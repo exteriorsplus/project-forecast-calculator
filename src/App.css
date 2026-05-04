@@ -61,7 +61,7 @@ body {
   font-weight: bold;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .back-button-header:hover {
@@ -527,4 +527,54 @@ input::placeholder {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
+}
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+input,
+button {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px;
+  }
+
+  input {
+    min-height: 44px;
+    transform: translateZ(0);
+  }
+
+  .date-controls input,
+  .date-controls button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .row input {
+    font-size: 16px;
+    min-height: 48px;
+  }
+
+  .card,
+  .header,
+  .data-panel,
+  .close-rate-panel,
+  .unknown-leads-panel,
+  .section-total {
+    transform: translateZ(0);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
