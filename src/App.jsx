@@ -1,0 +1,567 @@
+import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import "./App.css";
+
+const UNKNOWN_KEY = "Unknown-Work Type";
+const UNKNOWN_RPP = 15191.27;
+const UNKNOWN_MARGIN = 0.277;
+
+const categories = [
+  {
+    title: "Roofing",
+    className: "roofing",
+    items: [
+      { label: "Insurance", rpp: 16691.43, margin: 0.28218532 },
+      { label: "Repair", rpp: 2352.01, margin: 0.35404618 },
+      { label: "Retail", rpp: 13064.05, margin: 0.23808109 },
+    ],
+  },
+  {
+    title: "Siding",
+    className: "siding",
+    items: [
+      { label: "Insurance", rpp: 18816.72, margin: 0.35401739 },
+      { label: "Repair", rpp: 1870.49, margin: 0.33731542 },
+      { label: "Retail", rpp: 22143.99, margin: 0.24288058 },
+    ],
+  },
+  {
+    title: "Roofing & Siding",
+    className: "combo",
+    items: [
+      { label: "Insurance", rpp: 34034.1, margin: 0.26774496 },
+      { label: "Repair", rpp: 5727.9, margin: 0.2741249 },
+      { label: "Retail", rpp: 33258.86, margin: 0.22728198 },
+    ],
+  },
+];
+
+const money = (value) =>
+  value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
+const percent = (value) => `${(value * 100).toFixed(4)}%`;
+
+function AnimatedMoney({ value }) {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    const start = displayValue;
+    const end = value;
+    const duration = 350;
+    const startTime = performance.now();
+
+    const animate = (time) => {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const current = start + (end - start) * progress;
+      setDisplayValue(current);
+
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return <>{money(displayValue)}</>;
+}
+
+function parseExcelDate(value) {
+  if (!value) return null;
+
+  if (value instanceof Date) return value;
+
+  if (typeof value === "number") {
+    const parsed = XLSX.SSF.parse_date_code(value);
+    if (!parsed) return null;
+    return new Date(parsed.y, parsed.m - 1, parsed.d);
+  }
+
+  const date = new Date(String(value).trim());
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function dateOnly(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function normalizeTrade(value) {
+  const text = String(value || "").trim().toLowerCase();
+
+  if (text === "roofing") return "Roofing";
+  if (text === "siding") return "Siding";
+  if (text === "roofing & siding") return "Roofing & Siding";
+
+  if (text.includes("roofing") && text.includes("siding")) return "Roofing & Siding";
+  if (text.includes("roofing")) return "Roofing";
+  if (text.includes("siding")) return "Siding";
+
+  return "";
+}
+
+function normalizeWorkType(value) {
+  const text = String(value || "").trim().toLowerCase();
+
+  if (text.includes("insurance")) return "Insurance";
+  if (text.includes("repair")) return "Repair";
+  if (text.includes("retail")) return "Retail";
+
+  return "";
+}
+
+export default function App() {
+  const [screen, setScreen] = useState("home");
+
+  const [leads, setLeads] = useState({});
+  const [projects, setProjects] = useState({});
+  const [closeRate, setCloseRate] = useState(0.25);
+  const [customCloseRate, setCustomCloseRate] = useState("");
+  const [flash, setFlash] = useState(false);
+
+  const [leadRows, setLeadRows] = useState([]);
+  const [dataStatus, setDataStatus] = useState("Loading leads.xlsx...");
+  const [startDate, setStartDate] = useState("2025-01-01");
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
+
+  const rawRate =
+    closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
+
+  const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
+
+  const update = (setter, state, key, value) => {
+    setter({ ...state, [key]: value === "" ? "" : Number(value) });
+    setFlash(true);
+    setTimeout(() => setFlash(false), 350);
+  };
+
+  const clearLeads = () => {
+    const cleared = {};
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        cleared[`${category.title}-${item.label}`] = 0;
+      });
+    });
+
+    cleared[UNKNOWN_KEY] = 0;
+    setLeads(cleared);
+  };
+
+  const clearProjects = () => {
+    const cleared = {};
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        cleared[`${category.title}-${item.label}`] = 0;
+      });
+    });
+
+    setProjects(cleared);
+  };
+
+  const loadLeadFile = async () => {
+    try {
+      setDataStatus("Loading leads.xlsx...");
+
+      const response = await fetch(`/leads.xlsx?t=${Date.now()}`);
+
+      if (!response.ok) {
+        throw new Error("Could not find public/leads.xlsx");
+      }
+
+      const buffer = await response.arrayBuffer();
+
+      const workbook = XLSX.read(buffer, {
+        type: "array",
+        cellDates: true,
+      });
+
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+      });
+
+      setLeadRows(rows);
+      setDataStatus(`${rows.length} rows loaded from leads.xlsx`);
+    } catch (error) {
+      setLeadRows([]);
+      setDataStatus("No leads.xlsx file found yet.");
+      console.error(error);
+    }
+  };
+
+  const applyLeadCounts = (rows = leadRows) => {
+    const start = dateOnly(new Date(startDate));
+    const end = dateOnly(new Date(endDate));
+
+    const counts = {};
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        counts[`${category.title}-${item.label}`] = 0;
+      });
+    });
+
+    counts[UNKNOWN_KEY] = 0;
+
+    rows.forEach((row) => {
+      const rowDate = parseExcelDate(
+        row["Initial Appointment Date"] ||
+          row["Prospect Milestone Date"] ||
+          row["Closed Milestone Date"]
+      );
+
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      const rawTrade = String(row["Job Trade Type 2"] || "")
+        .trim()
+        .toLowerCase();
+
+      let trade = "";
+
+      if (rawTrade === "roofing") {
+        trade = "Roofing";
+      } else if (rawTrade === "siding") {
+        trade = "Siding";
+      } else if (rawTrade === "roofing & siding") {
+        trade = "Roofing & Siding";
+      } else {
+        trade = normalizeTrade(row["Job Trade Type"]);
+      }
+
+      const workType = normalizeWorkType(row["Work Type"]);
+
+      if (!workType) {
+        counts[UNKNOWN_KEY] += 1;
+        return;
+      }
+
+      const key = `${trade}-${workType}`;
+
+      if (Object.prototype.hasOwnProperty.call(counts, key)) {
+        counts[key] += 1;
+      }
+    });
+
+    setLeads(counts);
+  };
+
+  useEffect(() => {
+    loadLeadFile();
+  }, []);
+
+  useEffect(() => {
+    if (leadRows.length > 0 && startDate && endDate) {
+      applyLeadCounts(leadRows);
+    }
+  }, [leadRows, startDate, endDate]);
+
+  let totalLeads = 0;
+  let leadRevenue = 0;
+  let leadProfit = 0;
+  let projectRevenue = 0;
+  let projectProfit = 0;
+
+  const unknownLeadCount = Number(leads[UNKNOWN_KEY] || 0);
+  const unknownRevenue = unknownLeadCount * activeCloseRate * UNKNOWN_RPP;
+  const unknownProfit = unknownRevenue * UNKNOWN_MARGIN;
+
+  totalLeads += unknownLeadCount;
+  leadRevenue += unknownRevenue;
+  leadProfit += unknownProfit;
+
+  const Header = () => (
+    <header className="header">
+      {screen !== "home" && (
+        <button className="back-button-header" onClick={() => setScreen("home")}>
+          ← Home
+        </button>
+      )}
+
+      <div className="header-top">
+        <img src="/logo.png" alt="Logo" className="logo" />
+        <h1>Lead & Project Forecast Calculator</h1>
+      </div>
+    </header>
+  );
+
+  if (screen === "home") {
+    return (
+      <div className="page">
+        <Header />
+
+        <section className="home-grid">
+          <button className="home-card" onClick={() => setScreen("leads")}>
+            <span>Lead Forecast</span>
+            <strong>Forecast revenue from lead counts</strong>
+            <p>Uses close rate × revenue per project × margin.</p>
+          </button>
+
+          <button
+            className="home-card projects-card"
+            onClick={() => setScreen("projects")}
+          >
+            <span>Project Forecast</span>
+            <strong>Forecast revenue from project counts</strong>
+            <p>Uses confirmed project count × revenue per project × margin.</p>
+          </button>
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page">
+      <Header />
+
+      {screen === "leads" && (
+        <section className="calculator-section">
+          <div className="data-panel">
+            <div className="date-controls">
+              <label>
+                Start Date
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(event) => setStartDate(event.target.value)}
+                />
+              </label>
+
+              <label>
+                End Date
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(event) => setEndDate(event.target.value)}
+                />
+              </label>
+
+              <button onClick={() => applyLeadCounts()}>Apply Lead Counts</button>
+
+              <button className="clear-button" onClick={clearLeads}>
+                Clear Leads
+              </button>
+
+              <button onClick={loadLeadFile}>Reload File</button>
+            </div>
+          </div>
+
+          <div className="grid">
+            {categories.map((category) => (
+              <div className={`card ${category.className}`} key={category.title}>
+                <h3>{category.title}</h3>
+
+                {category.items.map((item) => {
+                  const key = `${category.title}-${item.label}`;
+                  const quantity = Number(leads[key] || 0);
+
+                  totalLeads += quantity;
+
+                  const revenue = quantity * activeCloseRate * item.rpp;
+                  const profit = revenue * item.margin;
+
+                  leadRevenue += revenue;
+                  leadProfit += profit;
+
+                  return (
+                    <div className="row" key={key}>
+                      <div>
+                        <strong>{item.label}</strong>
+                        <div className="sub-label">
+                          Rev/Project: {money(item.rpp)}
+                        </div>
+                        <div className="sub-label">
+                          Margin: {percent(item.margin)}
+                        </div>
+                      </div>
+
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Leads"
+                        value={leads[key] ?? ""}
+                        onChange={(event) =>
+                          update(setLeads, leads, key, event.target.value)
+                        }
+                      />
+
+                      <div className="return">
+                        {money(revenue)}
+                        <div className="profit">{money(profit)}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          <div className="lead-control-grid">
+            <div className="unknown-leads-panel">
+              <h3>Leads - Unknown Work Type</h3>
+              <p>Using {money(UNKNOWN_RPP)} avg revenue/project</p>
+              <p>Margin: 27.70%</p>
+              <strong>{unknownLeadCount}</strong>
+
+              <div className="unknown-divider"></div>
+
+              <h3>Total Leads</h3>
+              <strong>{totalLeads}</strong>
+            </div>
+
+            <div className="close-rate-panel">
+              <h3>Lead Close Rate</h3>
+              <p>
+                Lead totals are calculated as Leads × Close Rate × Revenue /
+                Project.
+              </p>
+
+              <div className="rate-buttons">
+                {[0.2, 0.25, 0.3, 0.35].map((rate) => (
+                  <button
+                    key={rate}
+                    className={
+                      closeRate === rate ? "rate-button active" : "rate-button"
+                    }
+                    onClick={() => setCloseRate(rate)}
+                  >
+                    {(rate * 100).toFixed(0)}%
+                  </button>
+                ))}
+
+                <div className="other-rate">
+                  <button
+                    className={
+                      closeRate === "custom"
+                        ? "rate-button active"
+                        : "rate-button"
+                    }
+                    onClick={() => setCloseRate("custom")}
+                  >
+                    Other
+                  </button>
+
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    placeholder="%"
+                    value={customCloseRate}
+                    onChange={(event) => {
+                      let value = Number(event.target.value);
+                      if (value > 100) value = 100;
+                      if (value < 0) value = 0;
+
+                      setCloseRate("custom");
+                      setCustomCloseRate(value);
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="active-rate">
+                Close Rate: {(activeCloseRate * 100).toFixed(0)}%
+              </div>
+            </div>
+          </div>
+
+          <div className="section-summary-grid">
+            <div className={`section-total red ${flash ? "glow" : ""}`}>
+              <strong>
+                <AnimatedMoney value={leadRevenue} />
+              </strong>
+              <span>Lead Revenue</span>
+            </div>
+
+            <div className={`section-total white ${flash ? "glow" : ""}`}>
+              <strong>
+                <AnimatedMoney value={leadProfit} />
+              </strong>
+              <span>Lead Profit</span>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {screen === "projects" && (
+        <section className="calculator-section">
+
+<div className="projects-controls">
+  <button className="apply-button" onClick={clearProjects}>
+    Clear Project Counts
+  </button>
+</div>
+
+          <div className="grid">
+            {categories.map((category) => (
+              <div className={`card ${category.className}`} key={category.title}>
+                <h3>{category.title}</h3>
+
+                {category.items.map((item) => {
+                  const key = `${category.title}-${item.label}`;
+                  const quantity = Number(projects[key] || 0);
+                  const revenue = quantity * item.rpp;
+                  const profit = revenue * item.margin;
+
+                  projectRevenue += revenue;
+                  projectProfit += profit;
+
+                  return (
+                    <div className="row" key={key}>
+                      <div>
+                        <strong>{item.label}</strong>
+                        <div className="sub-label">
+                          Rev/Project: {money(item.rpp)}
+                        </div>
+                        <div className="sub-label">
+                          Margin: {percent(item.margin)}
+                        </div>
+                      </div>
+
+                      <input
+                        type="number"
+                        min="0"
+                        placeholder="Projects"
+                        value={projects[key] ?? ""}
+                        onChange={(event) =>
+                          update(setProjects, projects, key, event.target.value)
+                        }
+                      />
+
+                      <div className="return">
+                        {money(revenue)}
+                        <div className="profit">{money(profit)}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          <div className="section-summary-grid">
+            <div className={`section-total red ${flash ? "glow" : ""}`}>
+              <strong>
+                <AnimatedMoney value={projectRevenue} />
+              </strong>
+              <span>Project Revenue</span>
+            </div>
+
+            <div className={`section-total white ${flash ? "glow" : ""}`}>
+              <strong>
+                <AnimatedMoney value={projectProfit} />
+              </strong>
+              <span>Project Profit</span>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}

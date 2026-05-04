@@ -1,0 +1,295 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f4f4;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 32px;
+}
+
+.header {
+  background: white;
+  padding: 22px 28px 18px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.logo {
+  max-height: 85px;
+  width: auto;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.header p {
+  margin: 8px 0 0;
+  text-align: center;
+  color: #666;
+  font-size: 15px;
+}
+
+.calculator-section {
+  margin-bottom: 34px;
+}
+
+.section-title {
+  text-align: center;
+  margin: 0 0 16px;
+  font-size: 28px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.card {
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-top: 10px solid #ccc;
+}
+
+.card.roofing {
+  border-top-color: #b91c1c;
+}
+
+.card.siding {
+  border-top-color: #4b5563;
+}
+
+.card.combo {
+  border-top-color: #111827;
+}
+
+.card > h3 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 92px 130px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid #eee;
+}
+
+.row strong {
+  font-size: 16px;
+}
+
+.sub-label {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 13px;
+}
+
+input {
+  width: 92px;
+  padding: 8px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.return {
+  font-weight: bold;
+  text-align: right;
+  font-size: 16px;
+}
+
+.profit {
+  margin-top: 4px;
+  font-size: 16px; /* match revenue */
+  font-weight: bold; /* optional but recommended */
+  color: #16a34a;
+}
+
+.section-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.section-total {
+  height: 120px;
+  padding: 22px;
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.section-total strong {
+  font-size: 34px;
+  line-height: 1;
+  margin: 0;
+}
+
+.section-total span {
+  margin-top: 7px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+.section-total.red {
+  background: #b91c1c;
+  color: white;
+}
+
+.section-total.white {
+  background: white;
+  color: #111827;
+  border: 2px solid #b91c1c;
+}
+
+.section-total.white strong {
+  color: #b91c1c;
+}
+
+.glow {
+  box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.15),
+    0 14px 35px rgba(185, 28, 28, 0.22);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 18px;
+  }
+
+  .grid,
+  .section-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-top {
+    flex-direction: column;
+  }
+
+  .logo {
+    max-height: 70px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .return {
+    text-align: left;
+  }
+}
+@media (max-width: 768px) {
+  
+  /* Make cards full width */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Row becomes horizontal layout */
+  .row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  /* Top info (label + meta) */
+  .row > div:first-child {
+    text-align: center;
+  }
+
+  /* Input + numbers row */
+  .row input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  /* Wrap input + results together */
+  .row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row .return {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    margin-top: 6px;
+  }
+
+  .row .profit {
+    margin: 0;
+    font-size: 13px;
+  }
+
+  /* Make input + output feel like one unit */
+  .row input,
+  .row .return {
+    width: 100%;
+  }
+
+  /* Optional: add subtle separation */
+  .row {
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+  }
+
+  /* Section totals stack clean */
+  .section-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Header tighter */
+  .header-top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logo {
+    max-height: 60px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+}
