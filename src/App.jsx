@@ -121,8 +121,19 @@ export default function App() {
 
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading leads.xlsx...");
-  const [startDate, setStartDate] = useState("2025-01-01");
-  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
+const today = new Date();
+
+const firstOfMonth = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  1
+);
+
+const formatDate = (date) =>
+  date.toISOString().slice(0, 10);
+
+const [startDate, setStartDate] = useState(formatDate(firstOfMonth));
+const [endDate, setEndDate] = useState(formatDate(today));
 
   const rawRate =
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
