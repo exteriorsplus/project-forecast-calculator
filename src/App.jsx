@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
@@ -44,24 +44,55 @@ const money = (value) =>
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
 
+const formatDate = (date) => date.toISOString().slice(0, 10);
+
+function getMonthDateRange() {
+  const today = new Date();
+  const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  return {
+    start: formatDate(firstOfMonth),
+    end: formatDate(today),
+  };
+}
+
 function AnimatedMoney({ value }) {
   const [displayValue, setDisplayValue] = useState(value);
+  const frameRef = useRef(null);
 
   useEffect(() => {
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      setDisplayValue(value);
+      return;
+    }
+
     const start = displayValue;
     const end = value;
-    const duration = 350;
+    const duration = 250;
     const startTime = performance.now();
 
     const animate = (time) => {
       const progress = Math.min((time - startTime) / duration, 1);
       const current = start + (end - start) * progress;
+
       setDisplayValue(current);
 
-      if (progress < 1) requestAnimationFrame(animate);
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(animate);
+      }
     };
 
-    requestAnimationFrame(animate);
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
   }, [value]);
 
   return <>{money(displayValue)}</>;
@@ -121,29 +152,33 @@ export default function App() {
 
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading leads.xlsx...");
-const today = new Date();
 
-const firstOfMonth = new Date(
-  today.getFullYear(),
-  today.getMonth(),
-  1
-);
+  const initialDateRange = getMonthDateRange();
+  const [startDate, setStartDate] = useState(initialDateRange.start);
+  const [endDate, setEndDate] = useState(initialDateRange.end);
 
-const formatDate = (date) =>
-  date.toISOString().slice(0, 10);
-
-const [startDate, setStartDate] = useState(formatDate(firstOfMonth));
-const [endDate, setEndDate] = useState(formatDate(today));
+  const flashTimeoutRef = useRef(null);
 
   const rawRate =
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
 
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
 
+  const triggerFlash = () => {
+    setFlash(true);
+
+    if (flashTimeoutRef.current) {
+      clearTimeout(flashTimeoutRef.current);
+    }
+
+    flashTimeoutRef.current = setTimeout(() => {
+      setFlash(false);
+    }, 200);
+  };
+
   const update = (setter, state, key, value) => {
     setter({ ...state, [key]: value === "" ? "" : Number(value) });
-    setFlash(true);
-    setTimeout(() => setFlash(false), 350);
+    triggerFlash();
   };
 
   const clearLeads = () => {
@@ -157,6 +192,7 @@ const [endDate, setEndDate] = useState(formatDate(today));
 
     cleared[UNKNOWN_KEY] = 0;
     setLeads(cleared);
+    triggerFlash();
   };
 
   const clearProjects = () => {
@@ -169,6 +205,7 @@ const [endDate, setEndDate] = useState(formatDate(today));
     });
 
     setProjects(cleared);
+    triggerFlash();
   };
 
   const loadLeadFile = async () => {
@@ -265,12 +302,22 @@ const [endDate, setEndDate] = useState(formatDate(today));
 
   useEffect(() => {
     loadLeadFile();
+
+    return () => {
+      if (flashTimeoutRef.current) {
+        clearTimeout(flashTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
-    if (leadRows.length > 0 && startDate && endDate) {
+    if (!leadRows.length || !startDate || !endDate) return;
+
+    const timeout = setTimeout(() => {
       applyLeadCounts(leadRows);
-    }
+    }, 150);
+
+    return () => clearTimeout(timeout);
   }, [leadRows, startDate, endDate]);
 
   let totalLeads = 0;
@@ -504,11 +551,11 @@ const [endDate, setEndDate] = useState(formatDate(today));
         <section className="calculator-section">
           <h2 className="section-title">Projects Forecast</h2>
 
-<div className="projects-controls">
-  <button className="apply-button" onClick={clearProjects}>
-    Clear Project Counts
-  </button>
-</div>
+          <div className="projects-controls">
+            <button className="apply-button" onClick={clearProjects}>
+              Clear Project Counts
+            </button>
+          </div>
 
           <div className="grid">
             {categories.map((category) => (
