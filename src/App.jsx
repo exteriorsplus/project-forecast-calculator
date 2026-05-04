@@ -61,15 +61,6 @@ function AnimatedMoney({ value }) {
   const frameRef = useRef(null);
 
   useEffect(() => {
-    const isMobile =
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 768px)").matches;
-
-    if (isMobile) {
-      setDisplayValue(value);
-      return;
-    }
-
     const start = displayValue;
     const end = value;
     const duration = 250;
