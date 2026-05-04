@@ -510,7 +510,7 @@ input::placeholder {
 }
 .apply-button {
   border: none;
-  background: #b91c1c; /* red default */
+  background: #111827;
   color: white;
   padding: 11px 22px;
   border-radius: 10px;
@@ -521,7 +521,7 @@ input::placeholder {
 }
 
 .apply-button:hover {
-  background: #111827; /* black on hover */
+  background: #b91c1c;
 }
 .projects-controls {
   display: flex;

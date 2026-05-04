@@ -502,6 +502,7 @@ const [endDate, setEndDate] = useState(formatDate(today));
 
       {screen === "projects" && (
         <section className="calculator-section">
+          <h2 className="section-title">Projects Forecast</h2>
 
 <div className="projects-controls">
   <button className="apply-button" onClick={clearProjects}>
