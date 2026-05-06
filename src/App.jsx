@@ -176,9 +176,9 @@ export default function App() {
     }, 200);
   };
 
-const update = (setter, state, key, value) => {
-  setter({ ...state, [key]: value === "" ? "" : Number(value) });
-};
+  const update = (setter, state, key, value) => {
+    setter({ ...state, [key]: value === "" ? "" : Number(value) });
+  };
 
   const clearLeads = () => {
     const cleared = {};
@@ -191,6 +191,7 @@ const update = (setter, state, key, value) => {
 
     cleared[UNKNOWN_KEY] = 0;
 
+    setLeads(cleared);
     triggerFlash();
   };
 
@@ -203,7 +204,7 @@ const update = (setter, state, key, value) => {
       });
     });
 
-
+    setProjects(cleared);
     triggerFlash();
   };
 
