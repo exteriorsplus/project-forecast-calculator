@@ -411,12 +411,79 @@ export default function App() {
           ← Home
         </button>
       )}
+      {screen === "projects" && (
+  <button className="header-action-button" onClick={clearProjects}>
+    Clear Project Counts
+  </button>
+)}
 
       <div className="header-top">
         <img src="/logo.png" alt="Logo" className="logo" />
-        <h1>Lead & Project Forecast Calculator</h1>
+        <h1>
+  {screen === "leads"
+    ? "Lead Revenue & Profit Forecast"
+    : screen === "projects"
+    ? "Projects Revenue and Margin Forecast"
+    : "Lead & Project Forecast Calculator"}
+</h1>
       </div>
     </header>
+  );
+
+  const ForecastRow = ({ item, keyName, quantity, revenue, breakdown, type }) => (
+    <div className="row">
+      <div className="row-label">{item.label}</div>
+
+      <div className="row-content">
+        <div className="row-left">
+          <div className="sub-label">
+            Rev / Project
+            <strong>{money(item.rpp)}</strong>
+          </div>
+
+          <div className="sub-label">
+            True Margin
+            <strong>{percent(breakdown.trueProjectMargin)}</strong>
+          </div>
+
+          <div className="sub-label">
+            Company Margin
+            <strong>{percent(item.margin)}</strong>
+          </div>
+        </div>
+
+        <div className="row-middle">
+          <input
+            type="number"
+            min="0"
+            placeholder={type === "leads" ? "Leads" : "Projects"}
+            value={quantity ?? ""}
+            onChange={(event) =>
+              type === "leads"
+                ? update(setLeads, leads, keyName, event.target.value)
+                : update(setProjects, projects, keyName, event.target.value)
+            }
+          />
+        </div>
+
+        <div className="row-right">
+          <div className="metric">
+            <span>Revenue</span>
+            <strong>{money(revenue)}</strong>
+          </div>
+
+          <div className="metric true">
+            <span>Project Profit</span>
+            <strong>{money(breakdown.trueProjectProfit)}</strong>
+          </div>
+
+          <div className="metric company">
+            <span>Company Profit</span>
+            <strong>{money(breakdown.companyProfit)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
   if (screen === "home") {
@@ -492,47 +559,15 @@ export default function App() {
                   const breakdown = getProfitBreakdown(revenue, item.margin);
 
                   return (
-                    <div className="row" key={key}>
-                      <div>
-                        <strong>{item.label}</strong>
-                        <div className="sub-label">
-                          Rev/Project: {money(item.rpp)}
-                        </div>
-                        <div className="sub-label">
-                          True Margin: {percent(breakdown.trueProjectMargin)}
-                        </div>
-                        <div className="sub-label">
-                          Company Margin: {percent(item.margin)}
-                        </div>
-                      </div>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="Leads"
-                        value={leads[key] ?? ""}
-                        onChange={(event) =>
-                          update(setLeads, leads, key, event.target.value)
-                        }
-                      />
-
-                      <div className="return">
-  <div className="metric">
-    <span>Revenue</span>
-    <strong>{money(revenue)}</strong>
-  </div>
-
-  <div className="metric true">
-    <span>True Profit</span>
-    <strong>{money(breakdown.trueProjectProfit)}</strong>
-  </div>
-
-  <div className="metric company">
-    <span>Company Profit</span>
-    <strong>{money(breakdown.companyProfit)}</strong>
-  </div>
-</div>
-                    </div>
+                    <ForecastRow
+                      key={key}
+                      item={item}
+                      keyName={key}
+                      quantity={leads[key]}
+                      revenue={revenue}
+                      breakdown={breakdown}
+                      type="leads"
+                    />
                   );
                 })}
               </div>
@@ -617,19 +652,32 @@ export default function App() {
               <span>Lead Revenue</span>
             </div>
 
-            <div className={`section-total white profit-total ${flash ? "glow" : ""}`}>
-              <strong>
-                <AnimatedMoney value={leadTotals.trueProjectProfit} />
-              </strong>
-              <span>True Project Profit</span>
+            <div
+              className={`section-total white profit-total finance-total ${
+                flash ? "glow" : ""
+              }`}
+            >
+              <div className="finance-main-row">
+                <span>True Project Profit</span>
+                <strong className="true-profit-number">
+                  <AnimatedMoney value={leadTotals.trueProjectProfit} />
+                </strong>
+              </div>
 
-              <div className="profit-breakdown">
-                <div className="expense-line">
-                  Company Expense 10%: -{money(leadTotals.companyExpense)}
-                </div>
-                <div>
-                  Company Profit: {money(leadTotals.companyProfit)}
-                </div>
+              <div className="finance-divider" />
+
+              <div className="finance-row company">
+                <span>True Company Profit</span>
+                <strong className="company-number">
+                  {money(leadTotals.companyProfit)}
+                </strong>
+              </div>
+
+              <div className="finance-row expense">
+                <span>Company Expense (10%)</span>
+                <strong className="expense-number">
+                  -{money(leadTotals.companyExpense)}
+                </strong>
               </div>
             </div>
           </div>
@@ -638,14 +686,8 @@ export default function App() {
 
       {screen === "projects" && (
         <section className="calculator-section">
-          <h2 className="section-title">Projects Forecast</h2>
 
-          <div className="projects-controls">
-            <button className="apply-button" onClick={clearProjects}>
-              Clear Project Counts
-            </button>
-          </div>
-
+          
           <div className="grid">
             {categories.map((category) => (
               <div className={`card ${category.className}`} key={category.title}>
@@ -658,47 +700,15 @@ export default function App() {
                   const breakdown = getProfitBreakdown(revenue, item.margin);
 
                   return (
-                    <div className="row" key={key}>
-                      <div>
-                        <strong>{item.label}</strong>
-                        <div className="sub-label">
-                          Rev/Project: {money(item.rpp)}
-                        </div>
-                        <div className="sub-label">
-                          True Margin: {percent(breakdown.trueProjectMargin)}
-                        </div>
-                        <div className="sub-label">
-                          Company Margin: {percent(item.margin)}
-                        </div>
-                      </div>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="Projects"
-                        value={projects[key] ?? ""}
-                        onChange={(event) =>
-                          update(setProjects, projects, key, event.target.value)
-                        }
-                      />
-
-<div className="return">
-  <div className="metric">
-    <span>Revenue</span>
-    <strong>{money(revenue)}</strong>
-  </div>
-
-  <div className="metric true">
-    <span>True Profit</span>
-    <strong>{money(breakdown.trueProjectProfit)}</strong>
-  </div>
-
-  <div className="metric company">
-    <span>Company Profit</span>
-    <strong>{money(breakdown.companyProfit)}</strong>
-  </div>
-</div>
-                    </div>
+                    <ForecastRow
+                      key={key}
+                      item={item}
+                      keyName={key}
+                      quantity={projects[key]}
+                      revenue={revenue}
+                      breakdown={breakdown}
+                      type="projects"
+                    />
                   );
                 })}
               </div>
@@ -713,19 +723,32 @@ export default function App() {
               <span>Project Revenue</span>
             </div>
 
-            <div className={`section-total white profit-total ${flash ? "glow" : ""}`}>
-              <strong>
-                <AnimatedMoney value={projectTotals.trueProjectProfit} />
-              </strong>
-              <span>True Project Profit</span>
+            <div
+              className={`section-total white profit-total finance-total ${
+                flash ? "glow" : ""
+              }`}
+            >
+              <div className="finance-main-row">
+                <span>True Project Profit</span>
+                <strong className="true-profit-number">
+                  <AnimatedMoney value={projectTotals.trueProjectProfit} />
+                </strong>
+              </div>
 
-              <div className="profit-breakdown">
-                <div className="expense-line">
-                  Company Expense 10%: -{money(projectTotals.companyExpense)}
-                </div>
-                <div>
-                  Company Profit: {money(projectTotals.companyProfit)}
-                </div>
+              <div className="finance-divider" />
+
+              <div className="finance-row company">
+                <span>True Company Profit</span>
+                <strong className="company-number">
+                  {money(projectTotals.companyProfit)}
+                </strong>
+              </div>
+
+              <div className="finance-row expense">
+                <span>Company Expense (10%)</span>
+                <strong className="expense-number">
+                  -{money(projectTotals.companyExpense)}
+                </strong>
               </div>
             </div>
           </div>
