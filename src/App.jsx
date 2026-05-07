@@ -5,6 +5,7 @@ import "./App.css";
 const UNKNOWN_KEY = "Unknown-Work Type";
 const UNKNOWN_RPP = 15191.27;
 const UNKNOWN_MARGIN = 0.277;
+const COMPANY_EXPENSE_RATE = 0.1;
 
 const categories = [
   {
@@ -124,7 +125,10 @@ function normalizeTrade(value) {
   if (text === "siding") return "Siding";
   if (text === "roofing & siding") return "Roofing & Siding";
 
-  if (text.includes("roofing") && text.includes("siding")) return "Roofing & Siding";
+  if (text.includes("roofing") && text.includes("siding")) {
+    return "Roofing & Siding";
+  }
+
   if (text.includes("roofing")) return "Roofing";
   if (text.includes("siding")) return "Siding";
 
@@ -139,6 +143,20 @@ function normalizeWorkType(value) {
   if (text.includes("retail")) return "Retail";
 
   return "";
+}
+
+function getProfitBreakdown(revenue, companyMargin) {
+  const trueProjectMargin = companyMargin + COMPANY_EXPENSE_RATE;
+  const trueProjectProfit = revenue * trueProjectMargin;
+  const companyExpense = revenue * COMPANY_EXPENSE_RATE;
+  const companyProfit = revenue * companyMargin;
+
+  return {
+    trueProjectMargin,
+    trueProjectProfit,
+    companyExpense,
+    companyProfit,
+  };
 }
 
 export default function App() {
@@ -300,6 +318,68 @@ export default function App() {
     setLeads(counts);
   };
 
+  const getLeadTotals = () => {
+    let totalLeads = Number(leads[UNKNOWN_KEY] || 0);
+    let revenue = totalLeads * activeCloseRate * UNKNOWN_RPP;
+
+    const unknownBreakdown = getProfitBreakdown(revenue, UNKNOWN_MARGIN);
+
+    let trueProjectProfit = unknownBreakdown.trueProjectProfit;
+    let companyExpense = unknownBreakdown.companyExpense;
+    let companyProfit = unknownBreakdown.companyProfit;
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        const key = `${category.title}-${item.label}`;
+        const quantity = Number(leads[key] || 0);
+        const itemRevenue = quantity * activeCloseRate * item.rpp;
+        const breakdown = getProfitBreakdown(itemRevenue, item.margin);
+
+        totalLeads += quantity;
+        revenue += itemRevenue;
+        trueProjectProfit += breakdown.trueProjectProfit;
+        companyExpense += breakdown.companyExpense;
+        companyProfit += breakdown.companyProfit;
+      });
+    });
+
+    return {
+      totalLeads,
+      revenue,
+      trueProjectProfit,
+      companyExpense,
+      companyProfit,
+    };
+  };
+
+  const getProjectTotals = () => {
+    let revenue = 0;
+    let trueProjectProfit = 0;
+    let companyExpense = 0;
+    let companyProfit = 0;
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        const key = `${category.title}-${item.label}`;
+        const quantity = Number(projects[key] || 0);
+        const itemRevenue = quantity * item.rpp;
+        const breakdown = getProfitBreakdown(itemRevenue, item.margin);
+
+        revenue += itemRevenue;
+        trueProjectProfit += breakdown.trueProjectProfit;
+        companyExpense += breakdown.companyExpense;
+        companyProfit += breakdown.companyProfit;
+      });
+    });
+
+    return {
+      revenue,
+      trueProjectProfit,
+      companyExpense,
+      companyProfit,
+    };
+  };
+
   useEffect(() => {
     loadLeadFile();
 
@@ -320,19 +400,9 @@ export default function App() {
     return () => clearTimeout(timeout);
   }, [leadRows, startDate, endDate]);
 
-  let totalLeads = 0;
-  let leadRevenue = 0;
-  let leadProfit = 0;
-  let projectRevenue = 0;
-  let projectProfit = 0;
-
+  const leadTotals = getLeadTotals();
+  const projectTotals = getProjectTotals();
   const unknownLeadCount = Number(leads[UNKNOWN_KEY] || 0);
-  const unknownRevenue = unknownLeadCount * activeCloseRate * UNKNOWN_RPP;
-  const unknownProfit = unknownRevenue * UNKNOWN_MARGIN;
-
-  totalLeads += unknownLeadCount;
-  leadRevenue += unknownRevenue;
-  leadProfit += unknownProfit;
 
   const Header = () => (
     <header className="header">
@@ -418,14 +488,8 @@ export default function App() {
                 {category.items.map((item) => {
                   const key = `${category.title}-${item.label}`;
                   const quantity = Number(leads[key] || 0);
-
-                  totalLeads += quantity;
-
                   const revenue = quantity * activeCloseRate * item.rpp;
-                  const profit = revenue * item.margin;
-
-                  leadRevenue += revenue;
-                  leadProfit += profit;
+                  const breakdown = getProfitBreakdown(revenue, item.margin);
 
                   return (
                     <div className="row" key={key}>
@@ -435,7 +499,10 @@ export default function App() {
                           Rev/Project: {money(item.rpp)}
                         </div>
                         <div className="sub-label">
-                          Margin: {percent(item.margin)}
+                          True Margin: {percent(breakdown.trueProjectMargin)}
+                        </div>
+                        <div className="sub-label">
+                          Company Margin: {percent(item.margin)}
                         </div>
                       </div>
 
@@ -450,9 +517,21 @@ export default function App() {
                       />
 
                       <div className="return">
-                        {money(revenue)}
-                        <div className="profit">{money(profit)}</div>
-                      </div>
+  <div className="metric">
+    <span>Revenue</span>
+    <strong>{money(revenue)}</strong>
+  </div>
+
+  <div className="metric true">
+    <span>True Profit</span>
+    <strong>{money(breakdown.trueProjectProfit)}</strong>
+  </div>
+
+  <div className="metric company">
+    <span>Company Profit</span>
+    <strong>{money(breakdown.companyProfit)}</strong>
+  </div>
+</div>
                     </div>
                   );
                 })}
@@ -464,13 +543,14 @@ export default function App() {
             <div className="unknown-leads-panel">
               <h3>Leads - Unknown Work Type</h3>
               <p>Using {money(UNKNOWN_RPP)} avg revenue/project</p>
-              <p>Margin: 27.70%</p>
+              <p>True Margin: {percent(UNKNOWN_MARGIN + COMPANY_EXPENSE_RATE)}</p>
+              <p>Company Margin: {percent(UNKNOWN_MARGIN)}</p>
               <strong>{unknownLeadCount}</strong>
 
               <div className="unknown-divider"></div>
 
               <h3>Total Leads</h3>
-              <strong>{totalLeads}</strong>
+              <strong>{leadTotals.totalLeads}</strong>
             </div>
 
             <div className="close-rate-panel">
@@ -532,16 +612,25 @@ export default function App() {
           <div className="section-summary-grid">
             <div className={`section-total red ${flash ? "glow" : ""}`}>
               <strong>
-                <AnimatedMoney value={leadRevenue} />
+                <AnimatedMoney value={leadTotals.revenue} />
               </strong>
               <span>Lead Revenue</span>
             </div>
 
-            <div className={`section-total white ${flash ? "glow" : ""}`}>
+            <div className={`section-total white profit-total ${flash ? "glow" : ""}`}>
               <strong>
-                <AnimatedMoney value={leadProfit} />
+                <AnimatedMoney value={leadTotals.trueProjectProfit} />
               </strong>
-              <span>Lead Profit</span>
+              <span>True Project Profit</span>
+
+              <div className="profit-breakdown">
+                <div className="expense-line">
+                  Company Expense 10%: -{money(leadTotals.companyExpense)}
+                </div>
+                <div>
+                  Company Profit: {money(leadTotals.companyProfit)}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -566,10 +655,7 @@ export default function App() {
                   const key = `${category.title}-${item.label}`;
                   const quantity = Number(projects[key] || 0);
                   const revenue = quantity * item.rpp;
-                  const profit = revenue * item.margin;
-
-                  projectRevenue += revenue;
-                  projectProfit += profit;
+                  const breakdown = getProfitBreakdown(revenue, item.margin);
 
                   return (
                     <div className="row" key={key}>
@@ -579,7 +665,10 @@ export default function App() {
                           Rev/Project: {money(item.rpp)}
                         </div>
                         <div className="sub-label">
-                          Margin: {percent(item.margin)}
+                          True Margin: {percent(breakdown.trueProjectMargin)}
+                        </div>
+                        <div className="sub-label">
+                          Company Margin: {percent(item.margin)}
                         </div>
                       </div>
 
@@ -595,7 +684,12 @@ export default function App() {
 
                       <div className="return">
                         {money(revenue)}
-                        <div className="profit">{money(profit)}</div>
+                        <div className="profit">
+                          True: {money(breakdown.trueProjectProfit)}
+                        </div>
+                        <div className="company-profit">
+                          Company: {money(breakdown.companyProfit)}
+                        </div>
                       </div>
                     </div>
                   );
@@ -607,16 +701,25 @@ export default function App() {
           <div className="section-summary-grid">
             <div className={`section-total red ${flash ? "glow" : ""}`}>
               <strong>
-                <AnimatedMoney value={projectRevenue} />
+                <AnimatedMoney value={projectTotals.revenue} />
               </strong>
               <span>Project Revenue</span>
             </div>
 
-            <div className={`section-total white ${flash ? "glow" : ""}`}>
+            <div className={`section-total white profit-total ${flash ? "glow" : ""}`}>
               <strong>
-                <AnimatedMoney value={projectProfit} />
+                <AnimatedMoney value={projectTotals.trueProjectProfit} />
               </strong>
-              <span>Project Profit</span>
+              <span>True Project Profit</span>
+
+              <div className="profit-breakdown">
+                <div className="expense-line">
+                  Company Expense 10%: -{money(projectTotals.companyExpense)}
+                </div>
+                <div>
+                  Company Profit: {money(projectTotals.companyProfit)}
+                </div>
+              </div>
             </div>
           </div>
         </section>

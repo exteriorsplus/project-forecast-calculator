@@ -2,12 +2,31 @@
   box-sizing: border-box;
 }
 
+html,
 body {
+  width: 100%;
   margin: 0;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
   background: #f4f4f4;
   font-family: Arial, sans-serif;
   color: #222;
 }
+
+button,
+input {
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* PAGE */
 
 .page {
   max-width: 1200px;
@@ -15,7 +34,10 @@ body {
   padding: 24px 32px 32px;
 }
 
+/* HEADER */
+
 .header {
+  position: relative;
   background: white;
   padding: 22px 28px 18px;
   border-radius: 20px;
@@ -41,12 +63,72 @@ body {
   line-height: 1;
 }
 
-.header p {
-  margin: 8px 0 0;
-  text-align: center;
-  color: #666;
-  font-size: 15px;
+.back-button-header {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  background: #111827;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: bold;
+  font-size: 13px;
 }
+
+.back-button-header:hover {
+  background: #b91c1c;
+}
+
+/* HOME */
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+.home-card {
+  background: white;
+  border: none;
+  border-top: 10px solid #b91c1c;
+  border-radius: 22px;
+  padding: 40px;
+  min-height: 170px;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.home-card:hover {
+  transform: translateY(-2px);
+}
+
+.projects-card {
+  border-top-color: #111827;
+}
+
+.home-card span {
+  display: block;
+  font-size: 32px;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 14px;
+}
+
+.home-card strong {
+  display: block;
+  font-size: 18px;
+  color: #b91c1c;
+  margin-bottom: 10px;
+}
+
+.home-card p {
+  margin: 0;
+  color: #333;
+  font-size: 16px;
+}
+
+/* SECTIONS */
 
 .calculator-section {
   margin-bottom: 34px;
@@ -57,6 +139,71 @@ body {
   margin: 0 0 16px;
   font-size: 28px;
 }
+
+/* DATA PANEL */
+
+.data-panel,
+.close-rate-panel,
+.unknown-leads-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid #d1d5db;
+}
+
+.data-panel {
+  margin-bottom: 22px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.date-controls {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: bold;
+  color: #111827;
+}
+
+.date-controls input {
+  width: 170px;
+}
+
+.date-controls button,
+.apply-button {
+  border: none;
+  background: #b91c1c;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.date-controls button:hover,
+.apply-button:hover {
+  background: #111827;
+}
+
+.clear-button {
+  border: 2px solid #b91c1c !important;
+  background: white !important;
+  color: #b91c1c !important;
+}
+
+.clear-button:hover {
+  background: #b91c1c !important;
+  color: white !important;
+}
+
+/* CARDS */
 
 .grid {
   display: grid;
@@ -92,42 +239,163 @@ body {
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 92px 130px;
+  grid-template-columns: 1fr 92px 150px;
   gap: 12px;
   align-items: center;
   padding: 14px 0;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #d1d5db;
 }
 
 .row strong {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .sub-label {
-  margin: 4px 0 0;
-  color: #777;
-  font-size: 13px;
+  margin-top: 4px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
 }
+
+/* INPUTS */
 
 input {
   width: 92px;
-  padding: 8px;
+  padding: 10px;
   font-size: 15px;
   text-align: center;
+  background: white;
+  border: 2px solid #9ca3af;
+  border-radius: 6px;
+  outline: none;
 }
+
+input:focus {
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.15);
+}
+
+input::placeholder {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* ROW RETURNS */
 
 .return {
   font-weight: bold;
   text-align: right;
   font-size: 16px;
+  line-height: 1.25;
 }
 
 .profit {
   margin-top: 4px;
-  font-size: 16px; /* match revenue */
-  font-weight: bold; /* optional but recommended */
+  font-size: 15px;
+  font-weight: bold;
   color: #16a34a;
 }
+
+.company-profit {
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #b91c1c;
+}
+
+/* LEAD CONTROLS */
+
+.lead-control-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.unknown-leads-panel {
+  text-align: center;
+}
+
+.unknown-leads-panel h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.unknown-leads-panel strong {
+  display: block;
+  font-size: 42px;
+  color: #b91c1c;
+  margin-bottom: 8px;
+}
+
+.unknown-leads-panel p {
+  margin: 4px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.unknown-divider {
+  height: 1px;
+  background: #d1d5db;
+  margin: 22px 0;
+}
+
+/* CLOSE RATE */
+
+.close-rate-panel {
+  text-align: center;
+}
+
+.rate-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rate-button {
+  border: 2px solid #b91c1c;
+  background: white;
+  color: #b91c1c;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.rate-button.active {
+  background: #b91c1c;
+  color: white;
+}
+
+.other-rate {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.active-rate {
+  margin-top: 22px;
+  font-weight: bold;
+  font-size: 16px;
+  color: #111827;
+}
+
+/* PROJECT CONTROLS */
+
+.projects-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.apply-button {
+  background: #111827;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+/* TOTALS */
 
 .section-summary-grid {
   display: grid;
@@ -137,23 +405,20 @@ input {
 }
 
 .section-total {
-  height: 120px;
+  min-height: 120px;
+  height: auto;
   padding: 22px;
   border-radius: 18px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   text-align: center;
-  transition: all 0.25s ease;
 }
 
 .section-total strong {
   font-size: 34px;
   line-height: 1;
-  margin: 0;
 }
 
 .section-total span {
@@ -161,7 +426,6 @@ input {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  opacity: 0.9;
 }
 
 .section-total.red {
@@ -179,11 +443,30 @@ input {
   color: #b91c1c;
 }
 
+.profit-total {
+  min-height: 155px;
+}
+
+.profit-breakdown {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  font-weight: 600;
+}
+
+.expense-line {
+  color: #b91c1c;
+  font-weight: bold;
+}
+
 .glow {
   box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.15),
     0 14px 35px rgba(185, 28, 28, 0.22);
   transform: translateY(-1px);
 }
+
+/* TABLET */
 
 @media (max-width: 900px) {
   .page {
@@ -191,12 +474,14 @@ input {
   }
 
   .grid,
-  .section-summary-grid {
+  .section-summary-grid,
+  .lead-control-grid {
     grid-template-columns: 1fr;
   }
 
   .header-top {
     flex-direction: column;
+    gap: 10px;
   }
 
   .logo {
@@ -216,72 +501,23 @@ input {
     text-align: left;
   }
 }
+
+/* MOBILE */
+
 @media (max-width: 768px) {
-  
-  /* Make cards full width */
-  .grid {
-    grid-template-columns: 1fr;
+  .page {
+    padding: 18px;
   }
 
-  /* Row becomes horizontal layout */
-  .row {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    align-items: stretch;
+  .header {
+    padding: 54px 20px 20px;
   }
 
-  /* Top info (label + meta) */
-  .row > div:first-child {
-    text-align: center;
-  }
-
-  /* Input + numbers row */
-  .row input {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  /* Wrap input + results together */
-  .row {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .row .return {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    margin-top: 6px;
-  }
-
-  .row .profit {
-    margin: 0;
-    font-size: 13px;
-  }
-
-  /* Make input + output feel like one unit */
-  .row input,
-  .row .return {
-    width: 100%;
-  }
-
-  /* Optional: add subtle separation */
-  .row {
-    border-top: 1px solid #eee;
-    padding-top: 16px;
-  }
-
-  /* Section totals stack clean */
-  .section-summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Header tighter */
-  .header-top {
-    flex-direction: column;
-    gap: 10px;
+  .back-button-header {
+    top: 12px;
+    left: 12px;
+    font-size: 12px;
+    padding: 7px 12px;
   }
 
   .logo {
@@ -290,24 +526,97 @@ input {
 
   .header h1 {
     font-size: 24px;
+  }
+
+  .home-card {
+    text-align: center;
+    padding: 30px 22px;
+  }
+
+  .home-card span {
+    font-size: 28px;
+  }
+
+  .date-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-controls input,
+  .date-controls button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  .row > div:first-child {
     text-align: center;
   }
+
+  .row input {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .row .return {
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .section-total {
+    width: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+.return {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  text-align: right;
 }
 
-.profit-total {
-  min-height: 150px;
-  height: auto;
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
 }
 
-.profit-breakdown {
-  margin-top: 10px;
-  font-size: 13px;
-  line-height: 1.45;
-  text-align: center;
+.metric span {
+  font-size: 12px;
+  color: #6b7280;
   font-weight: 600;
 }
 
-.expense-line {
+.metric strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.metric.true strong {
+  color: #16a34a;
+}
+
+.metric.company strong {
   color: #b91c1c;
-  font-weight: bold;
 }
