@@ -293,3 +293,21 @@ input {
     text-align: center;
   }
 }
+
+.profit-total {
+  min-height: 150px;
+  height: auto;
+}
+
+.profit-breakdown {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  font-weight: 600;
+}
+
+.expense-line {
+  color: #b91c1c;
+  font-weight: bold;
+}
