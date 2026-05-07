@@ -539,9 +539,9 @@ export default function App() {
 
               <button onClick={() => applyLeadCounts()}>Apply Lead Counts</button>
 
-              <button className="clear-button" onClick={clearLeads}>
-                Clear Leads
-              </button>
+              <button onClick={clearLeads}>
+  Clear Leads
+</button>
 
               <button onClick={loadLeadFile}>Reload File</button>
             </div>
