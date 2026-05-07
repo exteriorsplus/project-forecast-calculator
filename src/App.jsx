@@ -682,15 +682,22 @@ export default function App() {
                         }
                       />
 
-                      <div className="return">
-                        {money(revenue)}
-                        <div className="profit">
-                          True: {money(breakdown.trueProjectProfit)}
-                        </div>
-                        <div className="company-profit">
-                          Company: {money(breakdown.companyProfit)}
-                        </div>
-                      </div>
+<div className="return">
+  <div className="metric">
+    <span>Revenue</span>
+    <strong>{money(revenue)}</strong>
+  </div>
+
+  <div className="metric true">
+    <span>True Profit</span>
+    <strong>{money(breakdown.trueProjectProfit)}</strong>
+  </div>
+
+  <div className="metric company">
+    <span>Company Profit</span>
+    <strong>{money(breakdown.companyProfit)}</strong>
+  </div>
+</div>
                     </div>
                   );
                 })}
