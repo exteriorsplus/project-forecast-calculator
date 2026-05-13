@@ -330,6 +330,11 @@ const clearProjects = () => {
     const counts = buildClearedCounts(true);
 
     rows.forEach((row) => {
+      const milestone = String(row["Current Milestone"] || "")
+  .trim()
+  .toLowerCase();
+
+if (milestone === "dead") return;
       const rowDate = parseExcelDate(
         row["Initial Appointment Date"] ||
           row["Prospect Milestone Date"] ||
