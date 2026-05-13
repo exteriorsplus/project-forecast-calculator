@@ -12,27 +12,80 @@ const categories = [
     title: "Roofing",
     className: "roofing",
     items: [
-      { label: "Insurance", rpp: 16691.43, margin: 0.28218532 },
-      { label: "Repair", rpp: 2352.01, margin: 0.35404618 },
-      { label: "Retail", rpp: 13064.05, margin: 0.23808109 },
+      { label: "Insurance", rpp: 19082.88, margin: 0.258049 },
+      { label: "Repair", rpp: 1142.38, margin: 0.364825 },
+      { label: "Retail", rpp: 12984.44, margin: 0.212359 },
     ],
   },
   {
-    title: "Siding",
-    className: "siding",
+    title: "Roofing & Gutters",
+    className: "roofing-gutters",
     items: [
-      { label: "Insurance", rpp: 18816.72, margin: 0.35401739 },
-      { label: "Repair", rpp: 1870.49, margin: 0.33731542 },
-      { label: "Retail", rpp: 22143.99, margin: 0.24288058 },
+      { label: "Insurance", rpp: 20999.14, margin: 0.255887 },
+      { label: "Repair", rpp: 4198.92, margin: 0.350644 },
+      { label: "Retail", rpp: 14127.34, margin: 0.210625 },
     ],
   },
   {
     title: "Roofing & Siding",
     className: "combo",
     items: [
-      { label: "Insurance", rpp: 34034.1, margin: 0.26774496 },
-      { label: "Repair", rpp: 5727.9, margin: 0.2741249 },
-      { label: "Retail", rpp: 33258.86, margin: 0.22728198 },
+      { label: "Insurance", rpp: 41468.5, margin: 0.267046 },
+      { label: "Repair", rpp: 2097.63, margin: 0.289835 },
+      { label: "Retail", rpp: 32113.64, margin: 0.188107 },
+    ],
+  },
+  {
+    title: "Siding",
+    className: "siding",
+    items: [
+      { label: "Insurance", rpp: 21568.3, margin: 0.272371 },
+      { label: "Repair", rpp: 1457.44, margin: 0.30295 },
+      { label: "Retail", rpp: 17962.46, margin: 0.211199 },
+    ],
+  },
+  {
+    title: "James Hardie Siding",
+    className: "james-hardie",
+    items: [
+      { label: "Insurance", rpp: 32561.58, margin: 0.146764 },
+      { label: "Repair", rpp: 848.52, margin: 0.351721 },
+      { label: "Retail", rpp: 41849.3, margin: 0.154653 },
+    ],
+  },
+  {
+    title: "Metal Roofing",
+    className: "metal-roofing",
+    items: [
+      { label: "Insurance", rpp: 30710.23, margin: 0.308307 },
+      { label: "Repair", rpp: 4448.43, margin: 0.202305 },
+      { label: "Retail", rpp: 20678.49, margin: 0.172779 },
+    ],
+  },
+  {
+    title: "Windows",
+    className: "windows",
+    items: [
+      { label: "Insurance", rpp: 27727.17, margin: 0.154518 },
+      { label: "Repair", rpp: 559.78, margin: 0.231567 },
+      { label: "Retail", rpp: 11016.29, margin: 0.191793 },
+    ],
+  },
+  {
+    title: "Gutters",
+    className: "gutters",
+    items: [
+      { label: "Insurance", rpp: 4557.48, margin: 0.400291 },
+      { label: "Repair", rpp: 2732.52, margin: 0.398716 },
+      { label: "Retail", rpp: 4077.33, margin: 0.300995 },
+    ],
+  },
+  {
+    title: "Doors",
+    className: "doors",
+    items: [
+      { label: "Retail", rpp: 4996.31, margin: 0.19385 },
+      { label: "Service", rpp: 200.0, margin: 0.85 },
     ],
   },
 ];
@@ -121,16 +174,31 @@ function dateOnly(date) {
 function normalizeTrade(value) {
   const text = String(value || "").trim().toLowerCase();
 
+  if (text === "roofing & gutters") return "Roofing & Gutters";
+  if (text === "roofing & siding") return "Roofing & Siding";
+  if (text === "james hardie siding") return "James Hardie Siding";
+  if (text === "metal roofing") return "Metal Roofing";
   if (text === "roofing") return "Roofing";
   if (text === "siding") return "Siding";
-  if (text === "roofing & siding") return "Roofing & Siding";
+  if (text === "gutters") return "Gutters";
+  if (text === "doors") return "Doors";
+  if (text === "windows") return "Windows";
+
+  if (text.includes("roofing") && text.includes("gutters")) {
+    return "Roofing & Gutters";
+  }
 
   if (text.includes("roofing") && text.includes("siding")) {
     return "Roofing & Siding";
   }
 
+  if (text.includes("james hardie")) return "James Hardie Siding";
+  if (text.includes("metal roofing")) return "Metal Roofing";
   if (text.includes("roofing")) return "Roofing";
   if (text.includes("siding")) return "Siding";
+  if (text.includes("gutters")) return "Gutters";
+  if (text.includes("doors")) return "Doors";
+  if (text.includes("windows")) return "Windows";
 
   return "";
 }
@@ -141,6 +209,7 @@ function normalizeWorkType(value) {
   if (text.includes("insurance")) return "Insurance";
   if (text.includes("repair")) return "Repair";
   if (text.includes("retail")) return "Retail";
+  if (text.includes("service")) return "Service";
 
   return "";
 }
@@ -158,16 +227,14 @@ function getProfitBreakdown(revenue, companyMargin) {
     companyProfit,
   };
 }
-
+const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
 export default function App() {
   const [screen, setScreen] = useState("home");
-
   const [leads, setLeads] = useState({});
   const [projects, setProjects] = useState({});
   const [closeRate, setCloseRate] = useState(0.25);
   const [customCloseRate, setCustomCloseRate] = useState("");
   const [flash, setFlash] = useState(false);
-
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading leads.xlsx...");
 
@@ -198,33 +265,30 @@ export default function App() {
     setter({ ...state, [key]: value === "" ? "" : Number(value) });
   };
 
+  const buildClearedCounts = (includeUnknown = false) => {
+    const cleared = {};
+
+    categories.forEach((category) => {
+      category.items.forEach((item) => {
+        cleared[`${category.title}-${item.label}`] = 0;
+      });
+    });
+
+    if (includeUnknown) {
+      cleared[UNKNOWN_KEY] = 0;
+    }
+
+    return cleared;
+  };
+
   const clearLeads = () => {
-    const cleared = {};
-
-    categories.forEach((category) => {
-      category.items.forEach((item) => {
-        cleared[`${category.title}-${item.label}`] = 0;
-      });
-    });
-
-    cleared[UNKNOWN_KEY] = 0;
-
-    setLeads(cleared);
+    setLeads(buildClearedCounts(true));
     triggerFlash();
   };
 
-  const clearProjects = () => {
-    const cleared = {};
-
-    categories.forEach((category) => {
-      category.items.forEach((item) => {
-        cleared[`${category.title}-${item.label}`] = 0;
-      });
-    });
-
-    setProjects(cleared);
-    triggerFlash();
-  };
+const clearProjects = () => {
+  setProjects(buildClearedCounts(false));
+};
 
   const loadLeadFile = async () => {
     try {
@@ -263,15 +327,7 @@ export default function App() {
     const start = dateOnly(new Date(startDate));
     const end = dateOnly(new Date(endDate));
 
-    const counts = {};
-
-    categories.forEach((category) => {
-      category.items.forEach((item) => {
-        counts[`${category.title}-${item.label}`] = 0;
-      });
-    });
-
-    counts[UNKNOWN_KEY] = 0;
+    const counts = buildClearedCounts(true);
 
     rows.forEach((row) => {
       const rowDate = parseExcelDate(
@@ -285,25 +341,13 @@ export default function App() {
       const cleanDate = dateOnly(rowDate);
       if (cleanDate < start || cleanDate > end) return;
 
-      const rawTrade = String(row["Job Trade Type 2"] || "")
-        .trim()
-        .toLowerCase();
-
-      let trade = "";
-
-      if (rawTrade === "roofing") {
-        trade = "Roofing";
-      } else if (rawTrade === "siding") {
-        trade = "Siding";
-      } else if (rawTrade === "roofing & siding") {
-        trade = "Roofing & Siding";
-      } else {
-        trade = normalizeTrade(row["Job Trade Type"]);
-      }
+      const trade =
+        normalizeTrade(row["Job Trade Type 2"]) ||
+        normalizeTrade(row["Job Trade Type"]);
 
       const workType = normalizeWorkType(row["Work Type"]);
 
-      if (!workType) {
+      if (!trade || !workType) {
         counts[UNKNOWN_KEY] += 1;
         return;
       }
@@ -312,6 +356,8 @@ export default function App() {
 
       if (Object.prototype.hasOwnProperty.call(counts, key)) {
         counts[key] += 1;
+      } else {
+        counts[UNKNOWN_KEY] += 1;
       }
     });
 
@@ -411,21 +457,22 @@ export default function App() {
           ← Home
         </button>
       )}
+
       {screen === "projects" && (
-  <button className="header-action-button" onClick={clearProjects}>
-    Clear Project Counts
-  </button>
-)}
+        <button className="header-action-button" onClick={clearProjects}>
+          Clear Project Counts
+        </button>
+      )}
 
       <div className="header-top">
         <img src="/logo.png" alt="Logo" className="logo" />
         <h1>
-  {screen === "leads"
-    ? "Lead Revenue & Profit Forecast"
-    : screen === "projects"
-    ? "Projects Revenue and Margin Forecast"
-    : "Lead & Project Forecast Calculator"}
-</h1>
+          {screen === "leads"
+            ? "Lead Revenue & Profit Forecast"
+            : screen === "projects"
+            ? "Projects Revenue and Margin Forecast"
+            : "Lead & Project Forecast Calculator"}
+        </h1>
       </div>
     </header>
   );
@@ -486,6 +533,48 @@ export default function App() {
     </div>
   );
 
+  const SummaryTotals = ({
+    revenue,
+    trueProjectProfit,
+    companyProfit,
+    companyExpense,
+    revenueLabel,
+  }) => (
+    <div className="section-summary-grid">
+      <div className={`section-total red ${flash ? "glow" : ""}`}>
+        <strong>
+          <AnimatedMoney value={revenue} />
+        </strong>
+        <span>{revenueLabel}</span>
+      </div>
+
+      <div
+        className={`section-total white profit-total finance-total ${
+          flash ? "glow" : ""
+        }`}
+      >
+        <div className="finance-main-row">
+          <span>True Project Profit</span>
+          <strong className="true-profit-number">
+            <AnimatedMoney value={trueProjectProfit} />
+          </strong>
+        </div>
+
+        <div className="finance-divider" />
+
+        <div className="finance-row expense">
+          <span>Company Expense (10%)</span>
+          <strong className="expense-number">-{money(companyExpense)}</strong>
+        </div>
+
+        <div className="finance-row company">
+          <span>True Company Profit</span>
+          <strong className="company-number">{money(companyProfit)}</strong>
+        </div>
+      </div>
+    </div>
+  );
+
   if (screen === "home") {
     return (
       <div className="page">
@@ -538,45 +627,22 @@ export default function App() {
               </label>
 
               <button onClick={() => applyLeadCounts()}>Apply Lead Counts</button>
-
-              <button onClick={clearLeads}>
-  Clear Leads
-</button>
-
+              <button onClick={clearLeads}>Clear Leads</button>
               <button onClick={loadLeadFile}>Reload File</button>
             </div>
           </div>
 
-          <div className="grid">
-            {categories.map((category) => (
-              <div className={`card ${category.className}`} key={category.title}>
-                <h3>{category.title}</h3>
-
-                {category.items.map((item) => {
-                  const key = `${category.title}-${item.label}`;
-                  const quantity = Number(leads[key] || 0);
-                  const revenue = quantity * activeCloseRate * item.rpp;
-                  const breakdown = getProfitBreakdown(revenue, item.margin);
-
-                  return (
-                    <ForecastRow
-                      key={key}
-                      item={item}
-                      keyName={key}
-                      quantity={leads[key]}
-                      revenue={revenue}
-                      breakdown={breakdown}
-                      type="leads"
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
+          <SummaryTotals
+            revenue={leadTotals.revenue}
+            trueProjectProfit={leadTotals.trueProjectProfit}
+            companyProfit={leadTotals.companyProfit}
+            companyExpense={leadTotals.companyExpense}
+            revenueLabel="Lead Revenue"
+          />
 
           <div className="lead-control-grid">
             <div className="unknown-leads-panel">
-              <h3>Leads - Unknown Work Type</h3>
+              <h3>Appointments - Unknown Work Type</h3>
               <p>Using {money(UNKNOWN_RPP)} avg revenue/project</p>
               <p>True Margin: {percent(UNKNOWN_MARGIN + COMPANY_EXPENSE_RATE)}</p>
               <p>Company Margin: {percent(UNKNOWN_MARGIN)}</p>
@@ -584,12 +650,12 @@ export default function App() {
 
               <div className="unknown-divider"></div>
 
-              <h3>Total Leads</h3>
+              <h3>Total Appointments</h3>
               <strong>{leadTotals.totalLeads}</strong>
             </div>
 
             <div className="close-rate-panel">
-              <h3>Lead Close Rate</h3>
+              <h3>Appoinment Close Rate</h3>
               <p>
                 Lead totals are calculated as Leads × Close Rate × Revenue /
                 Project.
@@ -644,56 +710,63 @@ export default function App() {
             </div>
           </div>
 
-          <div className="section-summary-grid">
-            <div className={`section-total red ${flash ? "glow" : ""}`}>
-              <strong>
-                <AnimatedMoney value={leadTotals.revenue} />
-              </strong>
-              <span>Lead Revenue</span>
-            </div>
+          <div className="grid">
+            {categories.map((category) => (
+              <div className={`card ${category.className}`} key={category.title}>
+                <h3>{category.title}</h3>
 
-            <div
-              className={`section-total white profit-total finance-total ${
-                flash ? "glow" : ""
-              }`}
-            >
-              <div className="finance-main-row">
-                <span>True Project Profit</span>
-                <strong className="true-profit-number">
-                  <AnimatedMoney value={leadTotals.trueProjectProfit} />
-                </strong>
+                {[...category.items]
+                  .sort(
+                    (a, b) =>
+                      WORK_TYPE_ORDER.indexOf(a.label) -
+                      WORK_TYPE_ORDER.indexOf(b.label)
+                  )
+                  .map((item) => {
+                    const key = `${category.title}-${item.label}`;
+                    const quantity = Number(leads[key] || 0);
+                    const revenue = quantity * activeCloseRate * item.rpp;
+                    const breakdown = getProfitBreakdown(revenue, item.margin);
+
+                    return (
+                      <ForecastRow
+                        key={key}
+                        item={item}
+                        keyName={key}
+                        quantity={leads[key]}
+                        revenue={revenue}
+                        breakdown={breakdown}
+                        type="leads"
+                      />
+                    );
+                  })}
               </div>
-
-              <div className="finance-divider" />
-
-              <div className="finance-row company">
-                <span>True Company Profit</span>
-                <strong className="company-number">
-                  {money(leadTotals.companyProfit)}
-                </strong>
-              </div>
-
-              <div className="finance-row expense">
-                <span>Company Expense (10%)</span>
-                <strong className="expense-number">
-                  -{money(leadTotals.companyExpense)}
-                </strong>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       )}
 
       {screen === "projects" && (
         <section className="calculator-section">
+          <SummaryTotals
+            revenue={projectTotals.revenue}
+            trueProjectProfit={projectTotals.trueProjectProfit}
+            companyProfit={projectTotals.companyProfit}
+            companyExpense={projectTotals.companyExpense}
+            revenueLabel="Project Revenue"
+          />
 
-          
           <div className="grid">
             {categories.map((category) => (
               <div className={`card ${category.className}`} key={category.title}>
                 <h3>{category.title}</h3>
 
-                {category.items.map((item) => {
+{[...category.items]
+  .sort(
+    (a, b) =>
+      WORK_TYPE_ORDER.indexOf(a.label) -
+      WORK_TYPE_ORDER.indexOf(b.label)
+  )
+  .map((item) => {
                   const key = `${category.title}-${item.label}`;
                   const quantity = Number(projects[key] || 0);
                   const revenue = quantity * item.rpp;
@@ -713,44 +786,6 @@ export default function App() {
                 })}
               </div>
             ))}
-          </div>
-
-          <div className="section-summary-grid">
-            <div className={`section-total red ${flash ? "glow" : ""}`}>
-              <strong>
-                <AnimatedMoney value={projectTotals.revenue} />
-              </strong>
-              <span>Project Revenue</span>
-            </div>
-
-            <div
-              className={`section-total white profit-total finance-total ${
-                flash ? "glow" : ""
-              }`}
-            >
-              <div className="finance-main-row">
-                <span>True Project Profit</span>
-                <strong className="true-profit-number">
-                  <AnimatedMoney value={projectTotals.trueProjectProfit} />
-                </strong>
-              </div>
-
-              <div className="finance-divider" />
-
-              <div className="finance-row company">
-                <span>True Company Profit</span>
-                <strong className="company-number">
-                  {money(projectTotals.companyProfit)}
-                </strong>
-              </div>
-
-              <div className="finance-row expense">
-                <span>Company Expense (10%)</span>
-                <strong className="expense-number">
-                  -{money(projectTotals.companyExpense)}
-                </strong>
-              </div>
-            </div>
           </div>
         </section>
       )}

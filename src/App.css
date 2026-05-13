@@ -12,8 +12,8 @@ body {
 
 body {
   background: #f4f4f4;
-  font-family: Arial, sans-serif;
-  color: #222;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: #374151;
 }
 
 button,
@@ -26,15 +26,11 @@ button {
   cursor: pointer;
 }
 
-/* PAGE */
-
 .page {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 24px 32px 32px;
 }
-
-/* HEADER */
 
 .header {
   position: relative;
@@ -61,18 +57,19 @@ button {
   margin: 0;
   font-size: 32px;
   line-height: 1;
+  color: #111827;
 }
 
 .back-button-header,
 .header-action-button {
   position: absolute;
   top: 16px;
-  background: #111827;
+  background: #b91c1c;
   color: white;
   border: none;
   border-radius: 999px;
   padding: 8px 14px;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 13px;
 }
 
@@ -86,10 +83,8 @@ button {
 
 .back-button-header:hover,
 .header-action-button:hover {
-  background: #b91c1c;
+  background: #7f1d1d;
 }
-
-/* HOME */
 
 .home-grid {
   display: grid;
@@ -105,7 +100,7 @@ button {
   padding: 40px;
   min-height: 170px;
   text-align: left;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(185, 28, 28, 0.16);
 }
 
 .home-card:hover {
@@ -114,12 +109,13 @@ button {
 
 .projects-card {
   border-top-color: #111827;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.18);
 }
 
 .home-card span {
   display: block;
   font-size: 32px;
-  font-weight: bold;
+  font-weight: 800;
   color: #111827;
   margin-bottom: 14px;
 }
@@ -133,23 +129,13 @@ button {
 
 .home-card p {
   margin: 0;
-  color: #333;
+  color: #374151;
   font-size: 16px;
 }
-
-/* SECTIONS */
 
 .calculator-section {
   margin-bottom: 34px;
 }
-
-.section-title {
-  text-align: center;
-  margin: 0 0 16px;
-  font-size: 28px;
-}
-
-/* TOP CONTROLS */
 
 .data-panel,
 .close-rate-panel,
@@ -178,7 +164,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-weight: bold;
+  font-weight: 700;
   color: #111827;
 }
 
@@ -187,36 +173,25 @@ button {
 }
 
 .date-controls button,
-.apply-button {
+.apply-button,
+.clear-button {
   border: none;
   background: #b91c1c;
   color: white;
   padding: 11px 18px;
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .date-controls button:hover,
-.apply-button:hover {
+.apply-button:hover,
+.clear-button:hover {
   background: #111827;
 }
 
-.clear-button {
-  border: 2px solid #b91c1c !important;
-  background: white !important;
-  color: #b91c1c !important;
-}
-
-.clear-button:hover {
-  background: #b91c1c !important;
-  color: white !important;
-}
-
-/* CARDS */
-
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
 }
 
@@ -224,29 +199,46 @@ button {
   background: white;
   border-radius: 22px;
   padding: 22px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border-top: 10px solid #ccc;
+  box-shadow: none;
 }
 
-.card.roofing {
+/* Column 1 — Red */
+.grid > .card:nth-child(3n + 1) {
   border-top-color: #b91c1c;
+  box-shadow: 0 10px 30px rgba(185, 28, 28, 0.16);
 }
 
-.card.siding {
+/* Column 2 — Gray */
+.grid > .card:nth-child(3n + 2) {
   border-top-color: #4b5563;
+  box-shadow: 0 10px 30px rgba(75, 85, 99, 0.16);
 }
 
-.card.combo {
+/* Column 3 — Black */
+.grid > .card:nth-child(3n + 3) {
   border-top-color: #111827;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.18);
+}
+
+.grid > .card:nth-child(3n + 1):hover {
+  box-shadow: 0 14px 38px rgba(185, 28, 28, 0.22);
+}
+
+.grid > .card:nth-child(3n + 2):hover {
+  box-shadow: 0 14px 38px rgba(75, 85, 99, 0.22);
+}
+
+.grid > .card:nth-child(3n + 3):hover {
+  box-shadow: 0 14px 38px rgba(17, 24, 39, 0.26);
 }
 
 .card > h3 {
   margin: 0 0 20px;
   font-size: 24px;
   text-align: center;
+  color: #111827;
 }
-
-/* ROW CARDS */
 
 .row {
   display: block;
@@ -275,6 +267,7 @@ button {
   text-align: center;
   font-size: 18px;
   font-weight: 800;
+  color: #111827;
   margin-bottom: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid #e5e7eb;
@@ -302,33 +295,51 @@ button {
   width: 90px;
 }
 
-.row-right {
+.row-right,
+.return,
+.metric {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
   text-align: right;
 }
 
-/* SUB LABELS */
+.row-right {
+  gap: 8px;
+}
 
-.sub-label {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #6b7280;
+.sub-label,
+.metric span {
+  font-size: 12px;
+  color: #969696;
   font-weight: 700;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
   line-height: 1.15;
 }
 
-.sub-label strong {
-  display: block;
-  margin-top: 2px;
-  color: #111827;
-  font-size: 14px;
-  font-weight: 800;
+.sub-label {
+  margin-top: 8px;
 }
 
-/* INPUTS */
+.sub-label strong,
+.metric strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.15px;
+  text-transform: none;
+}
+
+.metric.true strong {
+  color: #16a34a;
+}
+
+.metric.company strong {
+  color: #b91c1c;
+}
 
 input {
   width: 92px;
@@ -352,46 +363,6 @@ input::placeholder {
   font-weight: 500;
 }
 
-/* ROW METRICS */
-
-.return {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
-  text-align: right;
-  line-height: 1.1;
-}
-
-.metric {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.metric span {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 800;
-  letter-spacing: 0.4px;
-}
-
-.metric strong {
-  font-size: 16px;
-  font-weight: 800;
-  color: #111827;
-}
-
-.metric.true strong {
-  color: #16a34a;
-}
-
-.metric.company strong {
-  color: #b91c1c;
-}
-
-/* LEAD CONTROL SECTION */
-
 .lead-control-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -406,6 +377,7 @@ input::placeholder {
 .unknown-leads-panel h3 {
   margin: 0 0 10px;
   font-size: 20px;
+  color: #111827;
 }
 
 .unknown-leads-panel strong {
@@ -417,7 +389,7 @@ input::placeholder {
 
 .unknown-leads-panel p {
   margin: 4px 0;
-  color: #666;
+  color: #4b5563;
   font-size: 14px;
 }
 
@@ -426,8 +398,6 @@ input::placeholder {
   background: #d1d5db;
   margin: 22px 0;
 }
-
-/* CLOSE RATE */
 
 .close-rate-panel {
   text-align: center;
@@ -446,7 +416,7 @@ input::placeholder {
   color: #b91c1c;
   padding: 10px 18px;
   border-radius: 999px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .rate-button.active {
@@ -462,12 +432,10 @@ input::placeholder {
 
 .active-rate {
   margin-top: 22px;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 16px;
   color: #111827;
 }
-
-/* TOTALS */
 
 .section-summary-grid {
   display: grid;
@@ -475,6 +443,13 @@ input::placeholder {
   gap: 22px;
   margin-top: 24px;
   align-items: stretch;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 25px; /* 👈 ADD THIS */
 }
 
 .section-summary-grid > div {
@@ -513,7 +488,7 @@ input::placeholder {
 
 .section-total.red span {
   margin-top: 7px;
-  font-size: 13px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -523,8 +498,6 @@ input::placeholder {
   color: #111827;
   border: 2px solid #b91c1c;
 }
-
-/* FINANCE TOTAL CARD */
 
 .finance-total {
   min-height: 150px;
@@ -547,7 +520,7 @@ input::placeholder {
 .finance-row span {
   text-align: left;
   margin: 0;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -587,29 +560,14 @@ input::placeholder {
   color: #b91c1c !important;
 }
 
-/* LEGACY SUPPORT */
-
 .profit {
   color: #16a34a;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .company-profit {
   color: #b91c1c;
-  font-weight: bold;
-}
-
-.profit-breakdown {
-  margin-top: 10px;
-  font-size: 13px;
-  line-height: 1.45;
-  text-align: center;
-  font-weight: 600;
-}
-
-.expense-line {
-  color: #b91c1c;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .glow {
@@ -618,7 +576,20 @@ input::placeholder {
   transform: translateY(-1px);
 }
 
-/* MOBILE */
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .section-summary-grid .red,
+  .section-summary-grid .profit-total {
+    grid-column: span 1;
+  }
+}
 
 @media (max-width: 768px) {
   .page {
@@ -690,7 +661,6 @@ input::placeholder {
   }
 
   .row {
-    display: block;
     padding: 18px;
   }
 
