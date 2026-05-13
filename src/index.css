@@ -159,8 +159,7 @@ button {
 
 .date-controls {
   display: flex;
-  justify-content: center;
-  align-items: end;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -619,4 +618,94 @@ input::placeholder {
 
 .metric.company strong {
   color: #b91c1c;
+}
+.card-logo {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  opacity: 0.12;
+}
+
+.card-logo img {
+  max-width: 200px;
+  width: 60%;
+}
+.project-top-row {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.project-date-panel {
+  width: 100%;
+}
+
+.project-count-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+}
+
+/* mobile fallback */
+@media (max-width: 900px) {
+  .project-top-row {
+    grid-template-columns: 1fr;
+  }
+}
+.project-top-row {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.project-date-panel,
+.project-count-panel {
+  min-height: 138px;
+}
+
+.project-date-panel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-date-panel .date-controls {
+  width: 100%;
+}
+
+.project-count-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .project-top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .reload-file-button {
+    margin-left: 0;
+  }
+}
+.date-controls button {
+  margin-left: 6px;
+}
+.project-date-panel,
+.project-count-panel {
+  height: 100%;
+}
+
+.project-date-panel {
+  display: flex;
+  align-items: center;
+}
+
+.project-date-panel .date-controls {
+  width: 100%;
 }

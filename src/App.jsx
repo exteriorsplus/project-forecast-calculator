@@ -90,6 +90,8 @@ const categories = [
   },
 ];
 
+const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
+
 const money = (value) =>
   value.toLocaleString("en-US", {
     style: "currency",
@@ -99,7 +101,15 @@ const money = (value) =>
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
 
 const formatDate = (date) => date.toISOString().slice(0, 10);
+function parseInputDate(value) {
+  if (!value) return null;
 
+  const [year, month, day] = String(value).split("-").map(Number);
+
+  if (!year || !month || !day) return null;
+
+  return new Date(year, month - 1, day);
+}
 function getMonthDateRange() {
   const today = new Date();
   const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -108,48 +118,6 @@ function getMonthDateRange() {
     start: formatDate(firstOfMonth),
     end: formatDate(today),
   };
-}
-
-function AnimatedMoney({ value }) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const frameRef = useRef(null);
-
-  useEffect(() => {
-    const isMobile =
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 768px)").matches;
-
-    if (isMobile) {
-      setDisplayValue(value);
-      return;
-    }
-
-    const start = displayValue;
-    const end = value;
-    const duration = 250;
-    const startTime = performance.now();
-
-    const animate = (time) => {
-      const progress = Math.min((time - startTime) / duration, 1);
-      const current = start + (end - start) * progress;
-
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        frameRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    frameRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
-    };
-  }, [value]);
-
-  return <>{money(displayValue)}</>;
 }
 
 function parseExcelDate(value) {
@@ -165,6 +133,16 @@ function parseExcelDate(value) {
 
   const date = new Date(String(value).trim());
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseMoney(value) {
+  if (value === null || value === undefined || value === "") return 0;
+  if (typeof value === "number") return value;
+
+  const cleaned = String(value).replace(/[$,]/g, "").trim();
+  const number = Number(cleaned);
+
+  return Number.isNaN(number) ? 0 : number;
 }
 
 function dateOnly(date) {
@@ -227,20 +205,104 @@ function getProfitBreakdown(revenue, companyMargin) {
     companyProfit,
   };
 }
-const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
+
+function findProjectConfig(trade, workType) {
+  for (const category of categories) {
+    for (const item of category.items) {
+      if (category.title === trade && item.label === workType) {
+        return {
+          key: `${category.title}-${item.label}`,
+          rpp: item.rpp,
+          margin: item.margin,
+        };
+      }
+    }
+  }
+
+  return {
+    key: UNKNOWN_KEY,
+    rpp: UNKNOWN_RPP,
+    margin: UNKNOWN_MARGIN,
+  };
+}
+
+function buildClearedCounts(includeUnknown = false) {
+  const cleared = {};
+
+  categories.forEach((category) => {
+    category.items.forEach((item) => {
+      cleared[`${category.title}-${item.label}`] = 0;
+    });
+  });
+
+  if (includeUnknown) {
+    cleared[UNKNOWN_KEY] = 0;
+  }
+
+  return cleared;
+}
+
+function AnimatedMoney({ value }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const frameRef = useRef(null);
+
+  useEffect(() => {
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const start = displayValue;
+    const end = value;
+    const duration = 250;
+    const startTime = performance.now();
+
+    const animate = (time) => {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const current = start + (end - start) * progress;
+
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, [value]);
+
+  return <>{money(displayValue)}</>;
+}
+
 export default function App() {
   const [screen, setScreen] = useState("home");
   const [leads, setLeads] = useState({});
-  const [projects, setProjects] = useState({});
+  const [salesRows, setSalesRows] = useState([]);
   const [closeRate, setCloseRate] = useState(0.25);
   const [customCloseRate, setCustomCloseRate] = useState("");
   const [flash, setFlash] = useState(false);
   const [leadRows, setLeadRows] = useState([]);
-  const [dataStatus, setDataStatus] = useState("Loading leads.xlsx...");
+  const [dataStatus, setDataStatus] = useState("Loading files...");
 
   const initialDateRange = getMonthDateRange();
+
   const [startDate, setStartDate] = useState(initialDateRange.start);
   const [endDate, setEndDate] = useState(initialDateRange.end);
+
+  const [projectStartDate, setProjectStartDate] = useState(
+    initialDateRange.start
+  );
+  const [projectEndDate, setProjectEndDate] = useState(initialDateRange.end);
 
   const flashTimeoutRef = useRef(null);
 
@@ -260,35 +322,6 @@ export default function App() {
       setFlash(false);
     }, 200);
   };
-
-  const update = (setter, state, key, value) => {
-    setter({ ...state, [key]: value === "" ? "" : Number(value) });
-  };
-
-  const buildClearedCounts = (includeUnknown = false) => {
-    const cleared = {};
-
-    categories.forEach((category) => {
-      category.items.forEach((item) => {
-        cleared[`${category.title}-${item.label}`] = 0;
-      });
-    });
-
-    if (includeUnknown) {
-      cleared[UNKNOWN_KEY] = 0;
-    }
-
-    return cleared;
-  };
-
-  const clearLeads = () => {
-    setLeads(buildClearedCounts(true));
-    triggerFlash();
-  };
-
-const clearProjects = () => {
-  setProjects(buildClearedCounts(false));
-};
 
   const loadLeadFile = async () => {
     try {
@@ -323,18 +356,68 @@ const clearProjects = () => {
     }
   };
 
+  const loadSalesFile = async () => {
+    try {
+      setDataStatus("Loading sales.xlsx...");
+
+      const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
+
+      if (!response.ok) {
+        throw new Error("Could not find public/sales.xlsx");
+      }
+
+      const buffer = await response.arrayBuffer();
+
+      const workbook = XLSX.read(buffer, {
+        type: "array",
+        cellDates: true,
+      });
+
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+      });
+
+      setSalesRows(rows);
+      setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
+    } catch (error) {
+      setSalesRows([]);
+      setDataStatus("No sales.xlsx file found yet.");
+      console.error(error);
+    }
+  };
+
+  const reloadFiles = () => {
+    loadLeadFile();
+    loadSalesFile();
+  };
+
+const clearLeads = () => {
+  setLeads(buildClearedCounts(true));
+  triggerFlash();
+};
+
+const clearProjects = () => {
+  setProjectStartDate("");
+  setProjectEndDate("");
+  triggerFlash();
+};
+
   const applyLeadCounts = (rows = leadRows) => {
-    const start = dateOnly(new Date(startDate));
-    const end = dateOnly(new Date(endDate));
+    const start = dateOnly(parseInputDate(startDate));
+const end = dateOnly(parseInputDate(endDate));
 
     const counts = buildClearedCounts(true);
 
     rows.forEach((row) => {
       const milestone = String(row["Current Milestone"] || "")
-  .trim()
-  .toLowerCase();
+        .trim()
+        .toLowerCase();
 
-if (milestone === "dead") return;
+      if (milestone.includes("dead")) return;
+
       const rowDate = parseExcelDate(
         row["Initial Appointment Date"] ||
           row["Prospect Milestone Date"] ||
@@ -403,36 +486,100 @@ if (milestone === "dead") return;
     };
   };
 
-  const getProjectTotals = () => {
-    let revenue = 0;
-    let trueProjectProfit = 0;
-    let companyExpense = 0;
-    let companyProfit = 0;
+const getProjectData = () => {
+if (!projectStartDate || !projectEndDate) {
+  return {
+    projectCounts: buildClearedCounts(true),
+    projectRevenue: buildClearedCounts(true),
+    totals: {
+      revenue: 0,
+      trueProjectProfit: 0,
+      companyExpense: 0,
+      companyProfit: 0,
+      projectCount: 0,
+    },
+  };
+}
 
-    categories.forEach((category) => {
-      category.items.forEach((item) => {
-        const key = `${category.title}-${item.label}`;
-        const quantity = Number(projects[key] || 0);
-        const itemRevenue = quantity * item.rpp;
-        const breakdown = getProfitBreakdown(itemRevenue, item.margin);
+const start = dateOnly(parseInputDate(projectStartDate));
+const end = dateOnly(parseInputDate(projectEndDate));
 
-        revenue += itemRevenue;
-        trueProjectProfit += breakdown.trueProjectProfit;
-        companyExpense += breakdown.companyExpense;
-        companyProfit += breakdown.companyProfit;
-      });
-    });
+  const projectCounts = buildClearedCounts(true);
+  const projectRevenue = buildClearedCounts(true);
 
-    return {
+  let revenue = 0;
+  let trueProjectProfit = 0;
+  let companyExpense = 0;
+  let companyProfit = 0;
+  let projectCount = 0;
+
+  salesRows.forEach((row) => {
+const rawAmount = row["Contract Amount"];
+
+if (rawAmount === "" || rawAmount === null || rawAmount === undefined) return;
+
+const contractAmount = parseMoney(rawAmount);
+
+    const rowDate = parseExcelDate(row["Approved Date"]);
+    if (!rowDate) return;
+
+    const cleanDate = dateOnly(rowDate);
+    if (cleanDate < start || cleanDate > end) return;
+
+    const trade =
+      normalizeTrade(row["Job Trade Type 2"]) ||
+      normalizeTrade(row["Job Trade Type"]);
+
+    const workType = normalizeWorkType(row["Work Type"]);
+
+    const config = findProjectConfig(trade, workType);
+
+    // ✅ PURE ACTUALS
+    projectCounts[config.key] =
+      Number(projectCounts[config.key] || 0) + 1;
+
+    projectRevenue[config.key] =
+      Number(projectRevenue[config.key] || 0) + contractAmount;
+
+    // ✅ ONLY math = profit
+    const breakdown = getProfitBreakdown(contractAmount, config.margin);
+
+    projectCount += 1;
+    revenue += contractAmount;
+    trueProjectProfit += breakdown.trueProjectProfit;
+    companyExpense += breakdown.companyExpense;
+    companyProfit += breakdown.companyProfit;
+  });
+console.table(
+  salesRows
+    .map((row) => ({
+      approvedDate: row["Approved Date"],
+      contractAmount: parseMoney(row["Contract Amount"]),
+      workType: row["Work Type"],
+      jobTradeType: row["Job Trade Type"],
+      jobTradeType2: row["Job Trade Type 2"],
+      contactName: row["Contact Name"],
+      jobNumber: row["Job Number"],
+    }))
+    .filter((row) => row.contractAmount)
+);
+
+
+  return {
+    projectCounts,
+    projectRevenue,
+    totals: {
       revenue,
       trueProjectProfit,
       companyExpense,
       companyProfit,
-    };
+      projectCount,
+    },
   };
+};
 
   useEffect(() => {
-    loadLeadFile();
+    reloadFiles();
 
     return () => {
       if (flashTimeoutRef.current) {
@@ -452,20 +599,16 @@ if (milestone === "dead") return;
   }, [leadRows, startDate, endDate]);
 
   const leadTotals = getLeadTotals();
-  const projectTotals = getProjectTotals();
+  const projectData = getProjectData();
+  const projectTotals = projectData.totals;
   const unknownLeadCount = Number(leads[UNKNOWN_KEY] || 0);
+  const unknownProjectCount = Number(projectData.projectCounts[UNKNOWN_KEY] || 0);
 
   const Header = () => (
     <header className="header">
       {screen !== "home" && (
         <button className="back-button-header" onClick={() => setScreen("home")}>
           ← Home
-        </button>
-      )}
-
-      {screen === "projects" && (
-        <button className="header-action-button" onClick={clearProjects}>
-          Clear Project Counts
         </button>
       )}
 
@@ -510,11 +653,15 @@ if (milestone === "dead") return;
             min="0"
             placeholder={type === "leads" ? "Leads" : "Projects"}
             value={quantity ?? ""}
-            onChange={(event) =>
-              type === "leads"
-                ? update(setLeads, leads, keyName, event.target.value)
-                : update(setProjects, projects, keyName, event.target.value)
-            }
+            readOnly={type === "projects"}
+            onChange={(event) => {
+              if (type === "projects") return;
+
+              setLeads({
+                ...leads,
+                [keyName]: event.target.value === "" ? "" : Number(event.target.value),
+              });
+            }}
           />
         </div>
 
@@ -597,8 +744,8 @@ if (milestone === "dead") return;
             onClick={() => setScreen("projects")}
           >
             <span>Project Forecast</span>
-            <strong>Forecast revenue from project counts</strong>
-            <p>Uses confirmed project count × revenue per project × margin.</p>
+            <strong>Forecast revenue from historical sales</strong>
+            <p>Uses sales.xlsx Contract Amount and Approved Date.</p>
           </button>
         </section>
       </div>
@@ -633,7 +780,7 @@ if (milestone === "dead") return;
 
               <button onClick={() => applyLeadCounts()}>Apply Lead Counts</button>
               <button onClick={clearLeads}>Clear Leads</button>
-              <button onClick={loadLeadFile}>Reload File</button>
+              <button onClick={loadLeadFile}>Reload Leads File</button>
             </div>
           </div>
 
@@ -660,7 +807,7 @@ if (milestone === "dead") return;
             </div>
 
             <div className="close-rate-panel">
-              <h3>Appoinment Close Rate</h3>
+              <h3>Appointment Close Rate</h3>
               <p>
                 Lead totals are calculated as Leads × Close Rate × Revenue /
                 Project.
@@ -744,6 +891,12 @@ if (milestone === "dead") return;
                       />
                     );
                   })}
+
+                {category.title === "Doors" && (
+                  <div className="card-logo">
+                    <img src="/logo.png" alt="Logo" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -752,6 +905,39 @@ if (milestone === "dead") return;
 
       {screen === "projects" && (
         <section className="calculator-section">
+          <div className="project-top-row">
+            <div className="data-panel project-date-panel">
+              <div className="date-controls">
+                <label>
+                  Start Date
+                  <input
+                    type="date"
+                    value={projectStartDate}
+                    onChange={(event) => setProjectStartDate(event.target.value)}
+                  />
+                </label>
+
+                <label>
+                  End Date
+                  <input
+                    type="date"
+                    value={projectEndDate}
+                    onChange={(event) => setProjectEndDate(event.target.value)}
+                  />
+                </label>
+
+                <button onClick={clearProjects}>Clear Projects</button>
+<button onClick={loadSalesFile}>Reload Sales File</button>
+              </div>
+            </div>
+
+<div className="unknown-leads-panel project-count-panel">
+  <h3>Total Projects</h3>
+  
+  <strong>{projectTotals.projectCount}</strong>
+</div>
+          </div>
+
           <SummaryTotals
             revenue={projectTotals.revenue}
             trueProjectProfit={projectTotals.trueProjectProfit}
@@ -765,30 +951,36 @@ if (milestone === "dead") return;
               <div className={`card ${category.className}`} key={category.title}>
                 <h3>{category.title}</h3>
 
-{[...category.items]
-  .sort(
-    (a, b) =>
-      WORK_TYPE_ORDER.indexOf(a.label) -
-      WORK_TYPE_ORDER.indexOf(b.label)
-  )
-  .map((item) => {
-                  const key = `${category.title}-${item.label}`;
-                  const quantity = Number(projects[key] || 0);
-                  const revenue = quantity * item.rpp;
-                  const breakdown = getProfitBreakdown(revenue, item.margin);
+                {[...category.items]
+                  .sort(
+                    (a, b) =>
+                      WORK_TYPE_ORDER.indexOf(a.label) -
+                      WORK_TYPE_ORDER.indexOf(b.label)
+                  )
+                  .map((item) => {
+                    const key = `${category.title}-${item.label}`;
+                    const quantity = Number(projectData.projectCounts[key] || 0);
+                    const revenue = Number(projectData.projectRevenue[key] || 0);
+                    const breakdown = getProfitBreakdown(revenue, item.margin);
 
-                  return (
-                    <ForecastRow
-                      key={key}
-                      item={item}
-                      keyName={key}
-                      quantity={projects[key]}
-                      revenue={revenue}
-                      breakdown={breakdown}
-                      type="projects"
-                    />
-                  );
-                })}
+                    return (
+                      <ForecastRow
+                        key={key}
+                        item={item}
+                        keyName={key}
+                        quantity={quantity}
+                        revenue={revenue}
+                        breakdown={breakdown}
+                        type="projects"
+                      />
+                    );
+                  })}
+
+                {category.title === "Doors" && (
+                  <div className="card-logo">
+                    <img src="/logo.png" alt="Logo" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
