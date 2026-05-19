@@ -726,7 +726,6 @@ input::placeholder {
   * {
     -webkit-tap-highlight-color: transparent;
   }
-}
 .lead-kpi-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
