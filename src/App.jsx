@@ -853,7 +853,7 @@ export default function App() {
           >
             <span>Project Revenue & Profit Margin</span>
             <strong>Revenue & Profit from Historical Sales</strong>
-            <p>Uses sales.xlsx Contract Amount and Approved Date.</p>
+            <p>Uses Historical Sales Data from Acculynx Sales Report</p>
           </button>
         </section>
       </div>
