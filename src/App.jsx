@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
-const APP_PASSWORD = "CHANGE_THIS_PASSWORD";
+const APP_PASSWORD = "Lakeview2910";
 
 const UNKNOWN_KEY = "Unknown-Work Type";
 const UNKNOWN_RPP = 15191.27;
