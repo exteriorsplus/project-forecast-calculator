@@ -615,7 +615,7 @@ export default function App() {
         <img src="/logo.png" alt="Logo" className="logo" />
         <h1>
           {screen === "leads"
-            ? "Lead Forecasted Revenue and Profit"
+            ? "Lead Forecasted Revenue & Profit"
             : screen === "projects"
             ? "Projects Revenue and Margin Forecast"
             : "Lead & Project Forecast Calculator"}
@@ -743,7 +743,7 @@ export default function App() {
             className="home-card projects-card"
             onClick={() => setScreen("projects")}
           >
-            <span>Project Revenue & Profit</span>
+            <span>Project Revenue & Profit Margin</span>
             <strong>Revenue and Profit from Historical Sales</strong>
             <p>Uses sales.xlsx Contract Amount and Approved Date.</p>
           </button>
