@@ -285,7 +285,7 @@ export default function App() {
   );
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-const [showPassword, setShowPassword] = useState(false);
+
   const [screen, setScreen] = useState("home");
   const [leads, setLeads] = useState({});
   const [salesRows, setSalesRows] = useState([]);
@@ -878,28 +878,18 @@ const [showPassword, setShowPassword] = useState(false);
           <img src="/logo.png" alt="Logo" className="login-logo" />
 
           <h1>Dashboard Login</h1>
-          <p>Enter the password to access the dashboard.</p>
+          <p>Enter the password to access the forecast dashboard.</p>
 
-<div className="password-input-wrapper">
-  <input
-    type={showPassword ? "password" : "text"}
-    placeholder="Password"
-    value={password}
-    autoFocus
-    onChange={(event) => {
-      setPassword(event.target.value);
-      setLoginError("");
-    }}
-  />
-
-  <button
-    type="button"
-    className="toggle-password"
-    onClick={() => setShowPassword(!showPassword)}
-  >
-    {showPassword ? "Hide" : "Show"}
-  </button>
-</div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            autoFocus
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setLoginError("");
+            }}
+          />
 
           {loginError && <div className="login-error">{loginError}</div>}
 

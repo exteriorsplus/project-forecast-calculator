@@ -828,24 +828,3 @@ input::placeholder {
   font-size: 14px;
   font-weight: 800;
 }
-.password-input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.password-input-wrapper input {
-  width: 100%;
-  padding-right: 80px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: #b91c1c;
-  font-weight: 700;
-  cursor: pointer;
-}
