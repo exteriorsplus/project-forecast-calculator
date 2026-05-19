@@ -615,7 +615,7 @@ export default function App() {
         <img src="/logo.png" alt="Logo" className="logo" />
         <h1>
           {screen === "leads"
-            ? "Lead Revenue & Profit Forecast"
+            ? "Lead Forecasted Revenue and Profit"
             : screen === "projects"
             ? "Projects Revenue and Margin Forecast"
             : "Lead & Project Forecast Calculator"}
