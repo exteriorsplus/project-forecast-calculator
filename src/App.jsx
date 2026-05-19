@@ -735,8 +735,8 @@ export default function App() {
         <section className="home-grid">
           <button className="home-card" onClick={() => setScreen("leads")}>
             <span>Lead Forecast - Revenue & Profit</span>
-            <strong>Forecast revenue from lead counts</strong>
-            <p>Uses close rate × revenue per project × margin.</p>
+            <strong>Forecast Revenue from Lead Counts</strong>
+            <p>Uses Average Revenue Per Project × Margin x Close Rate.</p>
           </button>
 
           <button
@@ -744,7 +744,7 @@ export default function App() {
             onClick={() => setScreen("projects")}
           >
             <span>Project Revenue & Profit</span>
-            <strong>Forecast revenue from historical sales</strong>
+            <strong>Revenue and Profit from Historical Sales</strong>
             <p>Uses sales.xlsx Contract Amount and Approved Date.</p>
           </button>
         </section>
