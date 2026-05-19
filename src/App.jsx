@@ -878,7 +878,7 @@ export default function App() {
           <img src="/logo.png" alt="Logo" className="login-logo" />
 
           <h1>Dashboard Login</h1>
-          <p>Enter the password to access the forecast dashboard.</p>
+          <p>Enter the password to access the dashboard.</p>
 
           <input
             type="password"
