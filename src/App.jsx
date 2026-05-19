@@ -743,7 +743,7 @@ export default function App() {
             className="home-card projects-card"
             onClick={() => setScreen("projects")}
           >
-            <span>Project Forecast</span>
+            <span>Historical Project Data</span>
             <strong>Forecast revenue from historical sales</strong>
             <p>Uses sales.xlsx Contract Amount and Approved Date.</p>
           </button>
