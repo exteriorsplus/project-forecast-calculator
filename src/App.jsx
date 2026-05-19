@@ -579,6 +579,54 @@ export default function App() {
     };
   };
 
+  const getLeadCategoryTotals = (category) => {
+    return category.items.reduce(
+      (totals, item) => {
+        const key = `${category.title}-${item.label}`;
+        const quantity = Number(leads[key] || 0);
+        const revenue = quantity * activeCloseRate * item.rpp;
+        const breakdown = getProfitBreakdown(revenue, item.margin);
+
+        return {
+          quantity: totals.quantity + quantity,
+          revenue: totals.revenue + revenue,
+          trueProjectProfit: totals.trueProjectProfit + breakdown.trueProjectProfit,
+          companyProfit: totals.companyProfit + breakdown.companyProfit,
+        };
+      },
+      {
+        quantity: 0,
+        revenue: 0,
+        trueProjectProfit: 0,
+        companyProfit: 0,
+      }
+    );
+  };
+
+  const getProjectCategoryTotals = (category) => {
+    return category.items.reduce(
+      (totals, item) => {
+        const key = `${category.title}-${item.label}`;
+        const quantity = Number(projectData.projectCounts[key] || 0);
+        const revenue = Number(projectData.projectRevenue[key] || 0);
+        const breakdown = getProfitBreakdown(revenue, item.margin);
+
+        return {
+          quantity: totals.quantity + quantity,
+          revenue: totals.revenue + revenue,
+          trueProjectProfit: totals.trueProjectProfit + breakdown.trueProjectProfit,
+          companyProfit: totals.companyProfit + breakdown.companyProfit,
+        };
+      },
+      {
+        quantity: 0,
+        revenue: 0,
+        trueProjectProfit: 0,
+        companyProfit: 0,
+      }
+    );
+  };
+
   useEffect(() => {
     reloadFiles();
 
@@ -684,6 +732,66 @@ export default function App() {
       </div>
     </div>
   );
+
+  const CategoryLeadTotal = ({ category }) => {
+    const totals = getLeadCategoryTotals(category);
+
+    return (
+      <div className="category-total">
+        <h4>{category.title} Total</h4>
+
+        <div>
+          <span>Leads</span>
+          <strong>{totals.quantity}</strong>
+        </div>
+
+        <div>
+          <span>Revenue</span>
+          <strong>{money(totals.revenue)}</strong>
+        </div>
+
+        <div>
+          <span>Project Profit</span>
+          <strong className="total-green">{money(totals.trueProjectProfit)}</strong>
+        </div>
+
+        <div>
+          <span>Company Profit</span>
+          <strong className="total-red">{money(totals.companyProfit)}</strong>
+        </div>
+      </div>
+    );
+  };
+
+  const CategoryProjectTotal = ({ category }) => {
+    const totals = getProjectCategoryTotals(category);
+
+    return (
+      <div className="category-total">
+        <h4>{category.title} Total</h4>
+
+        <div>
+          <span>Projects</span>
+          <strong>{totals.quantity}</strong>
+        </div>
+
+        <div>
+          <span>Revenue</span>
+          <strong>{money(totals.revenue)}</strong>
+        </div>
+
+        <div>
+          <span>Project Profit</span>
+          <strong className="total-green">{money(totals.trueProjectProfit)}</strong>
+        </div>
+
+        <div>
+          <span>Company Profit</span>
+          <strong className="total-red">{money(totals.companyProfit)}</strong>
+        </div>
+      </div>
+    );
+  };
 
   const SummaryTotals = ({
     revenue,
@@ -899,7 +1007,7 @@ export default function App() {
                     );
                   })}
 
-
+                <CategoryLeadTotal category={category} />
               </div>
             ))}
           </div>
@@ -982,6 +1090,7 @@ export default function App() {
                     );
                   })}
 
+                <CategoryProjectTotal category={category} />
               </div>
             ))}
           </div>

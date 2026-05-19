@@ -709,3 +709,50 @@ input::placeholder {
 .project-date-panel .date-controls {
   width: 100%;
 }
+.category-total {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.category-total h4 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.category-total div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 9px 10px;
+  margin-top: 8px;
+}
+
+.category-total span {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+}
+
+.category-total strong {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.category-total .total-green {
+  color: #16a34a;
+}
+
+.category-total .total-red {
+  color: #b91c1c;
+}

@@ -755,3 +755,11 @@ input::placeholder {
   justify-content: center;
   text-align: center;
 }
+.card {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-total {
+  margin-top: auto;
+}
