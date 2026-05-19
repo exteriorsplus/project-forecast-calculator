@@ -653,16 +653,19 @@ input::placeholder {
   }
 
   .date-controls {
-    flex-direction: column;
-    align-items: stretch;
+    align-items: center;
   }
 
-  .date-controls input,
-  .date-controls button {
+  .date-controls label {
     width: 100%;
-    min-height: 48px;
-    font-size: 16px;
+    align-items: center;
   }
+
+  .date-controls input {
+    text-align: center;
+  }
+
+}
 
   .row {
     padding: 18px;
