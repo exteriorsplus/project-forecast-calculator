@@ -666,7 +666,7 @@ export default function App() {
             ? "Lead Forecasted Revenue & Profit"
             : screen === "projects"
             ? "Projects Revenue and Margin Forecast"
-            : "Lead & Project Forecast Calculator"}
+            : "Lead & Project Forecast Dashboard"}
         </h1>
       </div>
     </header>
