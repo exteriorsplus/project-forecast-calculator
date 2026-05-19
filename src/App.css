@@ -765,3 +765,66 @@ input::placeholder {
 .category-total {
   margin-top: auto;
 }
+.login-screen {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f4;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 36px;
+  border-radius: 22px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 14px 38px rgba(17, 24, 39, 0.16);
+}
+
+.login-logo {
+  max-height: 90px;
+  width: auto;
+  margin-bottom: 16px;
+}
+
+.login-box h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 28px;
+}
+
+.login-box p {
+  margin: 0 0 22px;
+  color: #4b5563;
+}
+
+.login-box input {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+
+.login-box button {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #b91c1c;
+  color: white;
+  font-weight: 800;
+}
+
+.login-box button:hover {
+  background: #111827;
+}
+
+.login-error {
+  margin-bottom: 14px;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 800;
+}

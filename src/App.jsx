@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
+const APP_PASSWORD = "CHANGE_THIS_PASSWORD";
+
 const UNKNOWN_KEY = "Unknown-Work Type";
 const UNKNOWN_RPP = 15191.27;
 const UNKNOWN_MARGIN = 0.277;
@@ -278,6 +280,12 @@ function AnimatedMoney({ value }) {
 }
 
 export default function App() {
+  const [authorized, setAuthorized] = useState(
+    () => sessionStorage.getItem("dashboardAuthorized") === "true"
+  );
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   const [screen, setScreen] = useState("home");
   const [leads, setLeads] = useState({});
   const [salesRows, setSalesRows] = useState([]);
@@ -301,6 +309,28 @@ export default function App() {
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
 
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    if (password === APP_PASSWORD) {
+      sessionStorage.setItem("dashboardAuthorized", "true");
+      setAuthorized(true);
+      setLoginError("");
+      setPassword("");
+    } else {
+      setLoginError("Incorrect password. Please try again.");
+    }
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("dashboardAuthorized");
+    setAuthorized(false);
+    setScreen("home");
+    setLeadRows([]);
+    setSalesRows([]);
+    setLeads({});
+  };
 
   const triggerFlash = () => {
     setFlash(true);
@@ -628,22 +658,24 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (!authorized) return;
+
     reloadFiles();
 
     return () => {
       if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
     };
-  }, []);
+  }, [authorized]);
 
   useEffect(() => {
-    if (!leadRows.length || !startDate || !endDate) return;
+    if (!authorized || !leadRows.length || !startDate || !endDate) return;
 
     const timeout = setTimeout(() => {
       applyLeadCounts(leadRows);
     }, 150);
 
     return () => clearTimeout(timeout);
-  }, [leadRows, startDate, endDate]);
+  }, [authorized, leadRows, startDate, endDate]);
 
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
@@ -658,6 +690,10 @@ export default function App() {
           ← Home
         </button>
       )}
+
+      <button className="header-action-button" onClick={logout}>
+        Logout
+      </button>
 
       <div className="header-top">
         <img src="/logo.png" alt="Logo" className="logo" />
@@ -834,6 +870,34 @@ export default function App() {
       </div>
     </div>
   );
+
+  if (!authorized) {
+    return (
+      <div className="login-screen">
+        <form className="login-box" onSubmit={handleLogin}>
+          <img src="/logo.png" alt="Logo" className="login-logo" />
+
+          <h1>Dashboard Login</h1>
+          <p>Enter the password to access the forecast dashboard.</p>
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            autoFocus
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setLoginError("");
+            }}
+          />
+
+          {loginError && <div className="login-error">{loginError}</div>}
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    );
+  }
 
   if (screen === "home") {
     return (
