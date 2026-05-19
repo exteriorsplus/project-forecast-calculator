@@ -100,16 +100,20 @@ const money = (value) =>
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
 
-const formatDate = (date) => date.toISOString().slice(0, 10);
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function parseInputDate(value) {
   if (!value) return null;
-
   const [year, month, day] = String(value).split("-").map(Number);
-
   if (!year || !month || !day) return null;
-
   return new Date(year, month - 1, day);
 }
+
 function getMonthDateRange() {
   const today = new Date();
   const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -122,7 +126,6 @@ function getMonthDateRange() {
 
 function parseExcelDate(value) {
   if (!value) return null;
-
   if (value instanceof Date) return value;
 
   if (typeof value === "number") {
@@ -162,14 +165,8 @@ function normalizeTrade(value) {
   if (text === "doors") return "Doors";
   if (text === "windows") return "Windows";
 
-  if (text.includes("roofing") && text.includes("gutters")) {
-    return "Roofing & Gutters";
-  }
-
-  if (text.includes("roofing") && text.includes("siding")) {
-    return "Roofing & Siding";
-  }
-
+  if (text.includes("roofing") && text.includes("gutters")) return "Roofing & Gutters";
+  if (text.includes("roofing") && text.includes("siding")) return "Roofing & Siding";
   if (text.includes("james hardie")) return "James Hardie Siding";
   if (text.includes("metal roofing")) return "Metal Roofing";
   if (text.includes("roofing")) return "Roofing";
@@ -235,9 +232,7 @@ function buildClearedCounts(includeUnknown = false) {
     });
   });
 
-  if (includeUnknown) {
-    cleared[UNKNOWN_KEY] = 0;
-  }
+  if (includeUnknown) cleared[UNKNOWN_KEY] = 0;
 
   return cleared;
 }
@@ -275,9 +270,7 @@ function AnimatedMoney({ value }) {
     frameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
   }, [value]);
 
@@ -299,9 +292,7 @@ export default function App() {
   const [startDate, setStartDate] = useState(initialDateRange.start);
   const [endDate, setEndDate] = useState(initialDateRange.end);
 
-  const [projectStartDate, setProjectStartDate] = useState(
-    initialDateRange.start
-  );
+  const [projectStartDate, setProjectStartDate] = useState(initialDateRange.start);
   const [projectEndDate, setProjectEndDate] = useState(initialDateRange.end);
 
   const flashTimeoutRef = useRef(null);
@@ -314,9 +305,7 @@ export default function App() {
   const triggerFlash = () => {
     setFlash(true);
 
-    if (flashTimeoutRef.current) {
-      clearTimeout(flashTimeoutRef.current);
-    }
+    if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
 
     flashTimeoutRef.current = setTimeout(() => {
       setFlash(false);
@@ -334,15 +323,12 @@ export default function App() {
       }
 
       const buffer = await response.arrayBuffer();
-
       const workbook = XLSX.read(buffer, {
         type: "array",
         cellDates: true,
       });
 
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, {
         defval: "",
       });
@@ -367,15 +353,12 @@ export default function App() {
       }
 
       const buffer = await response.arrayBuffer();
-
       const workbook = XLSX.read(buffer, {
         type: "array",
         cellDates: true,
       });
 
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, {
         defval: "",
       });
@@ -394,20 +377,20 @@ export default function App() {
     loadSalesFile();
   };
 
-const clearLeads = () => {
-  setLeads(buildClearedCounts(true));
-  triggerFlash();
-};
+  const clearLeads = () => {
+    setLeads(buildClearedCounts(true));
+    triggerFlash();
+  };
 
-const clearProjects = () => {
-  setProjectStartDate("");
-  setProjectEndDate("");
-  triggerFlash();
-};
+  const clearProjects = () => {
+    setProjectStartDate("");
+    setProjectEndDate("");
+    triggerFlash();
+  };
 
   const applyLeadCounts = (rows = leadRows) => {
     const start = dateOnly(parseInputDate(startDate));
-const end = dateOnly(parseInputDate(endDate));
+    const end = dateOnly(parseInputDate(endDate));
 
     const counts = buildClearedCounts(true);
 
@@ -452,6 +435,37 @@ const end = dateOnly(parseInputDate(endDate));
     setLeads(counts);
   };
 
+  const getCurrentProspectCount = () => {
+    const start = dateOnly(parseInputDate(startDate));
+    const end = dateOnly(parseInputDate(endDate));
+
+    let count = 0;
+
+    leadRows.forEach((row) => {
+      const milestone = String(row["Current Milestone"] || "")
+        .trim()
+        .toLowerCase();
+
+      if (!milestone.includes("prospect")) return;
+      if (milestone.includes("dead")) return;
+
+      const rowDate = parseExcelDate(
+        row["Initial Appointment Date"] ||
+          row["Prospect Milestone Date"] ||
+          row["Closed Milestone Date"]
+      );
+
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      count += 1;
+    });
+
+    return count;
+  };
+
   const getLeadTotals = () => {
     let totalLeads = Number(leads[UNKNOWN_KEY] || 0);
     let revenue = totalLeads * activeCloseRate * UNKNOWN_RPP;
@@ -486,105 +500,90 @@ const end = dateOnly(parseInputDate(endDate));
     };
   };
 
-const getProjectData = () => {
-if (!projectStartDate || !projectEndDate) {
-  return {
-    projectCounts: buildClearedCounts(true),
-    projectRevenue: buildClearedCounts(true),
-    totals: {
-      revenue: 0,
-      trueProjectProfit: 0,
-      companyExpense: 0,
-      companyProfit: 0,
-      projectCount: 0,
-    },
+  const getProjectData = () => {
+    if (!projectStartDate || !projectEndDate) {
+      return {
+        projectCounts: buildClearedCounts(true),
+        projectRevenue: buildClearedCounts(true),
+        totals: {
+          revenue: 0,
+          trueProjectProfit: 0,
+          companyExpense: 0,
+          companyProfit: 0,
+          projectCount: 0,
+          zeroProjectCount: 0,
+        },
+      };
+    }
+
+    const start = dateOnly(parseInputDate(projectStartDate));
+    const end = dateOnly(parseInputDate(projectEndDate));
+
+    const projectCounts = buildClearedCounts(true);
+    const projectRevenue = buildClearedCounts(true);
+
+    let revenue = 0;
+    let trueProjectProfit = 0;
+    let companyExpense = 0;
+    let companyProfit = 0;
+    let projectCount = 0;
+    let zeroProjectCount = 0;
+
+    salesRows.forEach((row) => {
+      const rawAmount = row["Contract Amount"];
+
+      if (rawAmount === "" || rawAmount === null || rawAmount === undefined) return;
+
+      const contractAmount = parseMoney(rawAmount);
+
+      const rowDate = parseExcelDate(row["Approved Date"]);
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      const trade =
+        normalizeTrade(row["Job Trade Type 2"]) ||
+        normalizeTrade(row["Job Trade Type"]);
+
+      const workType = normalizeWorkType(row["Work Type"]);
+      const config = findProjectConfig(trade, workType);
+
+      projectCounts[config.key] = Number(projectCounts[config.key] || 0) + 1;
+
+      projectRevenue[config.key] =
+        Number(projectRevenue[config.key] || 0) + contractAmount;
+
+      const breakdown = getProfitBreakdown(contractAmount, config.margin);
+
+      if (contractAmount === 0) zeroProjectCount += 1;
+
+      projectCount += 1;
+      revenue += contractAmount;
+      trueProjectProfit += breakdown.trueProjectProfit;
+      companyExpense += breakdown.companyExpense;
+      companyProfit += breakdown.companyProfit;
+    });
+
+    return {
+      projectCounts,
+      projectRevenue,
+      totals: {
+        revenue,
+        trueProjectProfit,
+        companyExpense,
+        companyProfit,
+        projectCount,
+        zeroProjectCount,
+      },
+    };
   };
-}
-
-const start = dateOnly(parseInputDate(projectStartDate));
-const end = dateOnly(parseInputDate(projectEndDate));
-
-  const projectCounts = buildClearedCounts(true);
-  const projectRevenue = buildClearedCounts(true);
-
-  let revenue = 0;
-  let trueProjectProfit = 0;
-  let companyExpense = 0;
-  let companyProfit = 0;
-  let projectCount = 0;
-
-  salesRows.forEach((row) => {
-const rawAmount = row["Contract Amount"];
-
-if (rawAmount === "" || rawAmount === null || rawAmount === undefined) return;
-
-const contractAmount = parseMoney(rawAmount);
-
-    const rowDate = parseExcelDate(row["Approved Date"]);
-    if (!rowDate) return;
-
-    const cleanDate = dateOnly(rowDate);
-    if (cleanDate < start || cleanDate > end) return;
-
-    const trade =
-      normalizeTrade(row["Job Trade Type 2"]) ||
-      normalizeTrade(row["Job Trade Type"]);
-
-    const workType = normalizeWorkType(row["Work Type"]);
-
-    const config = findProjectConfig(trade, workType);
-
-    // ✅ PURE ACTUALS
-    projectCounts[config.key] =
-      Number(projectCounts[config.key] || 0) + 1;
-
-    projectRevenue[config.key] =
-      Number(projectRevenue[config.key] || 0) + contractAmount;
-
-    // ✅ ONLY math = profit
-    const breakdown = getProfitBreakdown(contractAmount, config.margin);
-
-    projectCount += 1;
-    revenue += contractAmount;
-    trueProjectProfit += breakdown.trueProjectProfit;
-    companyExpense += breakdown.companyExpense;
-    companyProfit += breakdown.companyProfit;
-  });
-console.table(
-  salesRows
-    .map((row) => ({
-      approvedDate: row["Approved Date"],
-      contractAmount: parseMoney(row["Contract Amount"]),
-      workType: row["Work Type"],
-      jobTradeType: row["Job Trade Type"],
-      jobTradeType2: row["Job Trade Type 2"],
-      contactName: row["Contact Name"],
-      jobNumber: row["Job Number"],
-    }))
-    .filter((row) => row.contractAmount)
-);
-
-
-  return {
-    projectCounts,
-    projectRevenue,
-    totals: {
-      revenue,
-      trueProjectProfit,
-      companyExpense,
-      companyProfit,
-      projectCount,
-    },
-  };
-};
 
   useEffect(() => {
     reloadFiles();
 
     return () => {
-      if (flashTimeoutRef.current) {
-        clearTimeout(flashTimeoutRef.current);
-      }
+      if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
     };
   }, []);
 
@@ -602,7 +601,7 @@ console.table(
   const projectData = getProjectData();
   const projectTotals = projectData.totals;
   const unknownLeadCount = Number(leads[UNKNOWN_KEY] || 0);
-  const unknownProjectCount = Number(projectData.projectCounts[UNKNOWN_KEY] || 0);
+  const currentProspectCount = getCurrentProspectCount();
 
   const Header = () => (
     <header className="header">
@@ -659,7 +658,8 @@ console.table(
 
               setLeads({
                 ...leads,
-                [keyName]: event.target.value === "" ? "" : Number(event.target.value),
+                [keyName]:
+                  event.target.value === "" ? "" : Number(event.target.value),
               });
             }}
           />
@@ -799,11 +799,6 @@ console.table(
               <p>True Margin: {percent(UNKNOWN_MARGIN + COMPANY_EXPENSE_RATE)}</p>
               <p>Company Margin: {percent(UNKNOWN_MARGIN)}</p>
               <strong>{unknownLeadCount}</strong>
-
-              <div className="unknown-divider"></div>
-
-              <h3>Total Appointments</h3>
-              <strong>{leadTotals.totalLeads}</strong>
             </div>
 
             <div className="close-rate-panel">
@@ -862,6 +857,18 @@ console.table(
             </div>
           </div>
 
+          <div className="lead-kpi-row">
+            <div className="unknown-leads-panel lead-kpi-card">
+              <h3>Total Appointments</h3>
+              <strong>{leadTotals.totalLeads}</strong>
+            </div>
+
+            <div className="unknown-leads-panel lead-kpi-card">
+              <h3>Current Prospects</h3>
+              <strong>{currentProspectCount}</strong>
+            </div>
+          </div>
+
           <div className="grid">
             {categories.map((category) => (
               <div className={`card ${category.className}`} key={category.title}>
@@ -892,11 +899,7 @@ console.table(
                     );
                   })}
 
-                {category.title === "Doors" && (
-                  <div className="card-logo">
-                    <img src="/logo.png" alt="Logo" />
-                  </div>
-                )}
+
               </div>
             ))}
           </div>
@@ -927,15 +930,18 @@ console.table(
                 </label>
 
                 <button onClick={clearProjects}>Clear Projects</button>
-<button onClick={loadSalesFile}>Reload Sales File</button>
+                <button onClick={loadSalesFile}>Reload Sales File</button>
               </div>
             </div>
 
-<div className="unknown-leads-panel project-count-panel">
-  <h3>Total Projects</h3>
-  
-  <strong>{projectTotals.projectCount}</strong>
-</div>
+            <div className="unknown-leads-panel project-count-panel">
+              <h3>Total Projects</h3>
+              <strong>{projectTotals.projectCount}</strong>
+
+              <p style={{ marginTop: "8px", fontSize: "14px", color: "#666" }}>
+                {projectTotals.zeroProjectCount} projects at $0
+              </p>
+            </div>
           </div>
 
           <SummaryTotals
@@ -976,11 +982,6 @@ console.table(
                     );
                   })}
 
-                {category.title === "Doors" && (
-                  <div className="card-logo">
-                    <img src="/logo.png" alt="Logo" />
-                  </div>
-                )}
               </div>
             ))}
           </div>

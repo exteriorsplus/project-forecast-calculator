@@ -145,6 +145,10 @@ button {
   padding: 22px;
   border: 1px solid #d1d5db;
 }
+.unknown-leads-panel,
+.close-rate-panel {
+  height: fit-content;
+}
 
 .data-panel {
   margin-bottom: 22px;
@@ -365,9 +369,9 @@ input::placeholder {
 
 .lead-control-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 16px;
-  margin-top: 22px;
+  grid-template-columns: 440px 1fr;
+  gap: 18px;
+  align-items: start;
 }
 
 .unknown-leads-panel {
@@ -719,4 +723,35 @@ input::placeholder {
   * {
     -webkit-tap-highlight-color: transparent;
   }
+}
+.lead-kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+  margin-bottom: 24px;
+}
+
+.lead-kpi-card {
+  height: fit-content;
+}
+
+@media (max-width: 768px) {
+  .lead-kpi-row {
+    grid-template-columns: 1fr;
+  }
+}
+.lead-control-grid {
+  align-items: stretch;
+}
+
+.lead-control-grid > .unknown-leads-panel,
+.lead-control-grid > .close-rate-panel {
+  height: 100%;
+}
+.unknown-leads-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
