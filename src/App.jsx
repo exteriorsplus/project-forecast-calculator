@@ -95,7 +95,7 @@ const categories = [
 const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
 
 const money = (value) =>
-  value.toLocaleString("en-US", {
+  Number(value || 0).toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
   });
@@ -279,6 +279,88 @@ function AnimatedMoney({ value }) {
   return <>{money(displayValue)}</>;
 }
 
+function ForecastRow({
+  item,
+  keyName,
+  quantity,
+  revenue,
+  breakdown,
+  type,
+  onLeadQuantityChange,
+}) {
+  const [localValue, setLocalValue] = useState(quantity ?? "");
+
+  useEffect(() => {
+    setLocalValue(quantity ?? "");
+  }, [quantity]);
+
+  useEffect(() => {
+    if (type !== "leads") return;
+
+    const timeout = setTimeout(() => {
+      onLeadQuantityChange(keyName, localValue);
+    }, 600);
+
+    return () => clearTimeout(timeout);
+  }, [localValue, keyName, type, onLeadQuantityChange]);
+
+  return (
+    <div className="row">
+      <div className="row-label">{item.label}</div>
+
+      <div className="row-content">
+        <div className="row-left">
+          <div className="sub-label">
+            Rev / Project
+            <strong>{money(item.rpp)}</strong>
+          </div>
+
+          <div className="sub-label">
+            True Margin
+            <strong>{percent(breakdown.trueProjectMargin)}</strong>
+          </div>
+
+          <div className="sub-label">
+            Company Margin
+            <strong>{percent(item.margin)}</strong>
+          </div>
+        </div>
+
+        <div className="row-middle">
+          <input
+            type="number"
+            min="0"
+            placeholder={type === "leads" ? "Leads" : "Projects"}
+            value={localValue}
+            readOnly={type === "projects"}
+            onChange={(event) => {
+              if (type === "projects") return;
+              setLocalValue(event.target.value);
+            }}
+          />
+        </div>
+
+        <div className="row-right">
+          <div className="metric">
+            <span>Revenue</span>
+            <strong>{money(revenue)}</strong>
+          </div>
+
+          <div className="metric true">
+            <span>Project Profit</span>
+            <strong>{money(breakdown.trueProjectProfit)}</strong>
+          </div>
+
+          <div className="metric company">
+            <span>Company Profit</span>
+            <strong>{money(breakdown.companyProfit)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [authorized, setAuthorized] = useState(
     () => sessionStorage.getItem("dashboardAuthorized") === "true"
@@ -330,6 +412,13 @@ export default function App() {
     setLeadRows([]);
     setSalesRows([]);
     setLeads({});
+  };
+
+  const handleLeadQuantityChange = (keyName, value) => {
+    setLeads((currentLeads) => ({
+      ...currentLeads,
+      [keyName]: value === "" ? "" : Number(value),
+    }));
   };
 
   const triggerFlash = () => {
@@ -708,67 +797,6 @@ export default function App() {
     </header>
   );
 
-  const ForecastRow = ({ item, keyName, quantity, revenue, breakdown, type }) => (
-    <div className="row">
-      <div className="row-label">{item.label}</div>
-
-      <div className="row-content">
-        <div className="row-left">
-          <div className="sub-label">
-            Rev / Project
-            <strong>{money(item.rpp)}</strong>
-          </div>
-
-          <div className="sub-label">
-            True Margin
-            <strong>{percent(breakdown.trueProjectMargin)}</strong>
-          </div>
-
-          <div className="sub-label">
-            Company Margin
-            <strong>{percent(item.margin)}</strong>
-          </div>
-        </div>
-
-        <div className="row-middle">
-          <input
-            type="number"
-            min="0"
-            placeholder={type === "leads" ? "Leads" : "Projects"}
-            value={quantity ?? ""}
-            readOnly={type === "projects"}
-            onChange={(event) => {
-              if (type === "projects") return;
-
-              setLeads({
-                ...leads,
-                [keyName]:
-                  event.target.value === "" ? "" : Number(event.target.value),
-              });
-            }}
-          />
-        </div>
-
-        <div className="row-right">
-          <div className="metric">
-            <span>Revenue</span>
-            <strong>{money(revenue)}</strong>
-          </div>
-
-          <div className="metric true">
-            <span>Project Profit</span>
-            <strong>{money(breakdown.trueProjectProfit)}</strong>
-          </div>
-
-          <div className="metric company">
-            <span>Company Profit</span>
-            <strong>{money(breakdown.companyProfit)}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   const CategoryLeadTotal = ({ category }) => {
     const totals = getLeadCategoryTotals(category);
 
@@ -1067,6 +1095,7 @@ export default function App() {
                         revenue={revenue}
                         breakdown={breakdown}
                         type="leads"
+                        onLeadQuantityChange={handleLeadQuantityChange}
                       />
                     );
                   })}
@@ -1150,6 +1179,7 @@ export default function App() {
                         revenue={revenue}
                         breakdown={breakdown}
                         type="projects"
+                        onLeadQuantityChange={handleLeadQuantityChange}
                       />
                     );
                   })}
