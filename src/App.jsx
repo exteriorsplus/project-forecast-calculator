@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
@@ -294,15 +294,19 @@ function ForecastRow({
     setLocalValue(quantity ?? "");
   }, [quantity]);
 
-  useEffect(() => {
-    if (type !== "leads") return;
+useEffect(() => {
+  if (type !== "leads") return;
 
-    const timeout = setTimeout(() => {
-      onLeadQuantityChange(keyName, localValue);
-    }, 600);
+  if (String(quantity ?? "") === String(localValue ?? "")) {
+    return;
+  }
 
-    return () => clearTimeout(timeout);
-  }, [localValue, keyName, type, onLeadQuantityChange]);
+  const timeout = setTimeout(() => {
+    onLeadQuantityChange(keyName, localValue);
+  }, 600);
+
+  return () => clearTimeout(timeout);
+}, [localValue, quantity, keyName, type, onLeadQuantityChange]);
 
   return (
     <div className="row">
@@ -414,12 +418,20 @@ export default function App() {
     setLeads({});
   };
 
-  const handleLeadQuantityChange = (keyName, value) => {
-    setLeads((currentLeads) => ({
+const handleLeadQuantityChange = useCallback((keyName, value) => {
+  setLeads((currentLeads) => {
+    const nextValue = value === "" ? "" : Number(value);
+
+    if (currentLeads[keyName] === nextValue) {
+      return currentLeads;
+    }
+
+    return {
       ...currentLeads,
-      [keyName]: value === "" ? "" : Number(value),
-    }));
-  };
+      [keyName]: nextValue,
+    };
+  });
+}, []);
 
   const triggerFlash = () => {
     setFlash(true);
