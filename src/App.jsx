@@ -51,6 +51,44 @@ const marketingScenarios = [
   { key: "expected", label: "Expected", factor: 1 },
   { key: "aggressive", label: "Aggressive", factor: 1.15 },
 ];
+const historicalMarketingData = [
+  {
+    channel: "Google Local Service",
+    rows: [
+      { month: "Oct 2025", spend: 21707.27, revenue: 81856.9 },
+      { month: "Nov 2025", spend: 10728.89, revenue: 15033.3 },
+      { month: "Dec 2025", spend: 8686.2, revenue: 44918.5 },
+      { month: "Jan 2026", spend: 12634.11, revenue: 49926.44 },
+      { month: "Feb 2026", spend: 16854.55, revenue: 30022.96 },
+      { month: "Mar 2026", spend: 39419.01, revenue: 254652.52 },
+      { month: "Apr 2026", spend: 21500, revenue: 49993.06 },
+    ],
+  },
+  {
+    channel: "Google Ads / SEO",
+    rows: [
+      { month: "Oct 2025", spend: 4839.65, revenue: 24395.18 },
+      { month: "Nov 2025", spend: 4390.23, revenue: 62146.38 },
+      { month: "Dec 2025", spend: 317.17, revenue: 99771.9 },
+      { month: "Jan 2026", spend: 892.94, revenue: 152525.13 },
+      { month: "Feb 2026", spend: 1043.44, revenue: 32266.07 },
+      { month: "Mar 2026", spend: 12438.75, revenue: 210804.96 },
+      { month: "Apr 2026", spend: 7976.88, revenue: 214601.44 },
+    ],
+  },
+  {
+    channel: "Thumbtack",
+    rows: [
+      { month: "Oct 2025", spend: 2033.45, revenue: 31945.92 },
+      { month: "Nov 2025", spend: 2685.1, revenue: 23946.03 },
+      { month: "Dec 2025", spend: 1072.79, revenue: 0 },
+      { month: "Jan 2026", spend: 1182.32, revenue: 0 },
+      { month: "Feb 2026", spend: 2334.4, revenue: 3100 },
+      { month: "Mar 2026", spend: 11574.3, revenue: 80014.51 },
+      { month: "Apr 2026", spend: 8833.12, revenue: 54165.59 },
+    ],
+  },
+];
 
 const categories = [
   {
@@ -1315,7 +1353,25 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
             ))}
           </div>
 
-          
+          <div className="historical-marketing-section">
+  <h2>Historical Spend & Revenue</h2>
+
+  <div className="historical-marketing-grid">
+    {historicalMarketingData.map((channel) => (
+      <div className="historical-marketing-card" key={channel.channel}>
+        <h3>{channel.channel}</h3>
+
+        {channel.rows.map((row) => (
+          <div className="historical-row" key={row.month}>
+            <span>{row.month}</span>
+            <strong>{money(row.spend)}</strong>
+            <strong>{money(row.revenue)}</strong>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</div>
         </section>
       )}
 

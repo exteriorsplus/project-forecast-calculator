@@ -1214,3 +1214,58 @@ input::placeholder {
 .marketing-total-section {
   margin-bottom: 32px;
 }
+.historical-marketing-section {
+  margin-top: 36px;
+}
+
+.historical-marketing-section h2 {
+  text-align: center;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+.historical-marketing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.historical-marketing-card {
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  border-top: 10px solid #4b5563;
+  box-shadow: 0 10px 30px rgba(75, 85, 99, 0.16);
+}
+
+.historical-marketing-card h3 {
+  margin: 0 0 18px;
+  text-align: center;
+  color: #111827;
+  font-size: 22px;
+}
+
+.historical-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.historical-row span {
+  font-weight: 800;
+  color: #6b7280;
+}
+
+.historical-row strong {
+  color: #111827;
+  font-weight: 900;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .historical-marketing-grid {
+    grid-template-columns: 1fr;
+  }
+}
