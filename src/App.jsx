@@ -441,9 +441,7 @@ export default function App() {
     0
   );
 
-  const [totalMarketingSpend, setTotalMarketingSpend] = useState(
-    String(defaultTotalMarketingSpend.toFixed(2))
-  );
+const [totalMarketingSpend, setTotalMarketingSpend] = useState("0");
 
   const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     marketingChannels.reduce((totals, channel) => {
