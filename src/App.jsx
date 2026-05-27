@@ -143,6 +143,18 @@ const money = (value) =>
     currency: "USD",
   });
 
+  const formatMoneyInput = (value) => {
+  const number = String(value || "").replace(/[^\d.]/g, "");
+
+  if (!number) return "";
+
+  return `$${Number(number).toLocaleString("en-US")}`;
+};
+
+const cleanMoneyInput = (value) => {
+  return String(value || "").replace(/[^\d.]/g, "");
+};
+
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
 
 function formatDate(date) {
@@ -1163,11 +1175,13 @@ export default function App() {
             <label>
               Total Marketing Spend
               <input
-                type="number"
-                min="0"
-                value={totalMarketingSpend}
-                onChange={(event) => setTotalMarketingSpend(event.target.value)}
-              />
+  type="text"
+  inputMode="decimal"
+  value={formatMoneyInput(totalMarketingSpend)}
+  onChange={(event) =>
+    setTotalMarketingSpend(cleanMoneyInput(event.target.value))
+  }
+/>
             </label>
 
             <button onClick={applyHistoricalSpendSplit}>
@@ -1188,16 +1202,16 @@ export default function App() {
                 <label>
                   Forecast Spend
                   <input
-                    type="number"
-                    min="0"
-                    value={marketingSpendByChannel[channel.key]}
-                    onChange={(event) =>
-                      setMarketingSpendByChannel((current) => ({
-                        ...current,
-                        [channel.key]: event.target.value,
-                      }))
-                    }
-                  />
+  type="text"
+  inputMode="decimal"
+  value={formatMoneyInput(marketingSpendByChannel[channel.key])}
+  onChange={(event) =>
+    setMarketingSpendByChannel((current) => ({
+      ...current,
+      [channel.key]: cleanMoneyInput(event.target.value),
+    }))
+  }
+/>
                 </label>
 
                 <div className="scenario-row">
