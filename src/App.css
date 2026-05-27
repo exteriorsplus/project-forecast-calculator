@@ -1141,3 +1141,73 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.marketing-total-spend-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.marketing-total-spend-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 800;
+  color: #111827;
+  text-align: center;
+}
+
+.marketing-total-spend-panel input {
+  width: 240px;
+  min-height: 48px;
+  font-size: 18px;
+}
+
+.marketing-total-spend-panel button {
+  border: none;
+  background: #b91c1c;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.marketing-total-spend-display {
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 14px 20px;
+}
+
+.marketing-total-spend-display span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.marketing-total-spend-display strong {
+  color: #111827;
+  font-size: 24px;
+}
+
+@media (max-width: 768px) {
+  .marketing-total-spend-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .marketing-total-spend-panel input,
+  .marketing-total-spend-panel button {
+    width: 100%;
+  }
+}

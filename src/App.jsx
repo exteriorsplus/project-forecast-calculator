@@ -13,6 +13,12 @@ const MARKETING_COMPANY_MARGIN = 0.21;
 const MARKETING_TRUE_PROJECT_MARGIN =
   MARKETING_COMPANY_MARGIN + COMPANY_EXPENSE_RATE;
 
+const MARKETING_SPEND_SPLIT = {
+  googleLocalService: 0.7284,
+  googleAdsSeo: 0.1377,
+  thumbtack: 0.1339,
+};
+
 const marketingChannels = [
   {
     key: "googleLocalService",
@@ -418,6 +424,15 @@ export default function App() {
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
+  const defaultTotalMarketingSpend = marketingChannels.reduce(
+    (sum, channel) => sum + channel.defaultSpend,
+    0
+  );
+
+  const [totalMarketingSpend, setTotalMarketingSpend] = useState(
+    String(defaultTotalMarketingSpend.toFixed(2))
+  );
+
   const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     marketingChannels.reduce((totals, channel) => {
       totals[channel.key] = String(channel.defaultSpend);
@@ -439,6 +454,22 @@ export default function App() {
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
 
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
+
+  const applyHistoricalSpendSplit = () => {
+    const total = Number(totalMarketingSpend || 0);
+
+    setMarketingSpendByChannel({
+      googleLocalService: String(
+        (total * MARKETING_SPEND_SPLIT.googleLocalService).toFixed(2)
+      ),
+      googleAdsSeo: String(
+        (total * MARKETING_SPEND_SPLIT.googleAdsSeo).toFixed(2)
+      ),
+      thumbtack: String(
+        (total * MARKETING_SPEND_SPLIT.thumbtack).toFixed(2)
+      ),
+    });
+  };
 
   const getMarketingForecast = () => {
     const channelForecasts = marketingChannels.map((channel) => {
@@ -481,6 +512,7 @@ export default function App() {
       return {
         ...channel,
         spend,
+        splitPercent: MARKETING_SPEND_SPLIT[channel.key],
         costPerLead,
         appointmentsPerSpend,
         scenarios,
@@ -526,21 +558,15 @@ export default function App() {
       };
     });
 
-    const totalSpend = channelForecasts.reduce(
+    const actualTotalSpend = channelForecasts.reduce(
       (sum, channel) => sum + channel.spend,
       0
     );
 
-    const roiTargets = [1, 2, 3, 4, 5].map((multiple) => ({
-      multiple,
-      revenueTarget: totalSpend * multiple,
-    }));
-
     return {
       channelForecasts,
       totals,
-      totalSpend,
-      roiTargets,
+      actualTotalSpend,
     };
   };
 
@@ -829,6 +855,7 @@ export default function App() {
       const config = findProjectConfig(trade, workType);
 
       projectCounts[config.key] = Number(projectCounts[config.key] || 0) + 1;
+
       projectRevenue[config.key] =
         Number(projectRevenue[config.key] || 0) + contractAmount;
 
@@ -1116,7 +1143,10 @@ export default function App() {
           >
             <span>Marketing Forecast</span>
             <strong>Predict Revenue from Marketing Spend</strong>
-            <p>Set spend by channel and forecast conservative, expected, and aggressive returns.</p>
+            <p>
+              Enter total spend, apply historical channel split, then override by
+              channel.
+            </p>
           </button>
         </section>
       </div>
@@ -1129,6 +1159,27 @@ export default function App() {
 
       {screen === "marketing" && (
         <section className="calculator-section">
+          <div className="marketing-total-spend-panel">
+            <label>
+              Total Marketing Spend
+              <input
+                type="number"
+                min="0"
+                value={totalMarketingSpend}
+                onChange={(event) => setTotalMarketingSpend(event.target.value)}
+              />
+            </label>
+
+            <button onClick={applyHistoricalSpendSplit}>
+              Apply Historical Spend Split
+            </button>
+
+            <div className="marketing-total-spend-display">
+              <span>Current Channel Spend Total</span>
+              <strong>{money(marketingForecast.actualTotalSpend)}</strong>
+            </div>
+          </div>
+
           <div className="marketing-channel-grid">
             {marketingForecast.channelForecasts.map((channel) => (
               <div className="marketing-channel-card" key={channel.key}>
@@ -1150,6 +1201,11 @@ export default function App() {
                 </label>
 
                 <div className="scenario-row">
+                  <span>Historical Spend Split</span>
+                  <strong>{(channel.splitPercent * 100).toFixed(2)}%</strong>
+                </div>
+
+                <div className="scenario-row">
                   <span>Avg Revenue / Appointment</span>
                   <strong>{money(channel.averageRevenuePerAppointment)}</strong>
                 </div>
@@ -1161,12 +1217,17 @@ export default function App() {
 
                 <div className="scenario-row">
                   <span>Cost / Lead</span>
-                  <strong>{channel.costPerLead ? money(channel.costPerLead) : "N/A"}</strong>
+                  <strong>
+                    {channel.costPerLead ? money(channel.costPerLead) : "N/A"}
+                  </strong>
                 </div>
 
                 <div className="mini-scenario-list">
                   {channel.scenarios.map((scenario) => (
-                    <div className={`mini-scenario ${scenario.key}`} key={scenario.key}>
+                    <div
+                      className={`mini-scenario ${scenario.key}`}
+                      key={scenario.key}
+                    >
                       <h4>{scenario.label}</h4>
 
                       <p>
@@ -1176,16 +1237,20 @@ export default function App() {
                       <p>
                         Leads:{" "}
                         <strong>
-                          {scenario.leads === null ? "N/A" : Math.round(scenario.leads)}
+                          {scenario.leads === null
+                            ? "N/A"
+                            : Math.round(scenario.leads)}
                         </strong>
                       </p>
 
                       <p>
-                        Appointments: <strong>{Math.round(scenario.appointments)}</strong>
+                        Appointments:{" "}
+                        <strong>{Math.round(scenario.appointments)}</strong>
                       </p>
 
                       <p>
-                        ROAS: <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
+                        ROAS:{" "}
+                        <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
                       </p>
                     </div>
                   ))}
