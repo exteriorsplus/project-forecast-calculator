@@ -1363,13 +1363,13 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
 
         {channel.rows.map((row) => (
 <>
-  {row.month === "Oct 2025" && (
-    <div className="historical-header-row">
-      <span></span>
-      <span>Spend</span>
-      <span>Revenue</span>
-    </div>
-  )}
+{row.month === "Oct 2025" && (
+  <div className="historical-header-row">
+    <span>Month</span>
+    <span>Spend</span>
+    <span>Revenue</span>
+  </div>
+)}
 
   <div className="historical-row" key={row.month}>
     <span>{row.month}</span>
