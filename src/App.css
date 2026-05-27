@@ -1269,3 +1269,28 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.historical-header-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  border-bottom: 2px solid #d1d5db;
+}
+
+.historical-header-row span {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.historical-spend {
+  min-width: 110px;
+  text-align: right;
+}
+
+.historical-revenue {
+  min-width: 130px;
+  text-align: right;
+}
