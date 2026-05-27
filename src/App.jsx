@@ -526,9 +526,21 @@ export default function App() {
       };
     });
 
+    const totalSpend = channelForecasts.reduce(
+      (sum, channel) => sum + channel.spend,
+      0
+    );
+
+    const roiTargets = [1, 2, 3, 4, 5].map((multiple) => ({
+      multiple,
+      revenueTarget: totalSpend * multiple,
+    }));
+
     return {
       channelForecasts,
       totals,
+      totalSpend,
+      roiTargets,
     };
   };
 
@@ -1227,6 +1239,19 @@ export default function App() {
                     <span>Company Profit</span>
                     <strong>{money(scenario.companyProfit)}</strong>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="roi-target-section">
+            <h2>Total Spend ROI Targets</h2>
+
+            <div className="roi-target-grid">
+              {marketingForecast.roiTargets.map((target) => (
+                <div className="roi-target-card" key={target.multiple}>
+                  <span>{target.multiple}x ROI</span>
+                  <strong>{money(target.revenueTarget)}</strong>
                 </div>
               ))}
             </div>

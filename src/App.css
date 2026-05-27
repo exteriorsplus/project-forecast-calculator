@@ -1096,3 +1096,48 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.roi-target-section {
+  margin-top: 28px;
+}
+
+.roi-target-section h2 {
+  text-align: center;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+.roi-target-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.roi-target-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  border-top: 8px solid #b91c1c;
+  box-shadow: 0 10px 24px rgba(185, 28, 28, 0.12);
+}
+
+.roi-target-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.roi-target-card strong {
+  color: #111827;
+  font-size: 24px;
+}
+
+@media (max-width: 900px) {
+  .roi-target-grid {
+    grid-template-columns: 1fr;
+  }
+}
