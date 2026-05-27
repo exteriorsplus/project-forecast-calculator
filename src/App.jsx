@@ -1285,12 +1285,25 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   type="text"
   inputMode="decimal"
   value={formatMoneyInput(marketingSpendByChannel[channel.key])}
-  onChange={(event) =>
-    setMarketingSpendByChannel((current) => ({
+onChange={(event) => {
+  const nextValue = cleanMoneyInput(event.target.value);
+
+  setMarketingSpendByChannel((current) => {
+    const updated = {
       ...current,
-      [channel.key]: cleanMoneyInput(event.target.value),
-    }))
-  }
+      [channel.key]: nextValue,
+    };
+
+    const newTotal = Object.values(updated).reduce(
+      (sum, value) => sum + Number(value || 0),
+      0
+    );
+
+    setTotalMarketingSpend(String(newTotal.toFixed(2)));
+
+    return updated;
+  });
+}}
 />
                 </label>
 
