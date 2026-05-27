@@ -1193,7 +1193,55 @@ export default function App() {
               <strong>{money(marketingForecast.actualTotalSpend)}</strong>
             </div>
           </div>
+<div className="marketing-total-section">
+            <h2>Total Marketing Forecast</h2>
 
+            <div className="marketing-scenario-grid">
+              {marketingForecast.totals.map((scenario) => (
+                <div
+                  className={`marketing-scenario-card ${scenario.key}`}
+                  key={scenario.key}
+                >
+                  <h3>{scenario.label}</h3>
+
+                  <div className="scenario-main-number">
+                    <span>Forecast Revenue</span>
+                    <strong>{money(scenario.revenue)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Total Spend</span>
+                    <strong>{money(scenario.spend)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Leads</span>
+                    <strong>{Math.round(scenario.leads)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Appointments</span>
+                    <strong>{Math.round(scenario.appointments)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Return / Spend</span>
+                    <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
+                  </div>
+
+                  <div className="scenario-row true">
+                    <span>Project Profit</span>
+                    <strong>{money(scenario.trueProjectProfit)}</strong>
+                  </div>
+
+                  <div className="scenario-row company">
+                    <span>Company Profit</span>
+                    <strong>{money(scenario.companyProfit)}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="marketing-channel-grid">
             {marketingForecast.channelForecasts.map((channel) => (
               <div className="marketing-channel-card" key={channel.key}>
@@ -1273,55 +1321,7 @@ export default function App() {
             ))}
           </div>
 
-          <div className="marketing-total-section">
-            <h2>Total Marketing Forecast</h2>
-
-            <div className="marketing-scenario-grid">
-              {marketingForecast.totals.map((scenario) => (
-                <div
-                  className={`marketing-scenario-card ${scenario.key}`}
-                  key={scenario.key}
-                >
-                  <h3>{scenario.label}</h3>
-
-                  <div className="scenario-main-number">
-                    <span>Forecast Revenue</span>
-                    <strong>{money(scenario.revenue)}</strong>
-                  </div>
-
-                  <div className="scenario-row">
-                    <span>Total Spend</span>
-                    <strong>{money(scenario.spend)}</strong>
-                  </div>
-
-                  <div className="scenario-row">
-                    <span>Leads</span>
-                    <strong>{Math.round(scenario.leads)}</strong>
-                  </div>
-
-                  <div className="scenario-row">
-                    <span>Appointments</span>
-                    <strong>{Math.round(scenario.appointments)}</strong>
-                  </div>
-
-                  <div className="scenario-row">
-                    <span>Return / Spend</span>
-                    <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
-                  </div>
-
-                  <div className="scenario-row true">
-                    <span>Project Profit</span>
-                    <strong>{money(scenario.trueProjectProfit)}</strong>
-                  </div>
-
-                  <div className="scenario-row company">
-                    <span>Company Profit</span>
-                    <strong>{money(scenario.companyProfit)}</strong>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          
         </section>
       )}
 
