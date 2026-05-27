@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
-const APP_PASSWORD = "CHANGE_THIS_PASSWORD";
+const APP_PASSWORD = "Lakeview2910";
 
 const UNKNOWN_KEY = "Unknown-Work Type";
 const UNKNOWN_RPP = 15191.27;
@@ -1186,10 +1186,6 @@ const [totalMarketingSpend, setTotalMarketingSpend] = useState("0");
               Update Numbers
             </button>
 
-            <div className="marketing-total-spend-display">
-              <span>Current Channel Spend Total</span>
-              <strong>{money(marketingForecast.actualTotalSpend)}</strong>
-            </div>
           </div>
 <div className="marketing-total-section">
             <h2>Total Marketing Forecast</h2>
