@@ -1011,3 +1011,88 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.marketing-channel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.marketing-channel-card {
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  border-top: 10px solid #4b5563;
+  box-shadow: 0 10px 30px rgba(75, 85, 99, 0.16);
+}
+
+.marketing-channel-card h3 {
+  margin: 0 0 18px;
+  text-align: center;
+  color: #111827;
+  font-size: 24px;
+}
+
+.marketing-channel-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  color: #111827;
+  font-weight: 800;
+  text-align: center;
+}
+
+.marketing-channel-card input {
+  width: 100%;
+  min-height: 48px;
+  font-size: 18px;
+}
+
+.mini-scenario-list {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.mini-scenario {
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.mini-scenario h4 {
+  margin: 0 0 8px;
+  color: #111827;
+  text-align: center;
+}
+
+.mini-scenario p {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.mini-scenario.expected strong {
+  color: #b91c1c;
+}
+
+.mini-scenario.aggressive strong {
+  color: #111827;
+}
+
+.marketing-total-section {
+  margin-top: 28px;
+}
+
+.marketing-total-section h2 {
+  text-align: center;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+  .marketing-channel-grid {
+    grid-template-columns: 1fr;
+  }
+}

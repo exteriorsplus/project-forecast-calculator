@@ -13,58 +13,37 @@ const MARKETING_COMPANY_MARGIN = 0.21;
 const MARKETING_TRUE_PROJECT_MARGIN =
   MARKETING_COMPANY_MARGIN + COMPANY_EXPENSE_RATE;
 
-const marketingChannels = {
-  googleCombined: {
-    label: "Total Google / SEO",
-    spend: 31550.38,
-    leads: 165,
-    appointments: 102,
-    note:
-      "Uses current month Google Ads plus normalized Google Local Service through October.",
-  },
-  googleLocalService: {
+const marketingChannels = [
+  {
+    key: "googleLocalService",
     label: "Google Local Service",
-    spend: 25985.91,
+    defaultSpend: 25985.91,
     leads: 165,
     appointments: 31,
-    note:
-      "Current month normalized by adding $10k spend, 63 leads, and 12 appointments.",
+    averageRevenuePerAppointment: 2232.24,
   },
-  googleAdsSeo: {
+  {
+    key: "googleAdsSeo",
     label: "Google Ads / SEO",
-    spend: 5564.47,
+    defaultSpend: 7976.88,
     leads: null,
-    appointments: 71,
-    note: "Lead count unavailable, so forecast uses appointments per dollar spent.",
+    appointments: 121,
+    averageRevenuePerAppointment: 3574.19,
   },
-  thumbtack: {
+  {
+    key: "thumbtack",
     label: "Thumbtack",
-    spend: 8810.98,
-    leads: 80,
-    appointments: 34,
-    note: "Uses current non-storm month performance.",
+    defaultSpend: 8833.12,
+    leads: 78,
+    appointments: 41,
+    averageRevenuePerAppointment: 1139.22,
   },
-};
+];
 
 const marketingScenarios = [
-  {
-    key: "conservative",
-    label: "Conservative",
-    appointmentFactor: 0.8,
-    revenueFactor: 0.85,
-  },
-  {
-    key: "expected",
-    label: "Expected",
-    appointmentFactor: 1,
-    revenueFactor: 1,
-  },
-  {
-    key: "aggressive",
-    label: "Aggressive",
-    appointmentFactor: 1.15,
-    revenueFactor: 1.15,
-  },
+  { key: "conservative", label: "Conservative", factor: 0.85 },
+  { key: "expected", label: "Expected", factor: 1 },
+  { key: "aggressive", label: "Aggressive", factor: 1.15 },
 ];
 
 const categories = [
@@ -439,10 +418,12 @@ export default function App() {
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
-  const [marketingChannel, setMarketingChannel] = useState("googleCombined");
-  const [marketingSpend, setMarketingSpend] = useState("25000");
-  const [marketingRevenuePerAppointment, setMarketingRevenuePerAppointment] =
-    useState("3500");
+  const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
+    marketingChannels.reduce((totals, channel) => {
+      totals[channel.key] = String(channel.defaultSpend);
+      return totals;
+    }, {})
+  );
 
   const initialDateRange = getMonthDateRange();
 
@@ -460,55 +441,94 @@ export default function App() {
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
 
   const getMarketingForecast = () => {
-    const channel = marketingChannels[marketingChannel];
-    const spend = Number(marketingSpend || 0);
-    const revenuePerAppointment = Number(marketingRevenuePerAppointment || 0);
+    const channelForecasts = marketingChannels.map((channel) => {
+      const spend = Number(marketingSpendByChannel[channel.key] || 0);
 
-    const costPerLead =
-      channel.leads && channel.leads > 0 ? channel.spend / channel.leads : null;
+      const costPerLead =
+        channel.leads && channel.leads > 0
+          ? channel.defaultSpend / channel.leads
+          : null;
 
-    const appointmentRate =
-      channel.leads && channel.leads > 0
-        ? channel.appointments / channel.leads
-        : null;
+      const appointmentsPerSpend =
+        channel.defaultSpend > 0
+          ? channel.appointments / channel.defaultSpend
+          : 0;
 
-    const appointmentsPerSpend =
-      channel.spend > 0 ? channel.appointments / channel.spend : 0;
+      const expectedLeads = costPerLead ? spend / costPerLead : null;
+      const expectedAppointments = spend * appointmentsPerSpend;
 
-    const baseLeads = costPerLead ? spend / costPerLead : null;
+      const scenarios = marketingScenarios.map((scenario) => {
+        const appointments = expectedAppointments * scenario.factor;
+        const leads =
+          expectedLeads === null ? null : expectedLeads * scenario.factor;
 
-    const baseAppointments =
-      baseLeads !== null
-        ? baseLeads * appointmentRate
-        : spend * appointmentsPerSpend;
+        const revenue =
+          appointments *
+          channel.averageRevenuePerAppointment *
+          scenario.factor;
 
-    const scenarios = marketingScenarios.map((scenario) => {
-      const appointments = baseAppointments * scenario.appointmentFactor;
-      const revenue =
-        appointments * revenuePerAppointment * scenario.revenueFactor;
-      const trueProjectProfit = revenue * MARKETING_TRUE_PROJECT_MARGIN;
-      const companyProfit = revenue * MARKETING_COMPANY_MARGIN;
+        return {
+          ...scenario,
+          leads,
+          appointments,
+          revenue,
+          trueProjectProfit: revenue * MARKETING_TRUE_PROJECT_MARGIN,
+          companyProfit: revenue * MARKETING_COMPANY_MARGIN,
+          returnPerSpend: spend > 0 ? revenue / spend : 0,
+        };
+      });
+
+      return {
+        ...channel,
+        spend,
+        costPerLead,
+        appointmentsPerSpend,
+        scenarios,
+      };
+    });
+
+    const totals = marketingScenarios.map((scenario) => {
+      const matchingScenarios = channelForecasts.map((channel) =>
+        channel.scenarios.find((item) => item.key === scenario.key)
+      );
+
+      const spend = channelForecasts.reduce(
+        (sum, channel) => sum + channel.spend,
+        0
+      );
+
+      const revenue = matchingScenarios.reduce(
+        (sum, item) => sum + item.revenue,
+        0
+      );
 
       return {
         ...scenario,
-        leads:
-          baseLeads !== null ? baseLeads * scenario.appointmentFactor : null,
-        appointments,
+        spend,
+        leads: matchingScenarios.reduce(
+          (sum, item) => sum + Number(item.leads || 0),
+          0
+        ),
+        appointments: matchingScenarios.reduce(
+          (sum, item) => sum + item.appointments,
+          0
+        ),
         revenue,
-        trueProjectProfit,
-        companyProfit,
+        trueProjectProfit: matchingScenarios.reduce(
+          (sum, item) => sum + item.trueProjectProfit,
+          0
+        ),
+        companyProfit: matchingScenarios.reduce(
+          (sum, item) => sum + item.companyProfit,
+          0
+        ),
         returnPerSpend: spend > 0 ? revenue / spend : 0,
       };
     });
 
     return {
-      channel,
-      spend,
-      revenuePerAppointment,
-      costPerLead,
-      appointmentRate,
-      appointmentsPerSpend,
-      scenarios,
+      channelForecasts,
+      totals,
     };
   };
 
@@ -797,7 +817,6 @@ export default function App() {
       const config = findProjectConfig(trade, workType);
 
       projectCounts[config.key] = Number(projectCounts[config.key] || 0) + 1;
-
       projectRevenue[config.key] =
         Number(projectRevenue[config.key] || 0) + contractAmount;
 
@@ -1085,7 +1104,7 @@ export default function App() {
           >
             <span>Marketing Forecast</span>
             <strong>Predict Revenue from Marketing Spend</strong>
-            <p>Uses normalized current-month performance and scenario forecasting.</p>
+            <p>Set spend by channel and forecast conservative, expected, and aggressive returns.</p>
           </button>
         </section>
       </div>
@@ -1095,6 +1114,125 @@ export default function App() {
   return (
     <div className="page">
       <Header />
+
+      {screen === "marketing" && (
+        <section className="calculator-section">
+          <div className="marketing-channel-grid">
+            {marketingForecast.channelForecasts.map((channel) => (
+              <div className="marketing-channel-card" key={channel.key}>
+                <h3>{channel.label}</h3>
+
+                <label>
+                  Forecast Spend
+                  <input
+                    type="number"
+                    min="0"
+                    value={marketingSpendByChannel[channel.key]}
+                    onChange={(event) =>
+                      setMarketingSpendByChannel((current) => ({
+                        ...current,
+                        [channel.key]: event.target.value,
+                      }))
+                    }
+                  />
+                </label>
+
+                <div className="scenario-row">
+                  <span>Avg Revenue / Appointment</span>
+                  <strong>{money(channel.averageRevenuePerAppointment)}</strong>
+                </div>
+
+                <div className="scenario-row">
+                  <span>Appointments / Spend</span>
+                  <strong>{channel.appointmentsPerSpend.toFixed(6)}</strong>
+                </div>
+
+                <div className="scenario-row">
+                  <span>Cost / Lead</span>
+                  <strong>{channel.costPerLead ? money(channel.costPerLead) : "N/A"}</strong>
+                </div>
+
+                <div className="mini-scenario-list">
+                  {channel.scenarios.map((scenario) => (
+                    <div className={`mini-scenario ${scenario.key}`} key={scenario.key}>
+                      <h4>{scenario.label}</h4>
+
+                      <p>
+                        Revenue: <strong>{money(scenario.revenue)}</strong>
+                      </p>
+
+                      <p>
+                        Leads:{" "}
+                        <strong>
+                          {scenario.leads === null ? "N/A" : Math.round(scenario.leads)}
+                        </strong>
+                      </p>
+
+                      <p>
+                        Appointments: <strong>{Math.round(scenario.appointments)}</strong>
+                      </p>
+
+                      <p>
+                        ROAS: <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="marketing-total-section">
+            <h2>Total Marketing Forecast</h2>
+
+            <div className="marketing-scenario-grid">
+              {marketingForecast.totals.map((scenario) => (
+                <div
+                  className={`marketing-scenario-card ${scenario.key}`}
+                  key={scenario.key}
+                >
+                  <h3>{scenario.label}</h3>
+
+                  <div className="scenario-main-number">
+                    <span>Forecast Revenue</span>
+                    <strong>{money(scenario.revenue)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Total Spend</span>
+                    <strong>{money(scenario.spend)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Leads</span>
+                    <strong>{Math.round(scenario.leads)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Appointments</span>
+                    <strong>{Math.round(scenario.appointments)}</strong>
+                  </div>
+
+                  <div className="scenario-row">
+                    <span>Return / Spend</span>
+                    <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
+                  </div>
+
+                  <div className="scenario-row true">
+                    <span>Project Profit</span>
+                    <strong>{money(scenario.trueProjectProfit)}</strong>
+                  </div>
+
+                  <div className="scenario-row company">
+                    <span>Company Profit</span>
+                    <strong>{money(scenario.companyProfit)}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {screen === "leads" && (
         <section className="calculator-section">
@@ -1241,141 +1379,6 @@ export default function App() {
                   })}
 
                 <CategoryLeadTotal category={category} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {screen === "marketing" && (
-        <section className="calculator-section">
-          <div className="marketing-panel">
-            <div className="marketing-controls">
-              <label>
-                Marketing Channel
-                <select
-                  value={marketingChannel}
-                  onChange={(event) => setMarketingChannel(event.target.value)}
-                >
-                  {Object.entries(marketingChannels).map(([key, channel]) => (
-                    <option key={key} value={key}>
-                      {channel.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                Forecast Spend
-                <input
-                  type="number"
-                  min="0"
-                  value={marketingSpend}
-                  onChange={(event) => setMarketingSpend(event.target.value)}
-                />
-              </label>
-
-              <label>
-                Revenue / Appointment
-                <input
-                  type="number"
-                  min="0"
-                  value={marketingRevenuePerAppointment}
-                  onChange={(event) =>
-                    setMarketingRevenuePerAppointment(event.target.value)
-                  }
-                />
-              </label>
-            </div>
-
-            <p className="marketing-note">{marketingForecast.channel.note}</p>
-          </div>
-
-          <div className="marketing-benchmark-grid">
-            <div className="marketing-benchmark-card">
-              <span>Baseline Spend</span>
-              <strong>{money(marketingForecast.channel.spend)}</strong>
-            </div>
-
-            <div className="marketing-benchmark-card">
-              <span>Baseline Leads</span>
-              <strong>
-                {marketingForecast.channel.leads === null
-                  ? "N/A"
-                  : Math.round(marketingForecast.channel.leads)}
-              </strong>
-            </div>
-
-            <div className="marketing-benchmark-card">
-              <span>Baseline Appointments</span>
-              <strong>{Math.round(marketingForecast.channel.appointments)}</strong>
-            </div>
-
-            <div className="marketing-benchmark-card">
-              <span>Cost / Lead</span>
-              <strong>
-                {marketingForecast.costPerLead
-                  ? money(marketingForecast.costPerLead)
-                  : "N/A"}
-              </strong>
-            </div>
-
-            <div className="marketing-benchmark-card">
-              <span>Appointment Rate</span>
-              <strong>
-                {marketingForecast.appointmentRate
-                  ? `${(marketingForecast.appointmentRate * 100).toFixed(2)}%`
-                  : "N/A"}
-              </strong>
-            </div>
-
-            <div className="marketing-benchmark-card">
-              <span>Appointments / Spend</span>
-              <strong>{marketingForecast.appointmentsPerSpend.toFixed(6)}</strong>
-            </div>
-          </div>
-
-          <div className="marketing-scenario-grid">
-            {marketingForecast.scenarios.map((scenario) => (
-              <div
-                className={`marketing-scenario-card ${scenario.key}`}
-                key={scenario.key}
-              >
-                <h3>{scenario.label}</h3>
-
-                <div className="scenario-main-number">
-                  <span>Forecast Revenue</span>
-                  <strong>{money(scenario.revenue)}</strong>
-                </div>
-
-                <div className="scenario-row">
-                  <span>Leads</span>
-                  <strong>
-                    {scenario.leads === null
-                      ? "N/A"
-                      : Math.round(scenario.leads)}
-                  </strong>
-                </div>
-
-                <div className="scenario-row">
-                  <span>Appointments</span>
-                  <strong>{Math.round(scenario.appointments)}</strong>
-                </div>
-
-                <div className="scenario-row">
-                  <span>Return / Spend</span>
-                  <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
-                </div>
-
-                <div className="scenario-row true">
-                  <span>Project Profit</span>
-                  <strong>{money(scenario.trueProjectProfit)}</strong>
-                </div>
-
-                <div className="scenario-row company">
-                  <span>Company Profit</span>
-                  <strong>{money(scenario.companyProfit)}</strong>
-                </div>
               </div>
             ))}
           </div>
