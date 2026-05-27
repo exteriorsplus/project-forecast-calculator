@@ -1247,11 +1247,45 @@ input::placeholder {
 
 .historical-row {
   display: grid;
-  grid-template-columns: 1fr 120px 140px;
-  gap: 14px;
+  grid-template-columns: 110px 1fr 1fr;
+  column-gap: 16px;
+  align-items: center;
+}
+
+.historical-header-row {
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  border-bottom: 2px solid #d1d5db;
+}
+
+.historical-header-row span {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #6b7280;
+  text-align: center;
+}
+
+.historical-row {
   padding: 10px 0;
   border-bottom: 1px solid #e5e7eb;
-  align-items: center;
+}
+
+.historical-row span {
+  font-weight: 800;
+  color: #6b7280;
+}
+
+.historical-row strong {
+  color: #111827;
+  font-weight: 900;
+  text-align: right;
+}
+
+.historical-spend,
+.historical-revenue {
+  min-width: 0;
+  text-align: right;
 }
 
 .historical-row span {
