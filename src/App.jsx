@@ -1243,19 +1243,6 @@ export default function App() {
               ))}
             </div>
           </div>
-
-          <div className="roi-target-section">
-            <h2>Total Spend ROI Targets</h2>
-
-            <div className="roi-target-grid">
-              {marketingForecast.roiTargets.map((target) => (
-                <div className="roi-target-card" key={target.multiple}>
-                  <span>{target.multiple}x ROI</span>
-                  <strong>{money(target.revenueTarget)}</strong>
-                </div>
-              ))}
-            </div>
-          </div>
         </section>
       )}
 
