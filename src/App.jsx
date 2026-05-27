@@ -1185,7 +1185,7 @@ export default function App() {
             </label>
 
             <button onClick={applyHistoricalSpendSplit}>
-              Apply Historical Spend Split
+              Update Numbers
             </button>
 
             <div className="marketing-total-spend-display">
