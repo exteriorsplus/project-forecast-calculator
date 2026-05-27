@@ -2,12 +2,70 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import "./App.css";
 
-const APP_PASSWORD = "Lakeview2910";
+const APP_PASSWORD = "CHANGE_THIS_PASSWORD";
 
 const UNKNOWN_KEY = "Unknown-Work Type";
 const UNKNOWN_RPP = 15191.27;
 const UNKNOWN_MARGIN = 0.277;
 const COMPANY_EXPENSE_RATE = 0.1;
+
+const MARKETING_COMPANY_MARGIN = 0.21;
+const MARKETING_TRUE_PROJECT_MARGIN =
+  MARKETING_COMPANY_MARGIN + COMPANY_EXPENSE_RATE;
+
+const marketingChannels = {
+  googleCombined: {
+    label: "Total Google / SEO",
+    spend: 31550.38,
+    leads: 165,
+    appointments: 102,
+    note:
+      "Uses current month Google Ads plus normalized Google Local Service through October.",
+  },
+  googleLocalService: {
+    label: "Google Local Service",
+    spend: 25985.91,
+    leads: 165,
+    appointments: 31,
+    note:
+      "Current month normalized by adding $10k spend, 63 leads, and 12 appointments.",
+  },
+  googleAdsSeo: {
+    label: "Google Ads / SEO",
+    spend: 5564.47,
+    leads: null,
+    appointments: 71,
+    note: "Lead count unavailable, so forecast uses appointments per dollar spent.",
+  },
+  thumbtack: {
+    label: "Thumbtack",
+    spend: 8810.98,
+    leads: 80,
+    appointments: 34,
+    note: "Uses current non-storm month performance.",
+  },
+};
+
+const marketingScenarios = [
+  {
+    key: "conservative",
+    label: "Conservative",
+    appointmentFactor: 0.8,
+    revenueFactor: 0.85,
+  },
+  {
+    key: "expected",
+    label: "Expected",
+    appointmentFactor: 1,
+    revenueFactor: 1,
+  },
+  {
+    key: "aggressive",
+    label: "Aggressive",
+    appointmentFactor: 1.15,
+    revenueFactor: 1.15,
+  },
+];
 
 const categories = [
   {
@@ -294,19 +352,19 @@ function ForecastRow({
     setLocalValue(quantity ?? "");
   }, [quantity]);
 
-useEffect(() => {
-  if (type !== "leads") return;
+  useEffect(() => {
+    if (type !== "leads") return;
 
-  if (String(quantity ?? "") === String(localValue ?? "")) {
-    return;
-  }
+    if (String(quantity ?? "") === String(localValue ?? "")) {
+      return;
+    }
 
-  const timeout = setTimeout(() => {
-    onLeadQuantityChange(keyName, localValue);
-  }, 600);
+    const timeout = setTimeout(() => {
+      onLeadQuantityChange(keyName, localValue);
+    }, 600);
 
-  return () => clearTimeout(timeout);
-}, [localValue, quantity, keyName, type, onLeadQuantityChange]);
+    return () => clearTimeout(timeout);
+  }, [localValue, quantity, keyName, type, onLeadQuantityChange]);
 
   return (
     <div className="row">
@@ -381,6 +439,11 @@ export default function App() {
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
+  const [marketingChannel, setMarketingChannel] = useState("googleCombined");
+  const [marketingSpend, setMarketingSpend] = useState("25000");
+  const [marketingRevenuePerAppointment, setMarketingRevenuePerAppointment] =
+    useState("3500");
+
   const initialDateRange = getMonthDateRange();
 
   const [startDate, setStartDate] = useState(initialDateRange.start);
@@ -395,6 +458,59 @@ export default function App() {
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
 
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
+
+  const getMarketingForecast = () => {
+    const channel = marketingChannels[marketingChannel];
+    const spend = Number(marketingSpend || 0);
+    const revenuePerAppointment = Number(marketingRevenuePerAppointment || 0);
+
+    const costPerLead =
+      channel.leads && channel.leads > 0 ? channel.spend / channel.leads : null;
+
+    const appointmentRate =
+      channel.leads && channel.leads > 0
+        ? channel.appointments / channel.leads
+        : null;
+
+    const appointmentsPerSpend =
+      channel.spend > 0 ? channel.appointments / channel.spend : 0;
+
+    const baseLeads = costPerLead ? spend / costPerLead : null;
+
+    const baseAppointments =
+      baseLeads !== null
+        ? baseLeads * appointmentRate
+        : spend * appointmentsPerSpend;
+
+    const scenarios = marketingScenarios.map((scenario) => {
+      const appointments = baseAppointments * scenario.appointmentFactor;
+      const revenue =
+        appointments * revenuePerAppointment * scenario.revenueFactor;
+      const trueProjectProfit = revenue * MARKETING_TRUE_PROJECT_MARGIN;
+      const companyProfit = revenue * MARKETING_COMPANY_MARGIN;
+
+      return {
+        ...scenario,
+        leads:
+          baseLeads !== null ? baseLeads * scenario.appointmentFactor : null,
+        appointments,
+        revenue,
+        trueProjectProfit,
+        companyProfit,
+        returnPerSpend: spend > 0 ? revenue / spend : 0,
+      };
+    });
+
+    return {
+      channel,
+      spend,
+      revenuePerAppointment,
+      costPerLead,
+      appointmentRate,
+      appointmentsPerSpend,
+      scenarios,
+    };
+  };
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -418,20 +534,20 @@ export default function App() {
     setLeads({});
   };
 
-const handleLeadQuantityChange = useCallback((keyName, value) => {
-  setLeads((currentLeads) => {
-    const nextValue = value === "" ? "" : Number(value);
+  const handleLeadQuantityChange = useCallback((keyName, value) => {
+    setLeads((currentLeads) => {
+      const nextValue = value === "" ? "" : Number(value);
 
-    if (currentLeads[keyName] === nextValue) {
-      return currentLeads;
-    }
+      if (currentLeads[keyName] === nextValue) {
+        return currentLeads;
+      }
 
-    return {
-      ...currentLeads,
-      [keyName]: nextValue,
-    };
-  });
-}, []);
+      return {
+        ...currentLeads,
+        [keyName]: nextValue,
+      };
+    });
+  }, []);
 
   const triggerFlash = () => {
     setFlash(true);
@@ -781,6 +897,7 @@ const handleLeadQuantityChange = useCallback((keyName, value) => {
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
   const projectTotals = projectData.totals;
+  const marketingForecast = getMarketingForecast();
   const unknownLeadCount = Number(leads[UNKNOWN_KEY] || 0);
   const currentProspectCount = getCurrentProspectCount();
 
@@ -803,6 +920,8 @@ const handleLeadQuantityChange = useCallback((keyName, value) => {
             ? "Lead Forecasted Revenue & Profit"
             : screen === "projects"
             ? "Projects Revenue and Margin Forecast"
+            : screen === "marketing"
+            ? "Marketing Forecast"
             : "Lead & Project Dashboard"}
         </h1>
       </div>
@@ -959,6 +1078,15 @@ const handleLeadQuantityChange = useCallback((keyName, value) => {
             <strong>Revenue & Profit from Historical Sales</strong>
             <p>Uses Historical Sales Data from Acculynx Sales Report</p>
           </button>
+
+          <button
+            className="home-card marketing-card"
+            onClick={() => setScreen("marketing")}
+          >
+            <span>Marketing Forecast</span>
+            <strong>Predict Revenue from Marketing Spend</strong>
+            <p>Uses normalized current-month performance and scenario forecasting.</p>
+          </button>
         </section>
       </div>
     );
@@ -1113,6 +1241,141 @@ const handleLeadQuantityChange = useCallback((keyName, value) => {
                   })}
 
                 <CategoryLeadTotal category={category} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {screen === "marketing" && (
+        <section className="calculator-section">
+          <div className="marketing-panel">
+            <div className="marketing-controls">
+              <label>
+                Marketing Channel
+                <select
+                  value={marketingChannel}
+                  onChange={(event) => setMarketingChannel(event.target.value)}
+                >
+                  {Object.entries(marketingChannels).map(([key, channel]) => (
+                    <option key={key} value={key}>
+                      {channel.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Forecast Spend
+                <input
+                  type="number"
+                  min="0"
+                  value={marketingSpend}
+                  onChange={(event) => setMarketingSpend(event.target.value)}
+                />
+              </label>
+
+              <label>
+                Revenue / Appointment
+                <input
+                  type="number"
+                  min="0"
+                  value={marketingRevenuePerAppointment}
+                  onChange={(event) =>
+                    setMarketingRevenuePerAppointment(event.target.value)
+                  }
+                />
+              </label>
+            </div>
+
+            <p className="marketing-note">{marketingForecast.channel.note}</p>
+          </div>
+
+          <div className="marketing-benchmark-grid">
+            <div className="marketing-benchmark-card">
+              <span>Baseline Spend</span>
+              <strong>{money(marketingForecast.channel.spend)}</strong>
+            </div>
+
+            <div className="marketing-benchmark-card">
+              <span>Baseline Leads</span>
+              <strong>
+                {marketingForecast.channel.leads === null
+                  ? "N/A"
+                  : Math.round(marketingForecast.channel.leads)}
+              </strong>
+            </div>
+
+            <div className="marketing-benchmark-card">
+              <span>Baseline Appointments</span>
+              <strong>{Math.round(marketingForecast.channel.appointments)}</strong>
+            </div>
+
+            <div className="marketing-benchmark-card">
+              <span>Cost / Lead</span>
+              <strong>
+                {marketingForecast.costPerLead
+                  ? money(marketingForecast.costPerLead)
+                  : "N/A"}
+              </strong>
+            </div>
+
+            <div className="marketing-benchmark-card">
+              <span>Appointment Rate</span>
+              <strong>
+                {marketingForecast.appointmentRate
+                  ? `${(marketingForecast.appointmentRate * 100).toFixed(2)}%`
+                  : "N/A"}
+              </strong>
+            </div>
+
+            <div className="marketing-benchmark-card">
+              <span>Appointments / Spend</span>
+              <strong>{marketingForecast.appointmentsPerSpend.toFixed(6)}</strong>
+            </div>
+          </div>
+
+          <div className="marketing-scenario-grid">
+            {marketingForecast.scenarios.map((scenario) => (
+              <div
+                className={`marketing-scenario-card ${scenario.key}`}
+                key={scenario.key}
+              >
+                <h3>{scenario.label}</h3>
+
+                <div className="scenario-main-number">
+                  <span>Forecast Revenue</span>
+                  <strong>{money(scenario.revenue)}</strong>
+                </div>
+
+                <div className="scenario-row">
+                  <span>Leads</span>
+                  <strong>
+                    {scenario.leads === null
+                      ? "N/A"
+                      : Math.round(scenario.leads)}
+                  </strong>
+                </div>
+
+                <div className="scenario-row">
+                  <span>Appointments</span>
+                  <strong>{Math.round(scenario.appointments)}</strong>
+                </div>
+
+                <div className="scenario-row">
+                  <span>Return / Spend</span>
+                  <strong>{scenario.returnPerSpend.toFixed(2)}x</strong>
+                </div>
+
+                <div className="scenario-row true">
+                  <span>Project Profit</span>
+                  <strong>{money(scenario.trueProjectProfit)}</strong>
+                </div>
+
+                <div className="scenario-row company">
+                  <span>Company Profit</span>
+                  <strong>{money(scenario.companyProfit)}</strong>
+                </div>
               </div>
             ))}
           </div>

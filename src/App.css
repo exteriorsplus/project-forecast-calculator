@@ -828,3 +828,186 @@ input::placeholder {
   font-size: 14px;
   font-weight: 800;
 }
+.marketing-card {
+  border-top-color: #4b5563;
+  box-shadow: 0 10px 30px rgba(75, 85, 99, 0.16);
+}
+
+.marketing-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.marketing-controls {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.marketing-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.marketing-controls input,
+.marketing-controls select {
+  min-width: 220px;
+  padding: 10px;
+  font-size: 15px;
+  text-align: center;
+  background: white;
+  border: 2px solid #9ca3af;
+  border-radius: 6px;
+  outline: none;
+}
+
+.marketing-note {
+  margin: 16px 0 0;
+  text-align: center;
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.marketing-benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.marketing-benchmark-card {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.marketing-benchmark-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.marketing-benchmark-card strong {
+  color: #111827;
+  font-size: 24px;
+}
+
+.marketing-scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.marketing-scenario-card {
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  border-top: 10px solid #4b5563;
+  box-shadow: 0 10px 30px rgba(75, 85, 99, 0.16);
+}
+
+.marketing-scenario-card.conservative {
+  border-top-color: #4b5563;
+}
+
+.marketing-scenario-card.expected {
+  border-top-color: #b91c1c;
+  box-shadow: 0 10px 30px rgba(185, 28, 28, 0.16);
+}
+
+.marketing-scenario-card.aggressive {
+  border-top-color: #111827;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.18);
+}
+
+.marketing-scenario-card h3 {
+  margin: 0 0 18px;
+  text-align: center;
+  color: #111827;
+  font-size: 24px;
+}
+
+.scenario-main-number {
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.scenario-main-number span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.scenario-main-number strong {
+  color: #b91c1c;
+  font-size: 30px;
+}
+
+.scenario-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.scenario-row span {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+}
+
+.scenario-row strong {
+  color: #111827;
+  font-weight: 900;
+}
+
+.scenario-row.true strong {
+  color: #16a34a;
+}
+
+.scenario-row.company strong {
+  color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .marketing-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .marketing-controls input,
+  .marketing-controls select {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .marketing-benchmark-grid,
+  .marketing-scenario-grid {
+    grid-template-columns: 1fr;
+  }
+}
