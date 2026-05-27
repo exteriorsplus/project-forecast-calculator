@@ -443,12 +443,12 @@ export default function App() {
 
 const [totalMarketingSpend, setTotalMarketingSpend] = useState("0");
 
-  const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
-    marketingChannels.reduce((totals, channel) => {
-      totals[channel.key] = String(channel.defaultSpend);
-      return totals;
-    }, {})
-  );
+const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
+  marketingChannels.reduce((totals, channel) => {
+    totals[channel.key] = "0";
+    return totals;
+  }, {})
+);
 
   const initialDateRange = getMonthDateRange();
 
