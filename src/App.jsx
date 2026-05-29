@@ -1460,11 +1460,25 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   }, [pmAuthorized]);
 
   useEffect(() => {
-    if (!pmRows.length || selectedPMMonth) return;
+  if (!pmRows.length || selectedPMMonth) return;
 
-    const options = getPMMonthOptions(jamiePM.name);
-    if (options.length) setSelectedPMMonth(options[0]);
-  }, [pmRows, selectedPMMonth]);
+  const options = getPMMonthOptions(jamiePM.name);
+
+  if (!options.length) return;
+
+  const currentMonth = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  const matchingMonth = options.find(
+    (month) => month === currentMonth
+  );
+
+  setSelectedPMMonth(
+    matchingMonth || options[0]
+  );
+}, [pmRows, selectedPMMonth]);
 
   const hostname =
     typeof window !== "undefined" ? window.location.hostname : "";
