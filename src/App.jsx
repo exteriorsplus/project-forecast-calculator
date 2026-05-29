@@ -90,6 +90,73 @@ const historicalMarketingData = [
   },
 ];
 
+
+const PM_COMPANY_GOAL = 10000000;
+const PM_ACTIVE_COUNT = 7;
+const PM_INDIVIDUAL_GOAL = PM_COMPANY_GOAL / PM_ACTIVE_COUNT;
+const PM_COMMISSION_RATE = 0.2;
+
+const projectManagers = [
+  {
+    name: "Jamie Jenkins",
+    slug: "jamiejenkins",
+    image: "/pm/jamiejenkins.jpg",
+    password: "jamie123",
+    activeGoal: true,
+  },
+  {
+    name: "Megan Rice",
+    slug: "meganrice",
+    image: "/pm/meganrice.jpg",
+    password: "megan123",
+    activeGoal: true,
+  },
+  {
+    name: "Dani Cole",
+    slug: "danicole",
+    image: "/pm/danicole.jpg",
+    password: "dani123",
+    activeGoal: true,
+  },
+  {
+    name: "John Fincher",
+    slug: "johnfincher",
+    image: "/pm/johnfincher.jpg",
+    password: "john123",
+    activeGoal: true,
+  },
+  {
+    name: "Andrew Painter",
+    slug: "andrewpainter",
+    image: "/pm/andrewpainter.jpg",
+    password: "andrew123",
+    activeGoal: true,
+  },
+  {
+    name: "George Anim",
+    slug: "georgeanim",
+    image: "/pm/georgeanim.jpg",
+    password: "george123",
+    activeGoal: true,
+  },
+  {
+    name: "William Dye",
+    slug: "williamdye",
+    image: "/pm/williamdye.jpg",
+    password: "william123",
+    activeGoal: true,
+  },
+  {
+    name: "Mike Harr",
+    slug: "mikeharr",
+    image: "/pm/mikeharr.jpg",
+    password: "mike123",
+    activeGoal: false,
+  },
+];
+
+const jamiePM = projectManagers.find((pm) => pm.slug === "jamiejenkins");
+
 const categories = [
   {
     title: "Roofing",
@@ -194,6 +261,119 @@ const cleanMoneyInput = (value) => {
 };
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
+
+
+const displayPercent = (value, decimals = 1) => {
+  const number = Number(value || 0);
+
+  return `${(number * 100).toFixed(decimals)}%`;
+};
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function formatPMMonth(value) {
+  if (!value) return "";
+
+  if (value instanceof Date) {
+    return `${monthNames[value.getMonth()]} ${value.getFullYear()}`;
+  }
+
+  const text = String(value).trim();
+
+  if (text.toUpperCase() === "YTD") return "YTD";
+  if (text === "November 205") return "November 2025";
+
+  const parsed = new Date(text);
+  if (!Number.isNaN(parsed.getTime())) {
+    return `${monthNames[parsed.getMonth()]} ${parsed.getFullYear()}`;
+  }
+
+  return text.replace(" 205", " 2025");
+}
+
+function getPreviousYearMonth(monthLabel) {
+  if (!monthLabel || monthLabel === "YTD") return "";
+
+  const parts = monthLabel.split(" ");
+  const year = Number(parts[parts.length - 1]);
+  const month = parts.slice(0, -1).join(" ");
+
+  if (!year || !month) return "";
+
+  return `${month} ${year - 1}`;
+}
+
+function getMonthSortValue(monthLabel) {
+  if (monthLabel === "YTD") return 999999;
+
+  const [month, year] = String(monthLabel).split(" ");
+  const monthIndex = monthNames.indexOf(month);
+
+  return Number(year || 0) * 100 + monthIndex;
+}
+
+function compareNumbers(current, comparison, isRate = false) {
+  const currentNumber = Number(current || 0);
+  const comparisonNumber = Number(comparison || 0);
+
+  if (!comparisonNumber) {
+    return {
+      label: "N/A",
+      className: "neutral",
+      rawDifference: 0,
+    };
+  }
+
+  if (isRate) {
+    const pointDifference = currentNumber - comparisonNumber;
+
+    return {
+      label: `${pointDifference >= 0 ? "+" : ""}${(pointDifference * 100).toFixed(
+        1
+      )} pts`,
+      className: pointDifference >= 0 ? "positive" : "negative",
+      rawDifference: pointDifference,
+    };
+  }
+
+  const percentDifference = (currentNumber - comparisonNumber) / comparisonNumber;
+
+  return {
+    label: `${percentDifference >= 0 ? "+" : ""}${(
+      percentDifference * 100
+    ).toFixed(1)}%`,
+    className: percentDifference >= 0 ? "positive" : "negative",
+    rawDifference: percentDifference,
+  };
+}
+
+function getRankSuffix(rank) {
+  if (!rank) return "";
+
+  const lastDigit = rank % 10;
+  const lastTwoDigits = rank % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) return "th";
+  if (lastDigit === 1) return "st";
+  if (lastDigit === 2) return "nd";
+  if (lastDigit === 3) return "rd";
+
+  return "th";
+}
+
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -458,6 +638,35 @@ function ForecastRow({
   );
 }
 
+
+function PMMetricCard({
+  label,
+  value,
+  comparisonLabel,
+  comparisonValue,
+  difference,
+}) {
+  return (
+    <div className="pm-metric-card">
+      <span>{label}</span>
+      <strong>{value}</strong>
+
+      {comparisonLabel && (
+        <div className="pm-comparison-line">
+          <small>{comparisonLabel}</small>
+          <b>{comparisonValue}</b>
+        </div>
+      )}
+
+      {difference && (
+        <div className={`pm-difference ${difference.className}`}>
+          {difference.label}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [authorized, setAuthorized] = useState(
     () => sessionStorage.getItem("dashboardAuthorized") === "true"
@@ -473,6 +682,16 @@ export default function App() {
   const [flash, setFlash] = useState(false);
   const [leadRows, setLeadRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
+
+  const [pmRows, setPmRows] = useState([]);
+  const [pmAuthorized, setPmAuthorized] = useState(
+    () => sessionStorage.getItem("jamiePMAuthorized") === "true"
+  );
+  const [pmPassword, setPmPassword] = useState("");
+  const [pmLoginError, setPmLoginError] = useState("");
+  const [pmSaleAmount, setPmSaleAmount] = useState("0");
+  const [selectedPMMonth, setSelectedPMMonth] = useState("");
+
 
   const defaultTotalMarketingSpend = marketingChannels.reduce(
     (sum, channel) => sum + channel.defaultSpend,
@@ -725,9 +944,242 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     }
   };
 
+
+  const loadPMFile = async () => {
+    try {
+      const response = await fetch(`/pm-contract-data.xlsx?t=${Date.now()}`);
+
+      if (!response.ok) {
+        throw new Error("Could not find public/pm-contract-data.xlsx");
+      }
+
+      const buffer = await response.arrayBuffer();
+      const workbook = XLSX.read(buffer, {
+        type: "array",
+        cellDates: true,
+      });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        header: 1,
+        defval: "",
+      });
+
+      setPmRows(rows);
+    } catch (error) {
+      setPmRows([]);
+      console.error(error);
+    }
+  };
+
+  const getPMBlockStart = (pmName) => {
+    return pmRows.findIndex(
+      (row) => String(row?.[0] || "").trim() === pmName
+    );
+  };
+
+  const getTeamMetricRow = (metric) => {
+    return pmRows.find(
+      (row) => String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
+    );
+  };
+
+  const getPMMonthOptions = (pmName = jamiePM.name) => {
+    const startIndex = getPMBlockStart(pmName);
+
+    if (startIndex < 0) return [];
+
+    const headerRow = pmRows[startIndex] || [];
+
+    return headerRow
+      .slice(1)
+      .map(formatPMMonth)
+      .filter(Boolean)
+      .filter((month) => month !== "YTD")
+      .sort((a, b) => getMonthSortValue(b) - getMonthSortValue(a));
+  };
+
+  const getPMMetric = (pmName, metric, monthLabel) => {
+    const startIndex = getPMBlockStart(pmName);
+
+    if (startIndex < 0 || !monthLabel) return 0;
+
+    const headerRow = pmRows[startIndex] || [];
+    const metricRow = pmRows
+      .slice(startIndex + 1, startIndex + 6)
+      .find(
+        (row) =>
+          String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
+      );
+
+    if (!metricRow) return 0;
+
+    const columnIndex = headerRow.findIndex(
+      (cell) => formatPMMonth(cell) === monthLabel
+    );
+
+    if (columnIndex < 0) return 0;
+
+    return Number(metricRow[columnIndex] || 0);
+  };
+
+  const getTeamMetric = (metric, monthLabel) => {
+    const row = getTeamMetricRow(metric);
+
+    if (!row || !monthLabel) return 0;
+
+    const headerSource =
+      pmRows.find((item) => String(item?.[0] || "").trim() === jamiePM.name) ||
+      [];
+
+    const columnIndex = headerSource.findIndex(
+      (cell) => formatPMMonth(cell) === monthLabel
+    );
+
+    if (columnIndex < 0) return 0;
+
+    return Number(row[columnIndex] || 0);
+  };
+
+  const getRankForMetric = (metric, monthLabel, pmName = jamiePM.name) => {
+    const ranked = projectManagers
+      .filter((pm) => pm.activeGoal)
+      .map((pm) => ({
+        name: pm.name,
+        value: getPMMetric(pm.name, metric, monthLabel),
+      }))
+      .filter((pm) => Number(pm.value || 0) > 0)
+      .sort((a, b) => b.value - a.value);
+
+    const index = ranked.findIndex((pm) => pm.name === pmName);
+
+    return {
+      rank: index >= 0 ? index + 1 : null,
+      total: ranked.length,
+    };
+  };
+
+  const getJamieDashboardData = () => {
+    const monthOptions = getPMMonthOptions(jamiePM.name);
+    const selectedMonth = selectedPMMonth || monthOptions[0] || "";
+    const lastYearMonth = getPreviousYearMonth(selectedMonth);
+
+    const ytdRevenue = getPMMetric(jamiePM.name, "Contract Total", "YTD");
+    const ytdContracts = getPMMetric(jamiePM.name, "Contracts", "YTD");
+    const ytdAverageContract = getPMMetric(
+      jamiePM.name,
+      "Average Contract",
+      "YTD"
+    );
+    const ytdClosingRate = getPMMetric(jamiePM.name, "Closing Rate", "YTD");
+
+    const contractTotal = getPMMetric(
+      jamiePM.name,
+      "Contract Total",
+      selectedMonth
+    );
+    const contracts = getPMMetric(jamiePM.name, "Contracts", selectedMonth);
+    const averageContract = getPMMetric(
+      jamiePM.name,
+      "Average Contract",
+      selectedMonth
+    );
+    const closingRate = getPMMetric(jamiePM.name, "Closing Rate", selectedMonth);
+
+    const lyContractTotal = getPMMetric(
+      jamiePM.name,
+      "Contract Total",
+      lastYearMonth
+    );
+    const lyContracts = getPMMetric(jamiePM.name, "Contracts", lastYearMonth);
+    const lyAverageContract = getPMMetric(
+      jamiePM.name,
+      "Average Contract",
+      lastYearMonth
+    );
+    const lyClosingRate = getPMMetric(
+      jamiePM.name,
+      "Closing Rate",
+      lastYearMonth
+    );
+
+    const teamContractTotal = getTeamMetric("Contract Total", selectedMonth);
+    const teamContracts = getTeamMetric("Contracts", selectedMonth);
+    const teamAverageContract = getTeamMetric("Average Contract", selectedMonth);
+    const teamClosingRate = getTeamMetric("Closing Rate", selectedMonth);
+
+    const revenueRank = getRankForMetric(
+      "Contract Total",
+      selectedMonth,
+      jamiePM.name
+    );
+    const closingRateRank = getRankForMetric(
+      "Closing Rate",
+      selectedMonth,
+      jamiePM.name
+    );
+
+    const saleAmount = Number(pmSaleAmount || 0);
+    const projectedYTDRevenue = ytdRevenue + saleAmount;
+    const commission = saleAmount * PM_COMMISSION_RATE;
+    const goalPercent = ytdRevenue / PM_INDIVIDUAL_GOAL;
+    const projectedGoalPercent = projectedYTDRevenue / PM_INDIVIDUAL_GOAL;
+    const remainingToGoal = Math.max(PM_INDIVIDUAL_GOAL - ytdRevenue, 0);
+
+    return {
+      monthOptions,
+      selectedMonth,
+      lastYearMonth,
+      ytdRevenue,
+      ytdContracts,
+      ytdAverageContract,
+      ytdClosingRate,
+      contractTotal,
+      contracts,
+      averageContract,
+      closingRate,
+      lyContractTotal,
+      lyContracts,
+      lyAverageContract,
+      lyClosingRate,
+      teamContractTotal,
+      teamContracts,
+      teamAverageContract,
+      teamClosingRate,
+      revenueRank,
+      closingRateRank,
+      saleAmount,
+      projectedYTDRevenue,
+      commission,
+      goalPercent,
+      projectedGoalPercent,
+      remainingToGoal,
+    };
+  };
+
+  const handlePMLogin = (event) => {
+    event.preventDefault();
+
+    if (pmPassword === jamiePM.password) {
+      sessionStorage.setItem("jamiePMAuthorized", "true");
+      setPmAuthorized(true);
+      setPmLoginError("");
+      setPmPassword("");
+    } else {
+      setPmLoginError("Incorrect password. Please try again.");
+    }
+  };
+
+  const pmLogout = () => {
+    sessionStorage.removeItem("jamiePMAuthorized");
+    setPmAuthorized(false);
+    setPmPassword("");
+  };
+
   const reloadFiles = () => {
     loadLeadFile();
     loadSalesFile();
+    loadPMFile();
   };
 
   const clearLeads = () => {
@@ -1000,6 +1452,27 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     return () => clearTimeout(timeout);
   }, [authorized, leadRows, startDate, endDate]);
 
+
+  useEffect(() => {
+    if (!pmAuthorized) return;
+
+    loadPMFile();
+  }, [pmAuthorized]);
+
+  useEffect(() => {
+    if (!pmRows.length || selectedPMMonth) return;
+
+    const options = getPMMonthOptions(jamiePM.name);
+    if (options.length) setSelectedPMMonth(options[0]);
+  }, [pmRows, selectedPMMonth]);
+
+  const hostname =
+    typeof window !== "undefined" ? window.location.hostname : "";
+
+  const isJamiePortal = hostname.startsWith("jamiejenkins.");
+
+  const jamieData = getJamieDashboardData();
+
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
   const projectTotals = projectData.totals;
@@ -1135,6 +1608,290 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       </div>
     </div>
   );
+
+
+  if (isJamiePortal && !pmAuthorized) {
+    return (
+      <div className="login-screen">
+        <form className="login-box" onSubmit={handlePMLogin}>
+          <img src={jamiePM.image} alt={jamiePM.name} className="pm-login-photo" />
+
+          <h1>{jamiePM.name}</h1>
+          <p>Enter your password to view your dashboard.</p>
+
+          <input
+            type="text"
+            placeholder="Password"
+            value={pmPassword}
+            autoFocus
+            onChange={(event) => {
+              setPmPassword(event.target.value);
+              setPmLoginError("");
+            }}
+          />
+
+          {pmLoginError && <div className="login-error">{pmLoginError}</div>}
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    );
+  }
+
+  if (isJamiePortal && pmAuthorized) {
+    const revenueRankLabel = jamieData.revenueRank.rank
+      ? `#${jamieData.revenueRank.rank}${getRankSuffix(
+          jamieData.revenueRank.rank
+        )} of ${jamieData.revenueRank.total}`
+      : "N/A";
+
+    const closingRankLabel = jamieData.closingRateRank.rank
+      ? `#${jamieData.closingRateRank.rank}${getRankSuffix(
+          jamieData.closingRateRank.rank
+        )} of ${jamieData.closingRateRank.total}`
+      : "N/A";
+
+    const revenueVsLY = compareNumbers(
+      jamieData.contractTotal,
+      jamieData.lyContractTotal
+    );
+    const contractsVsLY = compareNumbers(
+      jamieData.contracts,
+      jamieData.lyContracts
+    );
+    const averageVsLY = compareNumbers(
+      jamieData.averageContract,
+      jamieData.lyAverageContract
+    );
+    const closingRateVsLY = compareNumbers(
+      jamieData.closingRate,
+      jamieData.lyClosingRate,
+      true
+    );
+
+    const revenueVsTeam = compareNumbers(
+      jamieData.contractTotal,
+      jamieData.teamContractTotal
+    );
+    const contractsVsTeam = compareNumbers(
+      jamieData.contracts,
+      jamieData.teamContracts
+    );
+    const averageVsTeam = compareNumbers(
+      jamieData.averageContract,
+      jamieData.teamAverageContract
+    );
+    const closingRateVsTeam = compareNumbers(
+      jamieData.closingRate,
+      jamieData.teamClosingRate,
+      true
+    );
+
+    return (
+      <div className="page pm-page">
+        <header className="header">
+          <button className="header-action-button" onClick={pmLogout}>
+            Logout
+          </button>
+
+          <div className="header-top">
+            <img src="/logo.png" alt="Logo" className="logo" />
+            <h1>{jamiePM.name} Dashboard</h1>
+          </div>
+        </header>
+
+        <section className="pm-dashboard">
+          <div className="pm-hero-card">
+            <img src={jamiePM.image} alt={jamiePM.name} />
+
+            <div className="pm-hero-content">
+              <span>Project Manager</span>
+              <h2>{jamiePM.name}</h2>
+
+              <div className="pm-rank-row">
+                <div>
+                  <small>Revenue Rank</small>
+                  <strong>{revenueRankLabel}</strong>
+                </div>
+
+                <div>
+                  <small>Closing Rate Rank</small>
+                  <strong>{closingRankLabel}</strong>
+                </div>
+              </div>
+            </div>
+
+            <label className="pm-month-selector">
+              Month
+              <select
+                value={jamieData.selectedMonth}
+                onChange={(event) => setSelectedPMMonth(event.target.value)}
+              >
+                {jamieData.monthOptions.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="pm-goal-card">
+            <div className="pm-goal-top">
+              <span>YTD Revenue Goal Progress</span>
+              <strong>{money(jamieData.ytdRevenue)}</strong>
+              <p>Goal: {money(PM_INDIVIDUAL_GOAL)}</p>
+            </div>
+
+            <div className="pm-thermometer">
+              <div
+                className="pm-thermometer-fill"
+                style={{
+                  width: `${Math.min(jamieData.goalPercent * 100, 100)}%`,
+                }}
+              />
+            </div>
+
+            <div className="pm-goal-stats">
+              <div>
+                <span>Complete</span>
+                <strong>{displayPercent(jamieData.goalPercent, 1)}</strong>
+              </div>
+
+              <div>
+                <span>Remaining</span>
+                <strong>{money(jamieData.remainingToGoal)}</strong>
+              </div>
+
+              <div>
+                <span>YTD Contracts</span>
+                <strong>{Math.round(jamieData.ytdContracts || 0)}</strong>
+              </div>
+
+              <div>
+                <span>YTD Avg Contract</span>
+                <strong>{money(jamieData.ytdAverageContract)}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="pm-section-card">
+            <h2>{jamieData.selectedMonth} Performance</h2>
+
+            <div className="pm-metric-grid">
+              <PMMetricCard
+                label="Contract Total"
+                value={money(jamieData.contractTotal)}
+                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
+                comparisonValue={money(jamieData.lyContractTotal)}
+                difference={revenueVsLY}
+              />
+
+              <PMMetricCard
+                label="Contracts"
+                value={Math.round(jamieData.contracts || 0)}
+                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
+                comparisonValue={Math.round(jamieData.lyContracts || 0)}
+                difference={contractsVsLY}
+              />
+
+              <PMMetricCard
+                label="Average Contract"
+                value={money(jamieData.averageContract)}
+                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
+                comparisonValue={money(jamieData.lyAverageContract)}
+                difference={averageVsLY}
+              />
+
+              <PMMetricCard
+                label="Closing Rate"
+                value={displayPercent(jamieData.closingRate, 1)}
+                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
+                comparisonValue={displayPercent(jamieData.lyClosingRate, 1)}
+                difference={closingRateVsLY}
+              />
+            </div>
+          </div>
+
+          <div className="pm-section-card">
+            <h2>Team Comparison</h2>
+
+            <div className="pm-metric-grid">
+              <PMMetricCard
+                label="Revenue vs Team"
+                value={money(jamieData.contractTotal)}
+                comparisonLabel="Team Avg"
+                comparisonValue={money(jamieData.teamContractTotal)}
+                difference={revenueVsTeam}
+              />
+
+              <PMMetricCard
+                label="Contracts vs Team"
+                value={Math.round(jamieData.contracts || 0)}
+                comparisonLabel="Team Avg"
+                comparisonValue={Math.round(jamieData.teamContracts || 0)}
+                difference={contractsVsTeam}
+              />
+
+              <PMMetricCard
+                label="Avg Contract vs Team"
+                value={money(jamieData.averageContract)}
+                comparisonLabel="Team Avg"
+                comparisonValue={money(jamieData.teamAverageContract)}
+                difference={averageVsTeam}
+              />
+
+              <PMMetricCard
+                label="Closing Rate vs Team"
+                value={displayPercent(jamieData.closingRate, 1)}
+                comparisonLabel="Team Avg"
+                comparisonValue={displayPercent(jamieData.teamClosingRate, 1)}
+                difference={closingRateVsTeam}
+              />
+            </div>
+          </div>
+
+          <div className="pm-commission-card">
+            <h2>Commission Calculator</h2>
+
+            <label>
+              Potential Sale Amount
+              <input
+                type="text"
+                inputMode="decimal"
+                value={formatMoneyInput(pmSaleAmount)}
+                onChange={(event) =>
+                  setPmSaleAmount(cleanMoneyInput(event.target.value))
+                }
+              />
+            </label>
+
+            <div className="pm-commission-grid">
+              <div>
+                <span>Commission Rate</span>
+                <strong>20%</strong>
+              </div>
+
+              <div>
+                <span>Estimated Commission</span>
+                <strong>{money(jamieData.commission)}</strong>
+              </div>
+
+              <div>
+                <span>Projected YTD Revenue</span>
+                <strong>{money(jamieData.projectedYTDRevenue)}</strong>
+              </div>
+
+              <div>
+                <span>Projected Goal %</span>
+                <strong>{displayPercent(jamieData.projectedGoalPercent, 1)}</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   if (!authorized) {
     return (

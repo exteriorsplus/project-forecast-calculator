@@ -1330,3 +1330,311 @@ input::placeholder {
   min-width: 130px;
   text-align: right;
 }
+
+/* Project Manager Personal Dashboard */
+
+.pm-login-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: top center;
+  margin-bottom: 16px;
+  border: 4px solid #b91c1c;
+}
+
+.pm-page {
+  max-width: 1280px;
+}
+
+.pm-dashboard {
+  display: grid;
+  gap: 24px;
+}
+
+.pm-hero-card {
+  background: white;
+  border-radius: 22px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  border-top: 10px solid #b91c1c;
+  box-shadow: 0 10px 30px rgba(185, 28, 28, 0.16);
+}
+
+.pm-hero-card > img {
+  width: 145px;
+  height: 145px;
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: top center;
+  border: 4px solid #111827;
+}
+
+.pm-hero-content > span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.pm-hero-content h2 {
+  margin: 0 0 16px;
+  color: #111827;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.pm-rank-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.pm-rank-row div {
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 12px 16px;
+  min-width: 160px;
+}
+
+.pm-rank-row small {
+  display: block;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.pm-rank-row strong {
+  color: #b91c1c;
+  font-size: 22px;
+}
+
+.pm-month-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+  font-weight: 900;
+  color: #111827;
+  text-align: center;
+}
+
+.pm-month-selector select {
+  min-height: 48px;
+  border: 2px solid #9ca3af;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 800;
+  background: white;
+  color: #111827;
+}
+
+.pm-goal-card,
+.pm-section-card,
+.pm-commission-card {
+  background: white;
+  border-radius: 22px;
+  padding: 28px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+.pm-goal-top {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pm-goal-top span {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.pm-goal-top strong {
+  color: #b91c1c;
+  font-size: 46px;
+  line-height: 1;
+}
+
+.pm-goal-top p {
+  margin: 8px 0 0;
+  color: #4b5563;
+  font-weight: 800;
+}
+
+.pm-thermometer {
+  height: 34px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.pm-thermometer-fill {
+  height: 100%;
+  background: #b91c1c;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.pm-goal-stats,
+.pm-metric-grid,
+.pm-commission-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.pm-goal-stats div,
+.pm-commission-grid div,
+.pm-metric-card {
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  border: 1px solid #eef0f3;
+}
+
+.pm-goal-stats span,
+.pm-commission-grid span,
+.pm-metric-card > span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.pm-goal-stats strong,
+.pm-commission-grid strong,
+.pm-metric-card > strong {
+  display: block;
+  color: #111827;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.pm-section-card h2,
+.pm-commission-card h2 {
+  text-align: center;
+  margin: 0 0 20px;
+  color: #111827;
+  font-size: 26px;
+}
+
+.pm-comparison-line {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.pm-comparison-line small {
+  display: block;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.pm-comparison-line b {
+  color: #111827;
+  font-size: 17px;
+}
+
+.pm-difference {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.pm-difference.positive {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+.pm-difference.negative {
+  background: rgba(185, 28, 28, 0.12);
+  color: #b91c1c;
+}
+
+.pm-difference.neutral {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.pm-commission-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+  margin: 0 auto 24px;
+  text-align: center;
+  font-weight: 900;
+  color: #111827;
+}
+
+.pm-commission-card input {
+  width: 100%;
+  min-height: 52px;
+  font-size: 22px;
+}
+
+@media (max-width: 1100px) {
+  .pm-goal-stats,
+  .pm-metric-grid,
+  .pm-commission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pm-hero-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .pm-month-selector {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .pm-hero-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .pm-hero-card > img {
+    margin: 0 auto;
+  }
+
+  .pm-rank-row {
+    justify-content: center;
+  }
+
+  .pm-goal-stats,
+  .pm-metric-grid,
+  .pm-commission-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pm-goal-top strong {
+    font-size: 36px;
+  }
+}
