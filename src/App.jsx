@@ -1680,17 +1680,13 @@ const teamClosingRate = getTeamMetric(
   }
 
   if (isJamiePortal && pmAuthorized) {
-    const revenueRankLabel = jamieData.revenueRank.rank
-      ? `#${jamieData.revenueRank.rank}${getRankSuffix(
-          jamieData.revenueRank.rank
-        )} of ${jamieData.revenueRank.total}`
-      : "N/A";
+const revenueRankLabel = jamieData.revenueRank.rank
+  ? `#${jamieData.revenueRank.rank}`
+  : "N/A";
 
-    const closingRankLabel = jamieData.closingRateRank.rank
-      ? `#${jamieData.closingRateRank.rank}${getRankSuffix(
-          jamieData.closingRateRank.rank
-        )} of ${jamieData.closingRateRank.total}`
-      : "N/A";
+const closingRankLabel = jamieData.closingRateRank.rank
+  ? `#${jamieData.closingRateRank.rank}`
+  : "N/A";
 
     const revenueVsLY = compareNumbers(
       jamieData.contractTotal,
