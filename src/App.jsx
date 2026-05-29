@@ -1773,45 +1773,6 @@ const closingRankLabel = jamieData.closingRateRank.rank
             </label>
           </div>
 
-          <div className="pm-goal-card">
-            <div className="pm-goal-top">
-              <span>YTD Revenue Goal Progress</span>
-              <strong>{money(jamieData.ytdRevenue)}</strong>
-              <p>Goal: {money(PM_INDIVIDUAL_GOAL)}</p>
-            </div>
-
-            <div className="pm-thermometer">
-              <div
-                className="pm-thermometer-fill"
-                style={{
-                  width: `${Math.min(jamieData.goalPercent * 100, 100)}%`,
-                }}
-              />
-            </div>
-
-            <div className="pm-goal-stats">
-              <div>
-                <span>Complete</span>
-                <strong>{displayPercent(jamieData.goalPercent, 1)}</strong>
-              </div>
-
-              <div>
-                <span>Remaining</span>
-                <strong>{money(jamieData.remainingToGoal)}</strong>
-              </div>
-
-              <div>
-                <span>YTD Contracts</span>
-                <strong>{Math.round(jamieData.ytdContracts || 0)}</strong>
-              </div>
-
-              <div>
-                <span>YTD Avg Contract</span>
-                <strong>{money(jamieData.ytdAverageContract)}</strong>
-              </div>
-            </div>
-          </div>
-
           <div className="pm-section-card">
             <h2>{jamieData.selectedMonth} Performance</h2>
 
@@ -1885,6 +1846,45 @@ const closingRankLabel = jamieData.closingRateRank.rank
                 comparisonValue={displayPercent(jamieData.teamClosingRate, 1)}
                 difference={closingRateVsTeam}
               />
+            </div>
+          </div>
+
+          <div className="pm-goal-card">
+            <div className="pm-goal-top">
+              <span>YTD Revenue Goal Progress</span>
+              <strong>{money(jamieData.ytdRevenue)}</strong>
+              <p>Goal: {money(PM_INDIVIDUAL_GOAL)}</p>
+            </div>
+
+            <div className="pm-thermometer">
+              <div
+                className="pm-thermometer-fill"
+                style={{
+                  width: `${Math.min(jamieData.goalPercent * 100, 100)}%`,
+                }}
+              />
+            </div>
+
+            <div className="pm-goal-stats">
+              <div>
+                <span>Complete</span>
+                <strong>{displayPercent(jamieData.goalPercent, 1)}</strong>
+              </div>
+
+              <div>
+                <span>Remaining</span>
+                <strong>{money(jamieData.remainingToGoal)}</strong>
+              </div>
+
+              <div>
+                <span>YTD Contracts</span>
+                <strong>{Math.round(jamieData.ytdContracts || 0)}</strong>
+              </div>
+
+              <div>
+                <span>YTD Avg Contract</span>
+                <strong>{money(jamieData.ytdAverageContract)}</strong>
+              </div>
             </div>
           </div>
 
