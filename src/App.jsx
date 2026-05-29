@@ -1121,17 +1121,17 @@ const teamContractTotal = getTeamMetric(
 );
 
 const teamContracts = getTeamMetric(
-  "Contracts Average",
+  "Contracts",
   selectedMonth
 );
 
 const teamAverageContract = getTeamMetric(
-  "Contract Average Average",
+  "Average Contract",
   selectedMonth
 );
 
 const teamClosingRate = getTeamMetric(
-  "Closing Rate Average",
+  "Closing Rate",
   selectedMonth
 );
 
