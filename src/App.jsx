@@ -155,7 +155,15 @@ const projectManagers = [
   },
 ];
 
-const jamiePM = projectManagers.find((pm) => pm.slug === "jamiejenkins");
+const getCurrentProjectManager = () => {
+  if (typeof window === "undefined") return null;
+
+  const hostname = window.location.hostname.toLowerCase();
+
+  return (
+    projectManagers.find((pm) => hostname.startsWith(`${pm.slug}.`)) || null
+  );
+};
 
 const categories = [
   {
@@ -684,9 +692,11 @@ export default function App() {
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
   const [pmRows, setPmRows] = useState([]);
-  const [pmAuthorized, setPmAuthorized] = useState(
-    () => sessionStorage.getItem("jamiePMAuthorized") === "true"
-  );
+  const [pmAuthorized, setPmAuthorized] = useState(() => {
+    const initialPM = getCurrentProjectManager();
+    if (!initialPM) return false;
+    return sessionStorage.getItem(`${initialPM.slug}PMAuthorized`) === "true";
+  });
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
@@ -716,6 +726,9 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const [projectEndDate, setProjectEndDate] = useState(initialDateRange.end);
 
   const flashTimeoutRef = useRef(null);
+
+  const currentPM = getCurrentProjectManager();
+  const isPMPortal = Boolean(currentPM);
 
   const rawRate =
     closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
@@ -996,7 +1009,7 @@ const getTeamMetricRow = (metric) => {
     );
 };
 
-  const getPMMonthOptions = (pmName = jamiePM.name) => {
+  const getPMMonthOptions = (pmName = currentPM?.name || projectManagers[0].name) => {
     const startIndex = getPMBlockStart(pmName);
 
     if (startIndex < 0) return [];
@@ -1041,7 +1054,7 @@ const getTeamMetricRow = (metric) => {
     if (!row || !monthLabel) return 0;
 
     const headerSource =
-      pmRows.find((item) => String(item?.[0] || "").trim() === jamiePM.name) ||
+      pmRows.find((item) => String(item?.[0] || "").trim() === (currentPM?.name || projectManagers[0].name)) ||
       [];
 
     const columnIndex = headerSource.findIndex(
@@ -1053,7 +1066,7 @@ const getTeamMetricRow = (metric) => {
     return Number(row[columnIndex] || 0);
   };
 
-  const getRankForMetric = (metric, monthLabel, pmName = jamiePM.name) => {
+  const getRankForMetric = (metric, monthLabel, pmName = currentPM?.name || projectManagers[0].name) => {
     const ranked = projectManagers
       .filter((pm) => pm.activeGoal)
       .map((pm) => ({
@@ -1071,46 +1084,46 @@ const getTeamMetricRow = (metric) => {
     };
   };
 
-  const getJamieDashboardData = () => {
-    const monthOptions = getPMMonthOptions(jamiePM.name);
+  const getPMDashboardData = () => {
+    const monthOptions = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
     const selectedMonth = selectedPMMonth || monthOptions[0] || "";
     const lastYearMonth = getPreviousYearMonth(selectedMonth);
 
-    const ytdRevenue = getPMMetric(jamiePM.name, "Contract Total", "YTD");
-    const ytdContracts = getPMMetric(jamiePM.name, "Contracts", "YTD");
+    const ytdRevenue = getPMMetric((currentPM?.name || projectManagers[0].name), "Contract Total", "YTD");
+    const ytdContracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", "YTD");
     const ytdAverageContract = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Average Contract",
       "YTD"
     );
-    const ytdClosingRate = getPMMetric(jamiePM.name, "Closing Rate", "YTD");
+    const ytdClosingRate = getPMMetric((currentPM?.name || projectManagers[0].name), "Closing Rate", "YTD");
 
     const contractTotal = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Contract Total",
       selectedMonth
     );
-    const contracts = getPMMetric(jamiePM.name, "Contracts", selectedMonth);
+    const contracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", selectedMonth);
     const averageContract = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Average Contract",
       selectedMonth
     );
-    const closingRate = getPMMetric(jamiePM.name, "Closing Rate", selectedMonth);
+    const closingRate = getPMMetric((currentPM?.name || projectManagers[0].name), "Closing Rate", selectedMonth);
 
     const lyContractTotal = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Contract Total",
       lastYearMonth
     );
-    const lyContracts = getPMMetric(jamiePM.name, "Contracts", lastYearMonth);
+    const lyContracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", lastYearMonth);
     const lyAverageContract = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Average Contract",
       lastYearMonth
     );
     const lyClosingRate = getPMMetric(
-      jamiePM.name,
+      (currentPM?.name || projectManagers[0].name),
       "Closing Rate",
       lastYearMonth
     );
@@ -1138,12 +1151,12 @@ const teamClosingRate = getTeamMetric(
     const revenueRank = getRankForMetric(
       "Contract Total",
       selectedMonth,
-      jamiePM.name
+      (currentPM?.name || projectManagers[0].name)
     );
     const closingRateRank = getRankForMetric(
       "Closing Rate",
       selectedMonth,
-      jamiePM.name
+      (currentPM?.name || projectManagers[0].name)
     );
 
     const saleAmount = Number(pmSaleAmount || 0);
@@ -1187,8 +1200,8 @@ const teamClosingRate = getTeamMetric(
   const handlePMLogin = (event) => {
     event.preventDefault();
 
-    if (pmPassword === jamiePM.password) {
-      sessionStorage.setItem("jamiePMAuthorized", "true");
+    if (currentPM && pmPassword === currentPM.password) {
+      sessionStorage.setItem(`${currentPM.slug}PMAuthorized`, "true");
       setPmAuthorized(true);
       setPmLoginError("");
       setPmPassword("");
@@ -1198,7 +1211,7 @@ const teamClosingRate = getTeamMetric(
   };
 
   const pmLogout = () => {
-    sessionStorage.removeItem("jamiePMAuthorized");
+    if (currentPM) sessionStorage.removeItem(`${currentPM.slug}PMAuthorized`);
     setPmAuthorized(false);
     setPmPassword("");
   };
@@ -1489,7 +1502,7 @@ const teamClosingRate = getTeamMetric(
   useEffect(() => {
   if (!pmRows.length || selectedPMMonth) return;
 
-  const options = getPMMonthOptions(jamiePM.name);
+  const options = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
 
   if (!options.length) return;
 
@@ -1507,12 +1520,7 @@ const teamClosingRate = getTeamMetric(
   );
 }, [pmRows, selectedPMMonth]);
 
-  const hostname =
-    typeof window !== "undefined" ? window.location.hostname : "";
-
-  const isJamiePortal = hostname.startsWith("jamiejenkins.");
-
-  const jamieData = getJamieDashboardData();
+  const pmData = currentPM ? getPMDashboardData() : null;
 
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
@@ -1651,13 +1659,13 @@ const teamClosingRate = getTeamMetric(
   );
 
 
-  if (isJamiePortal && !pmAuthorized) {
+  if (isPMPortal && !pmAuthorized) {
     return (
       <div className="login-screen">
         <form className="login-box" onSubmit={handlePMLogin}>
-          <img src={jamiePM.image} alt={jamiePM.name} className="pm-login-photo" />
+          <img src={currentPM.image} alt={(currentPM?.name || projectManagers[0].name)} className="pm-login-photo" />
 
-          <h1>{jamiePM.name}</h1>
+          <h1>{(currentPM?.name || projectManagers[0].name)}</h1>
           <p>Enter your password to view your dashboard.</p>
 
           <input
@@ -1679,48 +1687,48 @@ const teamClosingRate = getTeamMetric(
     );
   }
 
-  if (isJamiePortal && pmAuthorized) {
-const revenueRankLabel = jamieData.revenueRank.rank
-  ? `#${jamieData.revenueRank.rank}`
+  if (isPMPortal && pmAuthorized && pmData) {
+const revenueRankLabel = pmData.revenueRank.rank
+  ? `#${pmData.revenueRank.rank}`
   : "N/A";
 
-const closingRankLabel = jamieData.closingRateRank.rank
-  ? `#${jamieData.closingRateRank.rank}`
+const closingRankLabel = pmData.closingRateRank.rank
+  ? `#${pmData.closingRateRank.rank}`
   : "N/A";
 
     const revenueVsLY = compareNumbers(
-      jamieData.contractTotal,
-      jamieData.lyContractTotal
+      pmData.contractTotal,
+      pmData.lyContractTotal
     );
     const contractsVsLY = compareNumbers(
-      jamieData.contracts,
-      jamieData.lyContracts
+      pmData.contracts,
+      pmData.lyContracts
     );
     const averageVsLY = compareNumbers(
-      jamieData.averageContract,
-      jamieData.lyAverageContract
+      pmData.averageContract,
+      pmData.lyAverageContract
     );
     const closingRateVsLY = compareNumbers(
-      jamieData.closingRate,
-      jamieData.lyClosingRate,
+      pmData.closingRate,
+      pmData.lyClosingRate,
       true
     );
 
     const revenueVsTeam = compareNumbers(
-      jamieData.contractTotal,
-      jamieData.teamContractTotal
+      pmData.contractTotal,
+      pmData.teamContractTotal
     );
     const contractsVsTeam = compareNumbers(
-      jamieData.contracts,
-      jamieData.teamContracts
+      pmData.contracts,
+      pmData.teamContracts
     );
     const averageVsTeam = compareNumbers(
-      jamieData.averageContract,
-      jamieData.teamAverageContract
+      pmData.averageContract,
+      pmData.teamAverageContract
     );
     const closingRateVsTeam = compareNumbers(
-      jamieData.closingRate,
-      jamieData.teamClosingRate,
+      pmData.closingRate,
+      pmData.teamClosingRate,
       true
     );
 
@@ -1733,17 +1741,17 @@ const closingRankLabel = jamieData.closingRateRank.rank
 
           <div className="header-top">
             <img src="/logo.png" alt="Logo" className="logo" />
-            <h1>{jamiePM.name} Dashboard</h1>
+            <h1>{currentPM.name} Dashboard</h1>
           </div>
         </header>
 
         <section className="pm-dashboard">
           <div className="pm-hero-card">
-            <img src={jamiePM.image} alt={jamiePM.name} />
+            <img src={currentPM.image} alt={(currentPM?.name || projectManagers[0].name)} />
 
             <div className="pm-hero-content">
               <span>Project Manager</span>
-              <h2>{jamiePM.name}</h2>
+              <h2>{(currentPM?.name || projectManagers[0].name)}</h2>
 
               <div className="pm-rank-row">
                 <div>
@@ -1761,10 +1769,10 @@ const closingRankLabel = jamieData.closingRateRank.rank
             <label className="pm-month-selector">
               Month
               <select
-                value={jamieData.selectedMonth}
+                value={pmData.selectedMonth}
                 onChange={(event) => setSelectedPMMonth(event.target.value)}
               >
-                {jamieData.monthOptions.map((month) => (
+                {pmData.monthOptions.map((month) => (
                   <option key={month} value={month}>
                     {month}
                   </option>
@@ -1774,38 +1782,38 @@ const closingRankLabel = jamieData.closingRateRank.rank
           </div>
 
           <div className="pm-section-card">
-            <h2>{jamieData.selectedMonth} Performance</h2>
+            <h2>{pmData.selectedMonth} Performance</h2>
 
             <div className="pm-metric-grid">
               <PMMetricCard
                 label="Contract Total"
-                value={money(jamieData.contractTotal)}
-                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
-                comparisonValue={money(jamieData.lyContractTotal)}
+                value={money(pmData.contractTotal)}
+                comparisonLabel={`vs ${pmData.lastYearMonth}`}
+                comparisonValue={money(pmData.lyContractTotal)}
                 difference={revenueVsLY}
               />
 
               <PMMetricCard
                 label="Contracts"
-                value={Math.round(jamieData.contracts || 0)}
-                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
-                comparisonValue={Math.round(jamieData.lyContracts || 0)}
+                value={Math.round(pmData.contracts || 0)}
+                comparisonLabel={`vs ${pmData.lastYearMonth}`}
+                comparisonValue={Math.round(pmData.lyContracts || 0)}
                 difference={contractsVsLY}
               />
 
               <PMMetricCard
                 label="Average Contract"
-                value={money(jamieData.averageContract)}
-                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
-                comparisonValue={money(jamieData.lyAverageContract)}
+                value={money(pmData.averageContract)}
+                comparisonLabel={`vs ${pmData.lastYearMonth}`}
+                comparisonValue={money(pmData.lyAverageContract)}
                 difference={averageVsLY}
               />
 
               <PMMetricCard
                 label="Closing Rate"
-                value={displayPercent(jamieData.closingRate, 1)}
-                comparisonLabel={`vs ${jamieData.lastYearMonth}`}
-                comparisonValue={displayPercent(jamieData.lyClosingRate, 1)}
+                value={displayPercent(pmData.closingRate, 1)}
+                comparisonLabel={`vs ${pmData.lastYearMonth}`}
+                comparisonValue={displayPercent(pmData.lyClosingRate, 1)}
                 difference={closingRateVsLY}
               />
             </div>
@@ -1817,33 +1825,33 @@ const closingRankLabel = jamieData.closingRateRank.rank
             <div className="pm-metric-grid">
               <PMMetricCard
                 label="Revenue vs Team"
-                value={money(jamieData.contractTotal)}
+                value={money(pmData.contractTotal)}
                 comparisonLabel="Team Avg"
-                comparisonValue={money(jamieData.teamContractTotal)}
+                comparisonValue={money(pmData.teamContractTotal)}
                 difference={revenueVsTeam}
               />
 
               <PMMetricCard
                 label="Contracts vs Team"
-                value={Math.round(jamieData.contracts || 0)}
+                value={Math.round(pmData.contracts || 0)}
                 comparisonLabel="Team Avg"
-                comparisonValue={Math.round(jamieData.teamContracts || 0)}
+                comparisonValue={Math.round(pmData.teamContracts || 0)}
                 difference={contractsVsTeam}
               />
 
               <PMMetricCard
                 label="Avg Contract vs Team"
-                value={money(jamieData.averageContract)}
+                value={money(pmData.averageContract)}
                 comparisonLabel="Team Avg"
-                comparisonValue={money(jamieData.teamAverageContract)}
+                comparisonValue={money(pmData.teamAverageContract)}
                 difference={averageVsTeam}
               />
 
               <PMMetricCard
                 label="Closing Rate vs Team"
-                value={displayPercent(jamieData.closingRate, 1)}
+                value={displayPercent(pmData.closingRate, 1)}
                 comparisonLabel="Team Avg"
-                comparisonValue={displayPercent(jamieData.teamClosingRate, 1)}
+                comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
                 difference={closingRateVsTeam}
               />
             </div>
@@ -1852,7 +1860,7 @@ const closingRankLabel = jamieData.closingRateRank.rank
           <div className="pm-goal-card">
             <div className="pm-goal-top">
               <span>YTD Revenue Goal Progress</span>
-              <strong>{money(jamieData.ytdRevenue)}</strong>
+              <strong>{money(pmData.ytdRevenue)}</strong>
               <p>Goal: {money(PM_INDIVIDUAL_GOAL)}</p>
             </div>
 
@@ -1860,7 +1868,7 @@ const closingRankLabel = jamieData.closingRateRank.rank
               <div
                 className="pm-thermometer-fill"
                 style={{
-                  width: `${Math.min(jamieData.goalPercent * 100, 100)}%`,
+                  width: `${Math.min(pmData.goalPercent * 100, 100)}%`,
                 }}
               />
             </div>
@@ -1868,22 +1876,22 @@ const closingRankLabel = jamieData.closingRateRank.rank
             <div className="pm-goal-stats">
               <div>
                 <span>Complete</span>
-                <strong>{displayPercent(jamieData.goalPercent, 1)}</strong>
+                <strong>{displayPercent(pmData.goalPercent, 1)}</strong>
               </div>
 
               <div>
                 <span>Remaining</span>
-                <strong>{money(jamieData.remainingToGoal)}</strong>
+                <strong>{money(pmData.remainingToGoal)}</strong>
               </div>
 
               <div>
                 <span>YTD Contracts</span>
-                <strong>{Math.round(jamieData.ytdContracts || 0)}</strong>
+                <strong>{Math.round(pmData.ytdContracts || 0)}</strong>
               </div>
 
               <div>
                 <span>YTD Avg Contract</span>
-                <strong>{money(jamieData.ytdAverageContract)}</strong>
+                <strong>{money(pmData.ytdAverageContract)}</strong>
               </div>
             </div>
           </div>
@@ -1911,17 +1919,17 @@ const closingRankLabel = jamieData.closingRateRank.rank
 
               <div>
                 <span>Estimated Commission</span>
-                <strong>{money(jamieData.commission)}</strong>
+                <strong>{money(pmData.commission)}</strong>
               </div>
 
               <div>
                 <span>Projected YTD Revenue</span>
-                <strong>{money(jamieData.projectedYTDRevenue)}</strong>
+                <strong>{money(pmData.projectedYTDRevenue)}</strong>
               </div>
 
               <div>
                 <span>Projected Goal %</span>
-                <strong>{displayPercent(jamieData.projectedGoalPercent, 1)}</strong>
+                <strong>{displayPercent(pmData.projectedGoalPercent, 1)}</strong>
               </div>
             </div>
           </div>
