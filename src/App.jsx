@@ -978,11 +978,23 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     );
   };
 
-  const getTeamMetricRow = (metric) => {
-    return pmRows.find(
-      (row) => String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
+const getTeamMetricRow = (metric) => {
+  const teamSectionStart = pmRows.findIndex(
+    (row) =>
+      String(row?.[0] || "").trim().toLowerCase() ===
+      "contract total average"
+  );
+
+  if (teamSectionStart < 0) return null;
+
+  return pmRows
+    .slice(teamSectionStart, teamSectionStart + 8)
+    .find(
+      (row) =>
+        String(row?.[0] || "").trim().toLowerCase() ===
+        metric.toLowerCase()
     );
-  };
+};
 
   const getPMMonthOptions = (pmName = jamiePM.name) => {
     const startIndex = getPMBlockStart(pmName);
