@@ -1103,10 +1103,13 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       lastYearMonth
     );
 
-    const teamContractTotal = getTeamMetric("Contract Total", selectedMonth);
-    const teamContracts = getTeamMetric("Contracts", selectedMonth);
-    const teamAverageContract = getTeamMetric("Average Contract", selectedMonth);
-    const teamClosingRate = getTeamMetric("Closing Rate", selectedMonth);
+const teamContractTotal = getTeamMetric(
+  "Contract Total Average",
+  selectedMonth
+);
+const teamContracts = getTeamMetric("Contracts", selectedMonth);
+const teamAverageContract = getTeamMetric("Average Contract", selectedMonth);
+const teamClosingRate = getTeamMetric("Closing Rate", selectedMonth);
 
     const revenueRank = getRankForMetric(
       "Contract Total",
