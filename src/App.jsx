@@ -1107,9 +1107,21 @@ const teamContractTotal = getTeamMetric(
   "Contract Total Average",
   selectedMonth
 );
-const teamContracts = getTeamMetric("Contracts", selectedMonth);
-const teamAverageContract = getTeamMetric("Average Contract", selectedMonth);
-const teamClosingRate = getTeamMetric("Closing Rate", selectedMonth);
+
+const teamContracts = getTeamMetric(
+  "Contracts Average",
+  selectedMonth
+);
+
+const teamAverageContract = getTeamMetric(
+  "Contract Average Average",
+  selectedMonth
+);
+
+const teamClosingRate = getTeamMetric(
+  "Closing Rate Average",
+  selectedMonth
+);
 
     const revenueRank = getRankForMetric(
       "Contract Total",
