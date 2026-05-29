@@ -1638,3 +1638,28 @@ input::placeholder {
     font-size: 36px;
   }
 }
+.pm-rank-row div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pm-rank-row div small {
+  text-align: center;
+}
+
+.pm-rank-row div strong {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  margin-top: 8px;
+}
+.pm-rank-row div strong {
+  font-size: 2.75rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  margin-top: 8px;
+}
