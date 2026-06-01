@@ -1935,7 +1935,7 @@ const closingRankLabel = pmData.closingRateRank.rank
 
           <div className="pm-goal-card">
             <div className="pm-goal-top">
-              <span>YTD Revenue Goal Progress</span>
+              <span>YTD Revenue Goal Progress - November 1, 2025-October 31, 2026</span>
               <strong>{money(pmData.ytdRevenue)}</strong>
               <p>Goal: {money(pmData.individualGoal)}</p>
             </div>
