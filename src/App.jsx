@@ -302,6 +302,20 @@ const monthNames = [
   "November",
   "December",
 ];
+const fiscalMonths = [
+  "November 2025",
+  "December 2025",
+  "January 2026",
+  "February 2026",
+  "March 2026",
+  "April 2026",
+  "May 2026",
+  "June 2026",
+  "July 2026",
+  "August 2026",
+  "September 2026",
+  "October 2026",
+];
 
 function formatPMMonth(value) {
   if (!value) return "";
@@ -1100,13 +1114,31 @@ const getTeamMetricRow = (metric) => {
     const selectedMonth = selectedPMMonth || monthOptions[0] || "";
     const lastYearMonth = getPreviousYearMonth(selectedMonth);
 
-    const ytdRevenue = getPMMetric((currentPM?.name || projectManagers[0].name), "Contract Total", "YTD");
-    const ytdContracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", "YTD");
-    const ytdAverageContract = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Average Contract",
-      "YTD"
-    );
+const pmName = currentPM?.name || projectManagers[0].name;
+
+const fiscalMonthIndex = fiscalMonths.indexOf(selectedMonth);
+
+const ytdMonths =
+  fiscalMonthIndex >= 0
+    ? fiscalMonths.slice(0, fiscalMonthIndex + 1)
+    : [];
+
+const ytdRevenue = ytdMonths.reduce(
+  (sum, month) =>
+    sum + getPMMetric(pmName, "Contract Total", month),
+  0
+);
+
+const ytdContracts = ytdMonths.reduce(
+  (sum, month) =>
+    sum + getPMMetric(pmName, "Contracts", month),
+  0
+);
+
+const ytdAverageContract =
+  ytdContracts > 0 ? ytdRevenue / ytdContracts : 0;
+
+const ytdClosingRate = 0;
     const ytdClosingRate = getPMMetric((currentPM?.name || projectManagers[0].name), "Closing Rate", "YTD");
 
     const contractTotal = getPMMetric(
@@ -1180,28 +1212,21 @@ const goalPercent = individualGoal > 0 ? ytdRevenue / individualGoal : 0;
 const projectedGoalPercent =
   individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
-const selectedMonthIndex = monthNames.indexOf(selectedMonth.split(" ")[0]);
-const selectedYear = selectedMonth.split(" ")[1];
-
 const monthlyGoal = individualGoal / 12;
 const monthlyGoalPercent = monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
 const monthlyRemaining = Math.max(monthlyGoal - contractTotal, 0);
 
-const quarterStartMonthIndex =
-  Math.floor(selectedMonthIndex / 3) * 3;
+const quarterStartIndex =
+  fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
 
-const quarterMonths = monthNames
-  .slice(quarterStartMonthIndex, quarterStartMonthIndex + 3)
-  .map((month) => `${month} ${selectedYear}`);
+const quarterMonths = fiscalMonths.slice(
+  quarterStartIndex,
+  quarterStartIndex + 3
+);
 
 const quarterRevenue = quarterMonths.reduce(
   (sum, month) =>
-    sum +
-    getPMMetric(
-      currentPM?.name || projectManagers[0].name,
-      "Contract Total",
-      month
-    ),
+    sum + getPMMetric(pmName, "Contract Total", month),
   0
 );
 
