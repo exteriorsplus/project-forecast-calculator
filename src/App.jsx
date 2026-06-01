@@ -369,6 +369,18 @@ function compareNumbers(current, comparison, isRate = false) {
       rawDifference: 0,
     };
   }
+  function getMonthDateBounds(monthLabel) {
+  const [monthName, yearText] = String(monthLabel).split(" ");
+  const monthIndex = monthNames.indexOf(monthName);
+  const year = Number(yearText);
+
+  if (monthIndex < 0 || !year) return null;
+
+  return {
+    start: new Date(year, monthIndex, 1),
+    end: new Date(year, monthIndex + 1, 0),
+  };
+}
 
   if (isRate) {
     const pointDifference = currentNumber - comparisonNumber;
@@ -1145,12 +1157,14 @@ const ytdClosingRate = 0;
 
 const customMonths =
   pmDateMode === "custom" && pmStartDate && pmEndDate
-    ? fiscalMonths.filter((month) => {
-        const monthDate = new Date(`${month} 1`);
+    ? monthOptions.filter((month) => {
+        const bounds = getMonthDateBounds(month);
+        if (!bounds) return false;
+
         const start = new Date(pmStartDate);
         const end = new Date(pmEndDate);
 
-        return monthDate >= start && monthDate <= end;
+        return bounds.end >= start && bounds.start <= end;
       })
     : [];
 
