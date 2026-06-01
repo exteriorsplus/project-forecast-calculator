@@ -1194,6 +1194,18 @@ const contractTotal = activeMonths.reduce(
   (sum, month) => sum + getPMMetric(pmName, "Contract Total", month),
   0
 );
+console.log("PM:", pmName);
+console.log("Custom Start:", pmStartDate);
+console.log("Custom End:", pmEndDate);
+console.log("Month Options:", monthOptions);
+console.log("Active Months:", activeMonths);
+console.log(
+  "Active Month Values:",
+  activeMonths.map((month) => ({
+    month,
+    value: getPMMetric(pmName, "Contract Total", month),
+  }))
+);
 
 const contracts = activeMonths.reduce(
   (sum, month) => sum + getPMMetric(pmName, "Contracts", month),
