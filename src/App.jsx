@@ -1108,7 +1108,11 @@ const getTeamMetricRow = (metric) => {
     return Number(row[columnIndex] || 0);
   };
 
-  const getRankForMetric = (metric, monthLabel, pmName = currentPM?.name || projectManagers[0].name) => {
+  const getRankForMetric = (
+    metric,
+    monthLabel,
+    pmName = currentPM?.name || projectManagers[0].name
+  ) => {
     const ranked = projectManagers
       .filter((pm) => pm.activeGoal)
       .map((pm) => ({
@@ -1118,54 +1122,52 @@ const getTeamMetricRow = (metric) => {
       .filter((pm) => Number(pm.value || 0) > 0)
       .sort((a, b) => b.value - a.value);
 
-  if (!pmStartDate || !pmEndDate) {
-    return {
-      contractTotal: 0,
-      contracts: 0,
-      averageContract: 0,
-    };
-  }
-
-  const start = dateOnly(parseInputDate(pmStartDate));
-  const end = dateOnly(parseInputDate(pmEndDate));
-
-  let contractTotal = 0;
-  let contracts = 0;
-
-  salesRows.forEach((row) => {
-    const rowPM =
-      String(row["Project Manager"] || "").trim() ||
-      String(row["Salesperson"] || "").trim();
-
-    if (rowPM !== pmName) return;
-
-    const rowDate = parseExcelDate(row["Approved Date"]);
-    if (!rowDate) return;
-
-    const cleanDate = dateOnly(rowDate);
-
-    if (cleanDate < start || cleanDate > end) return;
-
-    const amount = parseMoney(row["Contract Amount"]);
-
-    contractTotal += amount;
-    contracts += 1;
-  });
-
-
-  return {
-    contractTotal,
-    contracts,
-    averageContract:
-      contracts > 0 ? contractTotal / contracts : 0,
-  };
-};
-  const getPMCustomSalesData = (pmName) => {
     const index = ranked.findIndex((pm) => pm.name === pmName);
 
     return {
       rank: index >= 0 ? index + 1 : null,
       total: ranked.length,
+    };
+  };
+
+  const getPMCustomSalesData = (pmName) => {
+    if (!pmStartDate || !pmEndDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
+    const start = dateOnly(parseInputDate(pmStartDate));
+    const end = dateOnly(parseInputDate(pmEndDate));
+
+    let contractTotal = 0;
+    let contracts = 0;
+
+    salesRows.forEach((row) => {
+      const rowPM =
+        String(row["Project Manager"] || "").trim() ||
+        String(row["Salesperson"] || "").trim();
+
+      if (rowPM !== pmName) return;
+
+      const rowDate = parseExcelDate(row["Approved Date"]);
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      const amount = parseMoney(row["Contract Amount"]);
+
+      contractTotal += amount;
+      contracts += 1;
+    });
+
+    return {
+      contractTotal,
+      contracts,
+      averageContract: contracts > 0 ? contractTotal / contracts : 0,
     };
   };
 
