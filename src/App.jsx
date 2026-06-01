@@ -1139,7 +1139,6 @@ const ytdAverageContract =
   ytdContracts > 0 ? ytdRevenue / ytdContracts : 0;
 
 const ytdClosingRate = 0;
-    const ytdClosingRate = getPMMetric((currentPM?.name || projectManagers[0].name), "Closing Rate", "YTD");
 
     const contractTotal = getPMMetric(
       (currentPM?.name || projectManagers[0].name),
