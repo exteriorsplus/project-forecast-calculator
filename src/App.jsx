@@ -1118,7 +1118,6 @@ const getTeamMetricRow = (metric) => {
       .filter((pm) => Number(pm.value || 0) > 0)
       .sort((a, b) => b.value - a.value);
 
-const getPMCustomSalesData = (pmName) => {
   if (!pmStartDate || !pmEndDate) {
     return {
       contractTotal: 0,
@@ -1153,6 +1152,7 @@ const getPMCustomSalesData = (pmName) => {
     contracts += 1;
   });
 
+
   return {
     contractTotal,
     contracts,
@@ -1160,7 +1160,7 @@ const getPMCustomSalesData = (pmName) => {
       contracts > 0 ? contractTotal / contracts : 0,
   };
 };
-
+  const getPMCustomSalesData = (pmName) => {
     const index = ranked.findIndex((pm) => pm.name === pmName);
 
     return {
