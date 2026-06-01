@@ -726,6 +726,9 @@ export default function App() {
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
+  const [pmStartDate, setPmStartDate] = useState("");
+const [pmEndDate, setPmEndDate] = useState("");
+const [pmDateMode, setPmDateMode] = useState("month");
 
 
   const defaultTotalMarketingSpend = marketingChannels.reduce(
@@ -1140,18 +1143,42 @@ const ytdAverageContract =
 
 const ytdClosingRate = 0;
 
-    const contractTotal = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Contract Total",
-      selectedMonth
-    );
-    const contracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", selectedMonth);
-    const averageContract = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Average Contract",
-      selectedMonth
-    );
-    const closingRate = getPMMetric((currentPM?.name || projectManagers[0].name), "Closing Rate", selectedMonth);
+const customMonths =
+  pmDateMode === "custom" && pmStartDate && pmEndDate
+    ? fiscalMonths.filter((month) => {
+        const monthDate = new Date(`${month} 1`);
+        const start = new Date(pmStartDate);
+        const end = new Date(pmEndDate);
+
+        return monthDate >= start && monthDate <= end;
+      })
+    : [];
+
+const activeMonths =
+  pmDateMode === "fiscalYTD"
+    ? ytdMonths
+    : pmDateMode === "custom"
+    ? customMonths
+    : [selectedMonth];
+
+const contractTotal = activeMonths.reduce(
+  (sum, month) => sum + getPMMetric(pmName, "Contract Total", month),
+  0
+);
+
+const contracts = activeMonths.reduce(
+  (sum, month) => sum + getPMMetric(pmName, "Contracts", month),
+  0
+);
+
+const averageContract =
+  contracts > 0 ? contractTotal / contracts : 0;
+
+const closingRate =
+  pmDateMode === "month"
+    ? getPMMetric(pmName, "Closing Rate", selectedMonth)
+    : 0;
+
 
     const lyContractTotal = getPMMetric(
       (currentPM?.name || projectManagers[0].name),
@@ -1842,23 +1869,72 @@ const closingRankLabel = pmData.closingRateRank.rank
               </div>
             </div>
 
-            <label className="pm-month-selector">
-              Month
-              <select
-                value={pmData.selectedMonth}
-                onChange={(event) => setSelectedPMMonth(event.target.value)}
-              >
-                {pmData.monthOptions.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="pm-date-controls">
+  <label className="pm-month-selector">
+    Month
+    <select
+      value={pmData.selectedMonth}
+      onChange={(event) => {
+        setSelectedPMMonth(event.target.value);
+        setPmDateMode("month");
+      }}
+    >
+      {pmData.monthOptions.map((month) => (
+        <option key={month} value={month}>
+          {month}
+        </option>
+      ))}
+    </select>
+  </label>
+
+  <div className="pm-custom-date-row">
+    <label>
+      Start Date
+      <input
+        type="date"
+        value={pmStartDate}
+        onChange={(event) => {
+          setPmStartDate(event.target.value);
+          setPmDateMode("custom");
+        }}
+      />
+    </label>
+
+    <label>
+      End Date
+      <input
+        type="date"
+        value={pmEndDate}
+        onChange={(event) => {
+          setPmEndDate(event.target.value);
+          setPmDateMode("custom");
+        }}
+      />
+    </label>
+  </div>
+
+<button
+  type="button"
+  className="pm-fiscal-button"
+  onClick={() => {
+    setPmDateMode("fiscalYTD");
+    setPmStartDate("2025-11-01");
+    setPmEndDate(new Date().toISOString().slice(0, 10));
+  }}
+>
+  Fiscal YTD
+</button>
+</div>
           </div>
 
           <div className="pm-section-card">
-            <h2>{pmData.selectedMonth} Performance</h2>
+            <h2>
+  {pmDateMode === "fiscalYTD"
+    ? "Fiscal YTD Performance"
+    : pmDateMode === "custom"
+    ? "Custom Date Performance"
+    : `${pmData.selectedMonth} Performance`}
+</h2>
 
             <div className="pm-metric-grid">
               <PMMetricCard

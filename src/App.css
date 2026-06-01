@@ -1661,3 +1661,43 @@ input::placeholder {
   text-align: center;
   margin-top: 8px;
 }
+.pm-date-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 360px;
+  justify-self: center;
+}
+
+.pm-custom-date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pm-custom-date-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 900;
+  color: #111827;
+  text-align: center;
+}
+
+.pm-custom-date-row input {
+  width: 100%;
+  min-height: 46px;
+}
+
+.pm-fiscal-button {
+  border: none;
+  background: #b91c1c;
+  color: white;
+  border-radius: 8px;
+  min-height: 46px;
+  font-weight: 900;
+}
+
+.pm-fiscal-button:hover {
+  background: #111827;
+}
