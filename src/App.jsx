@@ -1157,22 +1157,31 @@ const ytdAverageContract =
 
 const ytdClosingRate = 0;
 
-const customMonths =
-  pmDateMode === "custom" && pmStartDate && pmEndDate
-    ? monthOptions.filter((month) => {
-        const bounds = getMonthDateBounds(month);
-        if (!bounds) return false;
+const customMonths = (() => {
+  if (pmDateMode !== "custom" || !pmStartDate || !pmEndDate) {
+    return [];
+  }
 
-        const start = new Date(`${pmStartDate}T00:00:00`);
-        const end = new Date(`${pmEndDate}T23:59:59`);
+  const start = new Date(`${pmStartDate}T00:00:00`);
+  const end = new Date(`${pmEndDate}T23:59:59`);
 
-        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
-          return false;
-        }
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return [];
+  }
 
-        return bounds.end >= start && bounds.start <= end;
-      })
-    : [];
+  return monthOptions.filter((month) => {
+    const [monthName, yearText] = String(month || "").split(" ");
+    const monthIndex = monthNames.indexOf(monthName);
+    const year = Number(yearText);
+
+    if (monthIndex < 0 || !year) return false;
+
+    const monthStart = new Date(year, monthIndex, 1);
+    const monthEnd = new Date(year, monthIndex + 1, 0, 23, 59, 59);
+
+    return monthEnd >= start && monthStart <= end;
+  });
+})();
 
 const activeMonths =
   pmDateMode === "fiscalYTD"
