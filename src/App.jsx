@@ -1947,13 +1947,9 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
           <div className="pm-hero-card">
             <img src={currentPM.image} alt={(currentPM?.name || projectManagers[0].name)} />
 
-            <div className="pm-hero-content">
-              <span>Project Manager</span>
-              <h2>{(currentPM?.name || projectManagers[0].name)}</h2>
-{!isCustomMode && (
 <div className="pm-hero-content">
   <span>Project Manager</span>
-  <h2>{currentPM.name}</h2>
+  <h2>{currentPM?.name || projectManagers[0].name}</h2>
 
   {!isCustomMode && (
     <div className="pm-rank-row">
@@ -1969,9 +1965,8 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
     </div>
   )}
 </div>
-)}
 
-            <div className="pm-date-controls">
+<div className="pm-date-controls">
   <label className="pm-month-selector">
     Month
     <select
