@@ -369,12 +369,14 @@ function compareNumbers(current, comparison, isRate = false) {
       rawDifference: 0,
     };
   }
-  function getMonthDateBounds(monthLabel) {
-  const [monthName, yearText] = String(monthLabel).split(" ");
+function getMonthDateBounds(monthLabel) {
+  const [monthName, yearText] = String(monthLabel || "").split(" ");
   const monthIndex = monthNames.indexOf(monthName);
   const year = Number(yearText);
 
-  if (monthIndex < 0 || !year) return null;
+  if (monthIndex < 0 || !year) {
+    return null;
+  }
 
   return {
     start: new Date(year, monthIndex, 1),
@@ -1161,8 +1163,12 @@ const customMonths =
         const bounds = getMonthDateBounds(month);
         if (!bounds) return false;
 
-        const start = new Date(pmStartDate);
-        const end = new Date(pmEndDate);
+        const start = new Date(`${pmStartDate}T00:00:00`);
+        const end = new Date(`${pmEndDate}T23:59:59`);
+
+        if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+          return false;
+        }
 
         return bounds.end >= start && bounds.start <= end;
       })
