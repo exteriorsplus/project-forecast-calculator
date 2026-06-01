@@ -2035,32 +2035,32 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
 <PMMetricCard
   label="Contract Total"
   value={money(pmData.contractTotal)}
-  comparisonLabel={isCustomMode ? "Selected Range" : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? customRangeLabel : money(pmData.lyContractTotal)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
   difference={isCustomMode ? null : revenueVsLY}
 />
 
 <PMMetricCard
   label="Contracts"
   value={Math.round(pmData.contracts || 0)}
-  comparisonLabel={isCustomMode ? "Selected Range" : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? customRangeLabel : Math.round(pmData.lyContracts || 0)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
   difference={isCustomMode ? null : contractsVsLY}
 />
 
 <PMMetricCard
   label="Average Contract"
   value={money(pmData.averageContract)}
-  comparisonLabel={isCustomMode ? "Selected Range" : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? customRangeLabel : money(pmData.lyAverageContract)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
   difference={isCustomMode ? null : averageVsLY}
 />
 
 <PMMetricCard
   label="Closing Rate"
   value={isCustomMode ? "N/A" : displayPercent(pmData.closingRate, 1)}
-  comparisonLabel={isCustomMode ? "Not available for custom ranges" : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? "" : displayPercent(pmData.lyClosingRate, 1)}
+  comparisonLabel={null}
+  comparisonValue={null}
   difference={isCustomMode ? null : closingRateVsLY}
 />
             </div>
