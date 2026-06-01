@@ -2061,8 +2061,8 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
 <PMMetricCard
   label="Closing Rate"
   value={isCustomMode ? "N/A" : displayPercent(pmData.closingRate, 1)}
-  comparisonLabel={null}
-  comparisonValue={null}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
   difference={isCustomMode ? null : closingRateVsLY}
 />
             </div>
