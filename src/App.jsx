@@ -1146,11 +1146,16 @@ const getTeamMetricRow = (metric) => {
     let contracts = 0;
 
     salesRows.forEach((row) => {
-      const rowPM =
-        String(row["Project Manager"] || "").trim() ||
-        String(row["Salesperson"] || "").trim();
+const rowPMValues = [
+  row["Project Manager"],
+  row["Salesperson"],
+  row["Sales Rep"],
+  row["Sales Representative"],
+  row["Primary Salesperson"],
+  row["Estimator"],
+].map((value) => String(value || "").trim());
 
-      if (rowPM !== pmName) return;
+if (!rowPMValues.includes(pmName)) return;
 
       const rowDate = parseExcelDate(row["Approved Date"]);
       if (!rowDate) return;
