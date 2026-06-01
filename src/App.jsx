@@ -1180,6 +1180,35 @@ const goalPercent = individualGoal > 0 ? ytdRevenue / individualGoal : 0;
 const projectedGoalPercent =
   individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
+const selectedMonthIndex = monthNames.indexOf(selectedMonth.split(" ")[0]);
+const selectedYear = selectedMonth.split(" ")[1];
+
+const monthlyGoal = individualGoal / 12;
+const monthlyGoalPercent = monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
+const monthlyRemaining = Math.max(monthlyGoal - contractTotal, 0);
+
+const quarterStartMonthIndex =
+  Math.floor(selectedMonthIndex / 3) * 3;
+
+const quarterMonths = monthNames
+  .slice(quarterStartMonthIndex, quarterStartMonthIndex + 3)
+  .map((month) => `${month} ${selectedYear}`);
+
+const quarterRevenue = quarterMonths.reduce(
+  (sum, month) =>
+    sum +
+    getPMMetric(
+      currentPM?.name || projectManagers[0].name,
+      "Contract Total",
+      month
+    ),
+  0
+);
+
+const quarterlyGoal = individualGoal / 4;
+const quarterlyGoalPercent =
+  quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
+const quarterlyRemaining = Math.max(quarterlyGoal - quarterRevenue, 0);
 
 return {
   monthOptions,
@@ -1210,6 +1239,13 @@ return {
       goalPercent,
       projectedGoalPercent,
       remainingToGoal,
+      monthlyGoal,
+monthlyGoalPercent,
+monthlyRemaining,
+quarterRevenue,
+quarterlyGoal,
+quarterlyGoalPercent,
+quarterlyRemaining,
     };
   };
 
@@ -1888,6 +1924,7 @@ const closingRankLabel = pmData.closingRateRank.rank
                 }}
               />
             </div>
+            
 
             <div className="pm-goal-stats">
               <div>
@@ -1911,7 +1948,45 @@ const closingRankLabel = pmData.closingRateRank.rank
               </div>
             </div>
           </div>
+<div className="pm-section-card">
+  <h2>Goal Pace Breakdown</h2>
 
+  <div className="pm-metric-grid">
+    <PMMetricCard
+      label="Monthly Goal"
+      value={money(pmData.monthlyGoal)}
+      comparisonLabel="Current Month"
+      comparisonValue={money(pmData.contractTotal)}
+      difference={{
+        label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+        className:
+          pmData.monthlyGoalPercent >= 1 ? "positive" : "neutral",
+      }}
+    />
+
+    <PMMetricCard
+      label="Monthly Remaining"
+      value={money(pmData.monthlyRemaining)}
+    />
+
+    <PMMetricCard
+      label="Quarterly Goal"
+      value={money(pmData.quarterlyGoal)}
+      comparisonLabel="Current Quarter"
+      comparisonValue={money(pmData.quarterRevenue)}
+      difference={{
+        label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
+        className:
+          pmData.quarterlyGoalPercent >= 1 ? "positive" : "neutral",
+      }}
+    />
+
+    <PMMetricCard
+      label="Quarterly Remaining"
+      value={money(pmData.quarterlyRemaining)}
+    />
+  </div>
+</div>
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
