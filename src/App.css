@@ -1609,7 +1609,34 @@ input::placeholder {
 }
 
 .pm-hero-card {
-  grid-template-columns: auto 1fr 280px;
+  grid-template-columns: 150px minmax(360px, 1fr) 360px;
+  gap: 28px;
+  align-items: center;
+}
+
+.pm-date-controls {
+  width: 360px;
+  min-width: 360px;
+  justify-self: end;
+  margin-right: 0;
+}
+
+.pm-month-selector {
+  min-width: 100%;
+  margin-right: 0;
+}
+
+.pm-month-selector select {
+  width: 100%;
+}
+
+.pm-custom-date-row {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pm-custom-date-row input {
+  width: 100%;
 }
 
 @media (max-width: 768px) {
