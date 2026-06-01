@@ -1118,6 +1118,49 @@ const getTeamMetricRow = (metric) => {
       .filter((pm) => Number(pm.value || 0) > 0)
       .sort((a, b) => b.value - a.value);
 
+const getPMCustomSalesData = (pmName) => {
+  if (!pmStartDate || !pmEndDate) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  const start = dateOnly(parseInputDate(pmStartDate));
+  const end = dateOnly(parseInputDate(pmEndDate));
+
+  let contractTotal = 0;
+  let contracts = 0;
+
+  salesRows.forEach((row) => {
+    const rowPM =
+      String(row["Project Manager"] || "").trim() ||
+      String(row["Salesperson"] || "").trim();
+
+    if (rowPM !== pmName) return;
+
+    const rowDate = parseExcelDate(row["Approved Date"]);
+    if (!rowDate) return;
+
+    const cleanDate = dateOnly(rowDate);
+
+    if (cleanDate < start || cleanDate > end) return;
+
+    const amount = parseMoney(row["Contract Amount"]);
+
+    contractTotal += amount;
+    contracts += 1;
+  });
+
+  return {
+    contractTotal,
+    contracts,
+    averageContract:
+      contracts > 0 ? contractTotal / contracts : 0,
+  };
+};
+
     const index = ranked.findIndex((pm) => pm.name === pmName);
 
     return {
@@ -1190,30 +1233,32 @@ const activeMonths =
     ? customMonths
     : [selectedMonth];
 
-const contractTotal = activeMonths.reduce(
-  (sum, month) => sum + getPMMetric(pmName, "Contract Total", month),
-  0
-);
-console.log("PM:", pmName);
-console.log("Custom Start:", pmStartDate);
-console.log("Custom End:", pmEndDate);
-console.log("Month Options:", monthOptions);
-console.log("Active Months:", activeMonths);
-console.log(
-  "Active Month Values:",
-  activeMonths.map((month) => ({
-    month,
-    value: getPMMetric(pmName, "Contract Total", month),
-  }))
-);
+const customSalesData = getPMCustomSalesData(pmName);
 
-const contracts = activeMonths.reduce(
-  (sum, month) => sum + getPMMetric(pmName, "Contracts", month),
-  0
-);
+const contractTotal =
+  pmDateMode === "custom"
+    ? customSalesData.contractTotal
+    : activeMonths.reduce(
+        (sum, month) =>
+          sum + getPMMetric(pmName, "Contract Total", month),
+        0
+      );
+
+const contracts =
+  pmDateMode === "custom"
+    ? customSalesData.contracts
+    : activeMonths.reduce(
+        (sum, month) =>
+          sum + getPMMetric(pmName, "Contracts", month),
+        0
+      );
 
 const averageContract =
-  contracts > 0 ? contractTotal / contracts : 0;
+  pmDateMode === "custom"
+    ? customSalesData.averageContract
+    : contracts > 0
+    ? contractTotal / contracts
+    : 0;
 
 const closingRate =
   pmDateMode === "month"
@@ -1637,11 +1682,12 @@ quarterlyRemaining,
   }, [authorized, leadRows, startDate, endDate]);
 
 
-  useEffect(() => {
-    if (!pmAuthorized) return;
+useEffect(() => {
+  if (!pmAuthorized) return;
 
-    loadPMFile();
-  }, [pmAuthorized]);
+  loadPMFile();
+  loadSalesFile();
+}, [pmAuthorized]);
 
   useEffect(() => {
   if (!pmRows.length || selectedPMMonth) return;
