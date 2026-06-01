@@ -1268,9 +1268,15 @@ const averageContract =
     : 0;
 
 const closingRate =
-  pmDateMode === "month"
-    ? getPMMetric(pmName, "Closing Rate", selectedMonth)
-    : 0;
+  pmDateMode === "custom"
+    ? (
+        activeMonths.reduce(
+          (sum, month) =>
+            sum + getPMMetric(pmName, "Closing Rate", month),
+          0
+        ) / activeMonths.length
+      )
+    : getPMMetric(pmName, "Closing Rate", selectedMonth);
 
 
     const lyContractTotal = getPMMetric(
@@ -2060,7 +2066,7 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
 
 <PMMetricCard
   label="Closing Rate"
-  value={isCustomMode ? "N/A" : displayPercent(pmData.closingRate, 1)}
+  value={displayPercent(pmData.closingRate, 1)}
   comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
   comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
   difference={isCustomMode ? null : closingRateVsLY}
