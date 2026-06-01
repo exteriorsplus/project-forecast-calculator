@@ -1073,7 +1073,7 @@ const getTeamMetricRow = (metric) => {
 
     const headerRow = pmRows[startIndex] || [];
     const metricRow = pmRows
-      .slice(startIndex + 1, startIndex + 6)
+  .slice(startIndex + 1, startIndex + 10)
       .find(
         (row) =>
           String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
