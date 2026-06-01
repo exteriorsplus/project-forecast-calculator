@@ -90,10 +90,21 @@ const historicalMarketingData = [
   },
 ];
 
+const PM_GOALS = {
+  "William Dye": 1750000,
+  "Jamie Jenkins": 1750000,
+  "Andrew Painter": 1750000,
+  "George Anim": 1000000,
+  "John Fincher": 1500000,
+  "Dani Cole": 1500000,
+  "Megan Rice": 1000000,
+  "Mike Harr": 500000,
+};
 
-const PM_COMPANY_GOAL = 10000000;
-const PM_ACTIVE_COUNT = 7;
-const PM_INDIVIDUAL_GOAL = PM_COMPANY_GOAL / PM_ACTIVE_COUNT;
+const PM_COMPANY_GOAL = Object.values(PM_GOALS).reduce(
+  (sum, goal) => sum + goal,
+  0
+);
 const PM_COMMISSION_RATE = 0.2;
 
 const projectManagers = [
@@ -146,13 +157,13 @@ const projectManagers = [
     password: "william123",
     activeGoal: true,
   },
-  {
-    name: "Mike Harr",
-    slug: "mikeharr",
-    image: "/pm/mikeharr.jpg",
-    password: "mike123",
-    activeGoal: false,
-  },
+{
+  name: "Mike Harr",
+  slug: "mikeharr",
+  image: "/pm/mikeharr.jpg",
+  password: "mike123",
+  activeGoal: true,
+},
 ];
 
 const getCurrentProjectManager = () => {
@@ -1162,13 +1173,18 @@ const teamClosingRate = getTeamMetric(
     const saleAmount = Number(pmSaleAmount || 0);
     const projectedYTDRevenue = ytdRevenue + saleAmount;
     const commission = saleAmount * PM_COMMISSION_RATE;
-    const goalPercent = ytdRevenue / PM_INDIVIDUAL_GOAL;
-    const projectedGoalPercent = projectedYTDRevenue / PM_INDIVIDUAL_GOAL;
-    const remainingToGoal = Math.max(PM_INDIVIDUAL_GOAL - ytdRevenue, 0);
+const individualGoal =
+  PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
-    return {
-      monthOptions,
-      selectedMonth,
+const goalPercent = individualGoal > 0 ? ytdRevenue / individualGoal : 0;
+const projectedGoalPercent =
+  individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
+const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
+
+return {
+  monthOptions,
+  selectedMonth,
+  individualGoal,
       lastYearMonth,
       ytdRevenue,
       ytdContracts,
@@ -1861,7 +1877,7 @@ const closingRankLabel = pmData.closingRateRank.rank
             <div className="pm-goal-top">
               <span>YTD Revenue Goal Progress</span>
               <strong>{money(pmData.ytdRevenue)}</strong>
-              <p>Goal: {money(PM_INDIVIDUAL_GOAL)}</p>
+              <p>Goal: {money(pmData.individualGoal)}</p>
             </div>
 
             <div className="pm-thermometer">
