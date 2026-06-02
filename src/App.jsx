@@ -2046,16 +2046,15 @@ const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
 const crushingItMessages = [
-  "You're crushing it. Production is well above goal.",
-  "Outstanding work. You're significantly ahead of pace.",
-  "You're setting the standard for performance this month.",
-  "Exceptional production. Keep your foot on the gas.",
-  "Your hard work is paying off in a big way.",
-  "Momentum is strong and results continue to follow.",
-  "You're operating at a very high level right now.",
-  "Fantastic job. You're well ahead of target.",
-  "This is the kind of month people remember.",
-  "Keep doing what you're doing. It's working.",
+  "You're crushing it. Production is well above goal. The consistency and effort you're putting in are clearly paying off.",
+  
+  "Outstanding work. You're significantly ahead of pace. Keep building momentum and finish the month even stronger.",
+  
+  "You're setting the standard for performance this month. The habits that got you here are worth repeating every day.",
+  
+  "Exceptional production. Keep your foot on the gas. This kind of momentum can create an incredible quarter.",
+  
+  "Your hard work is paying off in a big way. Stay focused and continue capitalizing on opportunities."
 ];
 
 const onTrackMessages = [
@@ -2072,44 +2071,43 @@ const onTrackMessages = [
 ];
 
 const closeMessages = [
-  "You're closer than you think. Keep pushing.",
-  "A strong finish can put you over the top.",
-  "The goal remains within reach.",
-  "Keep building momentum. You're not far away.",
-  "Stay focused. A few more wins could make the difference.",
-  "The opportunity is still there.",
-  "You're in striking distance of your target.",
-  "Now is the time to finish strong.",
-  "Stay disciplined and keep moving forward.",
-  "Every contract matters from here."
+  "You're closer than you think. Keep pushing. A few additional contracts could completely change the outcome of this month.",
+
+  "A strong finish can put you over the top. Stay focused on the opportunities directly in front of you.",
+
+  "The goal remains within reach. Consistent activity over the next few days can make all the difference.",
+
+  "Keep building momentum. You're not far away. Continue working your process and trust the results will come.",
+
+  "Stay disciplined and keep moving forward. The finish line is much closer than it appears."
 ];
 
 const needsPushMessages = [
-  "Keep grinding. Consistent effort pays off.",
-  "The month isn't over yet. Stay focused.",
-  "Every opportunity matters from this point forward.",
-  "Small wins add up quickly.",
-  "Keep working the process and results will follow.",
-  "Stay persistent and keep creating opportunities.",
-  "There's still time to improve your position.",
-  "Focus on the next opportunity, not the scoreboard.",
-  "Progress starts with consistent activity.",
-  "Keep your energy high and stay engaged.",
+  "Keep grinding. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
+
+  "The month isn't over yet. Stay focused. One strong week can completely change the trajectory of your results.",
+
+  "Every opportunity matters from this point forward. Keep creating conversations and the numbers will follow.",
+
+  "Small wins add up quickly. Focus on the next appointment, the next estimate, and the next contract.",
+
+  "Stay persistent and keep creating opportunities. Success often comes right after the point where others give up."
 ];
 
 const goalMotivation = (() => {
   const pct = pmData.monthlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
 
   if (pct >= 1.5)
-    return pickRandom(crushingItMessages);
+    return `${firstName}, ${pickRandom(crushingItMessages)}`;
 
   if (pct >= 0.9)
-    return pickRandom(onTrackMessages);
+    return `${firstName}, ${pickRandom(onTrackMessages)}`;
 
   if (pct >= 0.7)
-    return pickRandom(closeMessages);
+    return `${firstName}, ${pickRandom(closeMessages)}`;
 
-  return pickRandom(needsPushMessages);
+  return `${firstName}, ${pickRandom(needsPushMessages)}`;
 })();
 
 const generatePMInsight = ({
