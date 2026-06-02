@@ -2039,6 +2039,72 @@ const closeNeedsMessages = [
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
+const onTrackMessages = [
+  "You're on track to achieve your goal.",
+  "Great progress. Keep pushing toward the finish line.",
+  "You're in a strong position to finish successfully.",
+  "Steady effort is producing solid results.",
+  "The goal is well within reach.",
+  "Momentum is building in the right direction.",
+  "You're trending toward a successful month.",
+  "Stay focused and keep stacking wins.",
+  "Your consistency is paying off.",
+  "Keep the pressure on and finish strong."
+];
+
+const closeMessages = [
+  "You're closer than you think. Keep pushing.",
+  "A strong finish can put you over the top.",
+  "The goal remains within reach.",
+  "Keep building momentum. You're not far away.",
+  "Stay focused. A few more wins could make the difference.",
+  "The opportunity is still there.",
+  "You're in striking distance of your target.",
+  "Now is the time to finish strong.",
+  "Stay disciplined and keep moving forward.",
+  "Every contract matters from here."
+];
+
+const needsPushMessages = [
+  "Keep grinding. Consistent effort pays off.",
+  "The month isn't over yet. Stay focused.",
+  "Every opportunity matters from this point forward.",
+  "Small wins add up quickly.",
+  "Keep working the process and results will follow.",
+  "Stay persistent and keep creating opportunities.",
+  "There's still time to improve your position.",
+  "Focus on the next opportunity, not the scoreboard.",
+  "Progress starts with consistent activity.",
+  "Keep your energy high and stay engaged.",
+];
+
+const goalMotivation = (() => {
+  const pct = pmData.monthlyGoalPercent;
+
+  if (pct >= 1.5)
+    return pickRandom(crushingItMessages);
+
+  if (pct >= 0.9)
+    return pickRandom(onTrackMessages);
+
+  if (pct >= 0.7)
+    return pickRandom(closeMessages);
+
+  return pickRandom(needsPushMessages);
+})();
+
+  if (pct >= 1.5)
+    return pickRandom(crushingItMessages);
+
+  if (pct >= 0.9)
+    return pickRandom(onTrackMessages);
+
+  if (pct >= 0.7)
+    return pickRandom(closeMessages);
+
+  return pickRandom(needsPushMessages);
+})();
+
 const generatePMInsight = ({
   goalPercent,
   revenueVsTeam,
@@ -2399,6 +2465,7 @@ difference={{
       : "Over Goal"
   }  
   value={money(Math.abs(pmData.monthlyRemaining))}
+  customText={goalMotivation}
 />
 <PMMetricCard
   label="Quarterly Goal"
