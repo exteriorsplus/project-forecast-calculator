@@ -711,6 +711,11 @@ function PMMetricCard({
           {difference.label}
         </div>
       )}
+      {customMessage && (
+  <div className="pm-goal-message">
+    {customMessage}
+  </div>
+)}
     </div>
   );
 }
@@ -2465,9 +2470,9 @@ difference={{
     pmData.monthlyRemaining >= 0
       ? "Monthly Remaining"
       : "Over Goal"
-  }  
+  }
   value={money(Math.abs(pmData.monthlyRemaining))}
-  customText={goalMotivation}
+  customMessage={goalMotivation}
 />
 <PMMetricCard
   label="Quarterly Goal"

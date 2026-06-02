@@ -1732,3 +1732,20 @@ input::placeholder {
   background: #fff7d6;
   color: #9a6a00;
 }
+.pm-goal-message {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #64748b;
+  text-align: center;
+  padding: 0 10px;
+}
+.pm-goal-message {
+  margin-top: 14px;
+  padding: 0 12px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #64748b;
+  font-weight: 500;
+}
