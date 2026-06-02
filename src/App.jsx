@@ -2487,19 +2487,7 @@ difference={{
   className: monthlyGoalClass,
 }}
     />
-    <section className="mike-moment-card">
-  <div className="mike-moment-avatar">
-    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
-  </div>
 
-  <div className="mike-moment-bubble">
-    <div className="mike-moment-title">
-      💡 Mike Moment
-    </div>
-
-    <p>{goalMotivation}</p>
-  </div>
-</section>
 
 <PMMetricCard
   label={
