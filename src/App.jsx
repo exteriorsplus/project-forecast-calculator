@@ -1345,7 +1345,7 @@ const monthlyPace =
 const monthlyGoalPercent =
   monthlyGoal > 0 ? monthlyPace / monthlyGoal : 0;
 
-const monthlyRemaining = Math.max(monthlyGoal - monthlyPace, 0);
+const monthlyRemaining = monthlyGoal - monthlyPace;
 
 const quarterStartIndex =
   fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
@@ -1364,8 +1364,9 @@ const quarterRevenue = quarterMonths.reduce(
 const quarterlyGoal = individualGoal / 4;
 const quarterlyGoalPercent =
   quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
-const quarterlyRemaining = Math.max(quarterlyGoal - quarterRevenue, 0);
-
+const quarterlyRemaining =
+  quarterlyGoal - quarterRevenue;
+  
 return {
   monthOptions,
   selectedMonth,
@@ -2350,10 +2351,14 @@ comparisonValue={money(pmData.monthlyPace)}
       }}
     />
 
-    <PMMetricCard
-      label="Monthly Remaining"
-      value={money(pmData.monthlyRemaining)}
-    />
+<PMMetricCard
+  label={
+    pmData.monthlyRemaining >= 0
+      ? "Monthly Remaining"
+      : "Over Goal"
+  }  
+  value={money(Math.abs(pmData.monthlyRemaining))}
+/>
 
     <PMMetricCard
       label="Quarterly Goal"
