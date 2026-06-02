@@ -2093,18 +2093,6 @@ const goalMotivation = (() => {
   return pickRandom(needsPushMessages);
 })();
 
-  if (pct >= 1.5)
-    return pickRandom(crushingItMessages);
-
-  if (pct >= 0.9)
-    return pickRandom(onTrackMessages);
-
-  if (pct >= 0.7)
-    return pickRandom(closeMessages);
-
-  return pickRandom(needsPushMessages);
-})();
-
 const generatePMInsight = ({
   goalPercent,
   revenueVsTeam,
