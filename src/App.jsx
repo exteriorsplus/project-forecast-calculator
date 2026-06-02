@@ -2341,7 +2341,7 @@ const isCustomMode = pmDateMode === "custom";
     <PMMetricCard
       label="Monthly Goal"
       value={money(pmData.monthlyGoal)}
-comparisonLabel="Monthly Pace"
+comparisonLabel="Monthly Actual"
 comparisonValue={money(pmData.monthlyPace)}
       difference={{
         label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
