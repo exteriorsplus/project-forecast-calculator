@@ -1903,67 +1903,44 @@ const closingRankLabel = pmData.closingRateRank.rank
       pmData.contractTotal,
       pmData.lyContractTotal
     );
-    const contractsVsLY = compareNumbers(
-      pmData.contracts,
-      pmData.lyContracts
-    );
-    const averageVsLY = compareNumbers(
-      pmData.averageContract,
-      pmData.lyAverageContract
-    );
-    const closingRateVsLY = compareNumbers(
-      pmData.closingRate,
-      pmData.lyClosingRate,
-      true
-    );
+const revenueVsTeam = compareNumbers(
+  pmData.contractTotal,
+  pmData.teamContractTotal
+);
 
-    const revenueVsTeam = compareNumbers(
-      pmData.contractTotal,
-      pmData.teamContractTotal
-    );
-    const pmInsight = generatePMInsight({
-  goalPercent: pmData.goalPercent || 0,
-  revenueVsTeam:
-    revenueVsTeam?.value || 0,
-  contractsVsTeam:
-    contractsVsTeam?.value || 0,
-  averageVsTeam:
-    averageVsTeam?.value || 0,
-  closingRateVsTeam:
-    closingRateVsTeam?.value || 0,
-});
-    const contractsVsTeam = compareNumbers(
-      pmData.contracts,
-      pmData.teamContracts
-    );
-    const averageVsTeam = compareNumbers(
-      pmData.averageContract,
-      pmData.teamAverageContract
-    );
-    const closingRateVsTeam = compareNumbers(
-      pmData.closingRate,
-      pmData.teamClosingRate,
-      true
-    );
-    const generatePMInsight = ({
+const contractsVsTeam = compareNumbers(
+  pmData.contracts,
+  pmData.teamContracts
+);
+
+const averageVsTeam = compareNumbers(
+  pmData.averageContract,
+  pmData.teamAverageContract
+);
+
+const closingRateVsTeam = compareNumbers(
+  pmData.closingRate,
+  pmData.teamClosingRate,
+  true
+);
+
+const generatePMInsight = ({
   goalPercent,
   revenueVsTeam,
-  contractsVsTeam,
   averageVsTeam,
   closingRateVsTeam,
 }) => {
   const messages = [];
 
-  // Goal pacing
-  if (goalPercent >= 100) {
+  if (goalPercent >= 1) {
     messages.push(
       "Outstanding work. You've already exceeded your goal for this period."
     );
-  } else if (goalPercent >= 80) {
+  } else if (goalPercent >= 0.8) {
     messages.push(
       "You're on pace to reach your goal and finish the period strong."
     );
-  } else if (goalPercent >= 60) {
+  } else if (goalPercent >= 0.6) {
     messages.push(
       "You're making solid progress toward your goal with time remaining."
     );
@@ -1973,8 +1950,7 @@ const closingRankLabel = pmData.closingRateRank.rank
     );
   }
 
-  // Revenue vs Team
-  if (revenueVsTeam > 25) {
+  if (revenueVsTeam > 0.25) {
     messages.push(
       "Revenue production is significantly outperforming the team average."
     );
@@ -1988,23 +1964,21 @@ const closingRankLabel = pmData.closingRateRank.rank
     );
   }
 
-  // Average Contract
-  if (averageVsTeam > 10) {
+  if (averageVsTeam > 0.1) {
     messages.push(
       "Your average contract value continues to outperform the team."
     );
-  } else if (averageVsTeam < -10) {
+  } else if (averageVsTeam < -0.1) {
     messages.push(
       "Increasing average contract value could have a meaningful impact on results."
     );
   }
 
-  // Closing Rate
-  if (closingRateVsTeam > 5) {
+  if (closingRateVsTeam > 0.05) {
     messages.push(
       "Your closing efficiency remains one of your strongest advantages."
     );
-  } else if (closingRateVsTeam < -5) {
+  } else if (closingRateVsTeam < -0.05) {
     messages.push(
       "Improving conversion efficiency could unlock additional growth."
     );
@@ -2012,6 +1986,13 @@ const closingRankLabel = pmData.closingRateRank.rank
 
   return messages.slice(0, 3).join(" ");
 };
+
+const pmInsight = generatePMInsight({
+  goalPercent: pmData.goalPercent || 0,
+  revenueVsTeam: revenueVsTeam?.rawDifference || 0,
+  averageVsTeam: averageVsTeam?.rawDifference || 0,
+  closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
+});
 const isCustomMode = pmDateMode === "custom";
 const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
     return (
