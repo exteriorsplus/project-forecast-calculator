@@ -2111,6 +2111,27 @@ const pmInsight = generatePMInsight({
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
 });
 const isCustomMode = pmDateMode === "custom";
+const selectedMonthDate = new Date(pmData.selectedMonth);
+const now = new Date();
+
+const isPastMonth =
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() < now.getMonth());
+
+const monthlyGoalClass =
+  pmData.monthlyGoalPercent >= 1
+    ? "positive"
+    : isPastMonth
+    ? "negative"
+    : "warning";
+
+const quarterlyGoalClass =
+  pmData.quarterlyGoalPercent >= 1
+    ? "positive"
+    : isPastMonth
+    ? "negative"
+    : "warning";
     return (
       <div className="page pm-page">
         <header className="header">
@@ -2344,11 +2365,10 @@ const isCustomMode = pmDateMode === "custom";
       value={money(pmData.monthlyGoal)}
 comparisonLabel="Monthly Actual"
 comparisonValue={money(pmData.monthlyPace)}
-      difference={{
-        label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-        className:
-        pmData.monthlyGoalPercent >= 1 ? "positive" : "warning",
-      }}
+difference={{
+  label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+  className: monthlyGoalClass,
+}}
     />
 
 <PMMetricCard
@@ -2359,18 +2379,16 @@ comparisonValue={money(pmData.monthlyPace)}
   }  
   value={money(Math.abs(pmData.monthlyRemaining))}
 />
-
-    <PMMetricCard
-      label="Quarterly Goal"
-      value={money(pmData.quarterlyGoal)}
-      comparisonLabel="Current Quarter"
-      comparisonValue={money(pmData.quarterRevenue)}
-difference={{
-  label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
-  className:
-    pmData.quarterlyGoalPercent >= 1 ? "positive" : "warning",
-}}
-    />
+<PMMetricCard
+  label="Quarterly Goal"
+  value={money(pmData.quarterlyGoal)}
+  comparisonLabel="Current Quarter"
+  comparisonValue={money(pmData.quarterRevenue)}
+  difference={{
+    label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
+    className: quarterlyGoalClass,
+  }}
+/>
 
     <PMMetricCard
       label="Quarterly Remaining"
