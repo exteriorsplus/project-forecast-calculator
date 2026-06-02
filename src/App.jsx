@@ -2045,29 +2045,26 @@ const closeNeedsMessages = [
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
-const crushingItMessages = [
-  "You're crushing it. Production is well above goal. The consistency and effort you're putting in are clearly paying off.",
-  
-  "Outstanding work. You're significantly ahead of pace. Keep building momentum and finish the month even stronger.",
-  
-  "You're setting the standard for performance this month. The habits that got you here are worth repeating every day.",
-  
-  "Exceptional production. Keep your foot on the gas. This kind of momentum can create an incredible quarter.",
-  
-  "Your hard work is paying off in a big way. Stay focused and continue capitalizing on opportunities."
-];
-
 const onTrackMessages = [
-  "You're on track to achieve your goal.",
-  "Great progress. Keep pushing toward the finish line.",
-  "You're in a strong position to finish successfully.",
-  "Steady effort is producing solid results.",
-  "The goal is well within reach.",
-  "Momentum is building in the right direction.",
-  "You're trending toward a successful month.",
-  "Stay focused and keep stacking wins.",
-  "Your consistency is paying off.",
-  "Keep the pressure on and finish strong."
+  "You're on track to achieve your goal. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
+
+  "Great progress. Keep pushing toward the finish line. Staying disciplined over the next few weeks will put you in a strong position to exceed expectations.",
+
+  "You're in a strong position to finish successfully. Continue working your pipeline and capitalizing on opportunities. The goal is well within reach.",
+
+  "Steady effort is producing solid results. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
+
+  "The goal is well within reach. Continue focusing on quality opportunities and maintaining urgency. A strong finish could put you comfortably over target.",
+
+  "Momentum is building in the right direction. Stay committed to the daily activities that drive results. You're putting yourself in a position to succeed.",
+
+  "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
+
+  "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction.",
+
+  "Your consistency is paying off. Continue building on the progress you've already made. Every additional contract strengthens your position.",
+
+  "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues."
 ];
 
 const closeMessages = [
@@ -2079,7 +2076,17 @@ const closeMessages = [
 
   "Keep building momentum. You're not far away. Continue working your process and trust the results will come.",
 
-  "Stay disciplined and keep moving forward. The finish line is much closer than it appears."
+  "Stay focused. A few more wins could make the difference. The opportunity to finish strong is still there.",
+
+  "The goal is still achievable. Continue following up and creating opportunities. Success often comes from persistence.",
+
+  "You're in striking distance of your target. Keep your energy high and maintain urgency in every conversation.",
+
+  "Now is the time to finish strong. Every appointment and estimate matters from this point forward.",
+
+  "Stay disciplined and keep moving forward. The finish line is much closer than it appears.",
+
+  "Every contract matters from here. Continue stacking small wins and the larger results will follow."
 ];
 
 const needsPushMessages = [
@@ -2091,7 +2098,17 @@ const needsPushMessages = [
 
   "Small wins add up quickly. Focus on the next appointment, the next estimate, and the next contract.",
 
-  "Stay persistent and keep creating opportunities. Success often comes right after the point where others give up."
+  "Keep working the process and results will follow. Consistency is often the difference between average and exceptional performance.",
+
+  "Stay persistent and keep creating opportunities. Success often comes right after the point where others give up.",
+
+  "There's still time to improve your position. Continue executing the fundamentals and trust the process.",
+
+  "Focus on the next opportunity, not the scoreboard. Daily activity creates long-term success.",
+
+  "Progress starts with consistent activity. Continue building momentum one conversation and one contract at a time.",
+
+  "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
 ];
 
 const goalMotivation = (() => {
