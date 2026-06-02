@@ -2347,7 +2347,7 @@ comparisonValue={money(pmData.monthlyPace)}
       difference={{
         label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
         className:
-          pmData.monthlyGoalPercent >= 1 ? "positive" : "neutral",
+        pmData.monthlyGoalPercent >= 1 ? "positive" : "warning",
       }}
     />
 
@@ -2365,11 +2365,11 @@ comparisonValue={money(pmData.monthlyPace)}
       value={money(pmData.quarterlyGoal)}
       comparisonLabel="Current Quarter"
       comparisonValue={money(pmData.quarterRevenue)}
-      difference={{
-        label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
-        className:
-          pmData.quarterlyGoalPercent >= 1 ? "positive" : "neutral",
-      }}
+difference={{
+  label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
+  className:
+    pmData.quarterlyGoalPercent >= 1 ? "positive" : "warning",
+}}
     />
 
     <PMMetricCard
