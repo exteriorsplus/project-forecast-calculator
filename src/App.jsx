@@ -2039,6 +2039,19 @@ const closeNeedsMessages = [
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
+const crushingItMessages = [
+  "You're crushing it. Production is well above goal.",
+  "Outstanding work. You're significantly ahead of pace.",
+  "You're setting the standard for performance this month.",
+  "Exceptional production. Keep your foot on the gas.",
+  "Your hard work is paying off in a big way.",
+  "Momentum is strong and results continue to follow.",
+  "You're operating at a very high level right now.",
+  "Fantastic job. You're well ahead of target.",
+  "This is the kind of month people remember.",
+  "Keep doing what you're doing. It's working.",
+];
+
 const onTrackMessages = [
   "You're on track to achieve your goal.",
   "Great progress. Keep pushing toward the finish line.",
