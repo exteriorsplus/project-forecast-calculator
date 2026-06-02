@@ -1898,11 +1898,27 @@ const revenueRankLabel = pmData.revenueRank.rank
 const closingRankLabel = pmData.closingRateRank.rank
   ? `#${pmData.closingRateRank.rank}`
   : "N/A";
+const revenueVsLY = compareNumbers(
+  pmData.contractTotal,
+  pmData.lyContractTotal
+);
 
-    const revenueVsLY = compareNumbers(
-      pmData.contractTotal,
-      pmData.lyContractTotal
-    );
+const contractsVsLY = compareNumbers(
+  pmData.contracts,
+  pmData.lyContracts
+);
+
+const averageVsLY = compareNumbers(
+  pmData.averageContract,
+  pmData.lyAverageContract
+);
+
+const closingRateVsLY = compareNumbers(
+  pmData.closingRate,
+  pmData.lyClosingRate,
+  true
+);
+
 const revenueVsTeam = compareNumbers(
   pmData.contractTotal,
   pmData.teamContractTotal
