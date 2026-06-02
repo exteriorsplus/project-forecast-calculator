@@ -1940,6 +1940,97 @@ const closingRateVsTeam = compareNumbers(
   true
 );
 
+const exceededGoalMessages = [
+  "Outstanding work. You've already surpassed your goal for this period.",
+  "Excellent performance. You've exceeded expectations and continue to set the pace.",
+  "You've reached your goal ahead of schedule and are building momentum.",
+  "Fantastic job. Your production has already cleared the target for this period.",
+  "You're operating at a very high level and have successfully exceeded your goal."
+];
+
+const onPaceMessages = [
+  "You're on pace to reach your goal and finish the period strong.",
+  "Solid progress. Current production trends support achieving your target.",
+  "You're tracking well toward your goal and maintaining healthy momentum.",
+  "Keep doing what you're doing. You're positioned to reach your target.",
+  "Performance remains strong and you're currently pacing toward success."
+];
+
+const progressMessages = [
+  "You're making steady progress toward your goal with time remaining.",
+  "Momentum is building and there is still plenty of opportunity ahead.",
+  "Consistent effort now can create a strong finish to the period.",
+  "The foundation is there. Continue focusing on quality opportunities.",
+  "Progress remains positive and there is room to accelerate."
+];
+
+const pushMessages = [
+  "Keep pushing. A strong finish can still put you back on pace.",
+  "There is plenty of opportunity remaining to improve results.",
+  "Focus on controllable activities and the numbers will follow.",
+  "A few strong weeks can quickly change the trajectory.",
+  "Stay consistent and continue building momentum."
+];
+
+const revenueStrongMessages = [
+  "Revenue production is outperforming the team average.",
+  "Your revenue generation continues to lead the way.",
+  "You're producing above the team's current pace.",
+  "Revenue performance remains a key strength.",
+  "Your production levels are setting a strong example."
+];
+
+const revenueEliteMessages = [
+  "Revenue production is significantly outperforming the team average.",
+  "You're operating well above the team's current production pace.",
+  "Your revenue performance ranks among the strongest on the team.",
+  "Production continues to separate you from the field.",
+  "You're creating substantial value compared with team benchmarks."
+];
+
+const revenueNeedsMessages = [
+  "Revenue is currently below the team average, but opportunities remain.",
+  "Closing a few additional projects could quickly narrow the gap.",
+  "There is still time to improve revenue performance this period.",
+  "The team benchmark remains within reach.",
+  "Focus on pipeline conversion and revenue growth will follow."
+];
+
+const avgStrongMessages = [
+  "Your average contract value continues to outperform the team.",
+  "Customers are trusting you with larger projects than average.",
+  "Contract quality remains one of your strengths.",
+  "Higher-value projects are driving strong results.",
+  "Your average sale size remains above benchmark levels."
+];
+
+const avgNeedsMessages = [
+  "Increasing average contract value could have a meaningful impact.",
+  "Larger project opportunities could accelerate growth.",
+  "Focusing on project scope may improve overall production.",
+  "Even modest gains in average contract size would create significant upside.",
+  "Exploring higher-value opportunities may strengthen results."
+];
+
+const closeStrongMessages = [
+  "Your closing efficiency remains one of your strongest advantages.",
+  "Customers continue responding well to your sales process.",
+  "Conversion performance is helping drive strong results.",
+  "Your closing rate continues to outperform expectations.",
+  "Strong conversion efficiency remains a competitive advantage."
+];
+
+const closeNeedsMessages = [
+  "Improving conversion efficiency could unlock additional growth.",
+  "Small gains in closing rate could have a large impact on production.",
+  "More effective follow-up may improve conversion results.",
+  "There is opportunity to strengthen closing performance.",
+  "Improved conversion rates could significantly boost revenue."
+];
+
+const pickRandom = (messages) =>
+  messages[Math.floor(Math.random() * messages.length)];
+
 const generatePMInsight = ({
   goalPercent,
   revenueVsTeam,
@@ -1949,56 +2040,58 @@ const generatePMInsight = ({
   const messages = [];
 
   if (goalPercent >= 1) {
-    messages.push(
-      "Outstanding work. You've already exceeded your goal for this period."
-    );
+messages.push(
+  pickRandom(exceededGoalMessages)
+);
   } else if (goalPercent >= 0.8) {
-    messages.push(
-      "You're on pace to reach your goal and finish the period strong."
-    );
+messages.push(
+  pickRandom(onPaceMessages)
+);
   } else if (goalPercent >= 0.6) {
-    messages.push(
-      "You're making solid progress toward your goal with time remaining."
-    );
+messages.push(
+  pickRandom(progressMessages)
+);
   } else {
-    messages.push(
-      "Keep pushing. A strong finish can still put you back on pace."
-    );
+messages.push(
+  pickRandom(pushMessages)
+);
   }
 
-  if (revenueVsTeam > 0.25) {
-    messages.push(
-      "Revenue production is significantly outperforming the team average."
-    );
-  } else if (revenueVsTeam > 0) {
-    messages.push(
-      "Revenue production is currently above the team average."
-    );
-  } else {
-    messages.push(
-      "Revenue is trailing the team average, but opportunities remain to close the gap."
-    );
-  }
+if (revenueVsTeam > 0.25) {
+  messages.push(
+    pickRandom(revenueEliteMessages)
+  );
+}
+else if (revenueVsTeam > 0) {
+  messages.push(
+    pickRandom(revenueStrongMessages)
+  );
+}
+else {
+  messages.push(
+    pickRandom(revenueNeedsMessages)
+  );
+}
 
-  if (averageVsTeam > 0.1) {
-    messages.push(
-      "Your average contract value continues to outperform the team."
-    );
-  } else if (averageVsTeam < -0.1) {
-    messages.push(
-      "Increasing average contract value could have a meaningful impact on results."
-    );
-  }
+if (averageVsTeam > 0.1) {
+  messages.push(
+    pickRandom(avgStrongMessages)
+  );
+} else if (averageVsTeam < -0.1) {
+  messages.push(
+    pickRandom(avgNeedsMessages)
+  );
+}
 
-  if (closingRateVsTeam > 0.05) {
-    messages.push(
-      "Your closing efficiency remains one of your strongest advantages."
-    );
-  } else if (closingRateVsTeam < -0.05) {
-    messages.push(
-      "Improving conversion efficiency could unlock additional growth."
-    );
-  }
+if (closingRateVsTeam > 0.05) {
+  messages.push(
+    pickRandom(closeStrongMessages)
+  );
+} else if (closingRateVsTeam < -0.05) {
+  messages.push(
+    pickRandom(closeNeedsMessages)
+  );
+}
 
   return messages.slice(0, 3).join(" ");
 };
@@ -2010,7 +2103,6 @@ const pmInsight = generatePMInsight({
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
 });
 const isCustomMode = pmDateMode === "custom";
-const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
     return (
       <div className="page pm-page">
         <header className="header">
