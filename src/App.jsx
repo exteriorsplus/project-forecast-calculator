@@ -1921,6 +1921,17 @@ const closingRankLabel = pmData.closingRateRank.rank
       pmData.contractTotal,
       pmData.teamContractTotal
     );
+    const pmInsight = generatePMInsight({
+  goalPercent: pmData.goalPercent || 0,
+  revenueVsTeam:
+    revenueVsTeam?.value || 0,
+  contractsVsTeam:
+    contractsVsTeam?.value || 0,
+  averageVsTeam:
+    averageVsTeam?.value || 0,
+  closingRateVsTeam:
+    closingRateVsTeam?.value || 0,
+});
     const contractsVsTeam = compareNumbers(
       pmData.contracts,
       pmData.teamContracts
@@ -1934,6 +1945,73 @@ const closingRankLabel = pmData.closingRateRank.rank
       pmData.teamClosingRate,
       true
     );
+    const generatePMInsight = ({
+  goalPercent,
+  revenueVsTeam,
+  contractsVsTeam,
+  averageVsTeam,
+  closingRateVsTeam,
+}) => {
+  const messages = [];
+
+  // Goal pacing
+  if (goalPercent >= 100) {
+    messages.push(
+      "Outstanding work. You've already exceeded your goal for this period."
+    );
+  } else if (goalPercent >= 80) {
+    messages.push(
+      "You're on pace to reach your goal and finish the period strong."
+    );
+  } else if (goalPercent >= 60) {
+    messages.push(
+      "You're making solid progress toward your goal with time remaining."
+    );
+  } else {
+    messages.push(
+      "Keep pushing. A strong finish can still put you back on pace."
+    );
+  }
+
+  // Revenue vs Team
+  if (revenueVsTeam > 25) {
+    messages.push(
+      "Revenue production is significantly outperforming the team average."
+    );
+  } else if (revenueVsTeam > 0) {
+    messages.push(
+      "Revenue production is currently above the team average."
+    );
+  } else {
+    messages.push(
+      "Revenue is trailing the team average, but opportunities remain to close the gap."
+    );
+  }
+
+  // Average Contract
+  if (averageVsTeam > 10) {
+    messages.push(
+      "Your average contract value continues to outperform the team."
+    );
+  } else if (averageVsTeam < -10) {
+    messages.push(
+      "Increasing average contract value could have a meaningful impact on results."
+    );
+  }
+
+  // Closing Rate
+  if (closingRateVsTeam > 5) {
+    messages.push(
+      "Your closing efficiency remains one of your strongest advantages."
+    );
+  } else if (closingRateVsTeam < -5) {
+    messages.push(
+      "Improving conversion efficiency could unlock additional growth."
+    );
+  }
+
+  return messages.slice(0, 3).join(" ");
+};
 const isCustomMode = pmDateMode === "custom";
 const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
     return (
@@ -1946,6 +2024,13 @@ const customRangeLabel = `${pmStartDate} – ${pmEndDate}`;
           <div className="header-top">
             <img src="/logo.png" alt="Logo" className="logo" />
             <h1>{currentPM.name} Dashboard</h1>
+            <div className="pm-insight-box">
+  <div className="pm-insight-title">
+    Performance Insight
+  </div>
+
+  <p>{pmInsight}</p>
+</div>
           </div>
         </header>
 
