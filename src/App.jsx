@@ -1338,8 +1338,14 @@ const projectedGoalPercent =
   individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
-const monthlyGoalPercent = monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
-const monthlyRemaining = Math.max(monthlyGoal - contractTotal, 0);
+
+const monthlyPace =
+  activeMonths.length > 0 ? contractTotal / activeMonths.length : contractTotal;
+
+const monthlyGoalPercent =
+  monthlyGoal > 0 ? monthlyPace / monthlyGoal : 0;
+
+const monthlyRemaining = Math.max(monthlyGoal - monthlyPace, 0);
 
 const quarterStartIndex =
   fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
@@ -1390,6 +1396,7 @@ return {
       projectedGoalPercent,
       remainingToGoal,
       monthlyGoal,
+      monthlyPace,
 monthlyGoalPercent,
 monthlyRemaining,
 quarterRevenue,
@@ -2334,8 +2341,8 @@ const isCustomMode = pmDateMode === "custom";
     <PMMetricCard
       label="Monthly Goal"
       value={money(pmData.monthlyGoal)}
-      comparisonLabel="Current Month"
-      comparisonValue={money(pmData.contractTotal)}
+comparisonLabel="Monthly Pace"
+comparisonValue={money(pmData.monthlyPace)}
       difference={{
         label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
         className:
