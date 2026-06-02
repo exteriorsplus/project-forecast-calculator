@@ -1353,32 +1353,11 @@ const projectedGoalPercent =
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
 
-const getDaysInMonth = (date) =>
-  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
-const getElapsedDaysInMonth = (date) => {
-  const selectedIsCurrentMonth =
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth();
-
-  return selectedIsCurrentMonth ? now.getDate() : getDaysInMonth(date);
-};
-
-const now = new Date();
-const selectedMonthDate = new Date(selectedMonth);
-
-const daysInSelectedMonth = getDaysInMonth(selectedMonthDate);
-const elapsedDaysInSelectedMonth = getElapsedDaysInMonth(selectedMonthDate);
-
-const monthlyProjectedRevenue =
-  elapsedDaysInSelectedMonth > 0
-    ? (contractTotal / elapsedDaysInSelectedMonth) * daysInSelectedMonth
-    : 0;
-
 const monthlyGoalPercent =
-  monthlyGoal > 0 ? monthlyProjectedRevenue / monthlyGoal : 0;
+  monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
 
-const monthlyRemaining = monthlyGoal - monthlyProjectedRevenue;
+const monthlyRemaining =
+  monthlyGoal - contractTotal;
 
 const quarterStartIndex =
   fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
@@ -1472,7 +1451,7 @@ return {
       projectedGoalPercent,
       remainingToGoal,
       monthlyGoal,
-      monthlyPace: monthlyProjectedRevenue,
+      monthlyPace: contractTotal,
       quarterlyProjectedRevenue,
 monthlyGoalPercent,
 monthlyRemaining,
