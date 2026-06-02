@@ -711,9 +711,17 @@ function PMMetricCard({
           {difference.label}
         </div>
       )}
-      {customMessage && (
-  <div className="pm-goal-message">
-    {customMessage}
+    {customMessage && (
+  <div className="mike-moment-mini">
+    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+
+    <div className="mike-moment-mini-bubble">
+      <div className="mike-moment-mini-title">
+        Mike Moment
+      </div>
+
+      <p>{customMessage}</p>
+    </div>
   </div>
 )}
     </div>
@@ -2116,7 +2124,7 @@ const goalMotivation = (() => {
   const firstName = (currentPM?.name || "").split(" ")[0];
 
   if (pct >= 1.5)
-    return `${firstName}, ${pickRandom(crushingItMessages)}`;
+    return `${firstName}, ${pickRandom(exceededGoalMessages)}`;
 
   if (pct >= 0.9)
     return `${firstName}, ${pickRandom(onTrackMessages)}`;
@@ -2479,6 +2487,19 @@ difference={{
   className: monthlyGoalClass,
 }}
     />
+    <section className="mike-moment-card">
+  <div className="mike-moment-avatar">
+    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+  </div>
+
+  <div className="mike-moment-bubble">
+    <div className="mike-moment-title">
+      💡 Mike Moment
+    </div>
+
+    <p>{goalMotivation}</p>
+  </div>
+</section>
 
 <PMMetricCard
   label={
