@@ -1757,8 +1757,8 @@ input::placeholder {
 }
 
 .mike-moment-mini img {
-  width: 72px;
-  height: 72px;
+  width: 90px;
+  height: 90px;
   border-radius: 999px;
   object-fit: cover;
   object-position: top center;
