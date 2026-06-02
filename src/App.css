@@ -1780,13 +1780,17 @@ input::placeholder {
 .mike-moment-mini-bubble::before {
   content: "";
   position: absolute;
-  left: -10px;
+  left: -11px;
   top: 28px;
-  width: 16px;
-  height: 16px;
+
+  width: 18px;
+  height: 18px;
+
   background: white;
+
   border-left: 2px solid #b91c1c;
   border-bottom: 2px solid #b91c1c;
+
   transform: rotate(45deg);
 }
 
