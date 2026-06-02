@@ -1358,7 +1358,7 @@ const monthlyGoalPercent =
 
 const monthlyRemaining =
   monthlyGoal - contractTotal;
-
+const now = new Date();
 const quarterStartIndex =
   fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
 
