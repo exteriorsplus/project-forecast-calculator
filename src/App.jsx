@@ -1353,13 +1353,29 @@ const projectedGoalPercent =
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
 
-const monthlyPace =
-  activeMonths.length > 0 ? contractTotal / activeMonths.length : contractTotal;
+const getDaysInMonth = (date) =>
+  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+const getElapsedDaysInMonth = (date) => {
+  const selectedIsCurrentMonth =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth();
+
+  return selectedIsCurrentMonth ? now.getDate() : getDaysInMonth(date);
+};
+
+const daysInSelectedMonth = getDaysInMonth(selectedMonthDate);
+const elapsedDaysInSelectedMonth = getElapsedDaysInMonth(selectedMonthDate);
+
+const monthlyProjectedRevenue =
+  elapsedDaysInSelectedMonth > 0
+    ? (pmData.contractTotal / elapsedDaysInSelectedMonth) * daysInSelectedMonth
+    : 0;
 
 const monthlyGoalPercent =
-  monthlyGoal > 0 ? monthlyPace / monthlyGoal : 0;
+  monthlyGoal > 0 ? monthlyProjectedRevenue / monthlyGoal : 0;
 
-const monthlyRemaining = monthlyGoal - monthlyPace;
+const monthlyRemaining = monthlyGoal - monthlyProjectedRevenue;
 
 const quarterStartIndex =
   fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
@@ -1375,11 +1391,53 @@ const quarterRevenue = quarterMonths.reduce(
   0
 );
 
+const getQuarterDateRange = (quarterMonths) => {
+  const firstMonth = quarterMonths[0];
+  const lastMonth = quarterMonths[quarterMonths.length - 1];
+
+  const [firstMonthName, firstYearText] = firstMonth.split(" ");
+  const [lastMonthName, lastYearText] = lastMonth.split(" ");
+
+  const firstMonthIndex = monthNames.indexOf(firstMonthName);
+  const lastMonthIndex = monthNames.indexOf(lastMonthName);
+
+  const start = new Date(Number(firstYearText), firstMonthIndex, 1);
+  const end = new Date(Number(lastYearText), lastMonthIndex + 1, 0);
+
+  return { start, end };
+};
+
+const getInclusiveDays = (start, end) => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((dateOnly(end) - dateOnly(start)) / msPerDay) + 1;
+};
+
+const quarterDateRange = getQuarterDateRange(quarterMonths);
+
+const totalQuarterDays = getInclusiveDays(
+  quarterDateRange.start,
+  quarterDateRange.end
+);
+
+const elapsedQuarterDays =
+  now < quarterDateRange.start
+    ? 0
+    : now > quarterDateRange.end
+    ? totalQuarterDays
+    : getInclusiveDays(quarterDateRange.start, now);
+
 const quarterlyGoal = individualGoal / 4;
+
+const quarterlyProjectedRevenue =
+  elapsedQuarterDays > 0
+    ? (quarterRevenue / elapsedQuarterDays) * totalQuarterDays
+    : 0;
+
 const quarterlyGoalPercent =
-  quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
+  quarterlyGoal > 0 ? quarterlyProjectedRevenue / quarterlyGoal : 0;
+
 const quarterlyRemaining =
-  quarterlyGoal - quarterRevenue;
+  quarterlyGoal - quarterlyProjectedRevenue;
   
 return {
   monthOptions,
@@ -1411,7 +1469,8 @@ return {
       projectedGoalPercent,
       remainingToGoal,
       monthlyGoal,
-      monthlyPace,
+      monthlyPace: monthlyProjectedRevenue,
+      quarterlyProjectedRevenue,
 monthlyGoalPercent,
 monthlyRemaining,
 quarterRevenue,
@@ -2501,8 +2560,8 @@ difference={{
 <PMMetricCard
   label="Quarterly Goal"
   value={money(pmData.quarterlyGoal)}
-  comparisonLabel="Current Quarter"
-  comparisonValue={money(pmData.quarterRevenue)}
+  comparisonLabel="Projected Quarter"
+  comparisonValue={money(pmData.quarterlyProjectedRevenue)}
   difference={{
     label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
     className: quarterlyGoalClass,
