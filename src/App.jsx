@@ -1364,12 +1364,15 @@ const getElapsedDaysInMonth = (date) => {
   return selectedIsCurrentMonth ? now.getDate() : getDaysInMonth(date);
 };
 
+const now = new Date();
+const selectedMonthDate = new Date(selectedMonth);
+
 const daysInSelectedMonth = getDaysInMonth(selectedMonthDate);
 const elapsedDaysInSelectedMonth = getElapsedDaysInMonth(selectedMonthDate);
 
 const monthlyProjectedRevenue =
   elapsedDaysInSelectedMonth > 0
-    ? (pmData.contractTotal / elapsedDaysInSelectedMonth) * daysInSelectedMonth
+    ? (contractTotal / elapsedDaysInSelectedMonth) * daysInSelectedMonth
     : 0;
 
 const monthlyGoalPercent =
