@@ -692,6 +692,7 @@ function PMMetricCard({
   comparisonLabel,
   comparisonValue,
   difference,
+  customMessage,
 }) {
   return (
     <div className="pm-metric-card">
