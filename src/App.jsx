@@ -693,6 +693,7 @@ function PMMetricCard({
   comparisonValue,
   difference,
   customMessage,
+  messageTitle = "💡 MAGIC MIKE MOMENT",
 }) {
   return (
     <div className="pm-metric-card">
@@ -717,7 +718,7 @@ function PMMetricCard({
 
     <div className="mike-moment-mini-bubble">
 <div className="mike-moment-mini-title">
-  💡 MAGIC MIKE MOMENT
+  {messageTitle}
 </div>
 
       <p>{customMessage}</p>
@@ -2175,7 +2176,53 @@ const goalMotivation = (() => {
 
   return `${firstName}, ${pickRandom(needsPushMessages)}`;
 })();
+const quarterCrushingMessages = [
+  "You're projected to finish the quarter well above goal. Keep your foot on the gas.",
+  "Your quarterly pace is exceptional and currently exceeds expectations.",
+  "You're creating strong momentum that projects a successful quarter.",
+  "If this pace continues, you'll comfortably surpass your quarterly target.",
+  "Outstanding work. The quarter is shaping up extremely well."
+];
 
+const quarterOnTrackMessages = [
+  "You're currently pacing toward your quarterly goal. Stay consistent.",
+  "The quarter is tracking in the right direction. Keep executing.",
+  "Current production trends support a successful quarter.",
+  "Your quarterly pace remains healthy and on target.",
+  "Keep building momentum and the quarter should finish strong."
+];
+
+const quarterCloseMessages = [
+  "The quarter remains within reach. A strong finish can make the difference.",
+  "You're close enough that several strong weeks could put you over goal.",
+  "Momentum over the next few weeks will be important.",
+  "The quarterly target remains achievable with continued effort.",
+  "Keep pushing. The pace is close to where it needs to be."
+];
+
+const quarterNeedsPushMessages = [
+  "The quarter needs additional momentum, but there is still time.",
+  "Focus on pipeline activity and creating opportunities.",
+  "Several strong weeks can quickly improve the quarterly outlook.",
+  "Stay disciplined and continue executing the fundamentals.",
+  "The quarter isn't decided yet. Keep building momentum."
+];
+
+const quarterlyMotivation = (() => {
+  const pct = pmData.quarterlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  if (pct >= 1.2)
+    return `${firstName}, ${pickRandom(quarterCrushingMessages)}`;
+
+  if (pct >= 1.0)
+    return `${firstName}, ${pickRandom(quarterOnTrackMessages)}`;
+
+  if (pct >= 0.8)
+    return `${firstName}, ${pickRandom(quarterCloseMessages)}`;
+
+  return `${firstName}, ${pickRandom(quarterNeedsPushMessages)}`;
+})();
 const generatePMInsight = ({
   goalPercent,
   revenueVsTeam,
@@ -2518,16 +2565,18 @@ const quarterlyGoalClass =
   <h2>Goal Pace Breakdown</h2>
 
   <div className="pm-metric-grid">
-    <PMMetricCard
-      label="Monthly Goal"
-      value={money(pmData.monthlyGoal)}
-comparisonLabel="Monthly Actual"
-comparisonValue={money(pmData.monthlyPace)}
-difference={{
-  label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-  className: monthlyGoalClass,
-}}
-    />
+<PMMetricCard
+  label="Monthly Goal"
+  value={money(pmData.monthlyGoal)}
+  comparisonLabel="Monthly Actual"
+  comparisonValue={money(pmData.contractTotal)}
+  difference={{
+    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+    className: monthlyGoalClass,
+  }}
+  customMessage={goalMotivation}
+  messageTitle="💡 MONTHLY MIKE MOMENT"
+/>
 
 
 <PMMetricCard
@@ -2548,6 +2597,8 @@ difference={{
     label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
     className: quarterlyGoalClass,
   }}
+  customMessage={quarterlyMotivation}
+  messageTitle="💡 QUARTERLY MIKE MOMENT"
 />
 
     <PMMetricCard
