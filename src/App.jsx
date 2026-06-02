@@ -717,7 +717,7 @@ function PMMetricCard({
 
     <div className="mike-moment-mini-bubble">
 <div className="mike-moment-mini-title">
-  💡 Mike Moment
+  💡Monthly Mike Moment
 </div>
 
       <p>{customMessage}</p>
