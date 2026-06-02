@@ -716,9 +716,9 @@ function PMMetricCard({
     <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
 
     <div className="mike-moment-mini-bubble">
-      <div className="mike-moment-mini-title">
-       Monthly Mike Moment
-      </div>
+<div className="mike-moment-mini-title">
+  💡 Mike Moment
+</div>
 
       <p>{customMessage}</p>
     </div>
