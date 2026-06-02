@@ -2126,10 +2126,31 @@ const monthlyGoalClass =
     ? "negative"
     : "warning";
 
+const selectedMonthIndex = selectedMonthDate.getMonth();
+
+let quarterEndMonth;
+
+if ([10, 11, 0].includes(selectedMonthIndex)) {
+  quarterEndMonth = 0; // Nov-Dec-Jan
+} else if ([1, 2, 3].includes(selectedMonthIndex)) {
+  quarterEndMonth = 3; // Feb-Mar-Apr
+} else if ([4, 5, 6].includes(selectedMonthIndex)) {
+  quarterEndMonth = 6; // May-Jun-Jul
+} else {
+  quarterEndMonth = 9; // Aug-Sep-Oct
+}
+
+const quarterComplete =
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (
+    selectedMonthDate.getFullYear() === now.getFullYear() &&
+    quarterEndMonth < now.getMonth()
+  );
+
 const quarterlyGoalClass =
   pmData.quarterlyGoalPercent >= 1
     ? "positive"
-    : isPastMonth
+    : quarterComplete
     ? "negative"
     : "warning";
     return (
