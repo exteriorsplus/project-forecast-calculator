@@ -2189,28 +2189,28 @@ const quarterCrushingMessages = [
 "You're turning your leads into elite-level production. That's fire!",
 ];
 
-const quarterOnTrackMessages = [
-"You're currently pacing toward your quarterly goal. Stay consistent.",
-"The quarter is tracking in the right direction. Keep executing.",
-"Current production trends support a successful quarter.",
-"Your quarterly pace remains healthy and on target.",
-"Keep building momentum and the quarter should finish strong.",
-"You're maintaining the pace needed to achieve your quarterly target.",
-"The quarter is projecting exactly where it needs to be. Keep it up!",
-"Keep executing the fundamentals and the results should follow.",
-"Your consistency is creating a healthy quarterly outlook.",
-"Stay focused on the process and the quarter should finish strong.",
-"Current trends suggest you're headed toward a successful quarter.",
-"Your grind and determination is seeting you up for a great quarter.",
-"You're building the right habits for a strong quarter bub, keep up the great work!",
-"Keep stacking wins and maintaining momentum. You're doing great!",
-"The pace is solid and continues moving in the right direction."
+const quarterGoalAchievedMessages = [
+"Quarter goal achieved bub. Now let's see how far above it we can finish.",
+"You've already reached your quarterly target. That's fire!",
+"Outstanding work. The goal is behind you and now it's time to build separation.",
+"Goal accomplished. Keep your foot on the gas and keep driving.",
+"You're officially over quarterly goal bub. Keep stacking wins.",
+"One team one dream! You've already hit the target and there's still runway left.",
+"Your hard work has paid off. Quarter goal achieved and momentum is still building.",
+"You've earned the right to celebrate for about five minutes. Then let's go get more.",
+"The goal is complete. Everything from here is bonus production bub.",
+"That's what winning looks like. Quarterly goal achieved and still climbing.",
+"You didn't just pace toward the goal — you got there. Keep pushing.",
+"Quarter goal secured. Now let's see what kind of number we can really put up.",
+"You're proving what's possible through consistency and execution. That's fire!",
+"Goal reached bub. Stay aggressive and keep attacking opportunities.",
+"The quarter is already a success. Now let's make it an exceptional one."
 ];
 
 const quarterCloseMessages = [
 "The quarter remains within reach. A strong finish can make the difference.",
 "You're close enough that several strong weeks could put you over goal.",
-"Momentum over the next few weeks will be important.",
+"Keep your momentum and focus over the next appointments and great things will happen.",
 "The quarterly target remains achievable with continued effort.",
 "Keep pushing. The pace is close to where it needs to be.",
 "You're within range of the goal and still have time to close the gap.",
@@ -2292,11 +2292,14 @@ const quarterlyMotivation = (() => {
     if (pct >= 1.2)
       msg = pickRandom(quarterCrushingMessages);
 
-    else if (pct >= 1.0)
-      msg = pickRandom(quarterOnTrackMessages);
+else if (pct >= 1.0)
+  msg = pickRandom(quarterGoalAchievedMessages);
 
-    else if (pct >= 0.8)
-      msg = pickRandom(quarterCloseMessages);
+else if (pct >= 0.9)
+  msg = pickRandom(quarterCloseMessages);
+
+else if (pct >= 0.8)
+  msg = pickRandom(quarterNeedsPushMessages);
 
     else
       msg = pickRandom(quarterNeedsPushMessages);
