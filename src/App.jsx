@@ -2096,7 +2096,7 @@ const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
 const onTrackMessages = [
-  "You're on track to achieve your goal. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
+  "You're on track to achieve your goal bub. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
   "Great progress. Keep pushing toward the finish line. Staying disciplined over the next few weeks will put you in a strong position to exceed expectations.",
   "You're in a strong position to finish successfully. Continue working your pipeline and capitalizing on opportunities. The goal is well within reach.",
   "Steady effort is producing solid results. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
@@ -2666,7 +2666,7 @@ const quarterlyGoalClass =
   }
   value={money(Math.abs(pmData.monthlyRemaining))}
   customMessage={goalMotivation}
-  messageTitle="💡 MONTHLY MIKE MOMENT"
+  messageTitle="💡 MAGIC MIKE MOMENT"
 /> 
 <PMMetricCard
   label="Quarterly Goal"
@@ -2683,7 +2683,7 @@ const quarterlyGoalClass =
   label="Quarterly Remaining"
   value={money(pmData.quarterlyRemaining)}
   customMessage={quarterlyMotivation}
-  messageTitle="💡 QUARTERLY MIKE MOMENT"
+  messageTitle="💡 MAGIC MIKE MOMENT"
 />
   </div>
 </div>
