@@ -2317,40 +2317,71 @@ const generatePMInsight = ({
 }) => {
   const messages = [];
 
+  // Monthly Performance
   if (monthlyGoalPercent >= 1) {
-    messages.push("Monthly goal is currently met.");
+    messages.push(
+      "Monthly goal has been achieved and production remains strong."
+    );
   } else if (monthlyGoalPercent >= 0.85) {
-    messages.push("Monthly production is close to goal.");
+    messages.push(
+      "Monthly production is within striking distance of goal."
+    );
   } else {
-    messages.push("Monthly production needs additional momentum.");
+    messages.push(
+      "Monthly production is currently below the pace needed to reach goal."
+    );
   }
 
+  // Quarterly Performance
   if (quarterlyGoalPercent >= 1) {
-    messages.push("Quarterly goal is currently met.");
+    messages.push(
+      "Quarterly goal has already been achieved."
+    );
   } else if (quarterlyGoalPercent >= 0.85) {
-    messages.push("Quarterly production is within striking distance.");
+    messages.push(
+      "Quarterly production remains well within reach of goal."
+    );
   } else {
-    messages.push("Quarterly production is currently behind target.");
+    messages.push(
+      "Quarterly production currently trails the target pace."
+    );
   }
 
+  // Revenue vs Team
   if (revenueVsTeam > 0.25) {
-    messages.push(pickRandom(revenueEliteMessages));
+    messages.push(
+      "Revenue production is significantly outperforming the team average."
+    );
   } else if (revenueVsTeam > 0) {
-    messages.push(pickRandom(revenueStrongMessages));
+    messages.push(
+      "Revenue production currently exceeds the team average."
+    );
   } else {
-    messages.push(pickRandom(revenueNeedsMessages));
+    messages.push(
+      "Revenue production currently trails the team average."
+    );
   }
 
+  // Average Contract vs Team
   if (averageVsTeam > 0.1) {
-    messages.push(pickRandom(avgStrongMessages));
+    messages.push(
+      "Average contract value exceeds the team benchmark."
+    );
   } else if (averageVsTeam < -0.1) {
-    messages.push(pickRandom(avgNeedsMessages));
+    messages.push(
+      "Average contract value is below the team benchmark."
+    );
   }
 
+  // Closing Rate vs Team
   if (closingRateVsTeam > 0.05) {
-    messages.push(pickRandom(closeStrongMessages));
+    messages.push(
+      "Closing rate is outperforming the team average."
+    );
   } else if (closingRateVsTeam < -0.05) {
-    messages.push(pickRandom(closeNeedsMessages));
+    messages.push(
+      "Closing rate currently trails the team average."
+    );
   }
 
   return messages.slice(0, 4).join(" ");
