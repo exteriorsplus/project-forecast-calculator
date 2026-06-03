@@ -2461,17 +2461,29 @@ const quarterlyGoalClass =
             Logout
           </button>
 
-          <div className="header-top">
-            <img src="/logo.png" alt="Logo" className="logo" />
-            <h1>{currentPM.name} Dashboard</h1>
-            <div className="pm-insight-box">
-  <div className="pm-insight-title">
-    Performance Insight
+<div className="header-top">
+
+  <img
+    src="/logo.png"
+    alt="Logo"
+    className="logo"
+  />
+
+  <div className="pm-header-center">
+
+    <h1>{currentPM.name} Dashboard</h1>
+
+    <div className="pm-insight-box">
+      <div className="pm-insight-title">
+        Performance Insight
+      </div>
+
+      <p>{pmInsight}</p>
+    </div>
+
   </div>
 
-  <p>{pmInsight}</p>
 </div>
-          </div>
         </header>
 
         <section className="pm-dashboard">
