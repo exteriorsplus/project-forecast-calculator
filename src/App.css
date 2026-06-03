@@ -50,9 +50,11 @@ button {
 
 .logo {
   position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 8px;
+  top: 8px;
+
+  width: 120px;
+  height: auto;
 }
 
 .header h1 {
