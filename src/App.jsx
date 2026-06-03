@@ -1416,11 +1416,14 @@ const quarterlyProjectedRevenue =
     ? (quarterRevenue / elapsedQuarterDays) * totalQuarterDays
     : 0;
 
-const quarterlyGoalPercent =
+const quarterlyActualPercent =
+  quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
+
+const quarterlyProjectedPercent =
   quarterlyGoal > 0 ? quarterlyProjectedRevenue / quarterlyGoal : 0;
 
 const quarterlyRemaining =
-  quarterlyGoal - quarterlyProjectedRevenue;
+  quarterlyGoal - quarterRevenue;
   
 return {
   monthOptions,
@@ -1458,7 +1461,8 @@ monthlyGoalPercent,
 monthlyRemaining,
 quarterRevenue,
 quarterlyGoal,
-quarterlyGoalPercent,
+quarterlyGoalPercent: quarterlyActualPercent,
+quarterlyProjectedPercent,
 quarterlyRemaining,
     };
   };
@@ -2213,7 +2217,7 @@ const quarterCloseMessages = [
 "Keep your momentum and focus over the next appointments and great things will happen.",
 "The quarterly target remains achievable with continued effort.",
 "Keep pushing. The pace is close to where it needs to be.",
-"You're within range of the goal and still have time to close the gap.",
+"You're within range of the goal and still have time to close the gap. Keep pushing!",
 "A strong finish could quickly change the outlook for the quarter.",
 "Momentum over the next few weeks will be critical. Stay focused.",
 "The quarter remains highly achievable from this position. Keep pushing!",
@@ -2674,8 +2678,8 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Quarterly Goal"
   value={money(pmData.quarterlyGoal)}
-  comparisonLabel="Projected Quarter"
-  comparisonValue={money(pmData.quarterlyProjectedRevenue)}
+  comparisonLabel="Quarterly Actual"
+  comparisonValue={money(pmData.quarterRevenue)}
   difference={{
     label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
     className: quarterlyGoalClass,
@@ -2683,8 +2687,12 @@ const quarterlyGoalClass =
 />
 
 <PMMetricCard
-  label="Quarterly Remaining"
-  value={money(pmData.quarterlyRemaining)}
+  label={
+    pmData.quarterlyRemaining >= 0
+      ? "Quarterly Remaining"
+      : "Over Quarterly Goal"
+  }
+  value={money(Math.abs(pmData.quarterlyRemaining))}
   customMessage={quarterlyMotivation}
   messageTitle="✨MAGIC MIKE MOMENT✨"
 />
