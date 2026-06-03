@@ -2574,8 +2574,6 @@ const quarterlyGoalClass =
     label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
     className: monthlyGoalClass,
   }}
-  customMessage={goalMotivation}
-  messageTitle="💡 MONTHLY MIKE MOMENT"
 />
 
 
@@ -2587,7 +2585,8 @@ const quarterlyGoalClass =
   }
   value={money(Math.abs(pmData.monthlyRemaining))}
   customMessage={goalMotivation}
-/>
+  messageTitle="💡 MONTHLY MIKE MOMENT"
+/> 
 <PMMetricCard
   label="Quarterly Goal"
   value={money(pmData.quarterlyGoal)}
@@ -2597,14 +2596,14 @@ const quarterlyGoalClass =
     label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
     className: quarterlyGoalClass,
   }}
+/>
+
+<PMMetricCard
+  label="Quarterly Remaining"
+  value={money(pmData.quarterlyRemaining)}
   customMessage={quarterlyMotivation}
   messageTitle="💡 QUARTERLY MIKE MOMENT"
 />
-
-    <PMMetricCard
-      label="Quarterly Remaining"
-      value={money(pmData.quarterlyRemaining)}
-    />
   </div>
 </div>
           <div className="pm-commission-card">
