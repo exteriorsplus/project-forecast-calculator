@@ -1835,10 +1835,9 @@ input::placeholder {
 }
 .pm-header-logo {
   position: absolute !important;
-  left: -10px !important;
-  top: -10px !important;
+  left: -25px !important;
+  top: -20px !important;
   width: 120px !important;
-  border: none !important;
 }
 .pm-page .pm-header-logo {
   position: absolute !important;
