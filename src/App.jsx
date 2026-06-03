@@ -2222,7 +2222,7 @@ const quarterCloseMessages = [
 "A few more contracts can turn around your quarter. Keep up the hard work!",
 "The opportunity to finish strong remains very real, keep grinding!",
 "Stay disciplined and keep moving forward.",
-"Keep applying pressure and the results can come quickly."
+"Keep applying pressure and the results will come quickly."
 ];
 
 const quarterNeedsPushMessages = [
