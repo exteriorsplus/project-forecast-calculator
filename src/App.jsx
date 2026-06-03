@@ -2167,14 +2167,25 @@ const goalMotivation = (() => {
 
   let msg = "";
 
-  if (pct >= 1.5)
-    msg = pickRandom(exceededGoalMessages);
-  else if (pct >= 0.9)
-    msg = pickRandom(onTrackMessages);
-  else if (pct >= 0.7)
-    msg = pickRandom(closeMessages);
-  else
-    msg = pickRandom(needsPushMessages);
+  if (isPastMonth) {
+    if (pct >= 1)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = "you finished close to goal. Carry that momentum into the next month.";
+    else if (pct >= 0.7)
+      msg = "you made progress, but the month finished short of goal. Use it as fuel for the next one.";
+    else
+      msg = "that month is behind you. Reset, refocus, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.5)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = pickRandom(onTrackMessages);
+    else if (pct >= 0.7)
+      msg = pickRandom(closeMessages);
+    else
+      msg = pickRandom(needsPushMessages);
+  }
 
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
