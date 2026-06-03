@@ -624,9 +624,12 @@ input::placeholder {
     gap: 10px;
   }
 
-  .logo {
-    max-height: 60px;
-  }
+.logo {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  max-height: 60px;
+}
 
   .header h1 {
     font-size: 24px;
