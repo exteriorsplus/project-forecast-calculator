@@ -2309,72 +2309,55 @@ else if (pct >= 0.85)
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
 const generatePMInsight = ({
-  goalPercent,
+  monthlyGoalPercent,
+  quarterlyGoalPercent,
   revenueVsTeam,
   averageVsTeam,
   closingRateVsTeam,
 }) => {
   const messages = [];
 
-  if (goalPercent >= 1) {
-messages.push(
-  pickRandom(exceededGoalMessages)
-);
-  } else if (goalPercent >= 0.8) {
-messages.push(
-  pickRandom(onPaceMessages)
-);
-  } else if (goalPercent >= 0.6) {
-messages.push(
-  pickRandom(progressMessages)
-);
+  if (monthlyGoalPercent >= 1) {
+    messages.push("Monthly goal is currently met.");
+  } else if (monthlyGoalPercent >= 0.85) {
+    messages.push("Monthly production is close to goal.");
   } else {
-messages.push(
-  pickRandom(pushMessages)
-);
+    messages.push("Monthly production needs additional momentum.");
   }
 
-if (revenueVsTeam > 0.25) {
-  messages.push(
-    pickRandom(revenueEliteMessages)
-  );
-}
-else if (revenueVsTeam > 0) {
-  messages.push(
-    pickRandom(revenueStrongMessages)
-  );
-}
-else {
-  messages.push(
-    pickRandom(revenueNeedsMessages)
-  );
-}
+  if (quarterlyGoalPercent >= 1) {
+    messages.push("Quarterly goal is currently met.");
+  } else if (quarterlyGoalPercent >= 0.85) {
+    messages.push("Quarterly production is within striking distance.");
+  } else {
+    messages.push("Quarterly production is currently behind target.");
+  }
 
-if (averageVsTeam > 0.1) {
-  messages.push(
-    pickRandom(avgStrongMessages)
-  );
-} else if (averageVsTeam < -0.1) {
-  messages.push(
-    pickRandom(avgNeedsMessages)
-  );
-}
+  if (revenueVsTeam > 0.25) {
+    messages.push(pickRandom(revenueEliteMessages));
+  } else if (revenueVsTeam > 0) {
+    messages.push(pickRandom(revenueStrongMessages));
+  } else {
+    messages.push(pickRandom(revenueNeedsMessages));
+  }
 
-if (closingRateVsTeam > 0.05) {
-  messages.push(
-    pickRandom(closeStrongMessages)
-  );
-} else if (closingRateVsTeam < -0.05) {
-  messages.push(
-    pickRandom(closeNeedsMessages)
-  );
-}
+  if (averageVsTeam > 0.1) {
+    messages.push(pickRandom(avgStrongMessages));
+  } else if (averageVsTeam < -0.1) {
+    messages.push(pickRandom(avgNeedsMessages));
+  }
 
-  return messages.slice(0, 3).join(" ");
+  if (closingRateVsTeam > 0.05) {
+    messages.push(pickRandom(closeStrongMessages));
+  } else if (closingRateVsTeam < -0.05) {
+    messages.push(pickRandom(closeNeedsMessages));
+  }
+
+  return messages.slice(0, 4).join(" ");
 };
-
 const pmInsight = generatePMInsight({
-  goalPercent: pmData.goalPercent || 0,
+  monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
+  quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
   revenueVsTeam: revenueVsTeam?.rawDifference || 0,
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
