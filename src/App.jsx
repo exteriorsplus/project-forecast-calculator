@@ -2666,7 +2666,7 @@ const quarterlyGoalClass =
   }
   value={money(Math.abs(pmData.monthlyRemaining))}
   customMessage={goalMotivation}
-  messageTitle="💡 MAGIC MIKE MOMENT"
+  messageTitle="✨ MAGIC MIKE MOMENT"
 /> 
 <PMMetricCard
   label="Quarterly Goal"
