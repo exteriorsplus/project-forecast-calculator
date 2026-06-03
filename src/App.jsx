@@ -2097,67 +2097,40 @@ const pickRandom = (messages) =>
 
 const onTrackMessages = [
   "You're on track to achieve your goal. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
-
   "Great progress. Keep pushing toward the finish line. Staying disciplined over the next few weeks will put you in a strong position to exceed expectations.",
-
   "You're in a strong position to finish successfully. Continue working your pipeline and capitalizing on opportunities. The goal is well within reach.",
-
   "Steady effort is producing solid results. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
-
   "The goal is well within reach. Continue focusing on quality opportunities and maintaining urgency. A strong finish could put you comfortably over target.",
-
   "Momentum is building in the right direction. Stay committed to the daily activities that drive results. You're putting yourself in a position to succeed.",
-
   "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
-
   "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction.",
-
   "Your consistency is paying off. Continue building on the progress you've already made. Every additional contract strengthens your position.",
-
   "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues."
 ];
 
 const closeMessages = [
   "You're closer than you think. Keep pushing. A few additional contracts could completely change the outcome of this month.",
-
   "A strong finish can put you over the top. Stay focused on the opportunities directly in front of you.",
-
   "The goal remains within reach. Consistent activity over the next few days can make all the difference.",
-
   "Keep building momentum. You're not far away. Continue working your process and trust the results will come.",
-
   "Stay focused. A few more wins could make the difference. The opportunity to finish strong is still there.",
-
   "The goal is still achievable. Continue following up and creating opportunities. Success often comes from persistence.",
-
   "You're in striking distance of your target. Keep your energy high and maintain urgency in every conversation.",
-
   "Now is the time to finish strong. Every appointment and estimate matters from this point forward.",
-
   "Stay disciplined and keep moving forward. The finish line is much closer than it appears.",
-
   "Every contract matters from here. Continue stacking small wins and the larger results will follow."
 ];
 
 const needsPushMessages = [
   "Keep grinding. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
-
   "The month isn't over yet. Stay focused. One strong week can completely change the trajectory of your results.",
-
   "Every opportunity matters from this point forward. Keep creating conversations and the numbers will follow.",
-
   "Small wins add up quickly. Focus on the next appointment, the next estimate, and the next contract.",
-
   "Keep working the process and results will follow. Consistency is often the difference between average and exceptional performance.",
-
   "Stay persistent and keep creating opportunities. Success often comes right after the point where others give up.",
-
   "There's still time to improve your position. Continue executing the fundamentals and trust the process.",
-
   "Focus on the next opportunity, not the scoreboard. Daily activity creates long-term success.",
-
   "Progress starts with consistent activity. Continue building momentum one conversation and one contract at a time.",
-
   "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
 ];
 
@@ -2201,18 +2174,18 @@ const goalMotivation = (() => {
 })();
 const quarterCrushingMessages = [
 "You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
-"Your quarterly pace is exceptional and currently exceeds expectations.",
-"You're creating strong momentum that projects a successful quarter.",
-"If this pace continues, you'll comfortably surpass your quarterly target.",
+"Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
+"You're creating strong momentum that projects a successful quarter. Keep it up!",
+"If this pace continues, you'll comfortably surpass your quarterly target. Keep the drive alive!",
 "Outstanding work bub. The quarter is shaping up extremely well.",
 "You're operating at an elite pace and setting the standard for the quarter.",
 "Your current trajectory puts you in position for a remarkable finish bub, keep it up!",
 "The consistency you've shown is creating outstanding quarterly results.",
 "You're well ahead of target and proving what's possible with disciplined execution.",
-"Every indicator suggests you're on track for an exceptional quarter.",
-"Your pace continues to outperform expectations across the board.",
+"Every indicator suggests you're on track for an exceptional quarter. One team one dream!",
+"Your pace continues to outperform expectations across the board. You're killing it, bub!",
 "You're building a quarter that others will benchmark against. Keep it up!",
-"Keep attacking opportunities bub. The results are speaking for themselves.",
+"Keep attacking opportunities bub. The results are speaking for themselves!",
 "You're turning your leads into elite-level production. That's fire!",
 ];
 
@@ -2223,14 +2196,14 @@ const quarterOnTrackMessages = [
 "Your quarterly pace remains healthy and on target.",
 "Keep building momentum and the quarter should finish strong.",
 "You're maintaining the pace needed to achieve your quarterly target.",
-"The quarter is unfolding exactly where it needs to be.",
+"The quarter is projecting exactly where it needs to be. Keep it up!",
 "Keep executing the fundamentals and the results should follow.",
 "Your consistency is creating a healthy quarterly outlook.",
 "Stay focused on the process and the quarter should finish strong.",
 "Current trends suggest you're headed toward a successful quarter.",
 "Your grind and determination is seeting you up for a great quarter.",
-"You're building the right habits for a strong quarter, bub, keep up the great work!",
-"Keep stacking wins and maintaining momentum.",
+"You're building the right habits for a strong quarter bub, keep up the great work!",
+"Keep stacking wins and maintaining momentum. You're doing great!",
 "The pace is solid and continues moving in the right direction."
 ];
 
@@ -2242,12 +2215,12 @@ const quarterCloseMessages = [
 "Keep pushing. The pace is close to where it needs to be.",
 "You're within range of the goal and still have time to close the gap.",
 "A strong finish could quickly change the outlook for the quarter.",
-"Momentum over the next few weeks will be critical.",
-"The quarter remains highly achievable from this position.",
-"Stay focused on opportunity creation and follow-through.",
-"You're not far from where you need to be.",
-"Several additional contracts could completely change the quarter.",
-"The opportunity to finish strong remains very real.",
+"Momentum over the next few weeks will be critical. Stay focused.",
+"The quarter remains highly achievable from this position. Keep pushing!",
+"Stay focused on your leads and follow-through - you can still do this!",
+"You're not far from where you need to be. Keep pushing - you got this!",
+"A few more contracts can turn around your quarter. Keep up the hard work!",
+"The opportunity to finish strong remains very real, keep grinding!",
 "Stay disciplined and keep moving forward.",
 "Keep applying pressure and the results can come quickly."
 ];
