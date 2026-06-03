@@ -624,7 +624,7 @@ input::placeholder {
     flex-direction: column;
     gap: 10px;
   }
-  
+
 .logo {
   position: absolute;
   left: 12px;
@@ -1832,4 +1832,15 @@ input::placeholder {
 }
 .pm-insight-box {
   max-width: 900px;
+}
+.pm-header-logo {
+  position: absolute;
+  left: 10px;
+  top: 5px;
+
+  width: 120px;
+  height: auto;
+
+  max-height: none;
+  object-fit: contain;
 }

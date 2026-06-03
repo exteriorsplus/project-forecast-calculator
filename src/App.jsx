@@ -1813,7 +1813,7 @@ useEffect(() => {
       </button>
 
       <div className="header-top">
-        <img src="/logo.png" alt="Logo" className="logo" />
+        <img src="/logo.png" alt="Logo" className="pm-header-logo" />
         <h1>
           {screen === "leads"
             ? "Lead Forecasted Revenue & Profit"
