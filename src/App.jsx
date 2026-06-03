@@ -2165,23 +2165,35 @@ const goalMotivation = (() => {
   const pct = pmData.monthlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
 
+  let msg = "";
+
   if (pct >= 1.5)
-    return `${firstName}, ${pickRandom(exceededGoalMessages)}`;
+    msg = pickRandom(exceededGoalMessages);
+  else if (pct >= 0.9)
+    msg = pickRandom(onTrackMessages);
+  else if (pct >= 0.7)
+    msg = pickRandom(closeMessages);
+  else
+    msg = pickRandom(needsPushMessages);
 
-  if (pct >= 0.9)
-    return `${firstName}, ${pickRandom(onTrackMessages)}`;
-
-  if (pct >= 0.7)
-    return `${firstName}, ${pickRandom(closeMessages)}`;
-
-  return `${firstName}, ${pickRandom(needsPushMessages)}`;
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
 const quarterCrushingMessages = [
   "You're projected to finish the quarter well above goal. Keep your foot on the gas.",
   "Your quarterly pace is exceptional and currently exceeds expectations.",
   "You're creating strong momentum that projects a successful quarter.",
   "If this pace continues, you'll comfortably surpass your quarterly target.",
-  "Outstanding work. The quarter is shaping up extremely well."
+  "Outstanding work. The quarter is shaping up extremely well.",
+  "You're operating at an elite pace and setting the standard for the quarter.",
+"Your current trajectory puts you in position for a remarkable finish.",
+"The consistency you've shown is creating outstanding quarterly results.",
+"You're well ahead of target and proving what's possible with disciplined execution.",
+"Every indicator suggests you're on track for an exceptional quarter.",
+"Your pace continues to outperform expectations across the board.",
+"You're building a quarter that others will benchmark against.",
+"Keep attacking opportunities. The results are speaking for themselves.",
+"You're turning strong activity into elite-level production.",
+"Your quarterly performance demonstrates what sustained focus can accomplish."
 ];
 
 const quarterOnTrackMessages = [
@@ -2189,7 +2201,17 @@ const quarterOnTrackMessages = [
   "The quarter is tracking in the right direction. Keep executing.",
   "Current production trends support a successful quarter.",
   "Your quarterly pace remains healthy and on target.",
-  "Keep building momentum and the quarter should finish strong."
+  "Keep building momentum and the quarter should finish strong.",
+  "You're maintaining the pace needed to achieve your quarterly target.",
+"The quarter is unfolding exactly where it needs to be.",
+"Keep executing the fundamentals and the results should follow.",
+"Your consistency is creating a healthy quarterly outlook.",
+"Stay focused on the process and the quarter should finish strong.",
+"Current trends suggest you're headed toward a successful quarter.",
+"Your activity levels are supporting long-term success.",
+"You're building the right habits for a strong quarter.",
+"Keep stacking wins and maintaining momentum.",
+"The pace is solid and continues moving in the right direction."
 ];
 
 const quarterCloseMessages = [
@@ -2197,7 +2219,17 @@ const quarterCloseMessages = [
   "You're close enough that several strong weeks could put you over goal.",
   "Momentum over the next few weeks will be important.",
   "The quarterly target remains achievable with continued effort.",
-  "Keep pushing. The pace is close to where it needs to be."
+  "Keep pushing. The pace is close to where it needs to be.",
+  "You're within range of the goal and still have time to close the gap.",
+"A strong finish could quickly change the outlook for the quarter.",
+"Momentum over the next few weeks will be critical.",
+"The quarter remains highly achievable from this position.",
+"Stay focused on opportunity creation and follow-through.",
+"You're not far from where you need to be.",
+"Several additional contracts could completely change the quarter.",
+"The opportunity to finish strong remains very real.",
+"Stay disciplined and keep moving forward.",
+"Keep applying pressure and the results can come quickly."
 ];
 
 const quarterNeedsPushMessages = [
@@ -2205,23 +2237,35 @@ const quarterNeedsPushMessages = [
   "Focus on pipeline activity and creating opportunities.",
   "Several strong weeks can quickly improve the quarterly outlook.",
   "Stay disciplined and continue executing the fundamentals.",
-  "The quarter isn't decided yet. Keep building momentum."
+  "The quarter isn't decided yet. Keep building momentum.",
+  "There's still time to improve the trajectory of the quarter.",
+"Focus on activity and let the scoreboard take care of itself.",
+"Every conversation creates a new opportunity.",
+"Momentum can shift quickly when activity increases.",
+"Continue building pipeline and creating opportunities.",
+"Stay engaged and keep attacking the next opportunity.",
+"Persistence now can create a much stronger finish later.",
+"One productive stretch can change the entire quarter.",
+"Keep your energy high and focus on execution.",
+"The quarter is still being written. Keep pushing forward."
 ];
 
 const quarterlyMotivation = (() => {
   const pct = pmData.quarterlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
 
+  let msg = "";
+
   if (pct >= 1.2)
-    return `${firstName}, ${pickRandom(quarterCrushingMessages)}`;
+    msg = pickRandom(quarterCrushingMessages);
+  else if (pct >= 1.0)
+    msg = pickRandom(quarterOnTrackMessages);
+  else if (pct >= 0.8)
+    msg = pickRandom(quarterCloseMessages);
+  else
+    msg = pickRandom(quarterNeedsPushMessages);
 
-  if (pct >= 1.0)
-    return `${firstName}, ${pickRandom(quarterOnTrackMessages)}`;
-
-  if (pct >= 0.8)
-    return `${firstName}, ${pickRandom(quarterCloseMessages)}`;
-
-  return `${firstName}, ${pickRandom(quarterNeedsPushMessages)}`;
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
 const generatePMInsight = ({
   goalPercent,
