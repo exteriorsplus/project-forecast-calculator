@@ -2467,6 +2467,13 @@ const quarterlyGoalClass =
   src="/logo.png"
   alt="Logo"
   className="pm-header-logo"
+  style={{
+    position: "absolute",
+    left: "1px",
+    top: "1px",
+    border: "5px solid red",
+    zIndex: 9999,
+  }}
 />
 
   <div className="pm-header-center">
