@@ -42,15 +42,17 @@ button {
 }
 
 .header-top {
-  display: grid;
-  grid-template-columns: 180px 1fr;
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 24px;
 }
 
 .logo {
-  max-height: 85px;
-  width: auto;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .header h1 {
