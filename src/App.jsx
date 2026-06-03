@@ -2165,9 +2165,19 @@ const goalMotivation = (() => {
   const pct = pmData.monthlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
 
+  const selectedDate = new Date(pmData.selectedMonth);
+  const today = new Date();
+
+  const monthIsPast =
+    selectedDate.getFullYear() < today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() < today.getMonth()
+    );
+
   let msg = "";
 
-  if (isPastMonth) {
+  if (monthIsPast) {
     if (pct >= 1)
       msg = pickRandom(exceededGoalMessages);
     else if (pct >= 0.9)
