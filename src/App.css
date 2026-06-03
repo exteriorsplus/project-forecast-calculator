@@ -1844,3 +1844,12 @@ input::placeholder {
   max-height: none;
   object-fit: contain;
 }
+.pm-page .pm-header-logo {
+  position: absolute !important;
+  left: 1px !important;
+  top: 1px !important;
+  width: 120px !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+}
