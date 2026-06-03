@@ -2463,11 +2463,11 @@ const quarterlyGoalClass =
 
 <div className="header-top">
 
-  <img
-    src="/logo.png"
-    alt="Logo"
-    className="logo"
-  />
+<img
+  src="/logo.png"
+  alt="Logo"
+  className="pm-header-logo"
+/>
 
   <div className="pm-header-center">
 
