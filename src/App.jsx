@@ -693,7 +693,7 @@ function PMMetricCard({
   comparisonValue,
   difference,
   customMessage,
-  messageTitle = "🪄 MAGIC MIKE MOMENT",
+  messageTitle = "✨MAGIC MIKE MOMENT✨",
 }) {
   return (
     <div className="pm-metric-card">
@@ -2666,7 +2666,7 @@ const quarterlyGoalClass =
   }
   value={money(Math.abs(pmData.monthlyRemaining))}
   customMessage={goalMotivation}
-  messageTitle="✨ MAGIC MIKE MOMENT"
+  messageTitle="✨MAGIC MIKE MOMENT✨"
 /> 
 <PMMetricCard
   label="Quarterly Goal"
@@ -2683,7 +2683,7 @@ const quarterlyGoalClass =
   label="Quarterly Remaining"
   value={money(pmData.quarterlyRemaining)}
   customMessage={quarterlyMotivation}
-  messageTitle="🪄 MAGIC MIKE MOMENT"
+  messageTitle="✨MAGIC MIKE MOMENT✨"
 />
   </div>
 </div>
