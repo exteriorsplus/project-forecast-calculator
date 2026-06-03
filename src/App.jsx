@@ -2012,20 +2012,20 @@ const exceededGoalMessages = [
   "Outstanding work. You've surpassed your goal for this period. That's fire.",
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
   "You've reached your goal and are building momentum. That's fire.",
-  "Fantastic job. Your production has already cleared the goal for this period. That's fire.",
+  "Fantastic job. Your production cleared the goal for this month. That's fire.",
   "You're operating at a very high level and have successfully exceeded your goal. That's fire."
 ];
 
 const onPaceMessages = [
-  "You're on pace to reach your goal and finish the period strong.",
-  "Solid progress. Current production trends support achieving your target.",
+  "You're on pace to reach your goal and finish the period strong. Let's go!",
+  "Solid progress. You're on pace to reach your monthly goal. Keep it up!",
   "You're tracking well toward your goal and maintaining healthy momentum.",
   "Keep doing what you're doing. You're positioned to reach your target.",
-  "Performance remains strong and you're currently pacing toward success."
+  "Performance remains strong and you're currently pacing toward success. That's fire."
 ];
 
 const progressMessages = [
-  "You're making steady progress toward your goal with time remaining.",
+  "You're making steady progress toward your goal with some time remaining.",
   "Momentum is building and there is still plenty of opportunity ahead.",
   "Consistent effort now can create a strong finish to the period.",
   "The foundation is there. Continue focusing on quality opportunities.",
@@ -2035,9 +2035,9 @@ const progressMessages = [
 const pushMessages = [
   "Keep pushing. A strong finish can still put you back on pace.",
   "There is plenty of opportunity remaining to improve results.",
-  "Focus on controllable activities and the numbers will follow.",
-  "A few strong weeks can quickly change the trajectory.",
-  "Stay consistent and continue building momentum."
+  "Focus on the trainings we've had and the numbers will follow.",
+  "A few strong weeks can quickly change the trajectory. You got this!",
+  "Stay consistent and continue building momentum, there's still time!"
 ];
 
 const revenueStrongMessages = [
@@ -2237,7 +2237,7 @@ const quarterNeedsPushMessages = [
 "The quarter isn't decided yet. Keep building momentum.",
 "There's still time to improve the trajectory of the quarter.",
 "Focus on activity and let the scoreboard take care of itself.",
-"Every conversation creates a new opportunity.",
+"Every conversation creates a new opportunity. Keep grinding.",
 "Momentum can shift quickly when activity increases.",
 "Continue building pipeline and creating opportunities.",
 "Stay engaged and keep attacking the next opportunity.",
