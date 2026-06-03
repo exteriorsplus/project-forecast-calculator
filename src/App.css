@@ -54,7 +54,7 @@ button {
   top: 5px;
 
   width: 110px;
-  height: auto;
+  max-height: 100px;
 }
 
 .header h1 {
@@ -628,7 +628,7 @@ input::placeholder {
   position: absolute;
   left: 5px;
   top: 5px;
-  max-height: 60px;
+  max-height: 100px;
 }
 
   .header h1 {
