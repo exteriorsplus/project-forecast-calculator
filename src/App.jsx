@@ -2303,7 +2303,7 @@ const quarterlyMotivation = (() => {
   if (quarterIsPast) {
     if (pct >= 1)
       msg =
-        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter.";
+        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter. That's fire.";
 
     else if (pct >= 0.9)
       msg =
