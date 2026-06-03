@@ -2239,7 +2239,7 @@ const quarterNeedsPushMessages = [
 "Focus on activity and let the scoreboard take care of itself.",
 "Every conversation creates a new opportunity. Keep grinding.",
 "Momentum can shift quickly when activity increases.",
-"Continue building pipeline and creating opportunities.",
+"Continue building the sales pipeline and creating opportunities.",
 "Stay engaged and keep attacking the next opportunity.",
 "Persistence now can create a much stronger finish later.",
 "One productive stretch can change the entire quarter.",
@@ -2299,11 +2299,8 @@ const quarterlyMotivation = (() => {
 else if (pct >= 1.0)
   msg = pickRandom(quarterGoalAchievedMessages);
 
-else if (pct >= 0.9)
+else if (pct >= 0.85)
   msg = pickRandom(quarterCloseMessages);
-
-else if (pct >= 0.8)
-  msg = pickRandom(quarterNeedsPushMessages);
 
     else
       msg = pickRandom(quarterNeedsPushMessages);
