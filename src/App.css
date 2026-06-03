@@ -1834,15 +1834,11 @@ input::placeholder {
   max-width: 900px;
 }
 .pm-header-logo {
-  position: absolute;
-  left: 10px;
-  top: 5px;
-
-  width: 120px;
-  height: auto;
-
-  max-height: none;
-  object-fit: contain;
+  position: absolute !important;
+  left: -10px !important;
+  top: -10px !important;
+  width: 120px !important;
+  border: none !important;
 }
 .pm-page .pm-header-logo {
   position: absolute !important;
