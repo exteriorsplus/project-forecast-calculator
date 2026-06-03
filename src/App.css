@@ -50,11 +50,12 @@ button {
 
 .logo {
   position: absolute;
-  left: 5px;
-  top: 5px;
-
-  width: 110px;
-  max-height: 100px;
+  left: 20px;
+  top: 16px;
+  width: 120px;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
 .header h1 {
@@ -623,12 +624,15 @@ input::placeholder {
     flex-direction: column;
     gap: 10px;
   }
-
+  
 .logo {
   position: absolute;
-  left: 5px;
-  top: 5px;
-  max-height: 100px;
+  left: 12px;
+  top: 12px;
+  width: 95px;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
 }
 
   .header h1 {
