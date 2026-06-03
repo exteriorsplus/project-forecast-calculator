@@ -2005,11 +2005,11 @@ const closingRateVsTeam = compareNumbers(
 );
 
 const exceededGoalMessages = [
-  "Outstanding work. You've already surpassed your goal for this period.",
-  "Excellent performance. You've exceeded expectations and continue to set the pace.",
-  "You've reached your goal ahead of schedule and are building momentum.",
-  "Fantastic job. Your production has already cleared the target for this period.",
-  "You're operating at a very high level and have successfully exceeded your goal."
+  "Outstanding work. You've surpassed your goal for this period. That's fire.",
+  "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
+  "You've reached your goal and are building momentum. That's fire.",
+  "Fantastic job. Your production has already cleared the goal for this period. That's fire.",
+  "You're operating at a very high level and have successfully exceeded your goal. That's fire."
 ];
 
 const onPaceMessages = [
@@ -2275,16 +2275,60 @@ const quarterlyMotivation = (() => {
   const pct = pmData.quarterlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
 
+  const selectedMonthIndex = fiscalMonths.indexOf(pmData.selectedMonth);
+
+  const quarterStartIndex =
+    selectedMonthIndex >= 0
+      ? Math.floor(selectedMonthIndex / 3) * 3
+      : 0;
+
+  const quarterMonths = fiscalMonths.slice(
+    quarterStartIndex,
+    quarterStartIndex + 3
+  );
+
+  const lastQuarterMonth = quarterMonths[2];
+  const [monthName, yearText] = lastQuarterMonth.split(" ");
+
+  const quarterEndDate = new Date(
+    Number(yearText),
+    monthNames.indexOf(monthName) + 1,
+    0
+  );
+
+  const quarterIsPast = quarterEndDate < new Date();
+
   let msg = "";
 
-  if (pct >= 1.2)
-    msg = pickRandom(quarterCrushingMessages);
-  else if (pct >= 1.0)
-    msg = pickRandom(quarterOnTrackMessages);
-  else if (pct >= 0.8)
-    msg = pickRandom(quarterCloseMessages);
-  else
-    msg = pickRandom(quarterNeedsPushMessages);
+  if (quarterIsPast) {
+    if (pct >= 1)
+      msg =
+        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter.";
+
+    else if (pct >= 0.9)
+      msg =
+        "you finished just short of your quarterly goal. Carry that momentum into the next quarter.";
+
+    else if (pct >= 0.7)
+      msg =
+        "you made solid progress during the quarter. Use those lessons to build an even stronger next quarter.";
+
+    else
+      msg =
+        "that quarter is complete. Take what you learned, reset, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.2)
+      msg = pickRandom(quarterCrushingMessages);
+
+    else if (pct >= 1.0)
+      msg = pickRandom(quarterOnTrackMessages);
+
+    else if (pct >= 0.8)
+      msg = pickRandom(quarterCloseMessages);
+
+    else
+      msg = pickRandom(quarterNeedsPushMessages);
+  }
 
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
