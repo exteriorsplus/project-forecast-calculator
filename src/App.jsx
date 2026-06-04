@@ -2424,10 +2424,12 @@ const pmInsight = generatePMInsight({
   revenueVsTeam: revenueVsTeam?.rawDifference || 0,
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
+  isPastMonth,
 });
 const isCustomMode = pmDateMode === "custom";
 const selectedMonthDate = new Date(pmData.selectedMonth);
 const now = new Date();
+
 
 const isPastMonth =
   selectedMonthDate.getFullYear() < now.getFullYear() ||
