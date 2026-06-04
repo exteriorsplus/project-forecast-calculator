@@ -716,18 +716,12 @@ function PMMetricCard({
   </div>
 )}
 
-      {comparisonLabel && (
-        <div className="pm-comparison-line">
-          <small>{comparisonLabel}</small>
-          <b>{comparisonValue}</b>
-        </div>
-      )}
-
-      {difference && (
-        <div className={`pm-difference ${difference.className}`}>
-          {difference.label}
-        </div>
-      )}
+{comparisonLabel && (
+  <div className="pm-comparison-line">
+    <small>{comparisonLabel}</small>
+    <b>{comparisonValue}</b>
+  </div>
+)}
     {customMessage && (
   <div className="mike-moment-mini">
     <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
