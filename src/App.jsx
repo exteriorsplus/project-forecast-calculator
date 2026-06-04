@@ -988,7 +988,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     try {
       setDataStatus("Loading sales.xlsx...");
 
-      const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
+      const response = await fetch(`/pm/sales.xlsx?t=${Date.now()}`);
 
       if (!response.ok) {
         throw new Error("Could not find public/sales.xlsx");
@@ -1145,8 +1145,8 @@ const getTeamMetricRow = (metric) => {
     };
   };
 
-  const getPMCustomSalesData = (pmName) => {
-    if (!pmStartDate || !pmEndDate) {
+  const getPMSalesDataForRange = (pmName, startDate, endDate) => {
+    if (!pmName || !startDate || !endDate) {
       return {
         contractTotal: 0,
         contracts: 0,
@@ -1154,23 +1154,23 @@ const getTeamMetricRow = (metric) => {
       };
     }
 
-    const start = dateOnly(parseInputDate(pmStartDate));
-    const end = dateOnly(parseInputDate(pmEndDate));
+    const start = dateOnly(startDate);
+    const end = dateOnly(endDate);
 
     let contractTotal = 0;
     let contracts = 0;
 
     salesRows.forEach((row) => {
-const rowPMValues = [
-  row["Project Manager"],
-  row["Salesperson"],
-  row["Sales Rep"],
-  row["Sales Representative"],
-  row["Primary Salesperson"],
-  row["Estimator"],
-].map((value) => String(value || "").trim());
+      const rowPMValues = [
+        row["Project Manager"],
+        row["Salesperson"],
+        row["Sales Rep"],
+        row["Sales Representative"],
+        row["Primary Salesperson"],
+        row["Estimator"],
+      ].map((value) => String(value || "").trim());
 
-if (!rowPMValues.includes(pmName)) return;
+      if (!rowPMValues.includes(pmName)) return;
 
       const rowDate = parseExcelDate(row["Approved Date"]);
       if (!rowDate) return;
@@ -1191,6 +1191,22 @@ if (!rowPMValues.includes(pmName)) return;
     };
   };
 
+  const getPMCustomSalesData = (pmName) => {
+    if (!pmStartDate || !pmEndDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
+    return getPMSalesDataForRange(
+      pmName,
+      parseInputDate(pmStartDate),
+      parseInputDate(pmEndDate)
+    );
+  };
+
   const getPMDashboardData = () => {
     const monthOptions = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
     const selectedMonth = selectedPMMonth || monthOptions[0] || "";
@@ -1205,21 +1221,43 @@ const ytdMonths =
     ? fiscalMonths.slice(0, fiscalMonthIndex + 1)
     : [];
 
-const ytdRevenue = ytdMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contract Total", month),
-  0
-);
+const getMonthDateBoundsForSales = (monthLabel) => {
+  const [monthName, yearText] = String(monthLabel || "").split(" ");
+  const monthIndex = monthNames.indexOf(monthName);
+  const year = Number(yearText);
 
-const ytdContracts = ytdMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contracts", month),
-  0
-);
+  if (monthIndex < 0 || !year) return null;
 
-const ytdAverageContract =
-  ytdContracts > 0 ? ytdRevenue / ytdContracts : 0;
+  return {
+    start: new Date(year, monthIndex, 1),
+    end: new Date(year, monthIndex + 1, 0),
+  };
+};
 
+const getSalesDataForMonths = (months) => {
+  const ranges = months
+    .map(getMonthDateBoundsForSales)
+    .filter(Boolean);
+
+  if (!ranges.length) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  const start = ranges[0].start;
+  const end = ranges[ranges.length - 1].end;
+
+  return getPMSalesDataForRange(pmName, start, end);
+};
+
+const ytdSalesData = getSalesDataForMonths(ytdMonths);
+
+const ytdRevenue = ytdSalesData.contractTotal;
+const ytdContracts = ytdSalesData.contracts;
+const ytdAverageContract = ytdSalesData.averageContract;
 const ytdClosingRate = 0;
 
 const customMonths = (() => {
@@ -1255,32 +1293,31 @@ const activeMonths =
     ? customMonths
     : [selectedMonth];
 
-const customSalesData = getPMCustomSalesData(pmName);
+const customSalesData =
+  pmDateMode === "custom" && pmStartDate && pmEndDate
+    ? getPMSalesDataForRange(
+        pmName,
+        parseInputDate(pmStartDate),
+        parseInputDate(pmEndDate)
+      )
+    : {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
 
-const contractTotal =
-  pmDateMode === "custom"
-    ? customSalesData.contractTotal
-    : activeMonths.reduce(
-        (sum, month) =>
-          sum + getPMMetric(pmName, "Contract Total", month),
-        0
-      );
+const monthSalesData = getSalesDataForMonths([selectedMonth]);
 
-const contracts =
-  pmDateMode === "custom"
-    ? customSalesData.contracts
-    : activeMonths.reduce(
-        (sum, month) =>
-          sum + getPMMetric(pmName, "Contracts", month),
-        0
-      );
+const activeSalesData =
+  pmDateMode === "fiscalYTD"
+    ? ytdSalesData
+    : pmDateMode === "custom"
+    ? customSalesData
+    : monthSalesData;
 
-const averageContract =
-  pmDateMode === "custom"
-    ? customSalesData.averageContract
-    : contracts > 0
-    ? contractTotal / contracts
-    : 0;
+const contractTotal = activeSalesData.contractTotal;
+const contracts = activeSalesData.contracts;
+const averageContract = activeSalesData.averageContract;
 
 const closingRate =
   pmDateMode === "custom"
@@ -1448,11 +1485,8 @@ const quarterMonths = fiscalMonths.slice(
   quarterStartIndex + 3
 );
 
-const quarterRevenue = quarterMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contract Total", month),
-  0
-);
+const quarterSalesData = getSalesDataForMonths(quarterMonths);
+const quarterRevenue = quarterSalesData.contractTotal;
 
 const getQuarterDateRange = (quarterMonths) => {
   const firstMonth = quarterMonths[0];
