@@ -1331,22 +1331,17 @@ const closingRate =
     : getPMMetric(pmName, "Closing Rate", selectedMonth);
 
 
-    const lyContractTotal = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Contract Total",
-      lastYearMonth
-    );
-    const lyContracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", lastYearMonth);
-    const lyAverageContract = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Average Contract",
-      lastYearMonth
-    );
-    const lyClosingRate = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Closing Rate",
-      lastYearMonth
-    );
+const lastYearSalesData = getSalesDataForMonths([lastYearMonth]);
+
+const lyContractTotal = lastYearSalesData.contractTotal;
+const lyContracts = lastYearSalesData.contracts;
+const lyAverageContract = lastYearSalesData.averageContract;
+
+const lyClosingRate = getPMMetric(
+  pmName,
+  "Closing Rate",
+  lastYearMonth
+);
 
 const activeGoalProjectManagers = projectManagers.filter((pm) => pm.activeGoal);
 
@@ -1399,47 +1394,63 @@ const customTeamClosingRate =
       }, 0) / activeGoalProjectManagers.length
     : 0;
 
-const ytdTeamContractTotal = activeMonths.reduce(
-  (sum, month) => sum + getTeamMetric("Contract Total Average", month),
-  0
-);
+const getTeamSalesDataForMonths = (months) => {
+  const teamSalesData = activeGoalProjectManagers.map((pm) => {
+    const ranges = months
+      .map(getMonthDateBoundsForSales)
+      .filter(Boolean);
 
-const ytdTeamContracts = activeMonths.reduce(
-  (sum, month) => sum + getTeamMetric("Contracts", month),
-  0
-);
+    if (!ranges.length) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
 
-const ytdTeamAverageContract =
-  ytdTeamContracts > 0 ? ytdTeamContractTotal / ytdTeamContracts : 0;
+    return getPMSalesDataForRange(
+      pm.name,
+      ranges[0].start,
+      ranges[ranges.length - 1].end
+    );
+  });
 
-const ytdTeamClosingRate =
-  activeMonths.length > 0
-    ? activeMonths.reduce(
-        (sum, month) => sum + getTeamMetric("Closing Rate", month),
-        0
-      ) / activeMonths.length
-    : 0;
+  const totalRevenue = teamSalesData.reduce(
+    (sum, item) => sum + Number(item.contractTotal || 0),
+    0
+  );
 
-const teamContractTotal =
-  pmDateMode === "custom"
-    ? customTeamContractTotal
-    : pmDateMode === "fiscalYTD"
-    ? ytdTeamContractTotal
-    : getTeamMetric("Contract Total Average", selectedMonth);
+  const totalContracts = teamSalesData.reduce(
+    (sum, item) => sum + Number(item.contracts || 0),
+    0
+  );
 
-const teamContracts =
-  pmDateMode === "custom"
-    ? customTeamContracts
-    : pmDateMode === "fiscalYTD"
-    ? ytdTeamContracts
-    : getTeamMetric("Contracts", selectedMonth);
+  return {
+    contractTotal:
+      teamSalesData.length > 0 ? totalRevenue / teamSalesData.length : 0,
+    contracts:
+      teamSalesData.length > 0 ? totalContracts / teamSalesData.length : 0,
+    averageContract:
+      totalContracts > 0 ? totalRevenue / totalContracts : 0,
+  };
+};
 
-const teamAverageContract =
-  pmDateMode === "custom"
-    ? customTeamAverageContract
-    : pmDateMode === "fiscalYTD"
-    ? ytdTeamAverageContract
-    : getTeamMetric("Average Contract", selectedMonth);
+const teamSalesData =
+  pmDateMode === "fiscalYTD"
+    ? getTeamSalesDataForMonths(ytdMonths)
+    : pmDateMode === "custom"
+    ? customTeamSalesData.length > 0
+      ? {
+          contractTotal: customTeamContractTotal,
+          contracts: customTeamContracts,
+          averageContract: customTeamAverageContract,
+        }
+      : getTeamSalesDataForMonths(customMonths)
+    : getTeamSalesDataForMonths([selectedMonth]);
+
+const teamContractTotal = teamSalesData.contractTotal;
+const teamContracts = teamSalesData.contracts;
+const teamAverageContract = teamSalesData.averageContract;
 
 const teamClosingRate =
   pmDateMode === "custom"
