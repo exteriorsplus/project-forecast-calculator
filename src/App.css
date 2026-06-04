@@ -68,7 +68,9 @@ button {
 .back-button-header,
 .header-action-button {
   position: absolute;
-  top: 16px;
+  top: 22px;
+  right: 20px;
+
   background: #b91c1c;
   color: white;
   border: none;
