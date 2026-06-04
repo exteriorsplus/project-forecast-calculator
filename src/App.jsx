@@ -2212,38 +2212,38 @@ const quarterGoalAchievedMessages = [
 ];
 
 const quarterCloseMessages = [
-"The quarter remains within reach. A strong finish can make the difference.",
-"You're close enough that several strong weeks could put you over goal.",
+"The quarter remains within reach. A strong finish can make all the difference.",
+"You're close just a few more contracts could put you over goal.",
 "Keep your momentum and focus over the next appointments and great things will happen.",
-"The quarterly target remains achievable with continued effort.",
-"Keep pushing. The pace is close to where it needs to be.",
+"The quarterly target remains achievable. Keep the grind alive.",
+"Keep pushing. The pace is right where it needs to be.",
 "You're within range of the goal and still have time to close the gap. Keep pushing!",
-"A strong finish could quickly change the outlook for the quarter.",
-"Momentum over the next few weeks will be critical. Stay focused.",
+"A strong finish is what you need to close out the quarter. You got this!",
+"Momentum over the next few weeks will be critical. Keep focused.",
 "The quarter remains highly achievable from this position. Keep pushing!",
-"Stay focused on your leads and follow-through - you can still do this!",
+"Stay focused on your leads and the quarter is yours - You got this!",
 "You're not far from where you need to be. Keep pushing - you got this!",
 "A few more contracts can turn around your quarter. Keep up the hard work!",
-"The opportunity to finish strong remains very real, keep grinding!",
-"Stay disciplined and keep moving forward.",
-"Keep applying pressure and the results will come quickly."
+"The opportunity to finish strong remains very real, keep the grind alive!",
+"Stay disciplined and keep pushing forward. You are close to your quarterly goal!",
+"Keep applying pressure, your quarterly goal is in sight!"
 ];
 
 const quarterNeedsPushMessages = [
-"The quarter needs additional momentum, but there is still time.",
+"The quarter needs additional momentum, but there is still time. Keep pushing.",
 "Focus on pipeline activity and creating opportunities.",
-"Several strong weeks can quickly improve the quarterly outlook.",
+"Several strong contracts can quickly improve the quarterly outlook.",
 "Stay disciplined and continue executing the fundamentals.",
 "The quarter isn't decided yet. Keep building momentum.",
-"There's still time to improve the trajectory of the quarter.",
-"Focus on activity and let the scoreboard take care of itself.",
+"There's still time to improve the outcome of the quarter.",
+"Focus on your leads and don't let off the gas - you got this!",
 "Every conversation creates a new opportunity. Keep grinding.",
 "Momentum can shift quickly when activity increases.",
 "Continue building the sales pipeline and creating opportunities.",
 "Stay engaged and keep attacking the next opportunity.",
 "Persistence now can create a much stronger finish later.",
 "One productive stretch can change the entire quarter.",
-"Keep your energy high and focus on execution.",
+"Keep your energy high and focus on execution. You can do this!",
 "The quarter is still being written. Keep pushing forward."
 ];
 
