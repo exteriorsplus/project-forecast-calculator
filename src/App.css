@@ -1383,7 +1383,7 @@ input::placeholder {
   border-radius: 999px;
   object-fit: cover;
   object-position: top center;
-  border: 3px solid #b91c1c;
+  border: 5px solid #b91c1c;
 }
 
 .pm-hero-content > span {
