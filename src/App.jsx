@@ -1370,6 +1370,25 @@ const projectedGoalPercent =
   individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
+const monthlyContractGoal =
+  averageContract > 0
+    ? Math.ceil(monthlyGoal / averageContract)
+    : 0;
+
+const monthlyAverageContractGoal =
+  monthlyContractGoal > 0
+    ? monthlyGoal / monthlyContractGoal
+    : monthlyGoal;
+
+const estimatedMonthlyOpportunities =
+  closingRate > 0
+    ? contracts / closingRate
+    : 0;
+
+const monthlyClosingRateGoal =
+  estimatedMonthlyOpportunities > 0
+    ? monthlyContractGoal / estimatedMonthlyOpportunities
+    : 0;
 
 const monthlyGoalPercent =
   monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
@@ -1481,6 +1500,9 @@ quarterlyGoal,
 quarterlyGoalPercent: quarterlyActualPercent,
 quarterlyProjectedPercent,
 quarterlyRemaining,
+monthlyContractGoal,
+monthlyAverageContractGoal,
+monthlyClosingRateGoal,
     };
   };
 
@@ -2613,98 +2635,86 @@ const quarterlyGoalClass =
   </h2>
 
   <div className="pm-metric-grid">
-    <PMMetricCard
-      label="Contract Total"
-      value={money(pmData.contractTotal)}
-      goalLabel={isCustomMode ? null : "Monthly Goal"}
-      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
-      goalDifference={
-        isCustomMode
-          ? null
-          : {
-              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-              className: monthlyGoalClass,
-            }
-      }
-      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-      comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
-      difference={isCustomMode ? null : revenueVsLY}
-    />
+<PMMetricCard
+  label="Contract Total"
+  value={money(pmData.contractTotal)}
+  goalLabel="Monthly Revenue Goal"
+  goalValue={money(pmData.monthlyGoal)}
+  goalDifference={{
+    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+    className: monthlyGoalClass,
+  }}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
+  difference={isCustomMode ? null : revenueVsLY}
+/>
 
-    <PMMetricCard
-      label="Contracts"
-      value={Math.round(pmData.contracts || 0)}
-      goalLabel={isCustomMode ? null : "Monthly Goal"}
-      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
-      goalDifference={
-        isCustomMode
-          ? null
-          : {
-              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-              className: monthlyGoalClass,
-            }
-      }
-      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-      comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
-      difference={isCustomMode ? null : contractsVsLY}
-    />
+<PMMetricCard
+  label="Contracts"
+  value={Math.round(pmData.contracts || 0)}
+  goalLabel="Monthly Contract Goal"
+  goalValue={pmData.monthlyContractGoal || "N/A"}
+  goalDifference={{
+    label:
+      pmData.monthlyContractGoal > 0
+        ? `${Math.round(pmData.contracts || 0)} of ${pmData.monthlyContractGoal}`
+        : "Need Avg Contract",
+    className:
+      pmData.monthlyContractGoal > 0 &&
+      pmData.contracts >= pmData.monthlyContractGoal
+        ? "positive"
+        : "warning",
+  }}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
+  difference={isCustomMode ? null : contractsVsLY}
+/>
 
-    <PMMetricCard
-      label="Average Contract"
-      value={money(pmData.averageContract)}
-      goalLabel={
-        isCustomMode
-          ? null
-          : "Avg Needed For Goal"
-      }
-      goalValue={
-        isCustomMode
-          ? null
-          : money(
-              pmData.contracts > 0
-                ? pmData.monthlyGoal / pmData.contracts
-                : pmData.monthlyGoal
-            )
-      }
-      goalDifference={
-        isCustomMode
-          ? null
-          : {
-              label:
-                pmData.contracts > 0
-                  ? pmData.averageContract >= pmData.monthlyGoal / pmData.contracts
-                    ? "On Pace"
-                    : "Below Pace"
-                  : "Need Contracts",
-              className:
-                pmData.contracts > 0 &&
-                pmData.averageContract >= pmData.monthlyGoal / pmData.contracts
-                  ? "positive"
-                  : "warning",
-            }
-      }
-      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-      comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
-      difference={isCustomMode ? null : averageVsLY}
-    />
+<PMMetricCard
+  label="Average Contract"
+  value={money(pmData.averageContract)}
+  goalLabel="Monthly Avg Contract Goal"
+  goalValue={money(pmData.monthlyAverageContractGoal)}
+  goalDifference={{
+    label:
+      pmData.averageContract >= pmData.monthlyAverageContractGoal
+        ? "On Pace"
+        : "Below Pace",
+    className:
+      pmData.averageContract >= pmData.monthlyAverageContractGoal
+        ? "positive"
+        : "warning",
+  }}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
+  difference={isCustomMode ? null : averageVsLY}
+/>
 
-    <PMMetricCard
-      label="Closing Rate"
-      value={displayPercent(pmData.closingRate, 1)}
-      goalLabel={isCustomMode ? null : "Monthly Goal"}
-      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
-      goalDifference={
-        isCustomMode
-          ? null
-          : {
-              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-              className: monthlyGoalClass,
-            }
-      }
-      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-      comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
-      difference={isCustomMode ? null : closingRateVsLY}
-    />
+<PMMetricCard
+  label="Closing Rate"
+  value={displayPercent(pmData.closingRate, 1)}
+  goalLabel="Monthly Closing Rate Goal"
+  goalValue={
+    pmData.monthlyClosingRateGoal > 0
+      ? displayPercent(pmData.monthlyClosingRateGoal, 1)
+      : "N/A"
+  }
+  goalDifference={{
+    label:
+      pmData.monthlyClosingRateGoal > 0 &&
+      pmData.closingRate >= pmData.monthlyClosingRateGoal
+        ? "On Pace"
+        : "Need More Data",
+    className:
+      pmData.monthlyClosingRateGoal > 0 &&
+      pmData.closingRate >= pmData.monthlyClosingRateGoal
+        ? "positive"
+        : "warning",
+  }}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
+  difference={isCustomMode ? null : closingRateVsLY}
+/>
   </div>
 </div>
 
