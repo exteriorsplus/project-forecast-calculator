@@ -988,10 +988,10 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     try {
       setDataStatus("Loading sales.xlsx...");
 
-      const response = await fetch(`/pm/sales.xlsx?t=${Date.now()}`);
+      const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
 
       if (!response.ok) {
-        throw new Error("Could not find public/sales.xlsx");
+        throw new Error("Could not find public/pm/sales.xlsx");
       }
 
       const buffer = await response.arrayBuffer();
@@ -1009,7 +1009,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
     } catch (error) {
       setSalesRows([]);
-      setDataStatus("No sales.xlsx file found yet.");
+      setDataStatus("No public/pm/sales.xlsx file found yet.");
       console.error(error);
     }
   };
