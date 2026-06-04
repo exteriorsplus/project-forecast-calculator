@@ -1879,8 +1879,8 @@ input::placeholder {
   content: "";
   display: block;
   width: 180px;
-  height: 12px;
+  height: 4px;
   background: #b91c1c;
-  margin: 10px auto 0;
+  margin: 12px auto 0;
   border-radius: 999px;
 }
