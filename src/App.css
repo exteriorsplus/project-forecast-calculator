@@ -1858,8 +1858,8 @@ input::placeholder {
 
 .pm-page .pm-header-logo {
   position: absolute;
-  left: 20px;
-  top: 16px;
+  left: 10px;
+  top: 10px;
   width: 120px;
   height: auto;
   max-height: none;
