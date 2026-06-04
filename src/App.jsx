@@ -2418,14 +2418,8 @@ else if (closingRateVsTeam < -0.05) {
 
   return messages.slice(0, 4).join(" ");
 };
-const pmInsight = generatePMInsight({
-  monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
-  quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
-  revenueVsTeam: revenueVsTeam?.rawDifference || 0,
-  averageVsTeam: averageVsTeam?.rawDifference || 0,
-  closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
-  isPastMonth,
-});
+
+
 const isCustomMode = pmDateMode === "custom";
 const selectedMonthDate = new Date(pmData.selectedMonth);
 const now = new Date();
@@ -2435,6 +2429,15 @@ const isPastMonth =
   selectedMonthDate.getFullYear() < now.getFullYear() ||
   (selectedMonthDate.getFullYear() === now.getFullYear() &&
     selectedMonthDate.getMonth() < now.getMonth());
+
+    const pmInsight = generatePMInsight({
+  monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
+  quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
+  revenueVsTeam: revenueVsTeam?.rawDifference || 0,
+  averageVsTeam: averageVsTeam?.rawDifference || 0,
+  closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
+  isPastMonth,
+});
 
 const monthlyGoalClass =
   pmData.monthlyGoalPercent >= 1
