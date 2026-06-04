@@ -2323,11 +2323,11 @@ const generatePMInsight = ({
 if (isPastMonth) {
   if (monthlyGoalPercent >= 1) {
     messages.push(
-      "The selected month has closed with the monthly goal achieved."
+      "Congrats! This month has closed with the monthly goal achieved."
     );
   } else {
     messages.push(
-      "The selected month has closed below the monthly goal."
+      "This month unfortunately has closed below the monthly goal."
     );
   }
 }
