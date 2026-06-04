@@ -1213,8 +1213,17 @@ const getTeamMetricRow = (metric) => {
     const lastYearMonth = getPreviousYearMonth(selectedMonth);
 
 const pmName = currentPM?.name || projectManagers[0].name;
+const currentFiscalMonth = new Date().toLocaleDateString("en-US", {
+  month: "long",
+  year: "numeric",
+});
 
-const fiscalMonthIndex = fiscalMonths.indexOf(selectedMonth);
+const currentFiscalMonthIndex = fiscalMonths.indexOf(currentFiscalMonth);
+
+const fiscalMonthIndex =
+  currentFiscalMonthIndex >= 0
+    ? currentFiscalMonthIndex
+    : fiscalMonths.indexOf(selectedMonth);
 
 const ytdMonths =
   fiscalMonthIndex >= 0
