@@ -2316,6 +2316,7 @@ const generatePMInsight = ({
   revenueVsTeam,
   averageVsTeam,
   closingRateVsTeam,
+  isPastMonth,
 }) => {
   const messages = [];
 
