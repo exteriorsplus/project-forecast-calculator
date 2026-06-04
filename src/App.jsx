@@ -2603,67 +2603,71 @@ const quarterlyGoalClass =
           </div>
 
           <div className="pm-section-card">
-            <h2>
-  {pmDateMode === "fiscalYTD"
-    ? "Fiscal YTD Performance"
-    : pmDateMode === "custom"
-    ? "Custom Date Performance"
-    : `${pmData.selectedMonth} Performance`}
-</h2>
+  <h2>
+    {pmDateMode === "fiscalYTD"
+      ? "Fiscal YTD Performance"
+      : pmDateMode === "custom"
+      ? "Custom Date Performance"
+      : `${pmData.selectedMonth} Performance`}
+  </h2>
 
-            <div className="pm-metric-grid">
-<PMMetricCard
-  label="Contract Total"
-  value={money(pmData.contractTotal)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
-  difference={isCustomMode ? null : revenueVsLY}
-/>
+  <div className="pm-metric-grid">
+    <PMMetricCard
+      label="Contract Total"
+      value={money(pmData.contractTotal)}
+      goalLabel={isCustomMode ? null : "Monthly Goal"}
+      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
+      goalDifference={
+        isCustomMode
+          ? null
+          : {
+              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+              className: monthlyGoalClass,
+            }
+      }
+      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+      comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
+      difference={isCustomMode ? null : revenueVsLY}
+    />
 
-<PMMetricCard
-  label="Contracts"
-  value={Math.round(pmData.contracts || 0)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
-  difference={isCustomMode ? null : contractsVsLY}
-/>
+    <PMMetricCard
+      label="Contracts"
+      value={Math.round(pmData.contracts || 0)}
+      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+      comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
+      difference={isCustomMode ? null : contractsVsLY}
+    />
 
-<PMMetricCard
-  label="Average Contract"
-  value={money(pmData.averageContract)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
-  difference={isCustomMode ? null : averageVsLY}
-/>
+    <PMMetricCard
+      label="Average Contract"
+      value={money(pmData.averageContract)}
+      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+      comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
+      difference={isCustomMode ? null : averageVsLY}
+    />
 
-<PMMetricCard
-  label="Closing Rate"
-  value={displayPercent(pmData.closingRate, 1)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
-  difference={isCustomMode ? null : closingRateVsLY}
-/>
-            </div>
-          </div>
+    <PMMetricCard
+      label="Closing Rate"
+      value={displayPercent(pmData.closingRate, 1)}
+      comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+      comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
+      difference={isCustomMode ? null : closingRateVsLY}
+    />
+  </div>
+</div>
 
-          {!isCustomMode && (
+         {!isCustomMode && (
   <div className="pm-section-card">
     <h2>Team Comparison</h2>
 
     <div className="pm-metric-grid">
-<PMMetricCard
-  label="Contract Total"
-  value={money(pmData.contractTotal)}
-  goalLabel="Monthly Goal"
-  goalValue={money(pmData.monthlyGoal)}
-  goalDifference={{
-    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-    className: monthlyGoalClass,
-  }}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
-  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
-  difference={isCustomMode ? null : revenueVsLY}
-/>
+      <PMMetricCard
+        label="Contract Total vs Team"
+        value={money(pmData.contractTotal)}
+        comparisonLabel="Team Avg"
+        comparisonValue={money(pmData.teamContractTotal)}
+        difference={revenueVsTeam}
+      />
 
       <PMMetricCard
         label="Contracts vs Team"
