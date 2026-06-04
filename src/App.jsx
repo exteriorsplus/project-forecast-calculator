@@ -2096,22 +2096,6 @@ const closeNeedsMessages = [
   "Improved conversion rates could significantly boost revenue."
 ];
 
-const closeStrongMessages = [
-  "Your closing efficiency remains one of your strongest advantages.",
-  "Customers continue responding well to your sales process.",
-  "Conversion performance is helping drive strong results.",
-  "Your closing rate continues to outperform expectations.",
-  "Strong conversion efficiency remains a competitive advantage."
-];
-
-const closeNeedsMessages = [
-  "Improving conversion efficiency could unlock additional growth.",
-  "Small gains in closing rate could have a large impact on production.",
-  "More effective follow-up may improve conversion results.",
-  "There is opportunity to strengthen closing performance.",
-  "Improved conversion rates could significantly boost revenue."
-];
-
 
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
