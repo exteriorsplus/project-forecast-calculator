@@ -689,9 +689,6 @@ function ForecastRow({
 function PMMetricCard({
   label,
   value,
-  goalLabel,
-  goalValue,
-  goalDifference,
   comparisonLabel,
   comparisonValue,
   difference,
@@ -703,45 +700,31 @@ function PMMetricCard({
       <span>{label}</span>
       <strong>{value}</strong>
 
-      {goalLabel && (
-        <div className="pm-comparison-line">
-          <small>{goalLabel}</small>
-          <b>{goalValue}</b>
-
-          {goalDifference && (
-            <div className={`pm-difference ${goalDifference.className}`}>
-              {goalDifference.label}
-            </div>
-          )}
-        </div>
-      )}
-
       {comparisonLabel && (
         <div className="pm-comparison-line">
           <small>{comparisonLabel}</small>
           <b>{comparisonValue}</b>
-
-          {difference && (
-            <div className={`pm-difference ${difference.className}`}>
-              {difference.label}
-            </div>
-          )}
         </div>
       )}
 
-      {customMessage && (
-        <div className="mike-moment-mini">
-          <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
-
-          <div className="mike-moment-mini-bubble">
-            <div className="mike-moment-mini-title">
-              {messageTitle}
-            </div>
-
-            <p>{customMessage}</p>
-          </div>
+      {difference && (
+        <div className={`pm-difference ${difference.className}`}>
+          {difference.label}
         </div>
       )}
+    {customMessage && (
+  <div className="mike-moment-mini">
+    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+
+    <div className="mike-moment-mini-bubble">
+<div className="mike-moment-mini-title">
+  {messageTitle}
+</div>
+
+      <p>{customMessage}</p>
+    </div>
+  </div>
+)}
     </div>
   );
 }
@@ -1370,25 +1353,6 @@ const projectedGoalPercent =
   individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
-const monthlyContractGoal =
-  averageContract > 0
-    ? Math.ceil(monthlyGoal / averageContract)
-    : 0;
-
-const monthlyAverageContractGoal =
-  monthlyContractGoal > 0
-    ? monthlyGoal / monthlyContractGoal
-    : monthlyGoal;
-
-const estimatedMonthlyOpportunities =
-  closingRate > 0
-    ? contracts / closingRate
-    : 0;
-
-const monthlyClosingRateGoal =
-  estimatedMonthlyOpportunities > 0
-    ? monthlyContractGoal / estimatedMonthlyOpportunities
-    : 0;
 
 const monthlyGoalPercent =
   monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
@@ -1500,9 +1464,6 @@ quarterlyGoal,
 quarterlyGoalPercent: quarterlyActualPercent,
 quarterlyProjectedPercent,
 quarterlyRemaining,
-monthlyContractGoal,
-monthlyAverageContractGoal,
-monthlyClosingRateGoal,
     };
   };
 
@@ -2353,25 +2314,11 @@ const generatePMInsight = ({
   revenueVsTeam,
   averageVsTeam,
   closingRateVsTeam,
-   isPastMonth,
 }) => {
   const messages = [];
 
-// Monthly Performance
-if (isPastMonth) {
-
-  if (monthlyGoalPercent >= 1) {
-    messages.push(
-      "The selected month has closed with the monthly goal achieved."
-    );
-  } else {
-    messages.push(
-      "The selected month has closed below the monthly goal."
-    );
-  }
-
-}
-else if (monthlyGoalPercent >= 1) {
+  // Monthly Performance
+if (monthlyGoalPercent >= 1) {
   messages.push(
     "Monthly goal has been achieved and production remains strong."
   );
@@ -2457,26 +2404,21 @@ else if (closingRateVsTeam < -0.05) {
 
   return messages.slice(0, 4).join(" ");
 };
-
-
-const isCustomMode = pmDateMode === "custom";
-const selectedMonthDate = new Date(pmData.selectedMonth);
-const now = new Date();
-
-
-const isPastMonth =
-  selectedMonthDate.getFullYear() < now.getFullYear() ||
-  (selectedMonthDate.getFullYear() === now.getFullYear() &&
-    selectedMonthDate.getMonth() < now.getMonth());
-
-    const pmInsight = generatePMInsight({
+const pmInsight = generatePMInsight({
   monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
   quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
   revenueVsTeam: revenueVsTeam?.rawDifference || 0,
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
-  isPastMonth,
 });
+const isCustomMode = pmDateMode === "custom";
+const selectedMonthDate = new Date(pmData.selectedMonth);
+const now = new Date();
+
+const isPastMonth =
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() < now.getMonth());
 
 const monthlyGoalClass =
   pmData.monthlyGoalPercent >= 1
@@ -2625,25 +2567,19 @@ const quarterlyGoalClass =
 </div>
           </div>
 
-<div className="pm-section-card">
-  <h2>
-    {pmDateMode === "fiscalYTD"
-      ? "Fiscal YTD Performance"
-      : pmDateMode === "custom"
-      ? "Custom Date Performance"
-      : `${pmData.selectedMonth} Performance`}
-  </h2>
+          <div className="pm-section-card">
+            <h2>
+  {pmDateMode === "fiscalYTD"
+    ? "Fiscal YTD Performance"
+    : pmDateMode === "custom"
+    ? "Custom Date Performance"
+    : `${pmData.selectedMonth} Performance`}
+</h2>
 
-  <div className="pm-metric-grid">
+            <div className="pm-metric-grid">
 <PMMetricCard
   label="Contract Total"
   value={money(pmData.contractTotal)}
-  goalLabel="Monthly Revenue Goal"
-  goalValue={money(pmData.monthlyGoal)}
-  goalDifference={{
-    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-    className: monthlyGoalClass,
-  }}
   comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
   comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
   difference={isCustomMode ? null : revenueVsLY}
@@ -2652,19 +2588,6 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Contracts"
   value={Math.round(pmData.contracts || 0)}
-  goalLabel="Monthly Contract Goal"
-  goalValue={pmData.monthlyContractGoal || "N/A"}
-  goalDifference={{
-    label:
-      pmData.monthlyContractGoal > 0
-        ? `${Math.round(pmData.contracts || 0)} of ${pmData.monthlyContractGoal}`
-        : "Need Avg Contract",
-    className:
-      pmData.monthlyContractGoal > 0 &&
-      pmData.contracts >= pmData.monthlyContractGoal
-        ? "positive"
-        : "warning",
-  }}
   comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
   comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
   difference={isCustomMode ? null : contractsVsLY}
@@ -2673,18 +2596,6 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Average Contract"
   value={money(pmData.averageContract)}
-  goalLabel="Monthly Avg Contract Goal"
-  goalValue={money(pmData.monthlyAverageContractGoal)}
-  goalDifference={{
-    label:
-      pmData.averageContract >= pmData.monthlyAverageContractGoal
-        ? "On Pace"
-        : "Below Pace",
-    className:
-      pmData.averageContract >= pmData.monthlyAverageContractGoal
-        ? "positive"
-        : "warning",
-  }}
   comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
   comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
   difference={isCustomMode ? null : averageVsLY}
@@ -2693,38 +2604,20 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Closing Rate"
   value={displayPercent(pmData.closingRate, 1)}
-  goalLabel="Monthly Closing Rate Goal"
-  goalValue={
-    pmData.monthlyClosingRateGoal > 0
-      ? displayPercent(pmData.monthlyClosingRateGoal, 1)
-      : "N/A"
-  }
-  goalDifference={{
-    label:
-      pmData.monthlyClosingRateGoal > 0 &&
-      pmData.closingRate >= pmData.monthlyClosingRateGoal
-        ? "On Pace"
-        : "Need More Data",
-    className:
-      pmData.monthlyClosingRateGoal > 0 &&
-      pmData.closingRate >= pmData.monthlyClosingRateGoal
-        ? "positive"
-        : "warning",
-  }}
   comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
   comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
   difference={isCustomMode ? null : closingRateVsLY}
 />
-  </div>
-</div>
+            </div>
+          </div>
 
-         {!isCustomMode && (
+          {!isCustomMode && (
   <div className="pm-section-card">
     <h2>Team Comparison</h2>
 
     <div className="pm-metric-grid">
       <PMMetricCard
-        label="Contract Total vs Team"
+        label="Revenue vs Team"
         value={money(pmData.contractTotal)}
         comparisonLabel="Team Avg"
         comparisonValue={money(pmData.teamContractTotal)}
