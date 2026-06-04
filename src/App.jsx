@@ -704,37 +704,44 @@ function PMMetricCard({
       <strong>{value}</strong>
 
       {goalLabel && (
-  <div className="pm-comparison-line">
-    <small>{goalLabel}</small>
-    <b>{goalValue}</b>
+        <div className="pm-comparison-line">
+          <small>{goalLabel}</small>
+          <b>{goalValue}</b>
 
-    {goalDifference && (
-      <div className={`pm-difference ${goalDifference.className}`}>
-        {goalDifference.label}
-      </div>
-    )}
-  </div>
-)}
+          {goalDifference && (
+            <div className={`pm-difference ${goalDifference.className}`}>
+              {goalDifference.label}
+            </div>
+          )}
+        </div>
+      )}
 
-{comparisonLabel && (
-  <div className="pm-comparison-line">
-    <small>{comparisonLabel}</small>
-    <b>{comparisonValue}</b>
-  </div>
-)}
-    {customMessage && (
-  <div className="mike-moment-mini">
-    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+      {comparisonLabel && (
+        <div className="pm-comparison-line">
+          <small>{comparisonLabel}</small>
+          <b>{comparisonValue}</b>
 
-    <div className="mike-moment-mini-bubble">
-<div className="mike-moment-mini-title">
-  {messageTitle}
-</div>
+          {difference && (
+            <div className={`pm-difference ${difference.className}`}>
+              {difference.label}
+            </div>
+          )}
+        </div>
+      )}
 
-      <p>{customMessage}</p>
-    </div>
-  </div>
-)}
+      {customMessage && (
+        <div className="mike-moment-mini">
+          <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+
+          <div className="mike-moment-mini-bubble">
+            <div className="mike-moment-mini-title">
+              {messageTitle}
+            </div>
+
+            <p>{customMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2596,7 +2603,7 @@ const quarterlyGoalClass =
 </div>
           </div>
 
-          <div className="pm-section-card">
+<div className="pm-section-card">
   <h2>
     {pmDateMode === "fiscalYTD"
       ? "Fiscal YTD Performance"
@@ -2627,6 +2634,16 @@ const quarterlyGoalClass =
     <PMMetricCard
       label="Contracts"
       value={Math.round(pmData.contracts || 0)}
+      goalLabel={isCustomMode ? null : "Monthly Goal"}
+      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
+      goalDifference={
+        isCustomMode
+          ? null
+          : {
+              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+              className: monthlyGoalClass,
+            }
+      }
       comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
       comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
       difference={isCustomMode ? null : contractsVsLY}
@@ -2635,6 +2652,37 @@ const quarterlyGoalClass =
     <PMMetricCard
       label="Average Contract"
       value={money(pmData.averageContract)}
+      goalLabel={
+        isCustomMode
+          ? null
+          : "Avg Needed For Goal"
+      }
+      goalValue={
+        isCustomMode
+          ? null
+          : money(
+              pmData.contracts > 0
+                ? pmData.monthlyGoal / pmData.contracts
+                : pmData.monthlyGoal
+            )
+      }
+      goalDifference={
+        isCustomMode
+          ? null
+          : {
+              label:
+                pmData.contracts > 0
+                  ? pmData.averageContract >= pmData.monthlyGoal / pmData.contracts
+                    ? "On Pace"
+                    : "Below Pace"
+                  : "Need Contracts",
+              className:
+                pmData.contracts > 0 &&
+                pmData.averageContract >= pmData.monthlyGoal / pmData.contracts
+                  ? "positive"
+                  : "warning",
+            }
+      }
       comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
       comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
       difference={isCustomMode ? null : averageVsLY}
@@ -2643,6 +2691,16 @@ const quarterlyGoalClass =
     <PMMetricCard
       label="Closing Rate"
       value={displayPercent(pmData.closingRate, 1)}
+      goalLabel={isCustomMode ? null : "Monthly Goal"}
+      goalValue={isCustomMode ? null : money(pmData.monthlyGoal)}
+      goalDifference={
+        isCustomMode
+          ? null
+          : {
+              label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+              className: monthlyGoalClass,
+            }
+      }
       comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
       comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
       difference={isCustomMode ? null : closingRateVsLY}
