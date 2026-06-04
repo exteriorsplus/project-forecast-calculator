@@ -2664,45 +2664,43 @@ const quarterlyGoalClass =
             </div>
           </div>
 
-          {!isCustomMode && (
-  <div className="pm-section-card">
-    <h2>Team Comparison</h2>
+ <div className="pm-section-card">
+  <h2>Team Comparison</h2>
 
-    <div className="pm-metric-grid">
-      <PMMetricCard
-        label="Revenue vs Team"
-        value={money(pmData.contractTotal)}
-        comparisonLabel="Team Avg"
-        comparisonValue={money(pmData.teamContractTotal)}
-        difference={revenueVsTeam}
-      />
+  <div className="pm-metric-grid">
+    <PMMetricCard
+      label="Revenue vs Team"
+      value={money(pmData.contractTotal)}
+      comparisonLabel="Team Avg"
+      comparisonValue={money(pmData.teamContractTotal)}
+      difference={revenueVsTeam}
+    />
 
-      <PMMetricCard
-        label="Contracts vs Team"
-        value={Math.round(pmData.contracts || 0)}
-        comparisonLabel="Team Avg"
-        comparisonValue={Math.round(pmData.teamContracts || 0)}
-        difference={contractsVsTeam}
-      />
+    <PMMetricCard
+      label="Contracts vs Team"
+      value={Math.round(pmData.contracts || 0)}
+      comparisonLabel="Team Avg"
+      comparisonValue={Math.round(pmData.teamContracts || 0)}
+      difference={contractsVsTeam}
+    />
 
-      <PMMetricCard
-        label="Avg Contract vs Team"
-        value={money(pmData.averageContract)}
-        comparisonLabel="Team Avg"
-        comparisonValue={money(pmData.teamAverageContract)}
-        difference={averageVsTeam}
-      />
+    <PMMetricCard
+      label="Avg Contract vs Team"
+      value={money(pmData.averageContract)}
+      comparisonLabel="Team Avg"
+      comparisonValue={money(pmData.teamAverageContract)}
+      difference={averageVsTeam}
+    />
 
-      <PMMetricCard
-        label="Closing Rate vs Team"
-        value={displayPercent(pmData.closingRate, 1)}
-        comparisonLabel="Team Avg"
-        comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
-        difference={closingRateVsTeam}
-      />
-    </div>
+    <PMMetricCard
+      label="Closing Rate vs Team"
+      value={displayPercent(pmData.closingRate, 1)}
+      comparisonLabel="Team Avg"
+      comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
+      difference={closingRateVsTeam}
+    />
   </div>
-)}
+</div>
 
           <div className="pm-goal-card">
             <div className="pm-goal-top">
