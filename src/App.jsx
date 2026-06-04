@@ -2317,8 +2317,27 @@ const generatePMInsight = ({
   averageVsTeam,
   closingRateVsTeam,
   isPastMonth,
+  isCustomMode,
 }) => {
   const messages = [];
+
+  // Custom Date Performance
+if (isCustomMode) {
+  messages.push(
+    "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
+  );
+}
+else if (isPastMonth) {
+  if (monthlyGoalPercent >= 1) {
+    messages.push(
+      "Congrats! This month has closed with the monthly goal achieved."
+    );
+  } else {
+    messages.push(
+      "This month has closed below the monthly goal."
+    );
+  }
+}
 
   // Monthly Performance
 if (isPastMonth) {
@@ -2435,6 +2454,7 @@ const isPastMonth =
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
    isPastMonth,
+    isCustomMode,
 });
 
 const monthlyGoalClass =
