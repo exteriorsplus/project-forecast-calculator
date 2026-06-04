@@ -1622,7 +1622,7 @@ input::placeholder {
 }
 
 .pm-hero-card {
-  grid-template-columns: 150px minmax(360px, 1fr) 360px;
+  grid-template-columns: 150px auto 360px;
   gap: 28px;
   align-items: center;
 }
