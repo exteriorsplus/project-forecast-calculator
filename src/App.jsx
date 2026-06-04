@@ -689,6 +689,9 @@ function ForecastRow({
 function PMMetricCard({
   label,
   value,
+  goalLabel,
+  goalValue,
+  goalDifference,
   comparisonLabel,
   comparisonValue,
   difference,
@@ -699,6 +702,19 @@ function PMMetricCard({
     <div className="pm-metric-card">
       <span>{label}</span>
       <strong>{value}</strong>
+
+      {goalLabel && (
+  <div className="pm-comparison-line">
+    <small>{goalLabel}</small>
+    <b>{goalValue}</b>
+
+    {goalDifference && (
+      <div className={`pm-difference ${goalDifference.className}`}>
+        {goalDifference.label}
+      </div>
+    )}
+  </div>
+)}
 
       {comparisonLabel && (
         <div className="pm-comparison-line">
@@ -2635,13 +2651,19 @@ const quarterlyGoalClass =
     <h2>Team Comparison</h2>
 
     <div className="pm-metric-grid">
-      <PMMetricCard
-        label="Revenue vs Team"
-        value={money(pmData.contractTotal)}
-        comparisonLabel="Team Avg"
-        comparisonValue={money(pmData.teamContractTotal)}
-        difference={revenueVsTeam}
-      />
+<PMMetricCard
+  label="Contract Total"
+  value={money(pmData.contractTotal)}
+  goalLabel="Monthly Goal"
+  goalValue={money(pmData.monthlyGoal)}
+  goalDifference={{
+    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+    className: monthlyGoalClass,
+  }}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
+  difference={isCustomMode ? null : revenueVsLY}
+/>
 
       <PMMetricCard
         label="Contracts vs Team"
