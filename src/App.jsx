@@ -2096,6 +2096,23 @@ const closeNeedsMessages = [
   "Improved conversion rates could significantly boost revenue."
 ];
 
+const closeStrongMessages = [
+  "Your closing efficiency remains one of your strongest advantages.",
+  "Customers continue responding well to your sales process.",
+  "Conversion performance is helping drive strong results.",
+  "Your closing rate continues to outperform expectations.",
+  "Strong conversion efficiency remains a competitive advantage."
+];
+
+const closeNeedsMessages = [
+  "Improving conversion efficiency could unlock additional growth.",
+  "Small gains in closing rate could have a large impact on production.",
+  "More effective follow-up may improve conversion results.",
+  "There is opportunity to strengthen closing performance.",
+  "Improved conversion rates could significantly boost revenue."
+];
+
+
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
@@ -2124,6 +2141,7 @@ const closeMessages = [
   "Stay disciplined and keep moving forward. The finish line is much closer than it appears.",
   "Every contract matters from here. Continue stacking small wins and the larger results will follow."
 ];
+
 
 const needsPushMessages = [
   "Keep grinding. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
@@ -2318,7 +2336,18 @@ const generatePMInsight = ({
   const messages = [];
 
   // Monthly Performance
-if (monthlyGoalPercent >= 1) {
+if (isPastMonth) {
+  if (monthlyGoalPercent >= 1) {
+    messages.push(
+      "The selected month has closed with the monthly goal achieved."
+    );
+  } else {
+    messages.push(
+      "The selected month has closed below the monthly goal."
+    );
+  }
+}
+else if (monthlyGoalPercent >= 1) {
   messages.push(
     "Monthly goal has been achieved and production remains strong."
   );
@@ -2410,6 +2439,7 @@ const pmInsight = generatePMInsight({
   revenueVsTeam: revenueVsTeam?.rawDifference || 0,
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
+   isPastMonth,
 });
 const isCustomMode = pmDateMode === "custom";
 const selectedMonthDate = new Date(pmData.selectedMonth);
