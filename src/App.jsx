@@ -2009,7 +2009,7 @@ const closingRateVsTeam = compareNumbers(
 );
 
 const exceededGoalMessages = [
-  "Outstanding work. You've surpassed your goal for this period. That's fire.",
+  "Outstanding work. You've surpassed your goal for this month. That's fire.",
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
   "You've reached your goal and are building momentum. That's fire.",
   "Fantastic job. Your production cleared the goal for this month. That's fire.",
@@ -2314,11 +2314,25 @@ const generatePMInsight = ({
   revenueVsTeam,
   averageVsTeam,
   closingRateVsTeam,
+   isPastMonth,
 }) => {
   const messages = [];
 
-  // Monthly Performance
-if (monthlyGoalPercent >= 1) {
+// Monthly Performance
+if (isPastMonth) {
+
+  if (monthlyGoalPercent >= 1) {
+    messages.push(
+      "The selected month has closed with the monthly goal achieved."
+    );
+  } else {
+    messages.push(
+      "The selected month has closed below the monthly goal."
+    );
+  }
+
+}
+else if (monthlyGoalPercent >= 1) {
   messages.push(
     "Monthly goal has been achieved and production remains strong."
   );
