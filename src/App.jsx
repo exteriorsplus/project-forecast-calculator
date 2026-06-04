@@ -2326,6 +2326,22 @@ if (isCustomMode) {
   messages.push(
     "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
   );
+
+  if (revenueVsTeam > 0.25) {
+    messages.push(
+      `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+    );
+  } else if (revenueVsTeam > 0) {
+    messages.push(
+      "Revenue production is above the team average for the selected date range."
+    );
+  } else {
+    messages.push(
+      "Revenue production trails the team average for the selected date range."
+    );
+  }
+
+  return messages.slice(0, 2).join(" ");
 }
 else if (isPastMonth) {
   if (monthlyGoalPercent >= 1) {
