@@ -1511,58 +1511,85 @@ const monthlyGoalPercent =
 const monthlyRemaining =
   monthlyGoal - contractTotal;
 const now = new Date();
-let quarterMonths = [];
 
-if (fiscalMonthIndex >= 0) {
-  const quarterStartIndex = Math.floor(fiscalMonthIndex / 3) * 3;
+const selectedMonthBounds = getMonthDateBoundsForSales(selectedMonth);
+const selectedMonthStart = selectedMonthBounds?.start || null;
 
-  quarterMonths = fiscalMonths.slice(
-    quarterStartIndex,
-    quarterStartIndex + 3
-  );
-}
+const fiscalYearStart = selectedMonthStart
+  ? selectedMonthStart.getMonth() >= 10
+    ? new Date(selectedMonthStart.getFullYear(), 10, 1)
+    : new Date(selectedMonthStart.getFullYear() - 1, 10, 1)
+  : null;
 
-console.log("Selected Month:", selectedMonth);
-console.log("Fiscal Month Index:", fiscalMonthIndex);
-console.log("Quarter Months:", quarterMonths);
+const monthsSinceFiscalStart =
+  selectedMonthStart && fiscalYearStart
+    ? (selectedMonthStart.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+      selectedMonthStart.getMonth() -
+      fiscalYearStart.getMonth()
+    : -1;
 
-const quarterSalesData = getSalesDataForMonths(quarterMonths);
+const quarterStartOffset =
+  monthsSinceFiscalStart >= 0
+    ? Math.floor(monthsSinceFiscalStart / 3) * 3
+    : 0;
+
+const quarterStartDate = fiscalYearStart
+  ? new Date(
+      fiscalYearStart.getFullYear(),
+      fiscalYearStart.getMonth() + quarterStartOffset,
+      1
+    )
+  : null;
+
+const quarterEndDate = quarterStartDate
+  ? new Date(
+      quarterStartDate.getFullYear(),
+      quarterStartDate.getMonth() + 3,
+      0
+    )
+  : null;
+
+const quarterMonths = quarterStartDate
+  ? [0, 1, 2].map((offset) => {
+      const date = new Date(
+        quarterStartDate.getFullYear(),
+        quarterStartDate.getMonth() + offset,
+        1
+      );
+
+      return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    })
+  : [];
+
+const quarterSalesData =
+  quarterStartDate && quarterEndDate
+    ? getPMSalesDataForRange(pmName, quarterStartDate, quarterEndDate)
+    : {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+
 const quarterRevenue = quarterSalesData.contractTotal;
-
-const getQuarterDateRange = (quarterMonths) => {
-  const firstMonth = quarterMonths[0];
-  const lastMonth = quarterMonths[quarterMonths.length - 1];
-
-  const [firstMonthName, firstYearText] = firstMonth.split(" ");
-  const [lastMonthName, lastYearText] = lastMonth.split(" ");
-
-  const firstMonthIndex = monthNames.indexOf(firstMonthName);
-  const lastMonthIndex = monthNames.indexOf(lastMonthName);
-
-  const start = new Date(Number(firstYearText), firstMonthIndex, 1);
-  const end = new Date(Number(lastYearText), lastMonthIndex + 1, 0);
-
-  return { start, end };
-};
 
 const getInclusiveDays = (start, end) => {
   const msPerDay = 1000 * 60 * 60 * 24;
   return Math.floor((dateOnly(end) - dateOnly(start)) / msPerDay) + 1;
 };
 
-const quarterDateRange = getQuarterDateRange(quarterMonths);
-
-const totalQuarterDays = getInclusiveDays(
-  quarterDateRange.start,
-  quarterDateRange.end
-);
+const totalQuarterDays =
+  quarterStartDate && quarterEndDate
+    ? getInclusiveDays(quarterStartDate, quarterEndDate)
+    : 0;
 
 const elapsedQuarterDays =
-  now < quarterDateRange.start
+  !quarterStartDate || !quarterEndDate
     ? 0
-    : now > quarterDateRange.end
+    : now < quarterStartDate
+    ? 0
+    : now > quarterEndDate
     ? totalQuarterDays
-    : getInclusiveDays(quarterDateRange.start, now);
+    : getInclusiveDays(quarterStartDate, now);
 
 const quarterlyGoal = individualGoal / 4;
 
@@ -2434,61 +2461,81 @@ const quarterNeedsPushMessages = [
 "The quarter is still being written. Keep pushing forward."
 ];
 
+const futureQuarterMessages = [
+  "We're not in this quarter yet, bub, but I know you'll be ready when it gets here.",
+  "This quarter hasn't started yet, but preparation starts now.",
+  "The scoreboard is still blank for this quarter, but the opportunity is coming.",
+  "Future quarters are won by the habits you build today.",
+  "We're not there yet, bub, but I like our chances when the time comes.",
+  "The quarter is still ahead of us. Stay sharp and be ready to attack it.",
+  "No numbers yet, just opportunity. Be ready when the quarter opens.",
+  "This quarter is still waiting on us, bub. Let's be ready to make it count."
+];
+
 const quarterlyMotivation = (() => {
   const pct = pmData.quarterlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
 
-  const selectedMonthIndex = fiscalMonths.indexOf(pmData.selectedMonth);
+  const selectedQuarterStart = (() => {
+    const selectedDate = new Date(pmData.selectedMonth);
 
-  const quarterStartIndex =
-    selectedMonthIndex >= 0
-      ? Math.floor(selectedMonthIndex / 3) * 3
-      : 0;
+    if (Number.isNaN(selectedDate.getTime())) return null;
 
-  const quarterMonths = fiscalMonths.slice(
-    quarterStartIndex,
-    quarterStartIndex + 3
-  );
+    const fiscalYearStart =
+      selectedDate.getMonth() >= 10
+        ? new Date(selectedDate.getFullYear(), 10, 1)
+        : new Date(selectedDate.getFullYear() - 1, 10, 1);
 
-  const lastQuarterMonth = quarterMonths[2];
-  const [monthName, yearText] = lastQuarterMonth.split(" ");
+    const monthsSinceFiscalStart =
+      (selectedDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+      selectedDate.getMonth() -
+      fiscalYearStart.getMonth();
 
-  const quarterEndDate = new Date(
-    Number(yearText),
-    monthNames.indexOf(monthName) + 1,
-    0
-  );
+    const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
 
-  const quarterIsPast = quarterEndDate < new Date();
+    return new Date(
+      fiscalYearStart.getFullYear(),
+      fiscalYearStart.getMonth() + quarterStartOffset,
+      1
+    );
+  })();
+
+  const selectedQuarterEnd = selectedQuarterStart
+    ? new Date(
+        selectedQuarterStart.getFullYear(),
+        selectedQuarterStart.getMonth() + 3,
+        0
+      )
+    : null;
+
+  const today = new Date();
+  const quarterIsPast = selectedQuarterEnd ? selectedQuarterEnd < today : false;
+  const quarterIsFuture = selectedQuarterStart ? selectedQuarterStart > today : false;
 
   let msg = "";
 
-  if (quarterIsPast) {
+  if (quarterIsFuture) {
+    msg = pickRandom(futureQuarterMessages);
+  } else if (quarterIsPast) {
     if (pct >= 1)
       msg =
         "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter. That's fire.";
-
     else if (pct >= 0.9)
       msg =
         "you finished just short of your quarterly goal. Carry that momentum into the next quarter.";
-
     else if (pct >= 0.7)
       msg =
         "you made solid progress during the quarter. Use those lessons to build an even stronger next quarter.";
-
     else
       msg =
         "that quarter is complete. Take what you learned, reset, and attack the next opportunity.";
   } else {
     if (pct >= 1.2)
       msg = pickRandom(quarterCrushingMessages);
-
-else if (pct >= 1.0)
-  msg = pickRandom(quarterGoalAchievedMessages);
-
-else if (pct >= 0.85)
-  msg = pickRandom(quarterCloseMessages);
-
+    else if (pct >= 1.0)
+      msg = pickRandom(quarterGoalAchievedMessages);
+    else if (pct >= 0.85)
+      msg = pickRandom(quarterCloseMessages);
     else
       msg = pickRandom(quarterNeedsPushMessages);
   }
@@ -2672,26 +2719,39 @@ const monthlyGoalClass =
     ? "negative"
     : "warning";
 
-const selectedMonthIndex = selectedMonthDate.getMonth();
+const selectedQuarterStartForClass = (() => {
+  if (!selectedMonthDate || Number.isNaN(selectedMonthDate.getTime())) return null;
 
-let quarterEndMonth;
+  const fiscalYearStart =
+    selectedMonthDate.getMonth() >= 10
+      ? new Date(selectedMonthDate.getFullYear(), 10, 1)
+      : new Date(selectedMonthDate.getFullYear() - 1, 10, 1);
 
-if ([10, 11, 0].includes(selectedMonthIndex)) {
-  quarterEndMonth = 0; // Nov-Dec-Jan
-} else if ([1, 2, 3].includes(selectedMonthIndex)) {
-  quarterEndMonth = 3; // Feb-Mar-Apr
-} else if ([4, 5, 6].includes(selectedMonthIndex)) {
-  quarterEndMonth = 6; // May-Jun-Jul
-} else {
-  quarterEndMonth = 9; // Aug-Sep-Oct
-}
+  const monthsSinceFiscalStart =
+    (selectedMonthDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+    selectedMonthDate.getMonth() -
+    fiscalYearStart.getMonth();
 
-const quarterComplete =
-  selectedMonthDate.getFullYear() < now.getFullYear() ||
-  (
-    selectedMonthDate.getFullYear() === now.getFullYear() &&
-    quarterEndMonth < now.getMonth()
+  const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
+
+  return new Date(
+    fiscalYearStart.getFullYear(),
+    fiscalYearStart.getMonth() + quarterStartOffset,
+    1
   );
+})();
+
+const selectedQuarterEndForClass = selectedQuarterStartForClass
+  ? new Date(
+      selectedQuarterStartForClass.getFullYear(),
+      selectedQuarterStartForClass.getMonth() + 3,
+      0
+    )
+  : null;
+
+const quarterComplete = selectedQuarterEndForClass
+  ? selectedQuarterEndForClass < now
+  : false;
 
 const quarterlyGoalClass =
   pmData.quarterlyGoalPercent >= 1
