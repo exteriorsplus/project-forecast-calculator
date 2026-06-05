@@ -836,7 +836,8 @@ export default function App() {
   });
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
-  const [pmSaleAmount, setPmSaleAmount] = useState("0");
+ const [pmSaleAmount, setPmSaleAmount] = useState("0");
+const [debouncedPmSaleAmount, setDebouncedPmSaleAmount] = useState("0");
   const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
   const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
@@ -2304,7 +2305,13 @@ useEffect(() => {
   loadSalesFile();
   loadMarginFile();
 }, [pmAuthorized]);
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedPmSaleAmount(pmSaleAmount);
+  }, 500);
 
+  return () => clearTimeout(timer);
+}, [pmSaleAmount]);
   useEffect(() => {
   if (!pmRows.length || selectedPMMonth) return;
 
