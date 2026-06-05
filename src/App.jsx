@@ -2474,7 +2474,7 @@ const quarterCrushingMessages = [
 ];
 
 const quarterGoalAchievedMessages = [
-"Quarter goal achieved bub. Now let's see how far above it we can finish.",
+"Quarter goal achieved bub. Great job! Now let's see how far above it we can finish.",
 "You've already reached your quarterly target. That's fire!",
 "Outstanding work. The goal is behind you and now it's time to build separation.",
 "Goal accomplished. Keep your foot on the gas and keep driving.",
@@ -2528,7 +2528,7 @@ const quarterNeedsPushMessages = [
 ];
 
 const futureQuarterMessages = [
-  "We're not in this quarter yet, bub, but I know you'll be ready when it gets here.",
+  "We're not in this quarter just yet, bub, but I know you'll be ready when it gets here.",
   "This quarter hasn't started yet bub, but preparation starts now.",
   "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
   "Future quarters are won by the habits you build today bub.",
@@ -3697,4 +3697,3 @@ onChange={(event) => {
       )}
     </div>
   );
-}
