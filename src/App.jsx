@@ -772,9 +772,14 @@ export default function App() {
   });
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
-  const [pmSaleAmount, setPmSaleAmount] = useState("0");
-  const [selectedTradeType, setSelectedTradeType] = useState("");
-  const [selectedWorkType, setSelectedWorkType] = useState("");
+  const [commissionLines, setCommissionLines] = useState([
+    {
+      id: "commission-line-1",
+      saleAmount: "0",
+      tradeType: "",
+      workType: "",
+    },
+  ]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -1544,20 +1549,35 @@ const teamClosingRate =
       (currentPM?.name || projectManagers[0].name)
     );
 
-    const saleAmount = Number(pmSaleAmount || 0);
+    const companyTake = 0.10;
 
-const selectedGrossMargin =
-  getMarginForTradeAndWorkType(selectedTradeType, selectedWorkType);
+const commissionDetails = commissionLines.map((line) => {
+  const saleAmount = Number(line.saleAmount || 0);
+  const selectedGrossMargin = getMarginForTradeAndWorkType(
+    line.tradeType,
+    line.workType
+  );
+  const commissionableMargin = Math.max(selectedGrossMargin - companyTake, 0);
+  const commission = saleAmount * commissionableMargin * PM_COMMISSION_RATE;
 
-const companyTake = 0.10;
+  return {
+    ...line,
+    saleAmount,
+    selectedGrossMargin,
+    commissionableMargin,
+    commission,
+  };
+});
 
-const commissionableMargin =
-  Math.max(selectedGrossMargin - companyTake, 0);
+const saleAmount = commissionDetails.reduce(
+  (sum, line) => sum + line.saleAmount,
+  0
+);
 
-const commission =
-  saleAmount *
-  commissionableMargin *
-  PM_COMMISSION_RATE;
+const commission = commissionDetails.reduce(
+  (sum, line) => sum + line.commission,
+  0
+);
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
@@ -3108,66 +3128,149 @@ const quarterlyGoalClass =
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
-            <label>
-              Potential Sale Amount
-              <input
-                type="text"
-                inputMode="decimal"
-                value={formatMoneyInput(pmSaleAmount)}
-                onChange={(event) =>
-                  setPmSaleAmount(cleanMoneyInput(event.target.value))
-                }
-              />
-            </label>
-
             <div className="pm-commission-grid">
               <div>
                 <span>Commission Rate</span>
                 <strong>25%</strong>
               </div>
 
-<div>
-  <span>Job Trade Type</span>
-  <select
-    value={selectedTradeType}
-    onChange={(event) => {
-      setSelectedTradeType(event.target.value);
-      setSelectedWorkType("");
-    }}
-  >
-    <option value="">Select Job Trade Type</option>
-
-    {getJobTradeTypeOptions().map((tradeType) => (
-      <option key={tradeType} value={tradeType}>
-        {tradeType}
-      </option>
-    ))}
-  </select>
-</div>
-
-<div>
-  <span>Work Type</span>
-  <select
-    value={selectedWorkType}
-    disabled={!selectedTradeType}
-    onChange={(event) => setSelectedWorkType(event.target.value)}
-  >
-    <option value="">Select Work Type</option>
-
-    {getWorkTypeOptionsForTrade(selectedTradeType).map((workType) => (
-      <option key={workType} value={workType}>
-        {workType}
-      </option>
-    ))}
-  </select>
-</div>
-
-<div>
-  <span>Estimated Commission</span>
-  <strong>{money(pmData.commission)}</strong>
-</div>
-
+              <div>
+                <span>Total Estimated Commission</span>
+                <strong>{money(pmData.commission)}</strong>
+              </div>
             </div>
+
+            {commissionLines.map((line, index) => {
+              const lineMargin = getMarginForTradeAndWorkType(
+                line.tradeType,
+                line.workType
+              );
+              const lineCommissionableMargin = Math.max(lineMargin - 0.10, 0);
+              const lineCommission =
+                Number(line.saleAmount || 0) *
+                lineCommissionableMargin *
+                PM_COMMISSION_RATE;
+
+              return (
+                <div className="pm-commission-grid" key={line.id}>
+                  <div>
+                    <span>Sale Amount {index + 1}</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={formatMoneyInput(line.saleAmount)}
+                      onChange={(event) => {
+                        const nextValue = cleanMoneyInput(event.target.value);
+
+                        setCommissionLines((currentLines) =>
+                          currentLines.map((currentLine) =>
+                            currentLine.id === line.id
+                              ? { ...currentLine, saleAmount: nextValue }
+                              : currentLine
+                          )
+                        );
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <span>Job Trade Type</span>
+                    <select
+                      value={line.tradeType}
+                      onChange={(event) => {
+                        const nextTradeType = event.target.value;
+
+                        setCommissionLines((currentLines) =>
+                          currentLines.map((currentLine) =>
+                            currentLine.id === line.id
+                              ? {
+                                  ...currentLine,
+                                  tradeType: nextTradeType,
+                                  workType: "",
+                                }
+                              : currentLine
+                          )
+                        );
+                      }}
+                    >
+                      <option value="">Select Job Trade Type</option>
+
+                      {getJobTradeTypeOptions().map((tradeType) => (
+                        <option key={tradeType} value={tradeType}>
+                          {tradeType}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <span>Work Type</span>
+                    <select
+                      value={line.workType}
+                      disabled={!line.tradeType}
+                      onChange={(event) => {
+                        const nextWorkType = event.target.value;
+
+                        setCommissionLines((currentLines) =>
+                          currentLines.map((currentLine) =>
+                            currentLine.id === line.id
+                              ? { ...currentLine, workType: nextWorkType }
+                              : currentLine
+                          )
+                        );
+                      }}
+                    >
+                      <option value="">Select Work Type</option>
+
+                      {getWorkTypeOptionsForTrade(line.tradeType).map(
+                        (workType) => (
+                          <option key={workType} value={workType}>
+                            {workType}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  </div>
+
+                  <div>
+                    <span>Line Commission</span>
+                    <strong>{money(lineCommission)}</strong>
+
+                    {commissionLines.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCommissionLines((currentLines) =>
+                            currentLines.filter(
+                              (currentLine) => currentLine.id !== line.id
+                            )
+                          )
+                        }
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() =>
+                setCommissionLines((currentLines) => [
+                  ...currentLines,
+                  {
+                    id: `commission-line-${Date.now()}-${Math.random()}`,
+                    saleAmount: "0",
+                    tradeType: "",
+                    workType: "",
+                  },
+                ])
+              }
+            >
+              Add Project Line
+            </button>
           </div>
         </section>
       </div>
