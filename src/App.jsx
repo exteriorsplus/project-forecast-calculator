@@ -2298,6 +2298,32 @@ const needsPushMessages = [
   "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
 ];
 
+if (isFutureMonth) {
+  return randomFrom(futureMonthMessages);
+}
+const futureMonthMessages = [
+  "We're not here yet, bub, but I know you'll be ready for whatever comes your way.",
+  "The scoreboard is still blank, but champions prepare before the game starts.",
+  "Every great month starts at zero. Let's go build something special.",
+  "The opportunity is in front of you. Trust your process and attack the month.",
+  "Success leaves clues, and you've already proven you know how to win.",
+  "A strong month begins long before the first contract is signed.",
+  "Stay focused, stay hungry, and let the results take care of themselves.",
+  "You've built momentum before, and there's no reason this month can't be another great one.",
+  "The month is unwritten, but I like our chances.",
+  "Big goals don't care what happened yesterday. Time to go get it.",
+  "You don't need a perfect start—just a strong one.",
+  "The foundation is already there. Now let's put another great month on top of it.",
+  "Preparation today becomes production tomorrow.",
+  "Every contract starts with a conversation. Go start some conversations.",
+  "The month hasn't started yet, but confidence should.",
+  "Future-you is counting on present-you. Let's get after it.",
+  "You know the playbook. Now it's time to run it.",
+  "Pressure is a privilege, and you've earned the opportunity.",
+  "The next big month is usually hiding behind consistent daily actions.",
+  "Let's make this month one they'll be talking about at the leaderboard meeting."
+];
+
 const goalMotivation = (() => {
   const pct = pmData.monthlyGoalPercent;
   const firstName = (currentPM?.name || "").split(" ")[0];
