@@ -105,7 +105,8 @@ const PM_COMPANY_GOAL = Object.values(PM_GOALS).reduce(
   (sum, goal) => sum + goal,
   0
 );
-const PM_COMMISSION_RATE = 0.2;
+const PM_COMMISSION_RATE = 0.25;
+const PM_COMPANY_PROFIT_TAKE = 0.10;
 
 const projectManagers = [
   {
@@ -258,6 +259,27 @@ const categories = [
     ],
   },
 ];
+
+const getMarginForTradeType = (tradeType) => {
+  const normalizedTradeType = normalizeTrade(tradeType) || String(tradeType || "").trim();
+
+  const category = categories.find(
+    (c) => c.title === normalizedTradeType
+  );
+
+  if (!category) return 0;
+
+  const margins = category.items
+    .map((item) => item.margin)
+    .filter((margin) => margin > 0);
+
+  if (!margins.length) return 0;
+
+  return (
+    margins.reduce((sum, margin) => sum + margin, 0) /
+    margins.length
+  );
+};
 
 const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
 
@@ -754,6 +776,7 @@ export default function App() {
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
+  const [selectedTradeType, setSelectedTradeType] = useState("");
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -1206,6 +1229,15 @@ const getTeamMetricRow = (metric) => {
       parseInputDate(pmEndDate)
     );
   };
+const getJobTradeTypeOptions = () => {
+  const leadTradeTypes = leadRows
+    .map((row) => normalizeTrade(row["Job Trade Type 2"]))
+    .filter(Boolean);
+
+  const categoryTradeTypes = categories.map((category) => category.title);
+
+  return [...new Set([...leadTradeTypes, ...categoryTradeTypes])].sort();
+};
 
   const getPMDashboardData = () => {
     const monthOptions = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
@@ -1495,7 +1527,12 @@ const teamClosingRate =
 
     const saleAmount = Number(pmSaleAmount || 0);
     const projectedYTDRevenue = ytdRevenue + saleAmount;
-    const commission = saleAmount * PM_COMMISSION_RATE;
+
+    const averageMargin = getMarginForTradeType(selectedTradeType);
+    const companyTake = PM_COMPANY_PROFIT_TAKE;
+    const commissionableMargin = Math.max(averageMargin - companyTake, 0);
+    const commissionableProfit = saleAmount * commissionableMargin;
+    const commission = commissionableProfit * PM_COMMISSION_RATE;
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
@@ -1632,6 +1669,10 @@ return {
       closingRateRank,
       saleAmount,
       projectedYTDRevenue,
+      averageMargin,
+      companyTake,
+      commissionableMargin,
+      commissionableProfit,
       commission,
       goalPercent,
       projectedGoalPercent,
@@ -1950,6 +1991,7 @@ useEffect(() => {
 
   loadPMFile();
   loadSalesFile();
+  loadLeadFile();
 }, [pmAuthorized]);
 
   useEffect(() => {
@@ -2433,7 +2475,7 @@ const quarterCloseMessages = [
 "Keep pushing. The pace is right where it needs to be.",
 "You're within range of the goal and still have time to close the gap. Keep pushing!",
 "A strong finish is what you need to close out the quarter. You got this!",
-"Momentum over the next few weeks will be critical. Keep focused.",
+"Momentum over the next few weeks will be critical. Just stay focused and keep grinding.",
 "The quarter remains highly achievable from this position. Keep pushing!",
 "Stay focused on your leads and the quarter is yours - You got this!",
 "You're not far from where you need to be. Keep pushing - you got this!",
@@ -2463,12 +2505,12 @@ const quarterNeedsPushMessages = [
 
 const futureQuarterMessages = [
   "We're not in this quarter yet, bub, but I know you'll be ready when it gets here.",
-  "This quarter hasn't started yet, but preparation starts now.",
-  "The scoreboard is still blank for this quarter, but the opportunity is coming.",
-  "Future quarters are won by the habits you build today.",
-  "We're not there yet, bub, but I like our chances when the time comes.",
-  "The quarter is still ahead of us. Stay sharp and be ready to attack it.",
-  "No numbers yet, just opportunity. Be ready when the quarter opens.",
+  "This quarter hasn't started yet bub, but preparation starts now.",
+  "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
+  "Future quarters are won by the habits you build today bub.",
+  "We're not there yet bub, but I like our chances when the time comes.",
+  "The quarter is still ahead of us bub. Stay sharp and be ready to attack it.",
+  "No numbers just yet bub, just opportunity. Be ready when the quarter opens.",
   "This quarter is still waiting on us, bub. Let's be ready to make it count."
 ];
 
@@ -3065,13 +3107,44 @@ const quarterlyGoalClass =
             <div className="pm-commission-grid">
               <div>
                 <span>Commission Rate</span>
-                <strong>20%</strong>
+                <strong>25%</strong>
               </div>
 
-              <div>
-                <span>Estimated Commission</span>
-                <strong>{money(pmData.commission)}</strong>
-              </div>
+<div>
+  <span>Job Trade Type</span>
+  <select
+    value={selectedTradeType}
+    onChange={(event) => setSelectedTradeType(event.target.value)}
+  >
+    <option value="">Select Job Trade Type</option>
+
+    {getJobTradeTypeOptions().map((tradeType) => (
+      <option key={tradeType} value={tradeType}>
+        {tradeType}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div>
+  <span>Avg Gross Margin</span>
+  <strong>{selectedTradeType ? displayPercent(pmData.averageMargin, 1) : "Select Trade"}</strong>
+</div>
+
+<div>
+  <span>Company Take</span>
+  <strong>{displayPercent(pmData.companyTake, 1)}</strong>
+</div>
+
+<div>
+  <span>Commissionable Profit</span>
+  <strong>{money(pmData.commissionableProfit)}</strong>
+</div>
+
+<div>
+  <span>Estimated Commission</span>
+  <strong>{money(pmData.commission)}</strong>
+</div>
 
               <div>
                 <span>Projected YTD Revenue</span>
@@ -3507,6 +3580,8 @@ onChange={(event) => {
           </div>
         </section>
       )}
+
+
 
       {screen === "projects" && (
         <section className="calculator-section">
