@@ -2641,8 +2641,21 @@ const closeNeedsMessages = [
 
 
 
-const pickRandom = (messages) =>
-  messages[Math.floor(Math.random() * messages.length)];
+const pickRandom = (messages) => {
+  if (!messages || !messages.length) return "";
+
+  const key = messages.join("|");
+
+  let hash = 0;
+
+  for (let i = 0; i < key.length; i += 1) {
+    hash = (hash * 31 + key.charCodeAt(i)) | 0;
+  }
+
+  const index = Math.abs(hash) % messages.length;
+
+  return messages[index];
+};
 
 const onTrackMessages = [
   "You're on track to achieve your goal bub. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
