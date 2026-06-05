@@ -546,6 +546,19 @@ function dateOnly(date) {
 function normalizeTrade(value) {
   const text = String(value || "").trim().toLowerCase();
 
+    // EXCLUDED TRADE TYPES
+  if (
+    text === "other" ||
+    text === "other, skylights" ||
+    text === "other fascia" ||
+    text === "wraps, fascia" ||
+    text === "storm damage, fascia" ||
+    text === "repair" ||
+    text === "wraps"
+  ) {
+    return "";
+  }
+
   if (text === "roofing & gutters") return "Roofing & Gutters";
   if (text === "roofing & siding") return "Roofing & Siding";
   if (text === "james hardie siding") return "James Hardie Siding";
@@ -1363,21 +1376,44 @@ const getCommissionMarginSummary = () => {
 const getJobTradeTypeOptions = () => {
   const marginSummary = getCommissionMarginSummary();
 
+  const EXCLUDED_TRADE_TYPES = [
+    "Other",
+    "Other, Skylights",
+    "Other Fascia",
+    "Wraps, Fascia",
+    "Storm Damage, Fascia",
+    "Repair",
+    "Wraps",
+  ];
+
   if (!marginSummary.length) {
     return categories
       .map((category) => category.title)
+      .filter(
+        (trade) => !EXCLUDED_TRADE_TYPES.includes(trade)
+      )
       .sort();
   }
 
   const tradeSalesTotals = marginSummary.reduce((totals, item) => {
+    if (
+      !item.tradeType ||
+      EXCLUDED_TRADE_TYPES.includes(item.tradeType)
+    ) {
+      return totals;
+    }
+
     totals[item.tradeType] =
-      Number(totals[item.tradeType] || 0) + Number(item.payments || 0);
+      Number(totals[item.tradeType] || 0) +
+      Number(item.payments || 0);
+
     return totals;
   }, {});
 
   return Object.keys(tradeSalesTotals).sort((a, b) => {
     const salesDifference =
-      Number(tradeSalesTotals[b] || 0) - Number(tradeSalesTotals[a] || 0);
+      Number(tradeSalesTotals[b] || 0) -
+      Number(tradeSalesTotals[a] || 0);
 
     if (salesDifference !== 0) return salesDifference;
 
