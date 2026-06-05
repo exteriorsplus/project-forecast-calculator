@@ -773,13 +773,7 @@ export default function App() {
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
-  const [commissionLines, setCommissionLines] = useState([
-    {
-      id: "commission-line-1",
-      tradeType: "",
-      workType: "",
-    },
-  ]);
+  const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -1553,43 +1547,47 @@ const teamClosingRate =
 
 const saleAmount = Number(pmSaleAmount || 0);
 
-const commissionLineConfigs = commissionLines.map((line) => {
-  const selectedGrossMargin = getMarginForTradeAndWorkType(
-    line.tradeType,
-    line.workType
-  );
+const selectedTradeConfigs = selectedCommissionTrades
+  .map((tradeType) => {
+    const category = categories.find((item) => item.title === tradeType);
 
-  const config = findProjectConfig(line.tradeType, line.workType);
-  const hasValidSelection = Boolean(line.tradeType && line.workType);
+    if (!category) {
+      return null;
+    }
 
-  return {
-    ...line,
-    selectedGrossMargin,
-    rpp: hasValidSelection ? Number(config.rpp || 0) : 0,
-  };
-});
+    const averageRpp =
+      category.items.length > 0
+        ? category.items.reduce((sum, item) => sum + Number(item.rpp || 0), 0) /
+          category.items.length
+        : 0;
 
-const totalCommissionWeight = commissionLineConfigs.reduce(
-  (sum, line) => sum + Number(line.rpp || 0),
+    return {
+      tradeType,
+      averageRpp,
+      averageMargin: getMarginForTradeType(tradeType),
+    };
+  })
+  .filter(Boolean);
+
+const totalSelectedRpp = selectedTradeConfigs.reduce(
+  (sum, item) => sum + Number(item.averageRpp || 0),
   0
 );
 
-const commissionDetails = commissionLineConfigs.map((line) => {
+const commissionDetails = selectedTradeConfigs.map((item) => {
   const allocatedSaleAmount =
-    totalCommissionWeight > 0
-      ? saleAmount * (Number(line.rpp || 0) / totalCommissionWeight)
+    saleAmount > 0 && totalSelectedRpp > 0
+      ? saleAmount * (item.averageRpp / totalSelectedRpp)
+      : selectedTradeConfigs.length > 0
+      ? saleAmount / selectedTradeConfigs.length
       : 0;
 
-  const commissionableMargin = Math.max(
-    line.selectedGrossMargin - companyTake,
-    0
-  );
-
+  const commissionableMargin = Math.max(item.averageMargin - companyTake, 0);
   const commission =
     allocatedSaleAmount * commissionableMargin * PM_COMMISSION_RATE;
 
   return {
-    ...line,
+    ...item,
     allocatedSaleAmount,
     commissionableMargin,
     commission,
@@ -1734,7 +1732,6 @@ return {
       closingRateRank,
       saleAmount,
       commission,
-      commissionDetails,
       goalPercent,
       remainingToGoal,
       monthlyGoal,
@@ -3170,120 +3167,32 @@ const quarterlyGoalClass =
               </div>
 
               <div>
+                <span>Selected Trade Types</span>
+                <div className="commission-checkbox-grid">
+                  {getJobTradeTypeOptions().map((tradeType) => (
+                    <label key={tradeType} className="commission-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedCommissionTrades.includes(tradeType)}
+                        onChange={() => {
+                          setSelectedCommissionTrades((currentTrades) =>
+                            currentTrades.includes(tradeType)
+                              ? currentTrades.filter((item) => item !== tradeType)
+                              : [...currentTrades, tradeType]
+                          );
+                        }}
+                      />
+                      <span>{tradeType}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <span>Total Estimated Commission</span>
                 <strong>{money(pmData.commission)}</strong>
               </div>
             </div>
-
-            {commissionLines.map((line) => {
-              const lineDetail = pmData.commissionDetails?.find(
-                (detail) => detail.id === line.id
-              );
-
-              return (
-                <div className="pm-commission-grid" key={line.id}>
-                  <div>
-                    <span>Job Trade Type</span>
-                    <select
-                      value={line.tradeType}
-                      onChange={(event) => {
-                        const nextTradeType = event.target.value;
-
-                        setCommissionLines((currentLines) =>
-                          currentLines.map((currentLine) =>
-                            currentLine.id === line.id
-                              ? {
-                                  ...currentLine,
-                                  tradeType: nextTradeType,
-                                  workType: "",
-                                }
-                              : currentLine
-                          )
-                        );
-                      }}
-                    >
-                      <option value="">Select Job Trade Type</option>
-
-                      {getJobTradeTypeOptions().map((tradeType) => (
-                        <option key={tradeType} value={tradeType}>
-                          {tradeType}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <span>Work Type</span>
-                    <select
-                      value={line.workType}
-                      disabled={!line.tradeType}
-                      onChange={(event) => {
-                        const nextWorkType = event.target.value;
-
-                        setCommissionLines((currentLines) =>
-                          currentLines.map((currentLine) =>
-                            currentLine.id === line.id
-                              ? { ...currentLine, workType: nextWorkType }
-                              : currentLine
-                          )
-                        );
-                      }}
-                    >
-                      <option value="">Select Work Type</option>
-
-                      {getWorkTypeOptionsForTrade(line.tradeType).map(
-                        (workType) => (
-                          <option key={workType} value={workType}>
-                            {workType}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </div>
-
-                  <div>
-                    <span>Allocated Sale Amount</span>
-                    <strong>{money(lineDetail?.allocatedSaleAmount || 0)}</strong>
-                  </div>
-
-                  <div>
-                    <span>Line Commission</span>
-                    <strong>{money(lineDetail?.commission || 0)}</strong>
-
-                    {commissionLines.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setCommissionLines((currentLines) =>
-                            currentLines.filter(
-                              (currentLine) => currentLine.id !== line.id
-                            )
-                          )
-                        }
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            <button
-              type="button"
-              onClick={() =>
-                setCommissionLines((currentLines) => [
-                  ...currentLines,
-                  {
-                    id: `commission-line-${Date.now()}-${Math.random()}`,
-                    tradeType: "",
-                    workType: "",
-                  },
-                ])
-              }
-            >
-              Add Project Line
-            </button>
           </div>
         </section>
       </div>
