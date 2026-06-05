@@ -278,6 +278,55 @@ const getMarginForTradeType = (tradeType) => {
   );
 };
 
+function normalizeMarginTradeType(value) {
+  const text = String(value || "").trim();
+  return normalizeTrade(text) || text;
+}
+
+function normalizeMarginWorkType(value) {
+  return normalizeWorkType(value);
+}
+
+function getMarginRowPayment(row) {
+  return parseMoney(
+    row["Payments Received Total"] ??
+      row["SUM of Paymen"] ??
+      row["SUM of Payments Received Total"] ??
+      row["Contract Amount"] ??
+      row["Payment"]
+  );
+}
+
+function getMarginRowProfit(row) {
+  return parseMoney(
+    row["Profit"] ??
+      row["SUM of Profit"] ??
+      row["Gross Profit"]
+  );
+}
+
+function getMarginRowPercent(row) {
+  const raw =
+    row["Profit %"] ??
+    row["Margin per job"] ??
+    row["Margin"] ??
+    row["Profit Percent"];
+
+  if (raw === null || raw === undefined || raw === "") return null;
+
+  if (typeof raw === "number") {
+    return raw > 1 ? raw / 100 : raw;
+  }
+
+  const cleaned = String(raw).replace("%", "").trim();
+  const number = Number(cleaned);
+
+  if (Number.isNaN(number)) return null;
+
+  return number > 1 ? number / 100 : number;
+}
+
+
 const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
 const COMMISSION_WORK_TYPE_OPTIONS = ["Retail", "Insurance", "Repair"];
 
@@ -763,6 +812,7 @@ export default function App() {
   const [customCloseRate, setCustomCloseRate] = useState("");
   const [flash, setFlash] = useState(false);
   const [leadRows, setLeadRows] = useState([]);
+  const [marginRows, setMarginRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
   const [pmRows, setPmRows] = useState([]);
@@ -948,6 +998,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     setScreen("home");
     setLeadRows([]);
     setSalesRows([]);
+    setMarginRows([]);
     setLeads({});
   };
 
@@ -1033,6 +1084,32 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       setSalesRows([]);
       setDataStatus("No public/sales.xlsx file found yet.");
       console.error(error);
+    }
+  };
+
+
+  const loadMarginFile = async () => {
+    try {
+      const response = await fetch(`/margin.csv?t=${Date.now()}`);
+
+      if (!response.ok) {
+        throw new Error("Could not find public/margin.csv");
+      }
+
+      const buffer = await response.arrayBuffer();
+      const workbook = XLSX.read(buffer, {
+        type: "array",
+      });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+      });
+
+      setMarginRows(rows);
+    } catch (error) {
+      setMarginRows([]);
+      console.error("No public/margin.csv file found yet.", error);
     }
   };
 
@@ -1228,25 +1305,77 @@ const getTeamMetricRow = (metric) => {
       parseInputDate(pmEndDate)
     );
   };
-const getJobTradeTypeOptions = () => {
-  const categoryTitles = categories.map((category) => category.title);
+const getCommissionMarginSummary = () => {
+  const summary = {};
 
-  const tradeSalesTotals = categoryTitles.reduce((totals, tradeType) => {
-    totals[tradeType] = 0;
+  marginRows.forEach((row) => {
+    const tradeType =
+      normalizeMarginTradeType(row["Job Trade Type"]) ||
+      normalizeMarginTradeType(row["Job Trade Type 2"]);
+
+    const workType = normalizeMarginWorkType(row["Work Type"]);
+
+    if (!tradeType || !workType || workType === "Service") return;
+
+    const key = `${tradeType}-${workType}`;
+    const payment = getMarginRowPayment(row);
+    const profit = getMarginRowProfit(row);
+    const rowMargin = getMarginRowPercent(row);
+
+    if (!summary[key]) {
+      summary[key] = {
+        tradeType,
+        workType,
+        payments: 0,
+        profit: 0,
+        count: 0,
+        marginSum: 0,
+        marginCount: 0,
+      };
+    }
+
+    summary[key].payments += payment;
+    summary[key].profit += profit;
+    summary[key].count += 1;
+
+    if (rowMargin !== null) {
+      summary[key].marginSum += rowMargin;
+      summary[key].marginCount += 1;
+    }
+  });
+
+  return Object.values(summary).map((item) => {
+    const calculatedMargin =
+      item.payments > 0
+        ? item.profit / item.payments
+        : item.marginCount > 0
+        ? item.marginSum / item.marginCount
+        : 0;
+
+    return {
+      ...item,
+      margin: calculatedMargin,
+      rpp: item.count > 0 ? item.payments / item.count : 0,
+    };
+  });
+};
+
+const getJobTradeTypeOptions = () => {
+  const marginSummary = getCommissionMarginSummary();
+
+  if (!marginSummary.length) {
+    return categories
+      .map((category) => category.title)
+      .sort();
+  }
+
+  const tradeSalesTotals = marginSummary.reduce((totals, item) => {
+    totals[item.tradeType] =
+      Number(totals[item.tradeType] || 0) + Number(item.payments || 0);
     return totals;
   }, {});
 
-  salesRows.forEach((row) => {
-    const tradeType =
-      normalizeTrade(row["Job Trade Type 2"]) ||
-      normalizeTrade(row["Job Trade Type"]);
-
-    if (!tradeType || !categoryTitles.includes(tradeType)) return;
-
-    tradeSalesTotals[tradeType] += parseMoney(row["Contract Amount"]);
-  });
-
-  return categoryTitles.sort((a, b) => {
+  return Object.keys(tradeSalesTotals).sort((a, b) => {
     const salesDifference =
       Number(tradeSalesTotals[b] || 0) - Number(tradeSalesTotals[a] || 0);
 
@@ -1256,13 +1385,55 @@ const getJobTradeTypeOptions = () => {
   });
 };
 
+const getCommissionWorkTypeOptions = () => {
+  const marginSummary = getCommissionMarginSummary();
+  const selectedTrades = selectedCommissionTrades || [];
+
+  const availableWorkTypes = marginSummary
+    .filter(
+      (item) =>
+        selectedTrades.length === 0 || selectedTrades.includes(item.tradeType)
+    )
+    .map((item) => item.workType)
+    .filter((workType) => workType && workType !== "Service");
+
+  const uniqueWorkTypes = [...new Set(availableWorkTypes)];
+
+  if (!uniqueWorkTypes.length) return COMMISSION_WORK_TYPE_OPTIONS;
+
+  return uniqueWorkTypes.sort((a, b) => {
+    const aIndex = COMMISSION_WORK_TYPE_OPTIONS.indexOf(a);
+    const bIndex = COMMISSION_WORK_TYPE_OPTIONS.indexOf(b);
+
+    if (aIndex !== -1 || bIndex !== -1) {
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    }
+
+    return a.localeCompare(b);
+  });
+};
+
 const getWorkTypeOptionsForTrade = (tradeType) => {
+  const marginSummary = getCommissionMarginSummary();
+  const marginWorkTypes = marginSummary
+    .filter((item) => item.tradeType === tradeType)
+    .map((item) => item.workType)
+    .filter((workType) => workType && workType !== "Service");
+
+  if (marginWorkTypes.length) {
+    return [...new Set(marginWorkTypes)].sort(
+      (a, b) =>
+        WORK_TYPE_ORDER.indexOf(a) - WORK_TYPE_ORDER.indexOf(b)
+    );
+  }
+
   const category = categories.find((item) => item.title === tradeType);
 
   if (!category) return [];
 
   return category.items
     .map((item) => item.label)
+    .filter((label) => label !== "Service")
     .sort(
       (a, b) =>
         WORK_TYPE_ORDER.indexOf(a) - WORK_TYPE_ORDER.indexOf(b)
@@ -1270,6 +1441,13 @@ const getWorkTypeOptionsForTrade = (tradeType) => {
 };
 
 const getMarginForTradeAndWorkType = (tradeType, workType) => {
+  const marginSummary = getCommissionMarginSummary();
+  const marginMatch = marginSummary.find(
+    (item) => item.tradeType === tradeType && item.workType === workType
+  );
+
+  if (marginMatch) return Number(marginMatch.margin || 0);
+
   const category = categories.find((item) => item.title === tradeType);
 
   if (!category) return 0;
@@ -1571,19 +1749,31 @@ const teamClosingRate =
 
 const saleAmount = Number(pmSaleAmount || 0);
 
+const marginSummary = getCommissionMarginSummary();
+
 const selectedTradeConfigs = selectedCommissionTrades
-  .flatMap((tradeType) => {
-    const category = categories.find((item) => item.title === tradeType);
-
-    if (!category) return [];
-
-    return selectedCommissionWorkTypes
+  .flatMap((tradeType) =>
+    selectedCommissionWorkTypes
       .map((workType) => {
-        const matchingItem = category.items.find(
+        const marginMatch = marginSummary.find(
+          (item) => item.tradeType === tradeType && item.workType === workType
+        );
+
+        if (marginMatch) {
+          return {
+            tradeType,
+            workType,
+            rpp: Number(marginMatch.rpp || 0),
+            margin: Number(marginMatch.margin || 0),
+          };
+        }
+
+        const category = categories.find((item) => item.title === tradeType);
+        const matchingItem = category?.items.find(
           (item) => item.label === workType
         );
 
-        if (!matchingItem) return null;
+        if (!matchingItem || workType === "Service") return null;
 
         return {
           tradeType,
@@ -1592,8 +1782,8 @@ const selectedTradeConfigs = selectedCommissionTrades
           margin: Number(matchingItem.margin || 0),
         };
       })
-      .filter(Boolean);
-  })
+      .filter(Boolean)
+  )
   .filter(Boolean);
 
 const totalSelectedRpp = selectedTradeConfigs.reduce(
@@ -1797,6 +1987,7 @@ quarterlyRemaining,
     loadLeadFile();
     loadSalesFile();
     loadPMFile();
+    loadMarginFile();
   };
 
   const clearLeads = () => {
@@ -2075,6 +2266,7 @@ useEffect(() => {
 
   loadPMFile();
   loadSalesFile();
+  loadMarginFile();
 }, [pmAuthorized]);
 
   useEffect(() => {
@@ -3212,7 +3404,7 @@ const quarterlyGoalClass =
             <div className="pm-commission-selector-card">
               <span>Work Type</span>
               <div className="commission-checkbox-row commission-work-row">
-                {COMMISSION_WORK_TYPE_OPTIONS.map((workType) => (
+                {getCommissionWorkTypeOptions().map((workType) => (
                   <label key={workType} className="commission-option">
                     <input
                       type="checkbox"
