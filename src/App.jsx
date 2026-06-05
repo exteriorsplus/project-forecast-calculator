@@ -772,10 +772,10 @@ export default function App() {
   });
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
+  const [pmSaleAmount, setPmSaleAmount] = useState("0");
   const [commissionLines, setCommissionLines] = useState([
     {
       id: "commission-line-1",
-      saleAmount: "0",
       tradeType: "",
       workType: "",
     },
@@ -1551,28 +1551,50 @@ const teamClosingRate =
 
     const companyTake = 0.10;
 
-const commissionDetails = commissionLines.map((line) => {
-  const saleAmount = Number(line.saleAmount || 0);
+const saleAmount = Number(pmSaleAmount || 0);
+
+const commissionLineConfigs = commissionLines.map((line) => {
   const selectedGrossMargin = getMarginForTradeAndWorkType(
     line.tradeType,
     line.workType
   );
-  const commissionableMargin = Math.max(selectedGrossMargin - companyTake, 0);
-  const commission = saleAmount * commissionableMargin * PM_COMMISSION_RATE;
+
+  const config = findProjectConfig(line.tradeType, line.workType);
+  const hasValidSelection = Boolean(line.tradeType && line.workType);
 
   return {
     ...line,
-    saleAmount,
     selectedGrossMargin,
+    rpp: hasValidSelection ? Number(config.rpp || 0) : 0,
+  };
+});
+
+const totalCommissionWeight = commissionLineConfigs.reduce(
+  (sum, line) => sum + Number(line.rpp || 0),
+  0
+);
+
+const commissionDetails = commissionLineConfigs.map((line) => {
+  const allocatedSaleAmount =
+    totalCommissionWeight > 0
+      ? saleAmount * (Number(line.rpp || 0) / totalCommissionWeight)
+      : 0;
+
+  const commissionableMargin = Math.max(
+    line.selectedGrossMargin - companyTake,
+    0
+  );
+
+  const commission =
+    allocatedSaleAmount * commissionableMargin * PM_COMMISSION_RATE;
+
+  return {
+    ...line,
+    allocatedSaleAmount,
     commissionableMargin,
     commission,
   };
 });
-
-const saleAmount = commissionDetails.reduce(
-  (sum, line) => sum + line.saleAmount,
-  0
-);
 
 const commission = commissionDetails.reduce(
   (sum, line) => sum + line.commission,
@@ -1712,6 +1734,7 @@ return {
       closingRateRank,
       saleAmount,
       commission,
+      commissionDetails,
       goalPercent,
       remainingToGoal,
       monthlyGoal,
@@ -3128,6 +3151,18 @@ const quarterlyGoalClass =
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
+            <div className="pm-sale-input">
+              <label>Potential Sale Amount</label>
+              <input
+                type="text"
+                inputMode="decimal"
+                value={formatMoneyInput(pmSaleAmount)}
+                onChange={(event) =>
+                  setPmSaleAmount(cleanMoneyInput(event.target.value))
+                }
+              />
+            </div>
+
             <div className="pm-commission-grid">
               <div>
                 <span>Commission Rate</span>
@@ -3140,39 +3175,13 @@ const quarterlyGoalClass =
               </div>
             </div>
 
-            {commissionLines.map((line, index) => {
-              const lineMargin = getMarginForTradeAndWorkType(
-                line.tradeType,
-                line.workType
+            {commissionLines.map((line) => {
+              const lineDetail = pmData.commissionDetails?.find(
+                (detail) => detail.id === line.id
               );
-              const lineCommissionableMargin = Math.max(lineMargin - 0.10, 0);
-              const lineCommission =
-                Number(line.saleAmount || 0) *
-                lineCommissionableMargin *
-                PM_COMMISSION_RATE;
 
               return (
                 <div className="pm-commission-grid" key={line.id}>
-                  <div>
-                    <span>Sale Amount {index + 1}</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={formatMoneyInput(line.saleAmount)}
-                      onChange={(event) => {
-                        const nextValue = cleanMoneyInput(event.target.value);
-
-                        setCommissionLines((currentLines) =>
-                          currentLines.map((currentLine) =>
-                            currentLine.id === line.id
-                              ? { ...currentLine, saleAmount: nextValue }
-                              : currentLine
-                          )
-                        );
-                      }}
-                    />
-                  </div>
-
                   <div>
                     <span>Job Trade Type</span>
                     <select
@@ -3233,8 +3242,13 @@ const quarterlyGoalClass =
                   </div>
 
                   <div>
+                    <span>Allocated Sale Amount</span>
+                    <strong>{money(lineDetail?.allocatedSaleAmount || 0)}</strong>
+                  </div>
+
+                  <div>
                     <span>Line Commission</span>
-                    <strong>{money(lineCommission)}</strong>
+                    <strong>{money(lineDetail?.commission || 0)}</strong>
 
                     {commissionLines.length > 1 && (
                       <button
@@ -3262,7 +3276,6 @@ const quarterlyGoalClass =
                   ...currentLines,
                   {
                     id: `commission-line-${Date.now()}-${Math.random()}`,
-                    saleAmount: "0",
                     tradeType: "",
                     workType: "",
                   },
