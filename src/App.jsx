@@ -2255,6 +2255,7 @@ const closeNeedsMessages = [
 ];
 
 
+
 const pickRandom = (messages) =>
   messages[Math.floor(Math.random() * messages.length)];
 
@@ -2298,9 +2299,6 @@ const needsPushMessages = [
   "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
 ];
 
-if (isFutureMonth) {
-  return randomFrom(futureMonthMessages);
-}
 const futureMonthMessages = [
   "We're not here yet, bub, but I know you'll be ready for whatever comes your way.",
   "The scoreboard is still blank, but champions prepare before the game starts.",
@@ -2311,18 +2309,15 @@ const futureMonthMessages = [
   "Stay focused, stay hungry, and let the results take care of themselves.",
   "You've built momentum before, and there's no reason this month can't be another great one.",
   "The month is unwritten, but I like our chances.",
-  "Big goals don't care what happened yesterday. Time to go get it.",
-  "You don't need a perfect start—just a strong one.",
-  "The foundation is already there. Now let's put another great month on top of it.",
-  "Preparation today becomes production tomorrow.",
-  "Every contract starts with a conversation. Go start some conversations.",
-  "The month hasn't started yet, but confidence should.",
   "Future-you is counting on present-you. Let's get after it.",
   "You know the playbook. Now it's time to run it.",
-  "Pressure is a privilege, and you've earned the opportunity.",
-  "The next big month is usually hiding behind consistent daily actions.",
-  "Let's make this month one they'll be talking about at the leaderboard meeting."
+  "Preparation today becomes production tomorrow.",
+  "The month hasn't started yet, but confidence should.",
+  "We're not there yet, bub, but I already know you're going to be ready.",
+  "The work you do now is what makes future months look easy."
 ];
+
+
 
 const goalMotivation = (() => {
   const pct = pmData.monthlyGoalPercent;
@@ -2338,9 +2333,18 @@ const goalMotivation = (() => {
       selectedDate.getMonth() < today.getMonth()
     );
 
+  const monthIsFuture =
+    selectedDate.getFullYear() > today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() > today.getMonth()
+    );
+
   let msg = "";
 
-  if (monthIsPast) {
+  if (monthIsFuture) {
+    msg = pickRandom(futureMonthMessages);
+  } else if (monthIsPast) {
     if (pct >= 1)
       msg = pickRandom(exceededGoalMessages);
     else if (pct >= 0.9)
@@ -2361,7 +2365,7 @@ const goalMotivation = (() => {
   }
 
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
-})();
+})();;
 const quarterCrushingMessages = [
 "You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
 "Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
@@ -2501,6 +2505,7 @@ const generatePMInsight = ({
   averageVsTeam,
   closingRateVsTeam,
   isPastMonth,
+  isFutureMonth,
   isCustomMode,
 }) => {
   const messages = [];
@@ -2524,6 +2529,18 @@ if (isCustomMode) {
       "Revenue production trails the team average for the selected date range."
     );
   }
+
+  return messages.slice(0, 2).join(" ");
+}
+
+if (isFutureMonth) {
+  messages.push(
+    "Future month selected. The scoreboard is still blank, but preparation now creates production later."
+  );
+
+  messages.push(
+    pickRandom(futureMonthMessages)
+  );
 
   return messages.slice(0, 2).join(" ");
 }
@@ -2635,6 +2652,11 @@ const isPastMonth =
   (selectedMonthDate.getFullYear() === now.getFullYear() &&
     selectedMonthDate.getMonth() < now.getMonth());
 
+const isFutureMonth =
+  selectedMonthDate.getFullYear() > now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() > now.getMonth());
+
   const pmInsight = generatePMInsight({
   monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
   quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
@@ -2642,6 +2664,7 @@ const isPastMonth =
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
    isPastMonth,
+    isFutureMonth,
     isCustomMode,
 });
 
