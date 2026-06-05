@@ -1213,17 +1213,7 @@ const getTeamMetricRow = (metric) => {
     const lastYearMonth = getPreviousYearMonth(selectedMonth);
 
 const pmName = currentPM?.name || projectManagers[0].name;
-const currentFiscalMonth = new Date().toLocaleDateString("en-US", {
-  month: "long",
-  year: "numeric",
-});
-
-const currentFiscalMonthIndex = fiscalMonths.indexOf(currentFiscalMonth);
-
-const fiscalMonthIndex =
-  currentFiscalMonthIndex >= 0
-    ? currentFiscalMonthIndex
-    : fiscalMonths.indexOf(selectedMonth);
+const fiscalMonthIndex = fiscalMonths.indexOf(selectedMonth);
 
 const ytdMonths =
   fiscalMonthIndex >= 0
@@ -1521,13 +1511,20 @@ const monthlyGoalPercent =
 const monthlyRemaining =
   monthlyGoal - contractTotal;
 const now = new Date();
-const quarterStartIndex =
-  fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
+let quarterMonths = [];
 
-const quarterMonths = fiscalMonths.slice(
-  quarterStartIndex,
-  quarterStartIndex + 3
-);
+if (fiscalMonthIndex >= 0) {
+  const quarterStartIndex = Math.floor(fiscalMonthIndex / 3) * 3;
+
+  quarterMonths = fiscalMonths.slice(
+    quarterStartIndex,
+    quarterStartIndex + 3
+  );
+}
+
+console.log("Selected Month:", selectedMonth);
+console.log("Fiscal Month Index:", fiscalMonthIndex);
+console.log("Quarter Months:", quarterMonths);
 
 const quarterSalesData = getSalesDataForMonths(quarterMonths);
 const quarterRevenue = quarterSalesData.contractTotal;
