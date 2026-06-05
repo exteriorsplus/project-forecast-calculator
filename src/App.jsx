@@ -1784,7 +1784,7 @@ const teamClosingRate =
 
     const companyTake = 0.10;
 
-const saleAmount = Number(pmSaleAmount || 0);
+const saleAmount = Number(debouncedPmSaleAmount || 0);
 
 const marginSummary = getCommissionMarginSummary();
 
@@ -2305,6 +2305,7 @@ useEffect(() => {
   loadSalesFile();
   loadMarginFile();
 }, [pmAuthorized]);
+
 useEffect(() => {
   const timer = setTimeout(() => {
     setDebouncedPmSaleAmount(pmSaleAmount);
