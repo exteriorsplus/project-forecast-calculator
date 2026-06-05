@@ -1233,9 +1233,6 @@ const getJobTradeTypeOptions = () => {
     .sort();
 };
 
-  return [...new Set(tradeTypes)].sort();
-};
-
 const getWorkTypeOptionsForTrade = (tradeType) => {
   const category = categories.find((item) => item.title === tradeType);
 
@@ -3697,3 +3694,4 @@ onChange={(event) => {
       )}
     </div>
   );
+}
