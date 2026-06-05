@@ -1545,7 +1545,6 @@ const teamClosingRate =
     );
 
     const saleAmount = Number(pmSaleAmount || 0);
-    const projectedYTDRevenue = ytdRevenue + saleAmount;
 
 const selectedGrossMargin =
   getMarginForTradeAndWorkType(selectedTradeType, selectedWorkType);
@@ -1563,8 +1562,6 @@ const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
 const goalPercent = individualGoal > 0 ? ytdRevenue / individualGoal : 0;
-const projectedGoalPercent =
-  individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
 
@@ -1694,10 +1691,8 @@ return {
       revenueRank,
       closingRateRank,
       saleAmount,
-      projectedYTDRevenue,
       commission,
       goalPercent,
-      projectedGoalPercent,
       remainingToGoal,
       monthlyGoal,
       monthlyPace: contractTotal,
@@ -3172,15 +3167,6 @@ const quarterlyGoalClass =
   <strong>{money(pmData.commission)}</strong>
 </div>
 
-              <div>
-                <span>Projected YTD Revenue</span>
-                <strong>{money(pmData.projectedYTDRevenue)}</strong>
-              </div>
-
-              <div>
-                <span>Projected Goal %</span>
-                <strong>{displayPercent(pmData.projectedGoalPercent, 1)}</strong>
-              </div>
             </div>
           </div>
         </section>
