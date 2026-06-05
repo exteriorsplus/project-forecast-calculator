@@ -1228,12 +1228,10 @@ const getTeamMetricRow = (metric) => {
     );
   };
 const getJobTradeTypeOptions = () => {
-  const tradeTypes = leadRows
-    .map((row) => normalizeTrade(row["Job Trade Type 2"]))
-    .filter(Boolean)
-    .filter((tradeType) =>
-      categories.some((category) => category.title === tradeType)
-    );
+  return categories
+    .map((category) => category.title)
+    .sort();
+};
 
   return [...new Set(tradeTypes)].sort();
 };
