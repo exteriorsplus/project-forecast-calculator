@@ -106,7 +106,6 @@ const PM_COMPANY_GOAL = Object.values(PM_GOALS).reduce(
   0
 );
 const PM_COMMISSION_RATE = 0.25;
-const PM_COMPANY_PROFIT_TAKE = 0.10;
 
 const projectManagers = [
   {
@@ -261,10 +260,8 @@ const categories = [
 ];
 
 const getMarginForTradeType = (tradeType) => {
-  const normalizedTradeType = normalizeTrade(tradeType) || String(tradeType || "").trim();
-
   const category = categories.find(
-    (c) => c.title === normalizedTradeType
+    (c) => c.title === tradeType
   );
 
   if (!category) return 0;
@@ -777,6 +774,7 @@ export default function App() {
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
   const [selectedTradeType, setSelectedTradeType] = useState("");
+  const [selectedWorkType, setSelectedWorkType] = useState("");
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -1230,13 +1228,39 @@ const getTeamMetricRow = (metric) => {
     );
   };
 const getJobTradeTypeOptions = () => {
-  const leadTradeTypes = leadRows
+  const tradeTypes = leadRows
     .map((row) => normalizeTrade(row["Job Trade Type 2"]))
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((tradeType) =>
+      categories.some((category) => category.title === tradeType)
+    );
 
-  const categoryTradeTypes = categories.map((category) => category.title);
+  return [...new Set(tradeTypes)].sort();
+};
 
-  return [...new Set([...leadTradeTypes, ...categoryTradeTypes])].sort();
+const getWorkTypeOptionsForTrade = (tradeType) => {
+  const category = categories.find((item) => item.title === tradeType);
+
+  if (!category) return [];
+
+  return category.items
+    .map((item) => item.label)
+    .sort(
+      (a, b) =>
+        WORK_TYPE_ORDER.indexOf(a) - WORK_TYPE_ORDER.indexOf(b)
+    );
+};
+
+const getMarginForTradeAndWorkType = (tradeType, workType) => {
+  const category = categories.find((item) => item.title === tradeType);
+
+  if (!category) return 0;
+
+  const matchingWorkType = category.items.find(
+    (item) => item.label === workType
+  );
+
+  return Number(matchingWorkType?.margin || 0);
 };
 
   const getPMDashboardData = () => {
@@ -1528,11 +1552,18 @@ const teamClosingRate =
     const saleAmount = Number(pmSaleAmount || 0);
     const projectedYTDRevenue = ytdRevenue + saleAmount;
 
-    const averageMargin = getMarginForTradeType(selectedTradeType);
-    const companyTake = PM_COMPANY_PROFIT_TAKE;
-    const commissionableMargin = Math.max(averageMargin - companyTake, 0);
-    const commissionableProfit = saleAmount * commissionableMargin;
-    const commission = commissionableProfit * PM_COMMISSION_RATE;
+const selectedGrossMargin =
+  getMarginForTradeAndWorkType(selectedTradeType, selectedWorkType);
+
+const companyTake = 0.10;
+
+const commissionableMargin =
+  Math.max(selectedGrossMargin - companyTake, 0);
+
+const commission =
+  saleAmount *
+  commissionableMargin *
+  PM_COMMISSION_RATE;
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
@@ -1669,10 +1700,6 @@ return {
       closingRateRank,
       saleAmount,
       projectedYTDRevenue,
-      averageMargin,
-      companyTake,
-      commissionableMargin,
-      commissionableProfit,
       commission,
       goalPercent,
       projectedGoalPercent,
@@ -1991,7 +2018,6 @@ useEffect(() => {
 
   loadPMFile();
   loadSalesFile();
-  loadLeadFile();
 }, [pmAuthorized]);
 
   useEffect(() => {
@@ -2475,7 +2501,7 @@ const quarterCloseMessages = [
 "Keep pushing. The pace is right where it needs to be.",
 "You're within range of the goal and still have time to close the gap. Keep pushing!",
 "A strong finish is what you need to close out the quarter. You got this!",
-"Momentum over the next few weeks will be critical. Just stay focused and keep grinding.",
+"Momentum over the next few weeks will be critical. Keep focused.",
 "The quarter remains highly achievable from this position. Keep pushing!",
 "Stay focused on your leads and the quarter is yours - You got this!",
 "You're not far from where you need to be. Keep pushing - you got this!",
@@ -3114,7 +3140,10 @@ const quarterlyGoalClass =
   <span>Job Trade Type</span>
   <select
     value={selectedTradeType}
-    onChange={(event) => setSelectedTradeType(event.target.value)}
+    onChange={(event) => {
+      setSelectedTradeType(event.target.value);
+      setSelectedWorkType("");
+    }}
   >
     <option value="">Select Job Trade Type</option>
 
@@ -3127,18 +3156,20 @@ const quarterlyGoalClass =
 </div>
 
 <div>
-  <span>Avg Gross Margin</span>
-  <strong>{selectedTradeType ? displayPercent(pmData.averageMargin, 1) : "Select Trade"}</strong>
-</div>
+  <span>Work Type</span>
+  <select
+    value={selectedWorkType}
+    disabled={!selectedTradeType}
+    onChange={(event) => setSelectedWorkType(event.target.value)}
+  >
+    <option value="">Select Work Type</option>
 
-<div>
-  <span>Company Take</span>
-  <strong>{displayPercent(pmData.companyTake, 1)}</strong>
-</div>
-
-<div>
-  <span>Commissionable Profit</span>
-  <strong>{money(pmData.commissionableProfit)}</strong>
+    {getWorkTypeOptionsForTrade(selectedTradeType).map((workType) => (
+      <option key={workType} value={workType}>
+        {workType}
+      </option>
+    ))}
+  </select>
 </div>
 
 <div>
