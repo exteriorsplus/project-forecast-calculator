@@ -547,17 +547,18 @@ function normalizeTrade(value) {
   const text = String(value || "").trim().toLowerCase();
 
     // EXCLUDED TRADE TYPES
-  if (
-    text === "other" ||
-    text === "other, skylights" ||
-    text === "other fascia" ||
-    text === "wraps, fascia" ||
-    text === "storm damage, fascia" ||
-    text === "repair" ||
-    text === "wraps"
-  ) {
-    return "";
-  }
+if (
+  text === "other" ||
+  text === "other, skylights" ||
+  text === "other, fascia" ||
+  text === "wraps, fascia" ||
+  text === "storm damage, fascia" ||
+  text === "soffits, fascia" ||
+  text === "repair" ||
+  text === "wraps"
+) {
+  return "";
+}
 
   if (text === "roofing & gutters") return "Roofing & Gutters";
   if (text === "roofing & siding") return "Roofing & Siding";
