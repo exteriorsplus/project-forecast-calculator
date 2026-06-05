@@ -279,8 +279,7 @@ const getMarginForTradeType = (tradeType) => {
 };
 
 function normalizeMarginTradeType(value) {
-  const text = String(value || "").trim();
-  return normalizeTrade(text) || text;
+  return normalizeTrade(value);
 }
 
 function normalizeMarginWorkType(value) {
