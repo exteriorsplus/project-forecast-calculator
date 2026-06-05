@@ -774,6 +774,7 @@ export default function App() {
   const [pmLoginError, setPmLoginError] = useState("");
   const [pmSaleAmount, setPmSaleAmount] = useState("0");
   const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
+  const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -1548,41 +1549,44 @@ const teamClosingRate =
 const saleAmount = Number(pmSaleAmount || 0);
 
 const selectedTradeConfigs = selectedCommissionTrades
-  .map((tradeType) => {
+  .flatMap((tradeType) => {
     const category = categories.find((item) => item.title === tradeType);
 
-    if (!category) {
-      return null;
-    }
+    if (!category) return [];
 
-    const averageRpp =
-      category.items.length > 0
-        ? category.items.reduce((sum, item) => sum + Number(item.rpp || 0), 0) /
-          category.items.length
-        : 0;
+    return selectedCommissionWorkTypes
+      .map((workType) => {
+        const matchingItem = category.items.find(
+          (item) => item.label === workType
+        );
 
-    return {
-      tradeType,
-      averageRpp,
-      averageMargin: getMarginForTradeType(tradeType),
-    };
+        if (!matchingItem) return null;
+
+        return {
+          tradeType,
+          workType,
+          rpp: Number(matchingItem.rpp || 0),
+          margin: Number(matchingItem.margin || 0),
+        };
+      })
+      .filter(Boolean);
   })
   .filter(Boolean);
 
 const totalSelectedRpp = selectedTradeConfigs.reduce(
-  (sum, item) => sum + Number(item.averageRpp || 0),
+  (sum, item) => sum + Number(item.rpp || 0),
   0
 );
 
 const commissionDetails = selectedTradeConfigs.map((item) => {
   const allocatedSaleAmount =
     saleAmount > 0 && totalSelectedRpp > 0
-      ? saleAmount * (item.averageRpp / totalSelectedRpp)
+      ? saleAmount * (item.rpp / totalSelectedRpp)
       : selectedTradeConfigs.length > 0
       ? saleAmount / selectedTradeConfigs.length
       : 0;
 
-  const commissionableMargin = Math.max(item.averageMargin - companyTake, 0);
+  const commissionableMargin = Math.max(item.margin - companyTake, 0);
   const commission =
     allocatedSaleAmount * commissionableMargin * PM_COMMISSION_RATE;
 
@@ -3160,32 +3164,54 @@ const quarterlyGoalClass =
               />
             </div>
 
-            <div className="pm-commission-grid">
+            <div className="pm-commission-selector-card">
+              <span>Trade Types</span>
+              <div className="commission-checkbox-row commission-trade-row">
+                {getJobTradeTypeOptions().map((tradeType) => (
+                  <label key={tradeType} className="commission-option">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommissionTrades.includes(tradeType)}
+                      onChange={() => {
+                        setSelectedCommissionTrades((currentTrades) =>
+                          currentTrades.includes(tradeType)
+                            ? currentTrades.filter((item) => item !== tradeType)
+                            : [...currentTrades, tradeType]
+                        );
+                      }}
+                    />
+                    <span>{tradeType}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pm-commission-selector-card">
+              <span>Work Type</span>
+              <div className="commission-checkbox-row commission-work-row">
+                {WORK_TYPE_ORDER.map((workType) => (
+                  <label key={workType} className="commission-option">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommissionWorkTypes.includes(workType)}
+                      onChange={() => {
+                        setSelectedCommissionWorkTypes((currentWorkTypes) =>
+                          currentWorkTypes.includes(workType)
+                            ? currentWorkTypes.filter((item) => item !== workType)
+                            : [...currentWorkTypes, workType]
+                        );
+                      }}
+                    />
+                    <span>{workType}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pm-commission-summary">
               <div>
                 <span>Commission Rate</span>
                 <strong>25%</strong>
-              </div>
-
-              <div>
-                <span>Selected Trade Types</span>
-                <div className="commission-checkbox-grid">
-                  {getJobTradeTypeOptions().map((tradeType) => (
-                    <label key={tradeType} className="commission-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={selectedCommissionTrades.includes(tradeType)}
-                        onChange={() => {
-                          setSelectedCommissionTrades((currentTrades) =>
-                            currentTrades.includes(tradeType)
-                              ? currentTrades.filter((item) => item !== tradeType)
-                              : [...currentTrades, tradeType]
-                          );
-                        }}
-                      />
-                      <span>{tradeType}</span>
-                    </label>
-                  ))}
-                </div>
               </div>
 
               <div>
