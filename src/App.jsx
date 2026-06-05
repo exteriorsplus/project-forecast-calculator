@@ -279,6 +279,7 @@ const getMarginForTradeType = (tradeType) => {
 };
 
 const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
+const COMMISSION_WORK_TYPE_OPTIONS = ["Retail", "Insurance", "Repair"];
 
 const money = (value) =>
   Number(value || 0).toLocaleString("en-US", {
@@ -1228,9 +1229,31 @@ const getTeamMetricRow = (metric) => {
     );
   };
 const getJobTradeTypeOptions = () => {
-  return categories
-    .map((category) => category.title)
-    .sort();
+  const categoryTitles = categories.map((category) => category.title);
+
+  const tradeSalesTotals = categoryTitles.reduce((totals, tradeType) => {
+    totals[tradeType] = 0;
+    return totals;
+  }, {});
+
+  salesRows.forEach((row) => {
+    const tradeType =
+      normalizeTrade(row["Job Trade Type 2"]) ||
+      normalizeTrade(row["Job Trade Type"]);
+
+    if (!tradeType || !categoryTitles.includes(tradeType)) return;
+
+    tradeSalesTotals[tradeType] += parseMoney(row["Contract Amount"]);
+  });
+
+  return categoryTitles.sort((a, b) => {
+    const salesDifference =
+      Number(tradeSalesTotals[b] || 0) - Number(tradeSalesTotals[a] || 0);
+
+    if (salesDifference !== 0) return salesDifference;
+
+    return a.localeCompare(b);
+  });
 };
 
 const getWorkTypeOptionsForTrade = (tradeType) => {
@@ -3189,7 +3212,7 @@ const quarterlyGoalClass =
             <div className="pm-commission-selector-card">
               <span>Work Type</span>
               <div className="commission-checkbox-row commission-work-row">
-                {WORK_TYPE_ORDER.map((workType) => (
+                {COMMISSION_WORK_TYPE_OPTIONS.map((workType) => (
                   <label key={workType} className="commission-option">
                     <input
                       type="checkbox"
