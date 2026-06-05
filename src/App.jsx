@@ -991,7 +991,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
 
       if (!response.ok) {
-        throw new Error("Could not find public/pm/sales.xlsx");
+        throw new Error("Could not find public/sales.xlsx");
       }
 
       const buffer = await response.arrayBuffer();
@@ -1009,7 +1009,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
     } catch (error) {
       setSalesRows([]);
-      setDataStatus("No public/pm/sales.xlsx file found yet.");
+      setDataStatus("No public/sales.xlsx file found yet.");
       console.error(error);
     }
   };
@@ -1262,7 +1262,14 @@ const getSalesDataForMonths = (months) => {
   return getPMSalesDataForRange(pmName, start, end);
 };
 
-const ytdSalesData = getSalesDataForMonths(ytdMonths);
+const fiscalYTDStartDate = new Date(2025, 10, 1);
+const fiscalYTDEndDate = dateOnly(new Date());
+
+const ytdSalesData = getPMSalesDataForRange(
+  pmName,
+  fiscalYTDStartDate,
+  fiscalYTDEndDate
+);
 
 const ytdRevenue = ytdSalesData.contractTotal;
 const ytdContracts = ytdSalesData.contracts;
@@ -1403,26 +1410,10 @@ const customTeamClosingRate =
       }, 0) / activeGoalProjectManagers.length
     : 0;
 
-const getTeamSalesDataForMonths = (months) => {
-  const teamSalesData = activeGoalProjectManagers.map((pm) => {
-    const ranges = months
-      .map(getMonthDateBoundsForSales)
-      .filter(Boolean);
-
-    if (!ranges.length) {
-      return {
-        contractTotal: 0,
-        contracts: 0,
-        averageContract: 0,
-      };
-    }
-
-    return getPMSalesDataForRange(
-      pm.name,
-      ranges[0].start,
-      ranges[ranges.length - 1].end
-    );
-  });
+const getTeamSalesDataForRange = (startDate, endDate) => {
+  const teamSalesData = activeGoalProjectManagers.map((pm) =>
+    getPMSalesDataForRange(pm.name, startDate, endDate)
+  );
 
   const totalRevenue = teamSalesData.reduce(
     (sum, item) => sum + Number(item.contractTotal || 0),
@@ -1444,9 +1435,42 @@ const getTeamSalesDataForMonths = (months) => {
   };
 };
 
+const getTeamSalesDataForMonths = (months) => {
+  const ranges = months
+    .map(getMonthDateBoundsForSales)
+    .filter(Boolean);
+
+  if (!ranges.length) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  return getTeamSalesDataForRange(
+    ranges[0].start,
+    ranges[ranges.length - 1].end
+  );
+};
+
+const ytdTeamClosingRate =
+  ytdMonths.length > 0 && activeGoalProjectManagers.length > 0
+    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
+        const pmClosingRate =
+          ytdMonths.reduce(
+            (monthSum, month) =>
+              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+            0
+          ) / ytdMonths.length;
+
+        return pmSum + pmClosingRate;
+      }, 0) / activeGoalProjectManagers.length
+    : 0;
+
 const teamSalesData =
   pmDateMode === "fiscalYTD"
-    ? getTeamSalesDataForMonths(ytdMonths)
+    ? getTeamSalesDataForRange(fiscalYTDStartDate, fiscalYTDEndDate)
     : pmDateMode === "custom"
     ? customTeamSalesData.length > 0
       ? {
