@@ -1291,10 +1291,12 @@ const getTeamMetricRow = (metric) => {
       const cleanDate = dateOnly(rowDate);
       if (cleanDate < start || cleanDate > end) return;
 
-      const amount = parseMoney(row["Contract Amount"]);
+const amount = parseMoney(row["Contract Amount"]);
 
-      contractTotal += amount;
-      contracts += 1;
+if (amount <= 0) return;
+
+contractTotal += amount;
+contracts += 1;
     });
 
     return {
@@ -1638,7 +1640,11 @@ const lyClosingRate = getPMMetric(
   lastYearMonth
 );
 
-const activeGoalProjectManagers = projectManagers.filter((pm) => pm.activeGoal);
+const activeGoalProjectManagers = projectManagers.filter(
+  (pm) =>
+    pm.activeGoal &&
+    pm.name !== "George Anim"
+);
 
 const customTeamSalesData = activeGoalProjectManagers.map((pm) =>
   getPMCustomSalesData(pm.name)
@@ -1704,14 +1710,25 @@ const getTeamSalesDataForRange = (startDate, endDate) => {
     0
   );
 
-  return {
-    contractTotal:
-      teamSalesData.length > 0 ? totalRevenue / teamSalesData.length : 0,
-    contracts:
-      teamSalesData.length > 0 ? totalContracts / teamSalesData.length : 0,
-    averageContract:
-      totalContracts > 0 ? totalRevenue / totalContracts : 0,
-  };
+const activeTeamSalesData = teamSalesData.filter(
+  (item) => Number(item.contractTotal || 0) > 0
+);
+
+return {
+  contractTotal:
+    activeTeamSalesData.length > 0
+      ? totalRevenue / activeTeamSalesData.length
+      : 0,
+
+  contracts:
+    activeTeamSalesData.length > 0
+      ? totalContracts / activeTeamSalesData.length
+      : 0,
+
+  averageContract:
+    totalContracts > 0
+      ? totalRevenue / totalContracts
+      : 0,
 };
 
 const getTeamSalesDataForMonths = (months) => {
