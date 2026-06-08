@@ -2110,11 +2110,15 @@ const referralData = referralRange
       referralPercent: 0,
     };
 
-const ytdReferralData = getPMReferralDataForRange(
-  pmName,
-  fiscalYTDStartDate,
-  fiscalYTDEndDate
-);
+const quarterlyReferralData =
+  quarterStartDate && quarterEndDate
+    ? getPMReferralDataForRange(pmName, quarterStartDate, quarterEndDate)
+    : {
+        referralTotal: 0,
+        referralGoal: 0,
+        referralDelta: 0,
+        referralPercent: 0,
+      };
 
 const getReferralStatusForRange = (data, range) => {
   if (!range) {
@@ -2142,8 +2146,12 @@ const referralStatus =
       : "goalNotMet"
     : getReferralStatusForRange(referralData, referralRange);
 
-const ytdReferralStatus =
-  ytdReferralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+const quarterlyReferralStatus = getReferralStatusForRange(
+  quarterlyReferralData,
+  quarterStartDate && quarterEndDate
+    ? { start: quarterStartDate, end: quarterEndDate }
+    : null
+);
   
 return {
   monthOptions,
@@ -2187,11 +2195,11 @@ referralGoal: referralData.referralGoal,
 referralDelta: referralData.referralDelta,
 referralPercent: referralData.referralPercent,
 referralStatus,
-ytdReferralTotal: ytdReferralData.referralTotal,
-ytdReferralGoal: ytdReferralData.referralGoal,
-ytdReferralDelta: ytdReferralData.referralDelta,
-ytdReferralPercent: ytdReferralData.referralPercent,
-ytdReferralStatus,
+quarterlyReferralTotal: quarterlyReferralData.referralTotal,
+quarterlyReferralGoal: quarterlyReferralData.referralGoal,
+quarterlyReferralDelta: quarterlyReferralData.referralDelta,
+quarterlyReferralPercent: quarterlyReferralData.referralPercent,
+quarterlyReferralStatus,
     };
   };
 
@@ -3175,16 +3183,24 @@ const referralMotivation = (() => {
   return `${firstName}, ${msg}`;
 })();
 
-const ytdReferralStatusClass =
-  pmData.ytdReferralStatus === "goalMet" ? "positive" : "negative";
+const quarterlyReferralStatusClass =
+  pmData.quarterlyReferralStatus === "goalMet"
+    ? "positive"
+    : pmData.quarterlyReferralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
 
-const ytdReferralMotivation = (() => {
+const quarterlyReferralMotivation = (() => {
   const firstName = (currentPM?.name || "").split(" ")[0];
 
   const messages =
-    pmData.ytdReferralStatus === "goalMet"
+    pmData.quarterlyReferralStatus === "goalMet"
       ? referralGoalMetMessages
-      : referralGoalNotMetMessages;
+      : pmData.quarterlyReferralStatus === "goalNotMet"
+      ? referralGoalNotMetMessages
+      : pmData.quarterlyReferralStatus === "future"
+      ? referralFutureMessages
+      : referralInProgressMessages;
 
   const msg = pickRandom(messages);
 
@@ -3722,26 +3738,26 @@ const quarterlyGoalClass =
     />
 
     <PMMetricCard
-      label="YTD Referral Goal"
-      value={Math.round(pmData.ytdReferralGoal || 0)}
-      comparisonLabel="YTD Referral Actual"
-      comparisonValue={Math.round(pmData.ytdReferralTotal || 0)}
+      label="Quarterly Goal"
+      value={Math.round(pmData.quarterlyReferralGoal || 0)}
+      comparisonLabel="Quarterly Actual"
+      comparisonValue={Math.round(pmData.quarterlyReferralTotal || 0)}
       difference={{
-        label: `${displayPercent(pmData.ytdReferralPercent, 1)} Complete`,
-        className: ytdReferralStatusClass,
+        label: `${displayPercent(pmData.quarterlyReferralPercent, 1)} Complete`,
+        className: quarterlyReferralStatusClass,
       }}
     />
 
     <PMMetricCard
       label={
-        pmData.ytdReferralDelta >= 0
-          ? "YTD Over Referral Goal"
-          : "YTD Referral Remaining"
+        pmData.quarterlyReferralDelta >= 0
+          ? "Over Quarterly Goal"
+          : "Quarterly Remaining"
       }
-      value={`${pmData.ytdReferralDelta >= 0 ? "+" : ""}${Math.round(
-        pmData.ytdReferralDelta || 0
+      value={`${pmData.quarterlyReferralDelta >= 0 ? "+" : ""}${Math.round(
+        pmData.quarterlyReferralDelta || 0
       )}`}
-      customMessage={ytdReferralMotivation}
+      customMessage={quarterlyReferralMotivation}
       messageTitle="✨MAGIC MIKE MOMENT✨"
     />
   </div>
