@@ -2490,6 +2490,7 @@ useEffect(() => {
 
   loadPMFile();
   loadSalesFile();
+  loadLeadFile();
   loadMarginFile();
 }, [pmAuthorized]);
 
