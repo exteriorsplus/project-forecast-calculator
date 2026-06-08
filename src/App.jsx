@@ -2104,6 +2104,29 @@ const referralData = referralRange
       referralDelta: 0,
       referralPercent: 0,
     };
+
+const referralStatus = (() => {
+  if (pmDateMode === "fiscalYTD" || pmDateMode === "custom") {
+    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  }
+
+  if (!selectedMonthBounds) {
+    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  }
+
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  if (selectedMonthBounds.end < currentMonthStart) {
+    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  }
+
+  if (selectedMonthBounds.start > currentMonthEnd) {
+    return "future";
+  }
+
+  return referralData.referralDelta >= 0 ? "goalMet" : "inProgress";
+})();
   
 return {
   monthOptions,
@@ -2146,6 +2169,7 @@ referralTotal: referralData.referralTotal,
 referralGoal: referralData.referralGoal,
 referralDelta: referralData.referralDelta,
 referralPercent: referralData.referralPercent,
+referralStatus,
     };
   };
 
@@ -3065,26 +3089,64 @@ const quarterlyMotivation = (() => {
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
 
-const referralHitMessages = [
-  "referral goal achieved. Great work creating opportunities through relationships.",
-  "you hit the referral goal. Keep asking, keep connecting, and keep building trust.",
-  "referrals are on track. That means people trust you enough to send opportunities your way.",
-  "you reached the referral target. Relationship-driven business is working.",
-  "referral production is where it needs to be. Keep making it part of the process."
+const referralGoalMetMessages = [
+  "referral goal met. Great work creating opportunities through relationships.",
+  "you met the referral goal. That means people trust you enough to send opportunities your way.",
+  "referral goal achieved. Relationship-driven business is working.",
+  "you reached the referral target. Keep making referrals part of the process.",
+  "goal met on referrals. That kind of trust is earned, and it matters."
 ];
 
-const referralNeedsMessages = [
+const referralGoalNotMetMessages = [
+  "referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
+  "the referral goal was not met. Use this as a reminder to make referral asks part of every closeout conversation.",
+  "goal not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
+  "the referral target was missed. A few intentional referral conversations can help turn that around next month.",
+  "referral goal not met. Reset, refocus, and keep asking satisfied customers for introductions."
+];
+
+const referralInProgressMessages = [
   "referral goal has not been reached yet. Keep asking happy customers who else you can help.",
-  "there is still room to build more referral opportunities this period.",
+  "there is still room to build more referral opportunities this month.",
   "referrals need a little more focus. Every satisfied customer can open another door.",
   "keep planting referral seeds. The best leads often come from people who already trust us.",
   "referral activity is behind goal, but a few intentional asks can close the gap quickly."
 ];
 
+const referralFutureMessages = [
+  "this referral month has not started yet, but the best referral opportunities are built before the scoreboard opens.",
+  "future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
+  "we are not there yet bub, but every satisfied customer can become a future referral source.",
+  "future month selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
+  "that referral window is still ahead. Keep doing the kind of work people want to recommend."
+];
+
+const referralStatusLabel = (() => {
+  if (pmData.referralStatus === "goalMet") return "Goal Met";
+  if (pmData.referralStatus === "goalNotMet") return "Goal Not Met";
+  if (pmData.referralStatus === "future") return "Upcoming";
+  return "In Progress";
+})();
+
+const referralStatusClass =
+  pmData.referralStatus === "goalMet"
+    ? "positive"
+    : pmData.referralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
+
 const referralMotivation = (() => {
   const firstName = (currentPM?.name || "").split(" ")[0];
+
   const messages =
-    pmData.referralDelta >= 0 ? referralHitMessages : referralNeedsMessages;
+    pmData.referralStatus === "goalMet"
+      ? referralGoalMetMessages
+      : pmData.referralStatus === "goalNotMet"
+      ? referralGoalNotMetMessages
+      : pmData.referralStatus === "future"
+      ? referralFutureMessages
+      : referralInProgressMessages;
+
   const msg = pickRandom(messages);
 
   return `${firstName}, ${msg}`;
@@ -3608,18 +3670,22 @@ const quarterlyGoalClass =
       comparisonValue="1 Per Month"
       difference={{
         label: `${displayPercent(pmData.referralPercent, 1)} Complete`,
-        className: pmData.referralDelta >= 0 ? "positive" : "negative",
+        className: referralStatusClass,
       }}
     />
 
     <PMMetricCard
-      label={pmData.referralDelta >= 0 ? "Over Referral Goal" : "Under Referral Goal"}
+      label="Referral Goal +/-"
       value={`${pmData.referralDelta >= 0 ? "+" : ""}${Math.round(pmData.referralDelta || 0)}`}
     />
 
     <PMMetricCard
-      label="Referral Focus"
-      value={pmData.referralDelta >= 0 ? "On Track" : "Needs Push"}
+      label="Referral Status"
+      value={referralStatusLabel}
+      difference={{
+        label: referralStatusLabel,
+        className: referralStatusClass,
+      }}
       customMessage={referralMotivation}
       messageTitle="✨MAGIC MIKE MOMENT✨"
     />
