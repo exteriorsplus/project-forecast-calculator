@@ -542,6 +542,22 @@ function dateOnly(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function getInclusiveMonthCount(startDate, endDate) {
+  if (!startDate || !endDate) return 0;
+
+  const start = dateOnly(startDate);
+  const end = dateOnly(endDate);
+
+  if (end < start) return 0;
+
+  return (
+    (end.getFullYear() - start.getFullYear()) * 12 +
+    end.getMonth() -
+    start.getMonth() +
+    1
+  );
+}
+
 function normalizeTrade(value) {
   const text = String(value || "").trim().toLowerCase();
 
@@ -1321,6 +1337,75 @@ contracts += 1;
       parseInputDate(pmEndDate)
     );
   };
+
+const getPMReferralDataForRange = (pmName, startDate, endDate) => {
+  if (!pmName || !startDate || !endDate) {
+    return {
+      referralTotal: 0,
+      referralGoal: 0,
+      referralDelta: 0,
+      referralPercent: 0,
+    };
+  }
+
+  const start = dateOnly(startDate);
+  const end = dateOnly(endDate);
+  const referralGoal = getInclusiveMonthCount(start, end);
+
+  let referralTotal = 0;
+
+  leadRows.forEach((row) => {
+    const milestone = String(row["Current Milestone"] || "")
+      .trim()
+      .toLowerCase();
+
+    if (milestone.includes("dead")) return;
+
+    const rowPMValues = [
+      row["Project Manager"],
+      row["Salesperson"],
+      row["Sales Rep"],
+      row["Sales Representative"],
+      row["Primary Salesperson"],
+      row["Sales Owner"],
+      row["Estimator"],
+    ].map((value) => String(value || "").trim());
+
+    if (!rowPMValues.includes(pmName)) return;
+
+    const leadSource = String(row["Lead Source"] || "")
+      .trim()
+      .toLowerCase();
+
+    if (!leadSource.includes("referral")) return;
+
+    const rowDate = parseExcelDate(
+      row["Initial Appointment Date"] ||
+        row["Prospect Milestone Date"] ||
+        row["Closed Milestone Date"] ||
+        row["Created Date"] ||
+        row["Date Created"] ||
+        row["Approved Date"]
+    );
+
+    if (!rowDate) return;
+
+    const cleanDate = dateOnly(rowDate);
+    if (cleanDate < start || cleanDate > end) return;
+
+    referralTotal += 1;
+  });
+
+  const referralDelta = referralTotal - referralGoal;
+
+  return {
+    referralTotal,
+    referralGoal,
+    referralDelta,
+    referralPercent: referralGoal > 0 ? referralTotal / referralGoal : 0,
+  };
+};
+
 const getCommissionMarginSummary = () => {
   const summary = {};
 
@@ -1992,6 +2077,33 @@ const quarterlyProjectedPercent =
 
 const quarterlyRemaining =
   quarterlyGoal - quarterRevenue;
+
+const referralRange = (() => {
+  if (pmDateMode === "fiscalYTD") {
+    return {
+      start: fiscalYTDStartDate,
+      end: fiscalYTDEndDate,
+    };
+  }
+
+  if (pmDateMode === "custom" && pmStartDate && pmEndDate) {
+    return {
+      start: parseInputDate(pmStartDate),
+      end: parseInputDate(pmEndDate),
+    };
+  }
+
+  return selectedMonthBounds;
+})();
+
+const referralData = referralRange
+  ? getPMReferralDataForRange(pmName, referralRange.start, referralRange.end)
+  : {
+      referralTotal: 0,
+      referralGoal: 0,
+      referralDelta: 0,
+      referralPercent: 0,
+    };
   
 return {
   monthOptions,
@@ -2030,6 +2142,10 @@ quarterlyGoal,
 quarterlyGoalPercent: quarterlyActualPercent,
 quarterlyProjectedPercent,
 quarterlyRemaining,
+referralTotal: referralData.referralTotal,
+referralGoal: referralData.referralGoal,
+referralDelta: referralData.referralDelta,
+referralPercent: referralData.referralPercent,
     };
   };
 
@@ -2948,6 +3064,31 @@ const quarterlyMotivation = (() => {
 
   return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
+
+const referralHitMessages = [
+  "referral goal achieved. Great work creating opportunities through relationships.",
+  "you hit the referral goal. Keep asking, keep connecting, and keep building trust.",
+  "referrals are on track. That means people trust you enough to send opportunities your way.",
+  "you reached the referral target. Relationship-driven business is working.",
+  "referral production is where it needs to be. Keep making it part of the process."
+];
+
+const referralNeedsMessages = [
+  "referral goal has not been reached yet. Keep asking happy customers who else you can help.",
+  "there is still room to build more referral opportunities this period.",
+  "referrals need a little more focus. Every satisfied customer can open another door.",
+  "keep planting referral seeds. The best leads often come from people who already trust us.",
+  "referral activity is behind goal, but a few intentional asks can close the gap quickly."
+];
+
+const referralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+  const messages =
+    pmData.referralDelta >= 0 ? referralHitMessages : referralNeedsMessages;
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
 const generatePMInsight = ({
   monthlyGoalPercent,
   quarterlyGoalPercent,
@@ -3448,6 +3589,40 @@ const quarterlyGoalClass =
   customMessage={quarterlyMotivation}
   messageTitle="✨MAGIC MIKE MOMENT✨"
 />
+  </div>
+</div>
+
+<div className="pm-section-card">
+  <h2>Referral Information</h2>
+
+  <div className="pm-metric-grid">
+    <PMMetricCard
+      label="Referral Leads"
+      value={Math.round(pmData.referralTotal || 0)}
+    />
+
+    <PMMetricCard
+      label="Referral Goal"
+      value={Math.round(pmData.referralGoal || 0)}
+      comparisonLabel="Goal Pace"
+      comparisonValue="1 Per Month"
+      difference={{
+        label: `${displayPercent(pmData.referralPercent, 1)} Complete`,
+        className: pmData.referralDelta >= 0 ? "positive" : "negative",
+      }}
+    />
+
+    <PMMetricCard
+      label={pmData.referralDelta >= 0 ? "Over Referral Goal" : "Under Referral Goal"}
+      value={`${pmData.referralDelta >= 0 ? "+" : ""}${Math.round(pmData.referralDelta || 0)}`}
+    />
+
+    <PMMetricCard
+      label="Referral Focus"
+      value={pmData.referralDelta >= 0 ? "On Track" : "Needs Push"}
+      customMessage={referralMotivation}
+      messageTitle="✨MAGIC MIKE MOMENT✨"
+    />
   </div>
 </div>
             </>
