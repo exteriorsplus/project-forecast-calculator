@@ -1650,20 +1650,24 @@ const customTeamSalesData = activeGoalProjectManagers.map((pm) =>
   getPMCustomSalesData(pm.name)
 );
 
+const activeCustomTeamSalesData = customTeamSalesData.filter(
+  (item) => Number(item.contractTotal || 0) > 0
+);
+
 const customTeamContractTotal =
-  customTeamSalesData.length > 0
-    ? customTeamSalesData.reduce(
+  activeCustomTeamSalesData.length > 0
+    ? activeCustomTeamSalesData.reduce(
         (sum, item) => sum + Number(item.contractTotal || 0),
         0
-      ) / customTeamSalesData.length
+      ) / activeCustomTeamSalesData.length
     : 0;
 
 const customTeamContracts =
-  customTeamSalesData.length > 0
-    ? customTeamSalesData.reduce(
+  activeCustomTeamSalesData.length > 0
+    ? activeCustomTeamSalesData.reduce(
         (sum, item) => sum + Number(item.contracts || 0),
         0
-      ) / customTeamSalesData.length
+      ) / activeCustomTeamSalesData.length
     : 0;
 
 const customTeamTotalRevenue = customTeamSalesData.reduce(
@@ -1711,24 +1715,35 @@ const getTeamSalesDataForRange = (startDate, endDate) => {
   );
 
 const activeTeamSalesData = teamSalesData.filter(
-  (item) => Number(item.contractTotal || 0) > 0
-);
+    (item) => Number(item.contractTotal || 0) > 0
+  );
 
-return {
-  contractTotal:
-    activeTeamSalesData.length > 0
-      ? totalRevenue / activeTeamSalesData.length
-      : 0,
+  const activeTeamRevenue = activeTeamSalesData.reduce(
+    (sum, item) => sum + Number(item.contractTotal || 0),
+    0
+  );
 
-  contracts:
-    activeTeamSalesData.length > 0
-      ? totalContracts / activeTeamSalesData.length
-      : 0,
+  const activeTeamContracts = activeTeamSalesData.reduce(
+    (sum, item) => sum + Number(item.contracts || 0),
+    0
+  );
 
-  averageContract:
-    totalContracts > 0
-      ? totalRevenue / totalContracts
-      : 0,
+  return {
+    contractTotal:
+      activeTeamSalesData.length > 0
+        ? activeTeamRevenue / activeTeamSalesData.length
+        : 0,
+
+    contracts:
+      activeTeamSalesData.length > 0
+        ? activeTeamContracts / activeTeamSalesData.length
+        : 0,
+
+    averageContract:
+      activeTeamContracts > 0
+        ? activeTeamRevenue / activeTeamContracts
+        : 0,
+  };
 };
 
 const getTeamSalesDataForMonths = (months) => {
