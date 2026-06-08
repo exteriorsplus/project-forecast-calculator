@@ -1358,11 +1358,7 @@ const getPMReferralDataForRange = (pmName, startDate, endDate) => {
     const milestone = String(row["Current Milestone"] || "")
       .trim()
       .toLowerCase();
-if (
-  String(row["Lead Source"]).toLowerCase().includes("referral")
-) {
-  console.log("REFERRAL ROW FOUND", row);
-}
+
     if (milestone.includes("dead")) return;
 
     const rowPMValues = [
@@ -1377,22 +1373,16 @@ if (
 
     if (!rowPMValues.includes(pmName)) return;
 
-    console.log(
-  "Referral Check:",
-  row["Lead Source"],
-  row["Primary Salesperson"],
-  row["Initial Appointment Date"]
-);
     const leadSource = String(row["Lead Source"] || "")
       .trim()
       .toLowerCase();
 
-   if (
-  !leadSource ||
-  leadSource.replace(/\s+/g, "").indexOf("referral") === -1
-) {
-  return;
-}
+    if (
+      !leadSource ||
+      leadSource.replace(/\s+/g, "").indexOf("referral") === -1
+    ) {
+      return;
+    }
 
     const rowDate = parseExcelDate(
       row["Initial Appointment Date"] ||
@@ -2120,28 +2110,40 @@ const referralData = referralRange
       referralPercent: 0,
     };
 
-const referralStatus = (() => {
-  if (pmDateMode === "fiscalYTD" || pmDateMode === "custom") {
-    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
-  }
+const ytdReferralData = getPMReferralDataForRange(
+  pmName,
+  fiscalYTDStartDate,
+  fiscalYTDEndDate
+);
 
-  if (!selectedMonthBounds) {
-    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+const getReferralStatusForRange = (data, range) => {
+  if (!range) {
+    return data.referralDelta >= 0 ? "goalMet" : "goalNotMet";
   }
 
   const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-  if (selectedMonthBounds.end < currentMonthStart) {
-    return referralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  if (dateOnly(range.end) < currentMonthStart) {
+    return data.referralDelta >= 0 ? "goalMet" : "goalNotMet";
   }
 
-  if (selectedMonthBounds.start > currentMonthEnd) {
+  if (dateOnly(range.start) > currentMonthEnd) {
     return "future";
   }
 
-  return referralData.referralDelta >= 0 ? "goalMet" : "inProgress";
-})();
+  return data.referralDelta >= 0 ? "goalMet" : "inProgress";
+};
+
+const referralStatus =
+  pmDateMode === "fiscalYTD" || pmDateMode === "custom"
+    ? referralData.referralDelta >= 0
+      ? "goalMet"
+      : "goalNotMet"
+    : getReferralStatusForRange(referralData, referralRange);
+
+const ytdReferralStatus =
+  ytdReferralData.referralDelta >= 0 ? "goalMet" : "goalNotMet";
   
 return {
   monthOptions,
@@ -2185,6 +2187,11 @@ referralGoal: referralData.referralGoal,
 referralDelta: referralData.referralDelta,
 referralPercent: referralData.referralPercent,
 referralStatus,
+ytdReferralTotal: ytdReferralData.referralTotal,
+ytdReferralGoal: ytdReferralData.referralGoal,
+ytdReferralDelta: ytdReferralData.referralDelta,
+ytdReferralPercent: ytdReferralData.referralPercent,
+ytdReferralStatus,
     };
   };
 
@@ -3167,6 +3174,22 @@ const referralMotivation = (() => {
 
   return `${firstName}, ${msg}`;
 })();
+
+const ytdReferralStatusClass =
+  pmData.ytdReferralStatus === "goalMet" ? "positive" : "negative";
+
+const ytdReferralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const messages =
+    pmData.ytdReferralStatus === "goalMet"
+      ? referralGoalMetMessages
+      : referralGoalNotMetMessages;
+
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
 const generatePMInsight = ({
   monthlyGoalPercent,
   quarterlyGoalPercent,
@@ -3675,15 +3698,10 @@ const quarterlyGoalClass =
 
   <div className="pm-metric-grid">
     <PMMetricCard
-      label="Referral Leads"
-      value={Math.round(pmData.referralTotal || 0)}
-    />
-
-    <PMMetricCard
       label="Referral Goal"
       value={Math.round(pmData.referralGoal || 0)}
-      comparisonLabel="Goal Pace"
-      comparisonValue="1 Per Month"
+      comparisonLabel="Referral Actual"
+      comparisonValue={Math.round(pmData.referralTotal || 0)}
       difference={{
         label: `${displayPercent(pmData.referralPercent, 1)} Complete`,
         className: referralStatusClass,
@@ -3691,18 +3709,39 @@ const quarterlyGoalClass =
     />
 
     <PMMetricCard
-      label="Referral Goal +/-"
-      value={`${pmData.referralDelta >= 0 ? "+" : ""}${Math.round(pmData.referralDelta || 0)}`}
+      label={
+        pmData.referralDelta >= 0
+          ? "Over Referral Goal"
+          : "Referral Remaining"
+      }
+      value={`${pmData.referralDelta >= 0 ? "+" : ""}${Math.round(
+        pmData.referralDelta || 0
+      )}`}
+      customMessage={referralMotivation}
+      messageTitle="✨MAGIC MIKE MOMENT✨"
     />
 
     <PMMetricCard
-      label="Referral Status"
-      value={referralStatusLabel}
+      label="YTD Referral Goal"
+      value={Math.round(pmData.ytdReferralGoal || 0)}
+      comparisonLabel="YTD Referral Actual"
+      comparisonValue={Math.round(pmData.ytdReferralTotal || 0)}
       difference={{
-        label: referralStatusLabel,
-        className: referralStatusClass,
+        label: `${displayPercent(pmData.ytdReferralPercent, 1)} Complete`,
+        className: ytdReferralStatusClass,
       }}
-      customMessage={referralMotivation}
+    />
+
+    <PMMetricCard
+      label={
+        pmData.ytdReferralDelta >= 0
+          ? "YTD Over Referral Goal"
+          : "YTD Referral Remaining"
+      }
+      value={`${pmData.ytdReferralDelta >= 0 ? "+" : ""}${Math.round(
+        pmData.ytdReferralDelta || 0
+      )}`}
+      customMessage={ytdReferralMotivation}
       messageTitle="✨MAGIC MIKE MOMENT✨"
     />
   </div>
