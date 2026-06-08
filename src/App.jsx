@@ -1373,11 +1373,22 @@ const getPMReferralDataForRange = (pmName, startDate, endDate) => {
 
     if (!rowPMValues.includes(pmName)) return;
 
+    console.log(
+  "Referral Check:",
+  row["Lead Source"],
+  row["Primary Salesperson"],
+  row["Initial Appointment Date"]
+);
     const leadSource = String(row["Lead Source"] || "")
       .trim()
       .toLowerCase();
 
-    if (!leadSource.includes("referral")) return;
+   if (
+  !leadSource ||
+  leadSource.replace(/\s+/g, "").indexOf("referral") === -1
+) {
+  return;
+}
 
     const rowDate = parseExcelDate(
       row["Initial Appointment Date"] ||
