@@ -1358,7 +1358,11 @@ const getPMReferralDataForRange = (pmName, startDate, endDate) => {
     const milestone = String(row["Current Milestone"] || "")
       .trim()
       .toLowerCase();
-
+if (
+  String(row["Lead Source"]).toLowerCase().includes("referral")
+) {
+  console.log("REFERRAL ROW FOUND", row);
+}
     if (milestone.includes("dead")) return;
 
     const rowPMValues = [
