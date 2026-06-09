@@ -3124,7 +3124,7 @@ const referralGoalMetMessages = [
   "the referral goal was met bub! Great work creating opportunities through relationships!",
   "you met the referral goal bub! That means people trust you enough to send opportunities your way.",
   "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
-  "you reached the referral target bub. Word of mouth is the best lead source. Great job!",
+  "you reached the referral target bub. You're doing a great job!",
   "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
 ];
 
