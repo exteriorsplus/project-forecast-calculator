@@ -335,16 +335,23 @@ const money = (value) =>
     currency: "USD",
   });
 
-  const formatMoneyInput = (value) => {
-  const number = String(value || "").replace(/[^\d.]/g, "");
+const formatMoneyInput = (value) => {
+  const cleaned = String(value || "").replace(/[^\d.]/g, "");
 
-  if (!number) return "";
+  if (!cleaned) return "";
 
-  return `$${Number(number).toLocaleString("en-US")}`;
-};
+  const parts = cleaned.split(".");
 
-const cleanMoneyInput = (value) => {
-  return String(value || "").replace(/[^\d.]/g, "");
+  const wholePart = parts[0];
+  const decimalPart = parts[1];
+
+  const formattedWhole = Number(
+    wholePart || 0
+  ).toLocaleString("en-US");
+
+  return decimalPart !== undefined
+    ? `$${formattedWhole}.${decimalPart}`
+    : `$${formattedWhole}`;
 };
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
