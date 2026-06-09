@@ -854,6 +854,8 @@ export default function App() {
   const [pmLoginError, setPmLoginError] = useState("");
  const [pmSaleAmount, setPmSaleAmount] = useState("0");
 const [debouncedPmSaleAmount, setDebouncedPmSaleAmount] = useState("0");
+const [pmJobCost, setPmJobCost] = useState("0");
+const [debouncedPmJobCost, setDebouncedPmJobCost] = useState("0");
   const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
   const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
@@ -1907,6 +1909,7 @@ const teamClosingRate =
     const companyTake = 0.10;
 
 const saleAmount = Number(debouncedPmSaleAmount || 0);
+const jobCost = Number(debouncedPmJobCost || 0);
 
 const marginSummary = getCommissionMarginSummary();
 
@@ -1951,21 +1954,27 @@ const totalSelectedRpp = selectedTradeConfigs.reduce(
 );
 
 const commissionDetails = selectedTradeConfigs.map((item) => {
-  const allocatedSaleAmount =
+  const allocationRatio =
     saleAmount > 0 && totalSelectedRpp > 0
-      ? saleAmount * (item.rpp / totalSelectedRpp)
+      ? item.rpp / totalSelectedRpp
       : selectedTradeConfigs.length > 0
-      ? saleAmount / selectedTradeConfigs.length
+      ? 1 / selectedTradeConfigs.length
       : 0;
 
+  const allocatedSaleAmount = saleAmount * allocationRatio;
+  const allocatedJobCost = jobCost * allocationRatio;
   const commissionableMargin = Math.max(item.margin - companyTake, 0);
-  const commission =
-    allocatedSaleAmount * commissionableMargin * PM_COMMISSION_RATE;
+  const marginProfit = allocatedSaleAmount * commissionableMargin;
+  const finalProjectProfit = Math.max(marginProfit - allocatedJobCost, 0);
+  const commission = finalProjectProfit * PM_COMMISSION_RATE;
 
   return {
     ...item,
     allocatedSaleAmount,
+    allocatedJobCost,
     commissionableMargin,
+    marginProfit,
+    finalProjectProfit,
     commission,
   };
 });
@@ -2177,6 +2186,7 @@ return {
       revenueRank,
       closingRateRank,
       saleAmount,
+      jobCost,
       commission,
       goalPercent,
       remainingToGoal,
@@ -2516,6 +2526,14 @@ useEffect(() => {
 
   return () => clearTimeout(timer);
 }, [pmSaleAmount]);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedPmJobCost(pmJobCost);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [pmJobCost]);
   useEffect(() => {
   if (!pmRows.length || selectedPMMonth) return;
 
@@ -3800,16 +3818,38 @@ const quarterlyGoalClass =
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
-            <div className="pm-sale-input">
-              <label>Potential Sale Amount</label>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={formatMoneyInput(pmSaleAmount)}
-                onChange={(event) =>
-                  setPmSaleAmount(cleanMoneyInput(event.target.value))
-                }
-              />
+            <div
+              className="pm-sale-input-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "16px",
+                marginBottom: "18px",
+              }}
+            >
+              <div className="pm-sale-input">
+                <label>Potential Sale Amount</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formatMoneyInput(pmSaleAmount)}
+                  onChange={(event) =>
+                    setPmSaleAmount(cleanMoneyInput(event.target.value))
+                  }
+                />
+              </div>
+
+              <div className="pm-sale-input">
+                <label>Job Cost (Labor and Materials)</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formatMoneyInput(pmJobCost)}
+                  onChange={(event) =>
+                    setPmJobCost(cleanMoneyInput(event.target.value))
+                  }
+                />
+              </div>
             </div>
 
             <div className="pm-commission-selector-card">
