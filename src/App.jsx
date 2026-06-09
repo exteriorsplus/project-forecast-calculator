@@ -1978,19 +1978,21 @@ const commissionDetails = selectedTradeConfigs.map((item) => {
 
   const allocatedSaleAmount = saleAmount * allocationRatio;
   const allocatedJobCost = jobCost * allocationRatio;
-const companyTakeAmount = allocatedSaleAmount * companyTake;
+  const companyTakeAmount = allocatedSaleAmount * companyTake;
 
-const finalProjectProfit = Math.max(
-  allocatedSaleAmount - allocatedJobCost - companyTakeAmount,
-  0
-);
-
-const commission = finalProjectProfit * PM_COMMISSION_RATE;
+  // Commission formula:
+  // Sale amount - job cost - 10% company take = final project profit.
+  // Final project profit x 25% = estimated commission.
+  const commissionableMargin = Math.max(item.margin - companyTake, 0);
+  const marginProfit = allocatedSaleAmount - allocatedJobCost - companyTakeAmount;
+  const finalProjectProfit = Math.max(marginProfit, 0);
+  const commission = finalProjectProfit * PM_COMMISSION_RATE;
 
   return {
     ...item,
     allocatedSaleAmount,
     allocatedJobCost,
+    companyTakeAmount,
     commissionableMargin,
     marginProfit,
     finalProjectProfit,
