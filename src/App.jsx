@@ -353,6 +353,14 @@ const formatMoneyInput = (value) => {
     ? `$${formattedWhole}.${decimalPart}`
     : `$${formattedWhole}`;
 };
+const cleanMoneyInput = (value) => {
+  const cleaned = String(value || "").replace(/[^\d.]/g, "");
+  const parts = cleaned.split(".");
+
+  if (parts.length <= 1) return cleaned;
+
+  return `${parts[0]}.${parts.slice(1).join("")}`;
+};
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
 
