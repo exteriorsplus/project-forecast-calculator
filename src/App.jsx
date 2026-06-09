@@ -3121,35 +3121,35 @@ const quarterlyMotivation = (() => {
 })();
 
 const referralGoalMetMessages = [
-  "referral goal was met. Great work creating opportunities through relationships!",
-  "you met the referral goal. That means people trust you enough to send opportunities your way.",
-  "referral goal achieved. Relationship-driven business is working strong. Let's go!",
+  "the referral goal was met bub! Great work creating opportunities through relationships!",
+  "you met the referral goal bub! That means people trust you enough to send opportunities your way.",
+  "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
   "you reached the referral target bub. Word of mouth is the best lead source. Great job!",
-  "goal met on referrals. That kind of trust is earned, and that's fire."
+  "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
 ];
 
 const referralGoalNotMetMessages = [
-  "referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
+  "the referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
   "the referral goal was not met. Use this as a reminder to make referral asks part of every closeout conversation.",
-  "goal not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
+  "the goal was not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
   "the referral target was missed. A few intentional referral conversations can help turn that around next month.",
-  "referral goal not met. Reset, refocus, and keep asking satisfied customers for introductions."
+  "the referral goal was not met. Reset, refocus, and keep asking satisfied customers for introductions."
 ];
 
 const referralInProgressMessages = [
-  "referral goal has not been reached yet. Keep asking happy customers who else you can help.",
+  "the referral goal has not been reached yet. Keep asking happy customers who else you can help.",
   "there is still room to build more referral opportunities this month.",
   "referrals need a little more focus. Every satisfied customer can open another door.",
   "keep planting referral seeds. The best leads often come from people who already trust us.",
-  "referral activity is behind goal, but a few intentional asks can close the gap quickly."
+  "the referral activity is behind goal, but a few intentional asks can close the gap quickly."
 ];
 
 const referralFutureMessages = [
   "this referral month has not started yet, but the best referral opportunities are built before the scoreboard opens.",
-  "future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
+  "there is a future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
   "we are not there yet bub, but every satisfied customer can become a future referral source.",
-  "future month selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
-  "that referral window is still ahead. Keep doing the kind of work people want to recommend."
+  "a future month is selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
+  "that referral window is still ahead bub. Keep doing the kind of work people want to recommend."
 ];
 
 const referralStatusLabel = (() => {
@@ -3183,6 +3183,38 @@ const referralMotivation = (() => {
   return `${firstName}, ${msg}`;
 })();
 
+const quarterlyReferralGoalMetMessages = [
+  "quarterly referral goal achieved. Consistent relationship building is paying off.",
+  "you hit the quarterly referral target. That's the result of trust earned over time.",
+  "quarterly referral production is exactly where it needs to be. Great work.",
+  "the quarter referral goal has been met. Keep stacking wins through relationships.",
+  "strong quarter on referrals. Word-of-mouth momentum is growing."
+];
+
+const quarterlyReferralGoalNotMetMessages = [
+  "quarterly referral goal was missed. Review every completed project and identify referral opportunities.",
+  "the quarter is behind target. A stronger referral process can close that gap next quarter.",
+  "quarterly referrals fell short. Focus on asking every satisfied customer for introductions.",
+  "the referral target for the quarter was not reached. Consistency in referral conversations matters.",
+  "this quarter missed the referral mark. Build a plan to create more referral opportunities."
+];
+
+const quarterlyReferralInProgressMessages = [
+  "the quarter is still underway. Every referral conversation matters.",
+  "quarterly referral production is building. Stay consistent with referral asks.",
+  "there is time left in the quarter to create referral momentum.",
+  "quarterly referral progress is developing. Keep relationship building at the forefront.",
+  "the quarter is not finished yet. Small referral wins compound over time."
+];
+
+const quarterlyReferralFutureMessages = [
+  "this quarter has not started yet. Prepare now so referrals come naturally later.",
+  "future quarter selected. Build relationships today that generate referrals tomorrow.",
+  "the next quarter is ahead. Strong customer experiences create future opportunities.",
+  "that referral quarter is still coming. Stay focused on earning trust now.",
+  "future quarter selected. Set the foundation before the scoreboard opens."
+];
+
 const quarterlyReferralStatusClass =
   pmData.quarterlyReferralStatus === "goalMet"
     ? "positive"
@@ -3195,12 +3227,12 @@ const quarterlyReferralMotivation = (() => {
 
   const messages =
     pmData.quarterlyReferralStatus === "goalMet"
-      ? referralGoalMetMessages
+      ? quarterlyReferralGoalMetMessages
       : pmData.quarterlyReferralStatus === "goalNotMet"
-      ? referralGoalNotMetMessages
+      ? quarterlyReferralGoalNotMetMessages
       : pmData.quarterlyReferralStatus === "future"
-      ? referralFutureMessages
-      : referralInProgressMessages;
+      ? quarterlyReferralFutureMessages
+      : quarterlyReferralInProgressMessages;
 
   const msg = pickRandom(messages);
 
