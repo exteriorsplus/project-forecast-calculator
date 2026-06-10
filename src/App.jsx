@@ -2237,10 +2237,10 @@ return {
       jobCost,
       commission,
       commission,
+commission,
 commissionRate: effectiveCommissionRate,
 grossProfit: totalGrossProfit,
 goalPercent,
-      goalPercent,
       remainingToGoal,
       monthlyGoal,
       monthlyPace: contractTotal,
@@ -3948,11 +3948,11 @@ const quarterlyGoalClass =
               </div>
             </div>
 
-            <div className="pm-commission-summary">
-              <div>
-                <span>Commission Rate</span>
-                <strong>25%</strong>
-              </div>
+<div className="pm-commission-summary">
+  <div>
+    <span>Commission Rate</span>
+    <strong>{displayPercent(pmData.commissionRate, 0)}</strong>
+  </div>
 
               <div>
                 <span>Total Estimated Commission</span>
