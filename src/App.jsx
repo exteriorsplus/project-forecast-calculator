@@ -105,63 +105,74 @@ const PM_COMPANY_GOAL = Object.values(PM_GOALS).reduce(
   (sum, goal) => sum + goal,
   0
 );
-const PM_COMMISSION_RATE = 0.2;
+const PM_COMMISSION_RATE = 0.25;
+
+const getPMCommissionRate = (pmName, workType) => {
+  if (pmName === "George Anim" && workType === "Repair") return 0.15;
+  return 0.25;
+};
+
+const getOverheadRate = (tradeType) => {
+  if (tradeType === "James Hardie Siding") return 0.15;
+  if (tradeType === "Metal Roofing") return 0.15;
+  return 0.10;
+};
 
 const projectManagers = [
   {
     name: "Jamie Jenkins",
     slug: "jamiejenkins",
     image: "/pm/jamiejenkins.jpg",
-    password: "jamie123",
+    password: "Jamie123",
     activeGoal: true,
   },
   {
     name: "Megan Rice",
     slug: "meganrice",
     image: "/pm/meganrice.jpg",
-    password: "megan123",
+    password: "Megan123",
     activeGoal: true,
   },
   {
     name: "Dani Cole",
     slug: "danicole",
     image: "/pm/danicole.jpg",
-    password: "dani123",
+    password: "Dani123",
     activeGoal: true,
   },
   {
     name: "John Fincher",
     slug: "johnfincher",
     image: "/pm/johnfincher.jpg",
-    password: "john123",
+    password: "John123",
     activeGoal: true,
   },
   {
     name: "Andrew Painter",
     slug: "andrewpainter",
     image: "/pm/andrewpainter.jpg",
-    password: "andrew123",
+    password: "Andrew123",
     activeGoal: true,
   },
   {
     name: "George Anim",
     slug: "georgeanim",
     image: "/pm/georgeanim.jpg",
-    password: "george123",
+    password: "George123",
     activeGoal: true,
   },
   {
     name: "William Dye",
     slug: "williamdye",
     image: "/pm/williamdye.jpg",
-    password: "william123",
+    password: "William123",
     activeGoal: true,
   },
 {
   name: "Mike Harr",
   slug: "mikeharr",
   image: "/pm/mikeharr.jpg",
-  password: "mike123",
+  password: "Mike123",
   activeGoal: true,
 },
 ];
@@ -259,7 +270,75 @@ const categories = [
   },
 ];
 
+const getMarginForTradeType = (tradeType) => {
+  const category = categories.find(
+    (c) => c.title === tradeType
+  );
+
+  if (!category) return 0;
+
+  const margins = category.items
+    .map((item) => item.margin)
+    .filter((margin) => margin > 0);
+
+  if (!margins.length) return 0;
+
+  return (
+    margins.reduce((sum, margin) => sum + margin, 0) /
+    margins.length
+  );
+};
+
+function normalizeMarginTradeType(value) {
+  return normalizeTrade(value);
+}
+
+function normalizeMarginWorkType(value) {
+  return normalizeWorkType(value);
+}
+
+function getMarginRowPayment(row) {
+  return parseMoney(
+    row["Payments Received Total"] ??
+      row["SUM of Paymen"] ??
+      row["SUM of Payments Received Total"] ??
+      row["Contract Amount"] ??
+      row["Payment"]
+  );
+}
+
+function getMarginRowProfit(row) {
+  return parseMoney(
+    row["Profit"] ??
+      row["SUM of Profit"] ??
+      row["Gross Profit"]
+  );
+}
+
+function getMarginRowPercent(row) {
+  const raw =
+    row["Profit %"] ??
+    row["Margin per job"] ??
+    row["Margin"] ??
+    row["Profit Percent"];
+
+  if (raw === null || raw === undefined || raw === "") return null;
+
+  if (typeof raw === "number") {
+    return raw > 1 ? raw / 100 : raw;
+  }
+
+  const cleaned = String(raw).replace("%", "").trim();
+  const number = Number(cleaned);
+
+  if (Number.isNaN(number)) return null;
+
+  return number > 1 ? number / 100 : number;
+}
+
+
 const WORK_TYPE_ORDER = ["Retail", "Insurance", "Repair", "Service"];
+const COMMISSION_WORK_TYPE_OPTIONS = ["Retail", "Insurance", "Repair"];
 
 const money = (value) =>
   Number(value || 0).toLocaleString("en-US", {
@@ -267,16 +346,31 @@ const money = (value) =>
     currency: "USD",
   });
 
-  const formatMoneyInput = (value) => {
-  const number = String(value || "").replace(/[^\d.]/g, "");
+const formatMoneyInput = (value) => {
+  const cleaned = String(value || "").replace(/[^\d.]/g, "");
 
-  if (!number) return "";
+  if (!cleaned) return "";
 
-  return `$${Number(number).toLocaleString("en-US")}`;
+  const parts = cleaned.split(".");
+
+  const wholePart = parts[0];
+  const decimalPart = parts[1];
+
+  const formattedWhole = Number(
+    wholePart || 0
+  ).toLocaleString("en-US");
+
+  return decimalPart !== undefined
+    ? `$${formattedWhole}.${decimalPart}`
+    : `$${formattedWhole}`;
 };
-
 const cleanMoneyInput = (value) => {
-  return String(value || "").replace(/[^\d.]/g, "");
+  const cleaned = String(value || "").replace(/[^\d.]/g, "");
+  const parts = cleaned.split(".");
+
+  if (parts.length <= 1) return cleaned;
+
+  return `${parts[0]}.${parts.slice(1).join("")}`;
 };
 
 const percent = (value) => `${(value * 100).toFixed(4)}%`;
@@ -474,8 +568,38 @@ function dateOnly(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function getInclusiveMonthCount(startDate, endDate) {
+  if (!startDate || !endDate) return 0;
+
+  const start = dateOnly(startDate);
+  const end = dateOnly(endDate);
+
+  if (end < start) return 0;
+
+  return (
+    (end.getFullYear() - start.getFullYear()) * 12 +
+    end.getMonth() -
+    start.getMonth() +
+    1
+  );
+}
+
 function normalizeTrade(value) {
   const text = String(value || "").trim().toLowerCase();
+
+    // EXCLUDED TRADE TYPES
+if (
+  text === "other" ||
+  text === "other, skylights" ||
+  text === "other, fascia" ||
+  text === "wraps, fascia" ||
+  text === "storm damage, fascia" ||
+  text === "soffits, fascia" ||
+  text === "repair" ||
+  text === "wraps"
+) {
+  return "";
+}
 
   if (text === "roofing & gutters") return "Roofing & Gutters";
   if (text === "roofing & siding") return "Roofing & Siding";
@@ -692,6 +816,8 @@ function PMMetricCard({
   comparisonLabel,
   comparisonValue,
   difference,
+  customMessage,
+  messageTitle = "✨MAGIC MIKE MOMENT✨",
 }) {
   return (
     <div className="pm-metric-card">
@@ -710,6 +836,19 @@ function PMMetricCard({
           {difference.label}
         </div>
       )}
+    {customMessage && (
+  <div className="mike-moment-mini">
+    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+
+    <div className="mike-moment-mini-bubble">
+<div className="mike-moment-mini-title">
+  {messageTitle}
+</div>
+
+      <p>{customMessage}</p>
+    </div>
+  </div>
+)}
     </div>
   );
 }
@@ -728,6 +867,7 @@ export default function App() {
   const [customCloseRate, setCustomCloseRate] = useState("");
   const [flash, setFlash] = useState(false);
   const [leadRows, setLeadRows] = useState([]);
+  const [marginRows, setMarginRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading files...");
 
   const [pmRows, setPmRows] = useState([]);
@@ -738,7 +878,12 @@ export default function App() {
   });
   const [pmPassword, setPmPassword] = useState("");
   const [pmLoginError, setPmLoginError] = useState("");
-  const [pmSaleAmount, setPmSaleAmount] = useState("0");
+ const [pmSaleAmount, setPmSaleAmount] = useState("0");
+const [debouncedPmSaleAmount, setDebouncedPmSaleAmount] = useState("0");
+const [pmJobCost, setPmJobCost] = useState("0");
+const [debouncedPmJobCost, setDebouncedPmJobCost] = useState("0");
+  const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
+  const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
@@ -911,6 +1056,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     setScreen("home");
     setLeadRows([]);
     setSalesRows([]);
+    setMarginRows([]);
     setLeads({});
   };
 
@@ -994,8 +1140,34 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
     } catch (error) {
       setSalesRows([]);
-      setDataStatus("No sales.xlsx file found yet.");
+      setDataStatus("No public/sales.xlsx file found yet.");
       console.error(error);
+    }
+  };
+
+
+  const loadMarginFile = async () => {
+    try {
+      const response = await fetch(`/margin.csv?t=${Date.now()}`);
+
+      if (!response.ok) {
+        throw new Error("Could not find public/margin.csv");
+      }
+
+      const buffer = await response.arrayBuffer();
+      const workbook = XLSX.read(buffer, {
+        type: "array",
+      });
+
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+      });
+
+      setMarginRows(rows);
+    } catch (error) {
+      setMarginRows([]);
+      console.error("No public/margin.csv file found yet.", error);
     }
   };
 
@@ -1073,7 +1245,7 @@ const getTeamMetricRow = (metric) => {
 
     const headerRow = pmRows[startIndex] || [];
     const metricRow = pmRows
-      .slice(startIndex + 1, startIndex + 6)
+  .slice(startIndex + 1, startIndex + 10)
       .find(
         (row) =>
           String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
@@ -1130,8 +1302,8 @@ const getTeamMetricRow = (metric) => {
     };
   };
 
-  const getPMCustomSalesData = (pmName) => {
-    if (!pmStartDate || !pmEndDate) {
+  const getPMSalesDataForRange = (pmName, startDate, endDate) => {
+    if (!pmName || !startDate || !endDate) {
       return {
         contractTotal: 0,
         contracts: 0,
@@ -1139,18 +1311,23 @@ const getTeamMetricRow = (metric) => {
       };
     }
 
-    const start = dateOnly(parseInputDate(pmStartDate));
-    const end = dateOnly(parseInputDate(pmEndDate));
+    const start = dateOnly(startDate);
+    const end = dateOnly(endDate);
 
     let contractTotal = 0;
     let contracts = 0;
 
     salesRows.forEach((row) => {
-      const rowPM =
-        String(row["Project Manager"] || "").trim() ||
-        String(row["Salesperson"] || "").trim();
+      const rowPMValues = [
+        row["Project Manager"],
+        row["Salesperson"],
+        row["Sales Rep"],
+        row["Sales Representative"],
+        row["Primary Salesperson"],
+        row["Estimator"],
+      ].map((value) => String(value || "").trim());
 
-      if (rowPM !== pmName) return;
+      if (!rowPMValues.includes(pmName)) return;
 
       const rowDate = parseExcelDate(row["Approved Date"]);
       if (!rowDate) return;
@@ -1158,10 +1335,12 @@ const getTeamMetricRow = (metric) => {
       const cleanDate = dateOnly(rowDate);
       if (cleanDate < start || cleanDate > end) return;
 
-      const amount = parseMoney(row["Contract Amount"]);
+const amount = parseMoney(row["Contract Amount"]);
 
-      contractTotal += amount;
-      contracts += 1;
+if (amount <= 0) return;
+
+contractTotal += amount;
+contracts += 1;
     });
 
     return {
@@ -1171,13 +1350,278 @@ const getTeamMetricRow = (metric) => {
     };
   };
 
+  const getPMCustomSalesData = (pmName) => {
+    if (!pmStartDate || !pmEndDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
+    return getPMSalesDataForRange(
+      pmName,
+      parseInputDate(pmStartDate),
+      parseInputDate(pmEndDate)
+    );
+  };
+
+const getPMReferralDataForRange = (pmName, startDate, endDate) => {
+  if (!pmName || !startDate || !endDate) {
+    return {
+      referralTotal: 0,
+      referralGoal: 0,
+      referralDelta: 0,
+      referralPercent: 0,
+    };
+  }
+
+  const start = dateOnly(startDate);
+  const end = dateOnly(endDate);
+  const referralGoal = getInclusiveMonthCount(start, end);
+
+  let referralTotal = 0;
+
+  leadRows.forEach((row) => {
+    const milestone = String(row["Current Milestone"] || "")
+      .trim()
+      .toLowerCase();
+
+    if (milestone.includes("dead")) return;
+
+    const rowPMValues = [
+      row["Project Manager"],
+      row["Salesperson"],
+      row["Sales Rep"],
+      row["Sales Representative"],
+      row["Primary Salesperson"],
+      row["Sales Owner"],
+      row["Estimator"],
+    ].map((value) => String(value || "").trim());
+
+    if (!rowPMValues.includes(pmName)) return;
+
+    const leadSource = String(row["Lead Source"] || "")
+      .trim()
+      .toLowerCase();
+
+    if (
+      !leadSource ||
+      leadSource.replace(/\s+/g, "").indexOf("referral") === -1
+    ) {
+      return;
+    }
+
+    const rowDate = parseExcelDate(
+      row["Initial Appointment Date"] ||
+        row["Prospect Milestone Date"] ||
+        row["Closed Milestone Date"] ||
+        row["Created Date"] ||
+        row["Date Created"] ||
+        row["Approved Date"]
+    );
+
+    if (!rowDate) return;
+
+    const cleanDate = dateOnly(rowDate);
+    if (cleanDate < start || cleanDate > end) return;
+
+    referralTotal += 1;
+  });
+
+  const referralDelta = referralTotal - referralGoal;
+
+  return {
+    referralTotal,
+    referralGoal,
+    referralDelta,
+    referralPercent: referralGoal > 0 ? referralTotal / referralGoal : 0,
+  };
+};
+
+const getCommissionMarginSummary = () => {
+  const summary = {};
+
+  marginRows.forEach((row) => {
+    const tradeType =
+      normalizeMarginTradeType(row["Job Trade Type"]) ||
+      normalizeMarginTradeType(row["Job Trade Type 2"]);
+
+    const workType = normalizeMarginWorkType(row["Work Type"]);
+
+    if (!tradeType || !workType || workType === "Service") return;
+
+    const key = `${tradeType}-${workType}`;
+    const payment = getMarginRowPayment(row);
+    const profit = getMarginRowProfit(row);
+    const rowMargin = getMarginRowPercent(row);
+
+    if (!summary[key]) {
+      summary[key] = {
+        tradeType,
+        workType,
+        payments: 0,
+        profit: 0,
+        count: 0,
+        marginSum: 0,
+        marginCount: 0,
+      };
+    }
+
+    summary[key].payments += payment;
+    summary[key].profit += profit;
+    summary[key].count += 1;
+
+    if (rowMargin !== null) {
+      summary[key].marginSum += rowMargin;
+      summary[key].marginCount += 1;
+    }
+  });
+
+  return Object.values(summary).map((item) => {
+    const calculatedMargin =
+      item.payments > 0
+        ? item.profit / item.payments
+        : item.marginCount > 0
+        ? item.marginSum / item.marginCount
+        : 0;
+
+    return {
+      ...item,
+      margin: calculatedMargin,
+      rpp: item.count > 0 ? item.payments / item.count : 0,
+    };
+  });
+};
+
+const getJobTradeTypeOptions = () => {
+  const marginSummary = getCommissionMarginSummary();
+
+  const EXCLUDED_TRADE_TYPES = [
+    "Other",
+    "Other, Skylights",
+    "Other Fascia",
+    "Wraps, Fascia",
+    "Storm Damage, Fascia",
+    "Repair",
+    "Wraps",
+  ];
+
+  if (!marginSummary.length) {
+    return categories
+      .map((category) => category.title)
+      .filter(
+        (trade) => !EXCLUDED_TRADE_TYPES.includes(trade)
+      )
+      .sort();
+  }
+
+  const tradeSalesTotals = marginSummary.reduce((totals, item) => {
+    if (
+      !item.tradeType ||
+      EXCLUDED_TRADE_TYPES.includes(item.tradeType)
+    ) {
+      return totals;
+    }
+
+    totals[item.tradeType] =
+      Number(totals[item.tradeType] || 0) +
+      Number(item.payments || 0);
+
+    return totals;
+  }, {});
+
+  return Object.keys(tradeSalesTotals).sort((a, b) => {
+    const salesDifference =
+      Number(tradeSalesTotals[b] || 0) -
+      Number(tradeSalesTotals[a] || 0);
+
+    if (salesDifference !== 0) return salesDifference;
+
+    return a.localeCompare(b);
+  });
+};
+
+const getCommissionWorkTypeOptions = () => {
+  const marginSummary = getCommissionMarginSummary();
+  const selectedTrades = selectedCommissionTrades || [];
+
+  const availableWorkTypes = marginSummary
+    .filter(
+      (item) =>
+        selectedTrades.length === 0 || selectedTrades.includes(item.tradeType)
+    )
+    .map((item) => item.workType)
+    .filter((workType) => workType && workType !== "Service");
+
+  const uniqueWorkTypes = [...new Set(availableWorkTypes)];
+
+  if (!uniqueWorkTypes.length) return COMMISSION_WORK_TYPE_OPTIONS;
+
+  return uniqueWorkTypes.sort((a, b) => {
+    const aIndex = COMMISSION_WORK_TYPE_OPTIONS.indexOf(a);
+    const bIndex = COMMISSION_WORK_TYPE_OPTIONS.indexOf(b);
+
+    if (aIndex !== -1 || bIndex !== -1) {
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    }
+
+    return a.localeCompare(b);
+  });
+};
+
+const getWorkTypeOptionsForTrade = (tradeType) => {
+  const marginSummary = getCommissionMarginSummary();
+  const marginWorkTypes = marginSummary
+    .filter((item) => item.tradeType === tradeType)
+    .map((item) => item.workType)
+    .filter((workType) => workType && workType !== "Service");
+
+  if (marginWorkTypes.length) {
+    return [...new Set(marginWorkTypes)].sort(
+      (a, b) =>
+        WORK_TYPE_ORDER.indexOf(a) - WORK_TYPE_ORDER.indexOf(b)
+    );
+  }
+
+  const category = categories.find((item) => item.title === tradeType);
+
+  if (!category) return [];
+
+  return category.items
+    .map((item) => item.label)
+    .filter((label) => label !== "Service")
+    .sort(
+      (a, b) =>
+        WORK_TYPE_ORDER.indexOf(a) - WORK_TYPE_ORDER.indexOf(b)
+    );
+};
+
+const getMarginForTradeAndWorkType = (tradeType, workType) => {
+  const marginSummary = getCommissionMarginSummary();
+  const marginMatch = marginSummary.find(
+    (item) => item.tradeType === tradeType && item.workType === workType
+  );
+
+  if (marginMatch) return Number(marginMatch.margin || 0);
+
+  const category = categories.find((item) => item.title === tradeType);
+
+  if (!category) return 0;
+
+  const matchingWorkType = category.items.find(
+    (item) => item.label === workType
+  );
+
+  return Number(matchingWorkType?.margin || 0);
+};
+
   const getPMDashboardData = () => {
     const monthOptions = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
     const selectedMonth = selectedPMMonth || monthOptions[0] || "";
     const lastYearMonth = getPreviousYearMonth(selectedMonth);
 
 const pmName = currentPM?.name || projectManagers[0].name;
-
 const fiscalMonthIndex = fiscalMonths.indexOf(selectedMonth);
 
 const ytdMonths =
@@ -1185,21 +1629,50 @@ const ytdMonths =
     ? fiscalMonths.slice(0, fiscalMonthIndex + 1)
     : [];
 
-const ytdRevenue = ytdMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contract Total", month),
-  0
+const getMonthDateBoundsForSales = (monthLabel) => {
+  const [monthName, yearText] = String(monthLabel || "").split(" ");
+  const monthIndex = monthNames.indexOf(monthName);
+  const year = Number(yearText);
+
+  if (monthIndex < 0 || !year) return null;
+
+  return {
+    start: new Date(year, monthIndex, 1),
+    end: new Date(year, monthIndex + 1, 0),
+  };
+};
+
+const getSalesDataForMonths = (months) => {
+  const ranges = months
+    .map(getMonthDateBoundsForSales)
+    .filter(Boolean);
+
+  if (!ranges.length) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  const start = ranges[0].start;
+  const end = ranges[ranges.length - 1].end;
+
+  return getPMSalesDataForRange(pmName, start, end);
+};
+
+const fiscalYTDStartDate = new Date(2025, 10, 1);
+const fiscalYTDEndDate = dateOnly(new Date());
+
+const ytdSalesData = getPMSalesDataForRange(
+  pmName,
+  fiscalYTDStartDate,
+  fiscalYTDEndDate
 );
 
-const ytdContracts = ytdMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contracts", month),
-  0
-);
-
-const ytdAverageContract =
-  ytdContracts > 0 ? ytdRevenue / ytdContracts : 0;
-
+const ytdRevenue = ytdSalesData.contractTotal;
+const ytdContracts = ytdSalesData.contracts;
+const ytdAverageContract = ytdSalesData.averageContract;
 const ytdClosingRate = 0;
 
 const customMonths = (() => {
@@ -1235,75 +1708,218 @@ const activeMonths =
     ? customMonths
     : [selectedMonth];
 
-const customSalesData = getPMCustomSalesData(pmName);
+const customSalesData =
+  pmDateMode === "custom" && pmStartDate && pmEndDate
+    ? getPMSalesDataForRange(
+        pmName,
+        parseInputDate(pmStartDate),
+        parseInputDate(pmEndDate)
+      )
+    : {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
 
-const contractTotal =
-  pmDateMode === "custom"
-    ? customSalesData.contractTotal
-    : activeMonths.reduce(
-        (sum, month) =>
-          sum + getPMMetric(pmName, "Contract Total", month),
-        0
-      );
+const monthSalesData = getSalesDataForMonths([selectedMonth]);
 
-const contracts =
-  pmDateMode === "custom"
-    ? customSalesData.contracts
-    : activeMonths.reduce(
-        (sum, month) =>
-          sum + getPMMetric(pmName, "Contracts", month),
-        0
-      );
+const activeSalesData =
+  pmDateMode === "fiscalYTD"
+    ? ytdSalesData
+    : pmDateMode === "custom"
+    ? customSalesData
+    : monthSalesData;
 
-const averageContract =
-  pmDateMode === "custom"
-    ? customSalesData.averageContract
-    : contracts > 0
-    ? contractTotal / contracts
-    : 0;
+const contractTotal = activeSalesData.contractTotal;
+const contracts = activeSalesData.contracts;
+const averageContract = activeSalesData.averageContract;
 
 const closingRate =
-  pmDateMode === "month"
-    ? getPMMetric(pmName, "Closing Rate", selectedMonth)
+  pmDateMode === "custom"
+    ? activeMonths.length > 0
+      ? activeMonths.reduce(
+          (sum, month) =>
+            sum + getPMMetric(pmName, "Closing Rate", month),
+          0
+        ) / activeMonths.length
+      : 0
+    : getPMMetric(pmName, "Closing Rate", selectedMonth);
+
+
+const lastYearSalesData = getSalesDataForMonths([lastYearMonth]);
+
+const lyContractTotal = lastYearSalesData.contractTotal;
+const lyContracts = lastYearSalesData.contracts;
+const lyAverageContract = lastYearSalesData.averageContract;
+
+const lyClosingRate = getPMMetric(
+  pmName,
+  "Closing Rate",
+  lastYearMonth
+);
+
+const activeGoalProjectManagers = projectManagers.filter(
+  (pm) =>
+    pm.activeGoal &&
+    pm.name !== "George Anim"
+);
+
+const customTeamSalesData = activeGoalProjectManagers.map((pm) =>
+  getPMCustomSalesData(pm.name)
+);
+
+const activeCustomTeamSalesData = customTeamSalesData.filter(
+  (item) => Number(item.contractTotal || 0) > 0
+);
+
+const customTeamContractTotal =
+  activeCustomTeamSalesData.length > 0
+    ? activeCustomTeamSalesData.reduce(
+        (sum, item) => sum + Number(item.contractTotal || 0),
+        0
+      ) / activeCustomTeamSalesData.length
     : 0;
 
+const customTeamContracts =
+  activeCustomTeamSalesData.length > 0
+    ? activeCustomTeamSalesData.reduce(
+        (sum, item) => sum + Number(item.contracts || 0),
+        0
+      ) / activeCustomTeamSalesData.length
+    : 0;
 
-    const lyContractTotal = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Contract Total",
-      lastYearMonth
-    );
-    const lyContracts = getPMMetric((currentPM?.name || projectManagers[0].name), "Contracts", lastYearMonth);
-    const lyAverageContract = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Average Contract",
-      lastYearMonth
-    );
-    const lyClosingRate = getPMMetric(
-      (currentPM?.name || projectManagers[0].name),
-      "Closing Rate",
-      lastYearMonth
-    );
-
-const teamContractTotal = getTeamMetric(
-  "Contract Total Average",
-  selectedMonth
+const customTeamTotalRevenue = customTeamSalesData.reduce(
+  (sum, item) => sum + Number(item.contractTotal || 0),
+  0
 );
 
-const teamContracts = getTeamMetric(
-  "Contracts",
-  selectedMonth
+const customTeamTotalContracts = customTeamSalesData.reduce(
+  (sum, item) => sum + Number(item.contracts || 0),
+  0
 );
 
-const teamAverageContract = getTeamMetric(
-  "Average Contract",
-  selectedMonth
-);
+const customTeamAverageContract =
+  customTeamTotalContracts > 0
+    ? customTeamTotalRevenue / customTeamTotalContracts
+    : 0;
 
-const teamClosingRate = getTeamMetric(
-  "Closing Rate",
-  selectedMonth
-);
+const customTeamClosingRate =
+  activeMonths.length > 0 && activeGoalProjectManagers.length > 0
+    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
+        const pmClosingRate =
+          activeMonths.reduce(
+            (monthSum, month) =>
+              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+            0
+          ) / activeMonths.length;
+
+        return pmSum + pmClosingRate;
+      }, 0) / activeGoalProjectManagers.length
+    : 0;
+
+const getTeamSalesDataForRange = (startDate, endDate) => {
+  const teamSalesData = activeGoalProjectManagers.map((pm) =>
+    getPMSalesDataForRange(pm.name, startDate, endDate)
+  );
+
+  const totalRevenue = teamSalesData.reduce(
+    (sum, item) => sum + Number(item.contractTotal || 0),
+    0
+  );
+
+  const totalContracts = teamSalesData.reduce(
+    (sum, item) => sum + Number(item.contracts || 0),
+    0
+  );
+
+const activeTeamSalesData = teamSalesData.filter(
+    (item) => Number(item.contractTotal || 0) > 0
+  );
+
+  const activeTeamRevenue = activeTeamSalesData.reduce(
+    (sum, item) => sum + Number(item.contractTotal || 0),
+    0
+  );
+
+  const activeTeamContracts = activeTeamSalesData.reduce(
+    (sum, item) => sum + Number(item.contracts || 0),
+    0
+  );
+
+  return {
+    contractTotal:
+      activeTeamSalesData.length > 0
+        ? activeTeamRevenue / activeTeamSalesData.length
+        : 0,
+
+    contracts:
+      activeTeamSalesData.length > 0
+        ? activeTeamContracts / activeTeamSalesData.length
+        : 0,
+
+    averageContract:
+      activeTeamContracts > 0
+        ? activeTeamRevenue / activeTeamContracts
+        : 0,
+  };
+};
+
+const getTeamSalesDataForMonths = (months) => {
+  const ranges = months
+    .map(getMonthDateBoundsForSales)
+    .filter(Boolean);
+
+  if (!ranges.length) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  return getTeamSalesDataForRange(
+    ranges[0].start,
+    ranges[ranges.length - 1].end
+  );
+};
+
+const ytdTeamClosingRate =
+  ytdMonths.length > 0 && activeGoalProjectManagers.length > 0
+    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
+        const pmClosingRate =
+          ytdMonths.reduce(
+            (monthSum, month) =>
+              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+            0
+          ) / ytdMonths.length;
+
+        return pmSum + pmClosingRate;
+      }, 0) / activeGoalProjectManagers.length
+    : 0;
+
+const teamSalesData =
+  pmDateMode === "fiscalYTD"
+    ? getTeamSalesDataForRange(fiscalYTDStartDate, fiscalYTDEndDate)
+    : pmDateMode === "custom"
+    ? customTeamSalesData.length > 0
+      ? {
+          contractTotal: customTeamContractTotal,
+          contracts: customTeamContracts,
+          averageContract: customTeamAverageContract,
+        }
+      : getTeamSalesDataForMonths(customMonths)
+    : getTeamSalesDataForMonths([selectedMonth]);
+
+const teamContractTotal = teamSalesData.contractTotal;
+const teamContracts = teamSalesData.contracts;
+const teamAverageContract = teamSalesData.averageContract;
+
+const teamClosingRate =
+  pmDateMode === "custom"
+    ? customTeamClosingRate
+    : pmDateMode === "fiscalYTD"
+    ? ytdTeamClosingRate
+    : getTeamMetric("Closing Rate", selectedMonth);
 
     const revenueRank = getRankForMetric(
       "Contract Total",
@@ -1316,39 +1932,284 @@ const teamClosingRate = getTeamMetric(
       (currentPM?.name || projectManagers[0].name)
     );
 
-    const saleAmount = Number(pmSaleAmount || 0);
-    const projectedYTDRevenue = ytdRevenue + saleAmount;
-    const commission = saleAmount * PM_COMMISSION_RATE;
+    const companyTake = 0.10;
+
+const saleAmount = Number(debouncedPmSaleAmount || 0);
+const jobCost = Number(debouncedPmJobCost || 0);
+
+const marginSummary = getCommissionMarginSummary();
+
+const selectedTradeConfigs = selectedCommissionTrades
+  .flatMap((tradeType) =>
+    selectedCommissionWorkTypes
+      .map((workType) => {
+        const marginMatch = marginSummary.find(
+          (item) => item.tradeType === tradeType && item.workType === workType
+        );
+
+        if (marginMatch) {
+          return {
+            tradeType,
+            workType,
+            rpp: Number(marginMatch.rpp || 0),
+            margin: Number(marginMatch.margin || 0),
+          };
+        }
+
+        const category = categories.find((item) => item.title === tradeType);
+        const matchingItem = category?.items.find(
+          (item) => item.label === workType
+        );
+
+        if (!matchingItem || workType === "Service") return null;
+
+        return {
+          tradeType,
+          workType,
+          rpp: Number(matchingItem.rpp || 0),
+          margin: Number(matchingItem.margin || 0),
+        };
+      })
+      .filter(Boolean)
+  )
+  .filter(Boolean);
+
+const totalSelectedRpp = selectedTradeConfigs.reduce(
+  (sum, item) => sum + Number(item.rpp || 0),
+  0
+);
+
+const pmCommissionName = currentPM?.name || projectManagers[0].name;
+
+const commissionDetails = selectedTradeConfigs.map((item) => {
+  const allocationRatio =
+    saleAmount > 0 && totalSelectedRpp > 0
+      ? item.rpp / totalSelectedRpp
+      : selectedTradeConfigs.length > 0
+      ? 1 / selectedTradeConfigs.length
+      : 0;
+
+  const allocatedSaleAmount = saleAmount * allocationRatio;
+  const allocatedJobCost = jobCost * allocationRatio;
+
+  const overheadRate = getOverheadRate(item.tradeType);
+  const overheadAmount = allocatedSaleAmount * overheadRate;
+
+  const grossProfit = Math.max(
+    allocatedSaleAmount - allocatedJobCost - overheadAmount,
+    0
+  );
+
+  const commissionRate = getPMCommissionRate(
+    pmCommissionName,
+    item.workType
+  );
+
+  const commission = grossProfit * commissionRate;
+
+  return {
+    ...item,
+    allocatedSaleAmount,
+    allocatedJobCost,
+    overheadRate,
+    overheadAmount,
+    grossProfit,
+    commissionRate,
+    commission,
+  };
+});
+
+const commission = commissionDetails.reduce(
+  (sum, line) => sum + line.commission,
+  0
+);
+
+const totalGrossProfit = commissionDetails.reduce(
+  (sum, line) => sum + line.grossProfit,
+  0
+);
+
+const effectiveCommissionRate =
+  totalGrossProfit > 0 ? commission / totalGrossProfit : PM_COMMISSION_RATE;
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
 const goalPercent = individualGoal > 0 ? ytdRevenue / individualGoal : 0;
-const projectedGoalPercent =
-  individualGoal > 0 ? projectedYTDRevenue / individualGoal : 0;
 const remainingToGoal = Math.max(individualGoal - ytdRevenue, 0);
 const monthlyGoal = individualGoal / 12;
-const monthlyGoalPercent = monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
-const monthlyRemaining = Math.max(monthlyGoal - contractTotal, 0);
 
-const quarterStartIndex =
-  fiscalMonthIndex >= 0 ? Math.floor(fiscalMonthIndex / 3) * 3 : 0;
+const monthlyGoalPercent =
+  monthlyGoal > 0 ? contractTotal / monthlyGoal : 0;
 
-const quarterMonths = fiscalMonths.slice(
-  quarterStartIndex,
-  quarterStartIndex + 3
-);
+const monthlyRemaining =
+  monthlyGoal - contractTotal;
+const now = new Date();
 
-const quarterRevenue = quarterMonths.reduce(
-  (sum, month) =>
-    sum + getPMMetric(pmName, "Contract Total", month),
-  0
-);
+const selectedMonthBounds = getMonthDateBoundsForSales(selectedMonth);
+const selectedMonthStart = selectedMonthBounds?.start || null;
+
+const fiscalYearStart = selectedMonthStart
+  ? selectedMonthStart.getMonth() >= 10
+    ? new Date(selectedMonthStart.getFullYear(), 10, 1)
+    : new Date(selectedMonthStart.getFullYear() - 1, 10, 1)
+  : null;
+
+const monthsSinceFiscalStart =
+  selectedMonthStart && fiscalYearStart
+    ? (selectedMonthStart.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+      selectedMonthStart.getMonth() -
+      fiscalYearStart.getMonth()
+    : -1;
+
+const quarterStartOffset =
+  monthsSinceFiscalStart >= 0
+    ? Math.floor(monthsSinceFiscalStart / 3) * 3
+    : 0;
+
+const quarterStartDate = fiscalYearStart
+  ? new Date(
+      fiscalYearStart.getFullYear(),
+      fiscalYearStart.getMonth() + quarterStartOffset,
+      1
+    )
+  : null;
+
+const quarterEndDate = quarterStartDate
+  ? new Date(
+      quarterStartDate.getFullYear(),
+      quarterStartDate.getMonth() + 3,
+      0
+    )
+  : null;
+
+const quarterMonths = quarterStartDate
+  ? [0, 1, 2].map((offset) => {
+      const date = new Date(
+        quarterStartDate.getFullYear(),
+        quarterStartDate.getMonth() + offset,
+        1
+      );
+
+      return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    })
+  : [];
+
+const quarterSalesData =
+  quarterStartDate && quarterEndDate
+    ? getPMSalesDataForRange(pmName, quarterStartDate, quarterEndDate)
+    : {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+
+const quarterRevenue = quarterSalesData.contractTotal;
+
+const getInclusiveDays = (start, end) => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((dateOnly(end) - dateOnly(start)) / msPerDay) + 1;
+};
+
+const totalQuarterDays =
+  quarterStartDate && quarterEndDate
+    ? getInclusiveDays(quarterStartDate, quarterEndDate)
+    : 0;
+
+const elapsedQuarterDays =
+  !quarterStartDate || !quarterEndDate
+    ? 0
+    : now < quarterStartDate
+    ? 0
+    : now > quarterEndDate
+    ? totalQuarterDays
+    : getInclusiveDays(quarterStartDate, now);
 
 const quarterlyGoal = individualGoal / 4;
-const quarterlyGoalPercent =
-  quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
-const quarterlyRemaining = Math.max(quarterlyGoal - quarterRevenue, 0);
 
+const quarterlyProjectedRevenue =
+  elapsedQuarterDays > 0
+    ? (quarterRevenue / elapsedQuarterDays) * totalQuarterDays
+    : 0;
+
+const quarterlyActualPercent =
+  quarterlyGoal > 0 ? quarterRevenue / quarterlyGoal : 0;
+
+const quarterlyProjectedPercent =
+  quarterlyGoal > 0 ? quarterlyProjectedRevenue / quarterlyGoal : 0;
+
+const quarterlyRemaining =
+  quarterlyGoal - quarterRevenue;
+
+const referralRange = (() => {
+  if (pmDateMode === "fiscalYTD") {
+    return {
+      start: fiscalYTDStartDate,
+      end: fiscalYTDEndDate,
+    };
+  }
+
+  if (pmDateMode === "custom" && pmStartDate && pmEndDate) {
+    return {
+      start: parseInputDate(pmStartDate),
+      end: parseInputDate(pmEndDate),
+    };
+  }
+
+  return selectedMonthBounds;
+})();
+
+const referralData = referralRange
+  ? getPMReferralDataForRange(pmName, referralRange.start, referralRange.end)
+  : {
+      referralTotal: 0,
+      referralGoal: 0,
+      referralDelta: 0,
+      referralPercent: 0,
+    };
+
+const quarterlyReferralData =
+  quarterStartDate && quarterEndDate
+    ? getPMReferralDataForRange(pmName, quarterStartDate, quarterEndDate)
+    : {
+        referralTotal: 0,
+        referralGoal: 0,
+        referralDelta: 0,
+        referralPercent: 0,
+      };
+
+const getReferralStatusForRange = (data, range) => {
+  if (!range) {
+    return data.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  }
+
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const currentMonthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  if (dateOnly(range.end) < currentMonthStart) {
+    return data.referralDelta >= 0 ? "goalMet" : "goalNotMet";
+  }
+
+  if (dateOnly(range.start) > currentMonthEnd) {
+    return "future";
+  }
+
+  return data.referralDelta >= 0 ? "goalMet" : "inProgress";
+};
+
+const referralStatus =
+  pmDateMode === "fiscalYTD" || pmDateMode === "custom"
+    ? referralData.referralDelta >= 0
+      ? "goalMet"
+      : "goalNotMet"
+    : getReferralStatusForRange(referralData, referralRange);
+
+const quarterlyReferralStatus = getReferralStatusForRange(
+  quarterlyReferralData,
+  quarterStartDate && quarterEndDate
+    ? { start: quarterStartDate, end: quarterEndDate }
+    : null
+);
+  
 return {
   monthOptions,
   selectedMonth,
@@ -1373,18 +2234,34 @@ return {
       revenueRank,
       closingRateRank,
       saleAmount,
-      projectedYTDRevenue,
+      jobCost,
       commission,
+      commission,
+commissionRate: effectiveCommissionRate,
+grossProfit: totalGrossProfit,
+goalPercent,
       goalPercent,
-      projectedGoalPercent,
       remainingToGoal,
       monthlyGoal,
+      monthlyPace: contractTotal,
+      quarterlyProjectedRevenue,
 monthlyGoalPercent,
 monthlyRemaining,
 quarterRevenue,
 quarterlyGoal,
-quarterlyGoalPercent,
+quarterlyGoalPercent: quarterlyActualPercent,
+quarterlyProjectedPercent,
 quarterlyRemaining,
+referralTotal: referralData.referralTotal,
+referralGoal: referralData.referralGoal,
+referralDelta: referralData.referralDelta,
+referralPercent: referralData.referralPercent,
+referralStatus,
+quarterlyReferralTotal: quarterlyReferralData.referralTotal,
+quarterlyReferralGoal: quarterlyReferralData.referralGoal,
+quarterlyReferralDelta: quarterlyReferralData.referralDelta,
+quarterlyReferralPercent: quarterlyReferralData.referralPercent,
+quarterlyReferralStatus,
     };
   };
 
@@ -1411,6 +2288,7 @@ quarterlyRemaining,
     loadLeadFile();
     loadSalesFile();
     loadPMFile();
+    loadMarginFile();
   };
 
   const clearLeads = () => {
@@ -1689,8 +2567,25 @@ useEffect(() => {
 
   loadPMFile();
   loadSalesFile();
+  loadLeadFile();
+  loadMarginFile();
 }, [pmAuthorized]);
 
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedPmSaleAmount(pmSaleAmount);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [pmSaleAmount]);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedPmJobCost(pmJobCost);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [pmJobCost]);
   useEffect(() => {
   if (!pmRows.length || selectedPMMonth) return;
 
@@ -1734,7 +2629,7 @@ useEffect(() => {
       </button>
 
       <div className="header-top">
-        <img src="/logo.png" alt="Logo" className="logo" />
+        <img src="/logo.png" alt="Logo" className="pm-header-logo" />
         <h1>
           {screen === "leads"
             ? "Lead Forecasted Revenue & Profit"
@@ -1887,43 +2782,749 @@ const revenueRankLabel = pmData.revenueRank.rank
 const closingRankLabel = pmData.closingRateRank.rank
   ? `#${pmData.closingRateRank.rank}`
   : "N/A";
+const revenueVsLY = compareNumbers(
+  pmData.contractTotal,
+  pmData.lyContractTotal
+);
 
-    const revenueVsLY = compareNumbers(
-      pmData.contractTotal,
-      pmData.lyContractTotal
-    );
-    const contractsVsLY = compareNumbers(
-      pmData.contracts,
-      pmData.lyContracts
-    );
-    const averageVsLY = compareNumbers(
-      pmData.averageContract,
-      pmData.lyAverageContract
-    );
-    const closingRateVsLY = compareNumbers(
-      pmData.closingRate,
-      pmData.lyClosingRate,
-      true
+const contractsVsLY = compareNumbers(
+  pmData.contracts,
+  pmData.lyContracts
+);
+
+const averageVsLY = compareNumbers(
+  pmData.averageContract,
+  pmData.lyAverageContract
+);
+
+const closingRateVsLY = compareNumbers(
+  pmData.closingRate,
+  pmData.lyClosingRate,
+  true
+);
+
+const revenueVsTeam = compareNumbers(
+  pmData.contractTotal,
+  pmData.teamContractTotal
+);
+
+const contractsVsTeam = compareNumbers(
+  pmData.contracts,
+  pmData.teamContracts
+);
+
+const averageVsTeam = compareNumbers(
+  pmData.averageContract,
+  pmData.teamAverageContract
+);
+
+const closingRateVsTeam = compareNumbers(
+  pmData.closingRate,
+  pmData.teamClosingRate,
+  true
+);
+
+const exceededGoalMessages = [
+  "Outstanding work. You've surpassed your goal for this month. That's fire.",
+  "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
+  "You've reached your goal and are building momentum. That's fire.",
+  "Fantastic job. Your production cleared the goal for this month. That's fire.",
+  "You're operating at a very high level and have successfully exceeded your goal. That's fire."
+];
+
+const onPaceMessages = [
+  "You're on pace to reach your goal and finish the period strong. Let's go!",
+  "Solid progress. You're on pace to reach your monthly goal. Keep it up!",
+  "You're tracking well toward your goal and maintaining healthy momentum.",
+  "Keep doing what you're doing. You're positioned to reach your target.",
+  "Performance remains strong and you're currently pacing toward success. That's fire."
+];
+
+const progressMessages = [
+  "You're making steady progress toward your goal with some time remaining.",
+  "Momentum is building and there is still plenty of opportunity ahead.",
+  "Consistent effort now can create a strong finish to the period.",
+  "The foundation is there. Continue focusing on quality opportunities.",
+  "Progress remains positive and there is room to accelerate."
+];
+
+const pushMessages = [
+  "Keep pushing. A strong finish can still put you back on pace.",
+  "There is plenty of opportunity remaining to improve results.",
+  "Focus on the trainings we've had and the numbers will follow.",
+  "A few strong weeks can quickly change the trajectory. You got this!",
+  "Stay consistent and continue building momentum, there's still time!"
+];
+
+const revenueStrongMessages = [
+  "Revenue production is outperforming the team average.",
+  "Your revenue generation continues to lead the way.",
+  "You're producing above the team's current pace.",
+  "Revenue performance remains a key strength.",
+  "Your production levels are setting a strong example."
+];
+
+const revenueEliteMessages = [
+  "Revenue production is significantly outperforming the team average.",
+  "You're operating well above the team's current production pace.",
+  "Your revenue performance ranks among the strongest on the team.",
+  "Production continues to separate you from the field.",
+  "You're creating substantial value compared with team benchmarks."
+];
+
+const revenueNeedsMessages = [
+  "Revenue is currently below the team average, but opportunities remain.",
+  "Closing a few additional projects could quickly narrow the gap.",
+  "There is still time to improve revenue performance this period.",
+  "The team benchmark remains within reach.",
+  "Focus on pipeline conversion and revenue growth will follow."
+];
+
+const avgStrongMessages = [
+  "Your average contract value continues to outperform the team.",
+  "Customers are trusting you with larger projects than average.",
+  "Contract quality remains one of your strengths.",
+  "Higher-value projects are driving strong results.",
+  "Your average sale size remains above benchmark levels."
+];
+
+const avgNeedsMessages = [
+  "Increasing average contract value could have a meaningful impact.",
+  "Larger project opportunities could accelerate growth.",
+  "Focusing on project scope may improve overall production.",
+  "Even modest gains in average contract size would create significant upside.",
+  "Exploring higher-value opportunities may strengthen results."
+];
+
+const closeStrongMessages = [
+  "Your closing efficiency remains one of your strongest advantages.",
+  "Customers continue responding well to your sales process.",
+  "Conversion performance is helping drive strong results.",
+  "Your closing rate continues to outperform expectations.",
+  "Strong conversion efficiency remains a competitive advantage."
+];
+
+const closeNeedsMessages = [
+  "Improving conversion efficiency could unlock additional growth.",
+  "Small gains in closing rate could have a large impact on production.",
+  "More effective follow-up may improve conversion results.",
+  "There is opportunity to strengthen closing performance.",
+  "Improved conversion rates could significantly boost revenue."
+];
+
+
+
+const pickRandom = (messages) => {
+  if (!messages || !messages.length) return "";
+
+  const key = messages.join("|");
+
+  let hash = 0;
+
+  for (let i = 0; i < key.length; i += 1) {
+    hash = (hash * 31 + key.charCodeAt(i)) | 0;
+  }
+
+  const index = Math.abs(hash) % messages.length;
+
+  return messages[index];
+};
+
+const onTrackMessages = [
+  "You're on track to achieve your goal bub. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
+  "Great progress. Keep pushing toward the finish line. Staying disciplined over the next few weeks will put you in a strong position to exceed expectations.",
+  "You're in a strong position to finish successfully. Continue working your pipeline and capitalizing on opportunities. The goal is well within reach.",
+  "Steady effort is producing solid results. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
+  "The goal is well within reach. Continue focusing on quality opportunities and maintaining urgency. A strong finish could put you comfortably over target.",
+  "Momentum is building in the right direction. Stay committed to the daily activities that drive results. You're putting yourself in a position to succeed.",
+  "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
+  "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction.",
+  "Your consistency is paying off. Continue building on the progress you've already made. Every additional contract strengthens your position.",
+  "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues."
+];
+
+const closeMessages = [
+  "You're closer than you think. Keep pushing. A few additional contracts could completely change the outcome of this month.",
+  "A strong finish can put you over the top. Stay focused on the opportunities directly in front of you.",
+  "The goal remains within reach. Consistent activity over the next few days can make all the difference.",
+  "Keep building momentum. You're not far away. Continue working your process and trust the results will come.",
+  "Stay focused. A few more wins could make the difference. The opportunity to finish strong is still there.",
+  "The goal is still achievable. Continue following up and creating opportunities. Success often comes from persistence.",
+  "You're in striking distance of your target. Keep your energy high and maintain urgency in every conversation.",
+  "Now is the time to finish strong. Every appointment and estimate matters from this point forward.",
+  "Stay disciplined and keep moving forward. The finish line is much closer than it appears.",
+  "Every contract matters from here. Continue stacking small wins and the larger results will follow."
+];
+
+
+const needsPushMessages = [
+  "Keep grinding. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
+  "The month isn't over yet. Stay focused. One strong week can completely change the trajectory of your results.",
+  "Every opportunity matters from this point forward. Keep creating conversations and the numbers will follow.",
+  "Small wins add up quickly. Focus on the next appointment, the next estimate, and the next contract.",
+  "Keep working the process and results will follow. Consistency is often the difference between average and exceptional performance.",
+  "Stay persistent and keep creating opportunities. Success often comes right after the point where others give up.",
+  "There's still time to improve your position. Continue executing the fundamentals and trust the process.",
+  "Focus on the next opportunity, not the scoreboard. Daily activity creates long-term success.",
+  "Progress starts with consistent activity. Continue building momentum one conversation and one contract at a time.",
+  "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
+];
+
+const futureMonthMessages = [
+  "We're not here yet, bub, but I know you'll be ready for whatever comes your way.",
+  "The scoreboard is still blank, but champions prepare before the game starts.",
+  "Every great month starts at zero. Let's go build something special.",
+  "The opportunity is in front of you. Trust your process and attack the month.",
+  "Success leaves clues, and you've already proven you know how to win.",
+  "A strong month begins long before the first contract is signed.",
+  "Stay focused, stay hungry, and let the results take care of themselves.",
+  "You've built momentum before, and there's no reason this month can't be another great one.",
+  "The month is unwritten, but I like our chances.",
+  "Future-you is counting on present-you. Let's get after it.",
+  "You know the playbook. Now it's time to run it.",
+  "Preparation today becomes production tomorrow.",
+  "The month hasn't started yet, but confidence should.",
+  "We're not there yet, bub, but I already know you're going to be ready.",
+  "The work you do now is what makes future months look easy."
+];
+
+
+
+const goalMotivation = (() => {
+  const pct = pmData.monthlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const selectedDate = new Date(pmData.selectedMonth);
+  const today = new Date();
+
+  const monthIsPast =
+    selectedDate.getFullYear() < today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() < today.getMonth()
     );
 
-    const revenueVsTeam = compareNumbers(
-      pmData.contractTotal,
-      pmData.teamContractTotal
-    );
-    const contractsVsTeam = compareNumbers(
-      pmData.contracts,
-      pmData.teamContracts
-    );
-    const averageVsTeam = compareNumbers(
-      pmData.averageContract,
-      pmData.teamAverageContract
-    );
-    const closingRateVsTeam = compareNumbers(
-      pmData.closingRate,
-      pmData.teamClosingRate,
-      true
+  const monthIsFuture =
+    selectedDate.getFullYear() > today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() > today.getMonth()
     );
 
+  let msg = "";
+
+  if (monthIsFuture) {
+    msg = pickRandom(futureMonthMessages);
+  } else if (monthIsPast) {
+    if (pct >= 1)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = "you finished close to goal. Carry that momentum into the next month.";
+    else if (pct >= 0.7)
+      msg = "you made progress, but the month finished short of goal. Use it as fuel for the next one.";
+    else
+      msg = "that month is behind you. Reset, refocus, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.5)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = pickRandom(onTrackMessages);
+    else if (pct >= 0.7)
+      msg = pickRandom(closeMessages);
+    else
+      msg = pickRandom(needsPushMessages);
+  }
+
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+})();;
+const quarterCrushingMessages = [
+"You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
+"Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
+"You're creating strong momentum that projects a successful quarter. Keep it up!",
+"If this pace continues, you'll comfortably surpass your quarterly target. Keep the drive alive!",
+"Outstanding work bub. The quarter is shaping up extremely well.",
+"You're operating at an elite pace and setting the standard for the quarter.",
+"Your current trajectory puts you in position for a remarkable finish bub, keep it up!",
+"The consistency you've shown is creating outstanding quarterly results.",
+"You're well ahead of target and proving what's possible with disciplined execution.",
+"Every indicator suggests you're on track for an exceptional quarter. One team one dream!",
+"Your pace continues to outperform expectations across the board. You're killing it, bub!",
+"You're building a quarter that others will benchmark against. Keep it up!",
+"Keep attacking opportunities bub. The results are speaking for themselves!",
+"You're turning your leads into elite-level production. That's fire!",
+];
+
+const quarterGoalAchievedMessages = [
+"Quarter goal achieved bub. Great job! Now let's see how far above it we can finish.",
+"You've already reached your quarterly target. That's fire!",
+"Outstanding work. The goal is behind you and now it's time to build separation.",
+"Goal accomplished. Keep your foot on the gas and keep driving.",
+"You're officially over quarterly goal bub. Keep stacking wins.",
+"One team one dream! You've already hit the target and there's still runway left.",
+"Your hard work has paid off. Quarter goal achieved and momentum is still building.",
+"You've earned the right to celebrate for about five minutes. Then let's go get more.",
+"The goal is complete. Everything from here is bonus production bub.",
+"That's what winning looks like. Quarterly goal achieved and still climbing.",
+"You didn't just pace toward the goal — you got there. Keep pushing.",
+"Quarter goal secured. Now let's see what kind of number we can really put up.",
+"You're proving what's possible through consistency and execution. That's fire!",
+"Goal reached bub. Stay aggressive and keep attacking opportunities.",
+"The quarter is already a success. Now let's make it an exceptional one."
+];
+
+const quarterCloseMessages = [
+"The quarter remains within reach. A strong finish can make all the difference.",
+"You're close just a few more contracts could put you over goal.",
+"Keep your momentum and focus over the next appointments and great things will happen.",
+"The quarterly target remains achievable. Keep the grind alive.",
+"Keep pushing. The pace is right where it needs to be.",
+"You're within range of the goal and still have time to close the gap. Keep pushing!",
+"A strong finish is what you need to close out the quarter. You got this!",
+"Momentum over the next few weeks will be critical. Keep focused.",
+"The quarter remains highly achievable from this position. Keep pushing!",
+"Stay focused on your leads and the quarter is yours - You got this!",
+"You're not far from where you need to be. Keep pushing - you got this!",
+"A few more contracts can turn around your quarter. Keep up the hard work!",
+"The opportunity to finish strong remains very real, keep the grind alive!",
+"Stay disciplined and keep pushing forward. You are close to your quarterly goal!",
+"Keep applying pressure, your quarterly goal is in sight!"
+];
+
+const quarterNeedsPushMessages = [
+"The quarter needs additional momentum, but there is still time. Keep pushing.",
+"Focus on pipeline activity and creating opportunities.",
+"Several strong contracts can quickly improve the quarterly outlook.",
+"Stay disciplined and continue executing the fundamentals.",
+"The quarter isn't decided yet. Keep building momentum.",
+"There's still time to improve the outcome of the quarter.",
+"Focus on your leads and don't let off the gas - you got this!",
+"Every conversation creates a new opportunity. Keep grinding.",
+"Momentum can shift quickly when activity increases.",
+"Continue building the sales pipeline and creating opportunities.",
+"Stay engaged and keep attacking the next opportunity.",
+"Persistence now can create a much stronger finish later.",
+"One productive stretch can change the entire quarter.",
+"Keep your energy high and focus on execution. You can do this!",
+"The quarter is still being written. Keep pushing forward."
+];
+
+const futureQuarterMessages = [
+  "We're not in this quarter just yet, bub, but I know you'll be ready when it gets here.",
+  "This quarter hasn't started yet bub, but preparation starts now.",
+  "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
+  "Future quarters are won by the habits you build today bub.",
+  "We're not there yet bub, but I like our chances when the time comes.",
+  "The quarter is still ahead of us bub. Stay sharp and be ready to attack it.",
+  "No numbers just yet bub, just opportunity. Be ready when the quarter opens.",
+  "This quarter is still waiting on us, bub. Let's be ready to make it count."
+];
+
+const quarterlyMotivation = (() => {
+  const pct = pmData.quarterlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const selectedQuarterStart = (() => {
+    const selectedDate = new Date(pmData.selectedMonth);
+
+    if (Number.isNaN(selectedDate.getTime())) return null;
+
+    const fiscalYearStart =
+      selectedDate.getMonth() >= 10
+        ? new Date(selectedDate.getFullYear(), 10, 1)
+        : new Date(selectedDate.getFullYear() - 1, 10, 1);
+
+    const monthsSinceFiscalStart =
+      (selectedDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+      selectedDate.getMonth() -
+      fiscalYearStart.getMonth();
+
+    const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
+
+    return new Date(
+      fiscalYearStart.getFullYear(),
+      fiscalYearStart.getMonth() + quarterStartOffset,
+      1
+    );
+  })();
+
+  const selectedQuarterEnd = selectedQuarterStart
+    ? new Date(
+        selectedQuarterStart.getFullYear(),
+        selectedQuarterStart.getMonth() + 3,
+        0
+      )
+    : null;
+
+  const today = new Date();
+  const quarterIsPast = selectedQuarterEnd ? selectedQuarterEnd < today : false;
+  const quarterIsFuture = selectedQuarterStart ? selectedQuarterStart > today : false;
+
+  let msg = "";
+
+  if (quarterIsFuture) {
+    msg = pickRandom(futureQuarterMessages);
+  } else if (quarterIsPast) {
+    if (pct >= 1)
+      msg =
+        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter. That's fire.";
+    else if (pct >= 0.9)
+      msg =
+        "you finished just short of your quarterly goal. Carry that momentum into the next quarter.";
+    else if (pct >= 0.7)
+      msg =
+        "you made solid progress during the quarter. Use those lessons to build an even stronger next quarter.";
+    else
+      msg =
+        "that quarter is complete. Take what you learned, reset, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.2)
+      msg = pickRandom(quarterCrushingMessages);
+    else if (pct >= 1.0)
+      msg = pickRandom(quarterGoalAchievedMessages);
+    else if (pct >= 0.85)
+      msg = pickRandom(quarterCloseMessages);
+    else
+      msg = pickRandom(quarterNeedsPushMessages);
+  }
+
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+})();
+
+const referralGoalMetMessages = [
+  "the referral goal was met bub! Great work creating opportunities through relationships!",
+  "you met the referral goal bub! That means people trust you enough to send opportunities your way.",
+  "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
+  "you reached the referral target bub. You're doing a great job!",
+  "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
+];
+
+const referralGoalNotMetMessages = [
+  "the referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
+  "the referral goal was not met. Use this as a reminder to make referral asks part of every closeout conversation.",
+  "the goal was not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
+  "the referral target was missed. A few intentional referral conversations can help turn that around next month.",
+  "the referral goal was not met. Reset, refocus, and keep asking satisfied customers for introductions."
+];
+
+const referralInProgressMessages = [
+  "the referral goal has not been reached yet. Keep asking happy customers who else you can help.",
+  "there is still room to build more referral opportunities this month.",
+  "referrals need a little more focus. Every satisfied customer can open another door.",
+  "keep planting referral seeds. The best leads often come from people who already trust us.",
+  "the referral activity is behind goal, but a few intentional asks can close the gap quickly."
+];
+
+const referralFutureMessages = [
+  "this referral month has not started yet, but the best referral opportunities are built before the scoreboard opens.",
+  "there is a future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
+  "we are not there yet bub, but every satisfied customer can become a future referral source.",
+  "a future month is selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
+  "that referral window is still ahead bub. Keep doing the kind of work people want to recommend."
+];
+
+const referralStatusLabel = (() => {
+  if (pmData.referralStatus === "goalMet") return "Goal Met";
+  if (pmData.referralStatus === "goalNotMet") return "Goal Not Met";
+  if (pmData.referralStatus === "future") return "Upcoming";
+  return "In Progress";
+})();
+
+const referralStatusClass =
+  pmData.referralStatus === "goalMet"
+    ? "positive"
+    : pmData.referralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
+
+const referralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const messages =
+    pmData.referralStatus === "goalMet"
+      ? referralGoalMetMessages
+      : pmData.referralStatus === "goalNotMet"
+      ? referralGoalNotMetMessages
+      : pmData.referralStatus === "future"
+      ? referralFutureMessages
+      : referralInProgressMessages;
+
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
+
+const quarterlyReferralGoalMetMessages = [
+  "quarterly referral goal achieved. Consistent relationship building is paying off.",
+  "you hit the quarterly referral target. That's the result of trust earned over time.",
+  "quarterly referral production is exactly where it needs to be. Great work.",
+  "the quarter referral goal has been met. Keep stacking wins through relationships.",
+  "strong quarter on referrals. Word-of-mouth momentum is growing."
+];
+
+const quarterlyReferralGoalNotMetMessages = [
+  "quarterly referral goal was missed. Review every completed project and identify referral opportunities.",
+  "the quarter is behind target. A stronger referral process can close that gap next quarter.",
+  "quarterly referrals fell short. Focus on asking every satisfied customer for introductions.",
+  "the referral target for the quarter was not reached. Consistency in referral conversations matters.",
+  "this quarter missed the referral mark. Build a plan to create more referral opportunities."
+];
+
+const quarterlyReferralInProgressMessages = [
+  "the quarter is still underway. Every referral conversation matters.",
+  "quarterly referral production is building. Stay consistent with referral asks.",
+  "there is time left in the quarter to create referral momentum.",
+  "quarterly referral progress is developing. Keep relationship building at the forefront.",
+  "the quarter is not finished yet. Small referral wins compound over time."
+];
+
+const quarterlyReferralFutureMessages = [
+  "this quarter has not started yet. Prepare now so referrals come naturally later.",
+  "future quarter selected. Build relationships today that generate referrals tomorrow.",
+  "the next quarter is ahead. Strong customer experiences create future opportunities.",
+  "that referral quarter is still coming. Stay focused on earning trust now.",
+  "future quarter selected. Set the foundation before the scoreboard opens."
+];
+
+const quarterlyReferralStatusClass =
+  pmData.quarterlyReferralStatus === "goalMet"
+    ? "positive"
+    : pmData.quarterlyReferralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
+
+const quarterlyReferralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const messages =
+    pmData.quarterlyReferralStatus === "goalMet"
+      ? quarterlyReferralGoalMetMessages
+      : pmData.quarterlyReferralStatus === "goalNotMet"
+      ? quarterlyReferralGoalNotMetMessages
+      : pmData.quarterlyReferralStatus === "future"
+      ? quarterlyReferralFutureMessages
+      : quarterlyReferralInProgressMessages;
+
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
+const generatePMInsight = ({
+  monthlyGoalPercent,
+  quarterlyGoalPercent,
+  revenueVsTeam,
+  averageVsTeam,
+  closingRateVsTeam,
+  isPastMonth,
+  isFutureMonth,
+  isCustomMode,
+}) => {
+  const messages = [];
+
+  // Custom Date Performance
+if (isCustomMode) {
+  messages.push(
+    "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
+  );
+
+  if (revenueVsTeam > 0.25) {
+    messages.push(
+      `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+    );
+  } else if (revenueVsTeam > 0) {
+    messages.push(
+      "Revenue production is above the team average for the selected date range."
+    );
+  } else {
+    messages.push(
+      "Revenue production trails the team average for the selected date range."
+    );
+  }
+
+  return messages.slice(0, 2).join(" ");
+}
+
+if (isFutureMonth) {
+  messages.push(
+    "Future month selected. The scoreboard is still blank, but preparation now creates production later."
+  );
+
+  messages.push(
+    pickRandom(futureMonthMessages)
+  );
+
+  return messages.slice(0, 2).join(" ");
+}
+// Monthly Performance
+if (isPastMonth) {
+  if (monthlyGoalPercent >= 1) {
+    messages.push(
+      "Congrats! This month has closed with the monthly goal achieved."
+    );
+  } else {
+    messages.push(
+      "This month unfortunately has closed below the monthly goal."
+    );
+  }
+}
+else if (monthlyGoalPercent >= 1) {
+  messages.push(
+    "Monthly goal has been achieved and production remains strong."
+  );
+}
+else if (monthlyGoalPercent >= 0.9) {
+  messages.push(
+    "Monthly goal is within striking distance and remains well within reach."
+  );
+}
+else if (monthlyGoalPercent >= 0.75) {
+  messages.push(
+    "Monthly production remains on a competitive pace with opportunity to finish strong."
+  );
+}
+else {
+  messages.push(
+    "Monthly production is currently below the pace needed to reach goal."
+  );
+}
+
+  // Quarterly Performance
+if (quarterlyGoalPercent >= 1) {
+  messages.push(
+    "Quarterly goal has already been achieved."
+  );
+}
+else if (quarterlyGoalPercent >= 0.9) {
+  messages.push(
+    "Quarterly goal is within striking distance and remains well within reach."
+  );
+}
+else if (quarterlyGoalPercent >= 0.75) {
+  messages.push(
+    "Quarterly production remains competitive with a strong finish still available."
+  );
+}
+else {
+  messages.push(
+    "Quarterly production currently trails the target pace."
+  );
+}
+
+  // Revenue vs Team
+if (revenueVsTeam > 0.25) {
+  messages.push(
+    `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else if (revenueVsTeam > 0) {
+  messages.push(
+    `Revenue production exceeds the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else {
+  messages.push(
+    `Revenue production trails the team average by ${Math.abs(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+
+  // Average Contract vs Team
+if (averageVsTeam > 0.1) {
+  messages.push(
+    `Average contract value exceeds the team benchmark by ${(averageVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else if (averageVsTeam < -0.1) {
+  messages.push(
+    `Average contract value trails the team benchmark by ${Math.abs(averageVsTeam * 100).toFixed(1)}%.`
+  );
+}
+
+  // Closing Rate vs Team
+if (closingRateVsTeam > 0.05) {
+  messages.push(
+    `Closing rate exceeds the team average by ${(closingRateVsTeam * 100).toFixed(1)} percentage points.`
+  );
+}
+else if (closingRateVsTeam < -0.05) {
+  messages.push(
+    `Closing rate trails the team average by ${Math.abs(closingRateVsTeam * 100).toFixed(1)} percentage points.`
+  );
+}
+
+  return messages.slice(0, 4).join(" ");
+};
+
+const isCustomMode = pmDateMode === "custom";
+const selectedMonthDate = new Date(pmData.selectedMonth);
+const now = new Date();
+
+const isPastMonth =
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() < now.getMonth());
+
+const isFutureMonth =
+  selectedMonthDate.getFullYear() > now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() > now.getMonth());
+
+  const pmInsight = generatePMInsight({
+  monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
+  quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
+  revenueVsTeam: revenueVsTeam?.rawDifference || 0,
+  averageVsTeam: averageVsTeam?.rawDifference || 0,
+  closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
+   isPastMonth,
+    isFutureMonth,
+    isCustomMode,
+});
+
+const monthlyGoalClass =
+  pmData.monthlyGoalPercent >= 1
+    ? "positive"
+    : isPastMonth
+    ? "negative"
+    : "warning";
+
+const selectedQuarterStartForClass = (() => {
+  if (!selectedMonthDate || Number.isNaN(selectedMonthDate.getTime())) return null;
+
+  const fiscalYearStart =
+    selectedMonthDate.getMonth() >= 10
+      ? new Date(selectedMonthDate.getFullYear(), 10, 1)
+      : new Date(selectedMonthDate.getFullYear() - 1, 10, 1);
+
+  const monthsSinceFiscalStart =
+    (selectedMonthDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+    selectedMonthDate.getMonth() -
+    fiscalYearStart.getMonth();
+
+  const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
+
+  return new Date(
+    fiscalYearStart.getFullYear(),
+    fiscalYearStart.getMonth() + quarterStartOffset,
+    1
+  );
+})();
+
+const selectedQuarterEndForClass = selectedQuarterStartForClass
+  ? new Date(
+      selectedQuarterStartForClass.getFullYear(),
+      selectedQuarterStartForClass.getMonth() + 3,
+      0
+    )
+  : null;
+
+const quarterComplete = selectedQuarterEndForClass
+  ? selectedQuarterEndForClass < now
+  : false;
+
+const quarterlyGoalClass =
+  pmData.quarterlyGoalPercent >= 1
+    ? "positive"
+    : quarterComplete
+    ? "negative"
+    : "warning";
     return (
       <div className="page pm-page">
         <header className="header">
@@ -1931,34 +3532,55 @@ const closingRankLabel = pmData.closingRateRank.rank
             Logout
           </button>
 
-          <div className="header-top">
-            <img src="/logo.png" alt="Logo" className="logo" />
-            <h1>{currentPM.name} Dashboard</h1>
-          </div>
+<div className="header-top">
+
+<img
+  src="/logo.png"
+  alt="Logo"
+  className="logo"
+/>
+
+  <div className="pm-header-center">
+
+    <h1>{currentPM.name} Dashboard</h1>
+
+    <div className="pm-insight-box">
+      <div className="pm-insight-title">
+        Performance Insight
+      </div>
+
+      <p>{pmInsight}</p>
+    </div>
+
+  </div>
+
+</div>
         </header>
 
         <section className="pm-dashboard">
           <div className="pm-hero-card">
             <img src={currentPM.image} alt={(currentPM?.name || projectManagers[0].name)} />
 
-            <div className="pm-hero-content">
-              <span>Project Manager</span>
-              <h2>{(currentPM?.name || projectManagers[0].name)}</h2>
+<div className="pm-hero-content">
+  <span>Project Manager</span>
+  <h2>{currentPM?.name || projectManagers[0].name}</h2>
 
-              <div className="pm-rank-row">
-                <div>
-                  <small>Revenue Rank</small>
-                  <strong>{revenueRankLabel}</strong>
-                </div>
+  {!isCustomMode && (
+    <div className="pm-rank-row">
+      <div>
+        <small>Revenue Rank</small>
+        <strong>{revenueRankLabel}</strong>
+      </div>
 
-                <div>
-                  <small>Closing Rate Rank</small>
-                  <strong>{closingRankLabel}</strong>
-                </div>
-              </div>
-            </div>
+      <div>
+        <small>Closing Rate Rank</small>
+        <strong>{closingRankLabel}</strong>
+      </div>
+    </div>
+  )}
+</div>
 
-            <div className="pm-date-controls">
+<div className="pm-date-controls">
   <label className="pm-month-selector">
     Month
     <select
@@ -2026,79 +3648,81 @@ const closingRankLabel = pmData.closingRateRank.rank
 </h2>
 
             <div className="pm-metric-grid">
-              <PMMetricCard
-                label="Contract Total"
-                value={money(pmData.contractTotal)}
-                comparisonLabel={`vs ${pmData.lastYearMonth}`}
-                comparisonValue={money(pmData.lyContractTotal)}
-                difference={revenueVsLY}
-              />
+<PMMetricCard
+  label="Contract Total"
+  value={money(pmData.contractTotal)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
+  difference={isCustomMode ? null : revenueVsLY}
+/>
 
-              <PMMetricCard
-                label="Contracts"
-                value={Math.round(pmData.contracts || 0)}
-                comparisonLabel={`vs ${pmData.lastYearMonth}`}
-                comparisonValue={Math.round(pmData.lyContracts || 0)}
-                difference={contractsVsLY}
-              />
+<PMMetricCard
+  label="Contracts"
+  value={Math.round(pmData.contracts || 0)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
+  difference={isCustomMode ? null : contractsVsLY}
+/>
 
-              <PMMetricCard
-                label="Average Contract"
-                value={money(pmData.averageContract)}
-                comparisonLabel={`vs ${pmData.lastYearMonth}`}
-                comparisonValue={money(pmData.lyAverageContract)}
-                difference={averageVsLY}
-              />
+<PMMetricCard
+  label="Average Contract"
+  value={money(pmData.averageContract)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
+  difference={isCustomMode ? null : averageVsLY}
+/>
 
-              <PMMetricCard
-                label="Closing Rate"
-                value={displayPercent(pmData.closingRate, 1)}
-                comparisonLabel={`vs ${pmData.lastYearMonth}`}
-                comparisonValue={displayPercent(pmData.lyClosingRate, 1)}
-                difference={closingRateVsLY}
-              />
+<PMMetricCard
+  label="Closing Rate"
+  value={displayPercent(pmData.closingRate, 1)}
+  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
+  difference={isCustomMode ? null : closingRateVsLY}
+/>
             </div>
           </div>
 
           <div className="pm-section-card">
             <h2>Team Comparison</h2>
 
-            <div className="pm-metric-grid">
-              <PMMetricCard
-                label="Revenue vs Team"
-                value={money(pmData.contractTotal)}
-                comparisonLabel="Team Avg"
-                comparisonValue={money(pmData.teamContractTotal)}
-                difference={revenueVsTeam}
-              />
+    <div className="pm-metric-grid">
+      <PMMetricCard
+        label="Revenue vs Team"
+        value={money(pmData.contractTotal)}
+        comparisonLabel="Team Avg"
+        comparisonValue={money(pmData.teamContractTotal)}
+        difference={revenueVsTeam}
+      />
 
-              <PMMetricCard
-                label="Contracts vs Team"
-                value={Math.round(pmData.contracts || 0)}
-                comparisonLabel="Team Avg"
-                comparisonValue={Math.round(pmData.teamContracts || 0)}
-                difference={contractsVsTeam}
-              />
+      <PMMetricCard
+        label="Contracts vs Team"
+        value={Math.round(pmData.contracts || 0)}
+        comparisonLabel="Team Avg"
+        comparisonValue={Math.round(pmData.teamContracts || 0)}
+        difference={contractsVsTeam}
+      />
 
-              <PMMetricCard
-                label="Avg Contract vs Team"
-                value={money(pmData.averageContract)}
-                comparisonLabel="Team Avg"
-                comparisonValue={money(pmData.teamAverageContract)}
-                difference={averageVsTeam}
-              />
+      <PMMetricCard
+        label="Avg Contract vs Team"
+        value={money(pmData.averageContract)}
+        comparisonLabel="Team Avg"
+        comparisonValue={money(pmData.teamAverageContract)}
+        difference={averageVsTeam}
+      />
 
-              <PMMetricCard
-                label="Closing Rate vs Team"
-                value={displayPercent(pmData.closingRate, 1)}
-                comparisonLabel="Team Avg"
-                comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
-                difference={closingRateVsTeam}
-              />
-            </div>
-          </div>
+      <PMMetricCard
+        label="Closing Rate vs Team"
+        value={displayPercent(pmData.closingRate, 1)}
+        comparisonLabel="Team Avg"
+        comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
+        difference={closingRateVsTeam}
+      />
+    </div>
+  </div>
 
-          <div className="pm-goal-card">
+          {!isCustomMode && (
+            <>
+              <div className="pm-goal-card">
             <div className="pm-goal-top">
               <span>YTD Revenue Goal Progress - November 1, 2025-October 31, 2026</span>
               <strong>{money(pmData.ytdRevenue)}</strong>
@@ -2141,75 +3765,198 @@ const closingRankLabel = pmData.closingRateRank.rank
   <h2>Goal Pace Breakdown</h2>
 
   <div className="pm-metric-grid">
+<PMMetricCard
+  label="Monthly Goal"
+  value={money(pmData.monthlyGoal)}
+  comparisonLabel="Monthly Actual"
+  comparisonValue={money(pmData.contractTotal)}
+  difference={{
+    label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
+    className: monthlyGoalClass,
+  }}
+/>
+
+
+<PMMetricCard
+  label={
+    pmData.monthlyRemaining >= 0
+      ? "Monthly Remaining"
+      : "Over Goal"
+  }
+  value={money(Math.abs(pmData.monthlyRemaining))}
+  customMessage={goalMotivation}
+  messageTitle="✨MAGIC MIKE MOMENT✨"
+/> 
+<PMMetricCard
+  label="Quarterly Goal"
+  value={money(pmData.quarterlyGoal)}
+  comparisonLabel="Quarterly Actual"
+  comparisonValue={money(pmData.quarterRevenue)}
+  difference={{
+    label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
+    className: quarterlyGoalClass,
+  }}
+/>
+
+<PMMetricCard
+  label={
+    pmData.quarterlyRemaining >= 0
+      ? "Quarterly Remaining"
+      : "Over Quarterly Goal"
+  }
+  value={money(Math.abs(pmData.quarterlyRemaining))}
+  customMessage={quarterlyMotivation}
+  messageTitle="✨MAGIC MIKE MOMENT✨"
+/>
+  </div>
+</div>
+
+<div className="pm-section-card">
+  <h2>Referral Information</h2>
+
+  <div className="pm-metric-grid">
     <PMMetricCard
-      label="Monthly Goal"
-      value={money(pmData.monthlyGoal)}
-      comparisonLabel="Current Month"
-      comparisonValue={money(pmData.contractTotal)}
+      label="Referral Goal"
+      value={Math.round(pmData.referralGoal || 0)}
+      comparisonLabel="Referral Actual"
+      comparisonValue={Math.round(pmData.referralTotal || 0)}
       difference={{
-        label: `${displayPercent(pmData.monthlyGoalPercent, 1)} Complete`,
-        className:
-          pmData.monthlyGoalPercent >= 1 ? "positive" : "neutral",
+        label: `${displayPercent(pmData.referralPercent, 1)} Complete`,
+        className: referralStatusClass,
       }}
     />
 
     <PMMetricCard
-      label="Monthly Remaining"
-      value={money(pmData.monthlyRemaining)}
+      label={
+        pmData.referralDelta >= 0
+          ? "Over Referral Goal"
+          : "Referral Remaining"
+      }
+      value={`${pmData.referralDelta >= 0 ? "+" : ""}${Math.round(
+        pmData.referralDelta || 0
+      )}`}
+      customMessage={referralMotivation}
+      messageTitle="✨MAGIC MIKE MOMENT✨"
     />
 
     <PMMetricCard
       label="Quarterly Goal"
-      value={money(pmData.quarterlyGoal)}
-      comparisonLabel="Current Quarter"
-      comparisonValue={money(pmData.quarterRevenue)}
+      value={Math.round(pmData.quarterlyReferralGoal || 0)}
+      comparisonLabel="Quarterly Actual"
+      comparisonValue={Math.round(pmData.quarterlyReferralTotal || 0)}
       difference={{
-        label: `${displayPercent(pmData.quarterlyGoalPercent, 1)} Complete`,
-        className:
-          pmData.quarterlyGoalPercent >= 1 ? "positive" : "neutral",
+        label: `${displayPercent(pmData.quarterlyReferralPercent, 1)} Complete`,
+        className: quarterlyReferralStatusClass,
       }}
     />
 
     <PMMetricCard
-      label="Quarterly Remaining"
-      value={money(pmData.quarterlyRemaining)}
+      label={
+        pmData.quarterlyReferralDelta >= 0
+          ? "Over Quarterly Goal"
+          : "Quarterly Remaining"
+      }
+      value={`${pmData.quarterlyReferralDelta >= 0 ? "+" : ""}${Math.round(
+        pmData.quarterlyReferralDelta || 0
+      )}`}
+      customMessage={quarterlyReferralMotivation}
+      messageTitle="✨MAGIC MIKE MOMENT✨"
     />
   </div>
 </div>
+            </>
+          )}
+
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
-            <label>
-              Potential Sale Amount
-              <input
-                type="text"
-                inputMode="decimal"
-                value={formatMoneyInput(pmSaleAmount)}
-                onChange={(event) =>
-                  setPmSaleAmount(cleanMoneyInput(event.target.value))
-                }
-              />
-            </label>
+            <div
+              className="pm-sale-input-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "16px",
+                marginBottom: "18px",
+              }}
+            >
+              <div className="pm-sale-input">
+                <label>Potential Sale Amount</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formatMoneyInput(pmSaleAmount)}
+                  onChange={(event) =>
+                    setPmSaleAmount(cleanMoneyInput(event.target.value))
+                  }
+                />
+              </div>
 
-            <div className="pm-commission-grid">
+              <div className="pm-sale-input">
+                <label>Job Cost (Labor and Materials)</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formatMoneyInput(pmJobCost)}
+                  onChange={(event) =>
+                    setPmJobCost(cleanMoneyInput(event.target.value))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="pm-commission-selector-card">
+              <span>Trade Types</span>
+              <div className="commission-checkbox-row commission-trade-row">
+                {getJobTradeTypeOptions().map((tradeType) => (
+                  <label key={tradeType} className="commission-option">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommissionTrades.includes(tradeType)}
+                      onChange={() => {
+                        setSelectedCommissionTrades((currentTrades) =>
+                          currentTrades.includes(tradeType)
+                            ? currentTrades.filter((item) => item !== tradeType)
+                            : [...currentTrades, tradeType]
+                        );
+                      }}
+                    />
+                    <span>{tradeType}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pm-commission-selector-card">
+              <span>Work Type</span>
+              <div className="commission-checkbox-row commission-work-row">
+                {getCommissionWorkTypeOptions().map((workType) => (
+                  <label key={workType} className="commission-option">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommissionWorkTypes.includes(workType)}
+                      onChange={() => {
+                        setSelectedCommissionWorkTypes((currentWorkTypes) =>
+                          currentWorkTypes.includes(workType)
+                            ? currentWorkTypes.filter((item) => item !== workType)
+                            : [...currentWorkTypes, workType]
+                        );
+                      }}
+                    />
+                    <span>{workType}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="pm-commission-summary">
               <div>
                 <span>Commission Rate</span>
-                <strong>20%</strong>
+                <strong>25%</strong>
               </div>
 
               <div>
-                <span>Estimated Commission</span>
+                <span>Total Estimated Commission</span>
                 <strong>{money(pmData.commission)}</strong>
-              </div>
-
-              <div>
-                <span>Projected YTD Revenue</span>
-                <strong>{money(pmData.projectedYTDRevenue)}</strong>
-              </div>
-
-              <div>
-                <span>Projected Goal %</span>
-                <strong>{displayPercent(pmData.projectedGoalPercent, 1)}</strong>
               </div>
             </div>
           </div>
@@ -2636,6 +4383,8 @@ onChange={(event) => {
           </div>
         </section>
       )}
+
+
 
       {screen === "projects" && (
         <section className="calculator-section">
