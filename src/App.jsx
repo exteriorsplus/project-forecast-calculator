@@ -107,8 +107,8 @@ const PM_COMPANY_GOAL = Object.values(PM_GOALS).reduce(
 );
 const PM_COMMISSION_RATE = 0.25;
 
-const getPMCommissionRate = (pmName, workType) => {
-  if (pmName === "George Anim" && workType === "Repair") return 0.15;
+const getPMCommissionRate = (pmName) => {
+  if (pmName === "George Anim") return 0.15;
   return 0.25;
 };
 
