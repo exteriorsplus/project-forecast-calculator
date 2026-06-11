@@ -3117,7 +3117,7 @@ const quarterNeedsPushMessages = [
 "Every conversation creates a new opportunity. Keep grinding.",
 "Momentum can shift quickly when activity increases.",
 "Continue building the sales pipeline and creating opportunities.",
-"Stay engaged and keep attacking the next opportunity.",
+"Stay engaged bub and keep attacking the next opportunity.",
 "Persistence now can create a much stronger finish later.",
 "One productive stretch can change the entire quarter.",
 "Keep your energy high and focus on execution. You can do this!",
