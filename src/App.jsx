@@ -1996,10 +1996,12 @@ const commissionDetails = selectedTradeConfigs.map((item) => {
   const overheadAmount =
   Math.round(allocatedSaleAmount * overheadRate * 100) / 100;
     
-  const grossProfit = Math.max(
-    allocatedSaleAmount - allocatedJobCost - overheadAmount,
-    0
-  );
+const grossProfit = Math.max(
+  Math.round(
+    (allocatedSaleAmount - allocatedJobCost - overheadAmount) * 100
+  ) / 100,
+  0
+);
 
   const commissionRate = getPMCommissionRate(
     pmCommissionName,
