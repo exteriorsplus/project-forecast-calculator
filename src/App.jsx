@@ -1615,7 +1615,17 @@ const getMarginForTradeAndWorkType = (tradeType, workType) => {
 
   return Number(matchingWorkType?.margin || 0);
 };
+const roundCommission = (amount) => {
+  const cents = amount * 100;
+  const wholeCents = Math.floor(cents);
+  const decimalPart = cents - wholeCents;
 
+  if (Math.abs(decimalPart - 0.5) < 0.0001) {
+    return (wholeCents + 1) / 100;
+  }
+
+  return wholeCents / 100;
+};
   const getPMDashboardData = () => {
     const monthOptions = getPMMonthOptions((currentPM?.name || projectManagers[0].name));
     const selectedMonth = selectedPMMonth || monthOptions[0] || "";
@@ -2011,8 +2021,7 @@ const grossProfit = Math.max(
 const commission =
   pmCommissionName === "George Anim"
     ? grossProfit * commissionRate
-    : Math.floor(grossProfit * (commissionRate / (1 - commissionRate)) * 100) / 100;
-
+    : roundCommission(grossProfit * (commissionRate / (1 - commissionRate)));
   return {
     ...item,
     allocatedSaleAmount,
