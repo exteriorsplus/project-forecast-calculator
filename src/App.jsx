@@ -2020,8 +2020,10 @@ const grossProfit = Math.max(
 
 const commission =
   pmCommissionName === "George Anim"
-    ? grossProfit * commissionRate
-    : roundCommission(grossProfit * (commissionRate / (1 - commissionRate)));
+    ? roundCommission(grossProfit * commissionRate)
+    : roundCommission(
+        grossProfit * (commissionRate / (1 - commissionRate))
+      );
   return {
     ...item,
     allocatedSaleAmount,
