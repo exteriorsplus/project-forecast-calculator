@@ -2008,10 +2008,7 @@ const commissionDetails = selectedTradeConfigs.map((item) => {
 const grossedUpCommission =
   grossProfit * (commissionRate / (1 - commissionRate));
 
-const commission =
-  pmCommissionName === "George Anim"
-    ? Math.floor(grossedUpCommission * 100) / 100
-    : grossedUpCommission;
+const commission = grossProfit * commissionRate;
 
   return {
     ...item,
