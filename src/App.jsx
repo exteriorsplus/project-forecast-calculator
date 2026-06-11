@@ -2018,12 +2018,9 @@ const grossProfit = Math.max(
     item.workType
   );
 
-const commission =
-  pmCommissionName === "George Anim"
-    ? roundCommission(grossProfit * commissionRate)
-    : roundCommission(
-        grossProfit * (commissionRate / (1 - commissionRate))
-      );
+const commission = roundCommission(
+  grossProfit * (commissionRate / (1 - commissionRate))
+);
   return {
     ...item,
     allocatedSaleAmount,
