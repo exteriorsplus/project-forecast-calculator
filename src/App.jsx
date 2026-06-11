@@ -2005,7 +2005,10 @@ const commissionDetails = selectedTradeConfigs.map((item) => {
     item.workType
   );
 
-  const commission = grossProfit * commissionRate;
+const commission =
+  pmCommissionName === "George Anim"
+    ? grossProfit * (commissionRate / (1 - commissionRate))
+    : grossProfit * commissionRate;
 
   return {
     ...item,
