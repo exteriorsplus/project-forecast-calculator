@@ -2035,7 +2035,7 @@ const totalGrossProfit = commissionDetails.reduce(
 const effectiveCommissionRate =
   commissionDetails.length > 0
     ? commissionDetails[0].commissionRate
-    : PM_COMMISSION_RATE;
+    : getPMCommissionRate(pmCommissionName);
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
