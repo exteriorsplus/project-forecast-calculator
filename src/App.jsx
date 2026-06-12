@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
-import confetti from "canvas-confetti";
+import JSConfetti from "js-confetti";
 import "./App.css";
 
 const APP_PASSWORD = "Lakeview2910";
@@ -916,6 +916,11 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const flashTimeoutRef = useRef(null);
   const commissionCardRef = useRef(null);
   const previousCommissionRef = useRef(0);
+  const jsConfettiRef = useRef(null);
+
+  useEffect(() => {
+    jsConfettiRef.current = new JSConfetti();
+  }, []);
 
   const currentPM = getCurrentProjectManager();
   const isPMPortal = Boolean(currentPM);
@@ -2601,28 +2606,11 @@ useEffect(() => {
     }
 
     const confettiDelay = setTimeout(() => {
-      const rect = commissionCardRef.current?.getBoundingClientRect();
-
-      if (rect) {
-confetti({
-  particleCount: 40,
-  spread: 80,
-  startVelocity: 35,
-  scalar: 1.8,
-  origin: {
-    x: (rect.left + rect.width / 2) / window.innerWidth,
-    y: (rect.top + rect.height / 2) / window.innerHeight,
-  },
-
-  shapes: ["text"],
-
-  shapeOptions: {
-    text: {
-      value: ["💵", "💰", "💸", "$"],
-    },
-  },
-});
-      }
+      jsConfettiRef.current?.addConfetti({
+        emojis: ["💵", "💵", "💸", "💰", "$"],
+        emojiSize: 42,
+        confettiNumber: 38,
+      });
 
       previousCommissionRef.current = currentCommission;
     }, 900);
