@@ -883,13 +883,13 @@ export default function App() {
 const [debouncedPmSaleAmount, setDebouncedPmSaleAmount] = useState("0");
 const [pmJobCost, setPmJobCost] = useState("0");
 const [debouncedPmJobCost, setDebouncedPmJobCost] = useState("0");
-const [commissionCelebrated, setCommissionCelebrated] = useState(false);
   const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
   const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
 const [pmDateMode, setPmDateMode] = useState("month");
+const [commissionCelebrated, setCommissionCelebrated] = useState(false);
 
 
   const defaultTotalMarketingSpend = marketingChannels.reduce(
@@ -2604,28 +2604,35 @@ useEffect(() => {
 
     setCommissionCelebrated(false);
 
-    const confettiDelay = setTimeout(() => {
-      const rect = commissionCardRef.current?.getBoundingClientRect();
+    let popDelay;
 
+    const greenRevealDelay = setTimeout(() => {
       setCommissionCelebrated(true);
 
-      if (rect) {
-        confetti({
-          particleCount: 60,
-          spread: 85,
-          startVelocity: 35,
-          scalar: 1.25,
-          origin: {
-            x: (rect.left + rect.width / 2) / window.innerWidth,
-            y: (rect.top + rect.height / 2) / window.innerHeight,
-          },
-        });
-      }
+      popDelay = setTimeout(() => {
+        const rect = commissionCardRef.current?.getBoundingClientRect();
 
-      previousCommissionRef.current = currentCommission;
-    }, 900);
+        if (rect) {
+          confetti({
+            particleCount: 60,
+            spread: 85,
+            startVelocity: 35,
+            scalar: 1.25,
+            origin: {
+              x: (rect.left + rect.width / 2) / window.innerWidth,
+              y: (rect.top + rect.height / 2) / window.innerHeight,
+            },
+          });
+        }
 
-    return () => clearTimeout(confettiDelay);
+        previousCommissionRef.current = currentCommission;
+      }, 100);
+    }, 500);
+
+    return () => {
+      clearTimeout(greenRevealDelay);
+      if (popDelay) clearTimeout(popDelay);
+    };
   }, [pmSaleAmount, pmJobCost, pmData?.commission]);
 
   const leadTotals = getLeadTotals();
