@@ -2004,19 +2004,46 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+/* Commission reward card
+   Starts dark/locked. Turns subtle green only when the JSX adds the active class. */
+
+.pm-commission-reward,
 .pm-commission-summary > .pm-commission-reward {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-  border: 2px solid #b91c1c !important;
-  box-shadow: 0 14px 32px rgba(185, 28, 28, 0.16) !important;
+  background: #111827 !important;
+  border: 1px solid #111827 !important;
+  box-shadow: none !important;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
+.pm-commission-reward span,
 .pm-commission-summary > .pm-commission-reward span {
-  color: #7f1d1d !important;
+  color: #d1d5db !important;
   letter-spacing: 0.08em;
 }
 
+.pm-commission-reward strong,
 .pm-commission-summary > .pm-commission-reward strong {
-  color: #b91c1c !important;
+  color: #ffffff !important;
   font-size: 38px !important;
   font-weight: 900 !important;
+}
+
+.pm-commission-reward.active,
+.pm-commission-summary > .pm-commission-reward.active {
+  background: #f7fbf8 !important;
+  border: 1px solid #86efac !important;
+  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.10) !important;
+}
+
+.pm-commission-reward.active span,
+.pm-commission-summary > .pm-commission-reward.active span {
+  color: #166534 !important;
+}
+
+.pm-commission-reward.active strong,
+.pm-commission-summary > .pm-commission-reward.active strong {
+  color: #16a34a !important;
 }
