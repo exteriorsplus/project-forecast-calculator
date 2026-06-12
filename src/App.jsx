@@ -2587,61 +2587,28 @@ useEffect(() => {
   const pmData = currentPM ? getPMDashboardData() : null;
 
   useEffect(() => {
-    const currentCommission = Number(pmData?.commission || 0);
     const hasSale = Number(cleanMoneyInput(pmSaleAmount)) > 0;
     const hasJobCost = Number(cleanMoneyInput(pmJobCost)) > 0;
 
-    if (
-      previousCommissionRef.current === 0 &&
-      currentCommission > 0 &&
-      hasSale &&
-      hasJobCost
-    ) {
+    if (hasSale && hasJobCost && !hasFiredConfettiRef.current) {
       confetti({
-        particleCount: 40,
-        spread: 75,
-        startVelocity: 34,
-        scalar: 1.2,
+        particleCount: 75,
+        spread: 90,
+        startVelocity: 35,
+        scalar: 1.3,
         origin: {
-          x: 0.74,
-          y: 0.62,
+          x: 0.75,
+          y: 0.65,
         },
       });
+
+      hasFiredConfettiRef.current = true;
     }
 
-    useEffect(() => {
-  const hasSale =
-    Number(cleanMoneyInput(pmSaleAmount)) > 0;
-
-  const hasJobCost =
-    Number(cleanMoneyInput(pmJobCost)) > 0;
-
-  if (
-    hasSale &&
-    hasJobCost &&
-    !hasFiredConfettiRef.current
-  ) {
-    confetti({
-      particleCount: 75,
-      spread: 90,
-      startVelocity: 35,
-      scalar: 1.3,
-      origin: {
-        x: 0.75,
-        y: 0.65,
-      },
-    });
-
-    hasFiredConfettiRef.current = true;
-  }
-
-  if (!hasSale || !hasJobCost) {
-    hasFiredConfettiRef.current = false;
-  }
-}, [pmSaleAmount, pmJobCost]);
-
-    previousCommissionRef.current = currentCommission;
-  }, [pmData?.commission, pmSaleAmount, pmJobCost]);
+    if (!hasSale || !hasJobCost) {
+      hasFiredConfettiRef.current = false;
+    }
+  }, [pmSaleAmount, pmJobCost]);
 
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
