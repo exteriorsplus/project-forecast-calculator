@@ -2611,8 +2611,8 @@ useEffect(() => {
       if (rect) {
 jsConfettiRef.current?.addConfetti({
   emojis: ["💵", "💸", "💰", "🤑"],
-  emojiSize: 70,
-  confettiNumber: 55,
+  emojiSize: 75,
+  confettiNumber: 75,
 });
       }
 
