@@ -2604,16 +2604,24 @@ useEffect(() => {
       const rect = commissionCardRef.current?.getBoundingClientRect();
 
       if (rect) {
-        confetti({
-          particleCount: 60,
-          spread: 85,
-          startVelocity: 35,
-          scalar: 1.25,
-          origin: {
-            x: (rect.left + rect.width / 2) / window.innerWidth,
-            y: (rect.top + rect.height / 2) / window.innerHeight,
-          },
-        });
+confetti({
+  particleCount: 40,
+  spread: 80,
+  startVelocity: 35,
+  scalar: 1.8,
+  origin: {
+    x: (rect.left + rect.width / 2) / window.innerWidth,
+    y: (rect.top + rect.height / 2) / window.innerHeight,
+  },
+
+  shapes: ["text"],
+
+  shapeOptions: {
+    text: {
+      value: ["💵", "💰", "💸", "$"],
+    },
+  },
+});
       }
 
       previousCommissionRef.current = currentCommission;
