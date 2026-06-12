@@ -914,8 +914,8 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const [projectEndDate, setProjectEndDate] = useState(initialDateRange.end);
 
   const flashTimeoutRef = useRef(null);
-  const hasFiredConfettiRef = useRef(false);
   const commissionCardRef = useRef(null);
+  const previousCommissionRef = useRef(0);
 
   const currentPM = getCurrentProjectManager();
   const isPMPortal = Boolean(currentPM);
@@ -2587,47 +2587,40 @@ useEffect(() => {
   const pmData = currentPM ? getPMDashboardData() : null;
 
   useEffect(() => {
-  const hasSale =
-    Number(cleanMoneyInput(pmSaleAmount)) > 0;
+    const hasSale = Number(cleanMoneyInput(pmSaleAmount)) > 0;
+    const hasJobCost = Number(cleanMoneyInput(pmJobCost)) > 0;
+    const currentCommission = Number(pmData?.commission || 0);
 
-  const hasJobCost =
-    Number(cleanMoneyInput(pmJobCost)) > 0;
-
-  if (!hasSale || !hasJobCost) {
-    hasFiredConfettiRef.current = false;
-    return;
-  }
-
-  if (hasFiredConfettiRef.current) {
-    return;
-  }
-
-  const confettiDelay = setTimeout(() => {
-    const rect =
-      commissionCardRef.current?.getBoundingClientRect();
-
-    if (rect) {
-      confetti({
-        particleCount: 75,
-        spread: 90,
-        startVelocity: 35,
-        scalar: 1.3,
-        origin: {
-          x:
-            (rect.left + rect.width / 2) /
-            window.innerWidth,
-          y:
-            (rect.top + rect.height / 2) /
-            window.innerHeight,
-        },
-      });
+    if (!hasSale || !hasJobCost || currentCommission <= 0) {
+      previousCommissionRef.current = currentCommission;
+      return;
     }
 
-    hasFiredConfettiRef.current = true;
-  }, 900);
+    if (currentCommission === previousCommissionRef.current) {
+      return;
+    }
 
-  return () => clearTimeout(confettiDelay);
-}, [pmSaleAmount, pmJobCost]);
+    const confettiDelay = setTimeout(() => {
+      const rect = commissionCardRef.current?.getBoundingClientRect();
+
+      if (rect) {
+        confetti({
+          particleCount: 60,
+          spread: 85,
+          startVelocity: 35,
+          scalar: 1.25,
+          origin: {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight,
+          },
+        });
+      }
+
+      previousCommissionRef.current = currentCommission;
+    }, 900);
+
+    return () => clearTimeout(confettiDelay);
+  }, [pmSaleAmount, pmJobCost, pmData?.commission]);
 
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
