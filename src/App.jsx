@@ -3291,7 +3291,7 @@ const quarterlyReferralInProgressMessages = [
 ];
 
 const quarterlyReferralFutureMessages = [
-  "this quarter has not started yet. Prepare now so referrals come naturally later.",
+  "this quarter has not started yet bub. Prepare now so referrals come naturally later.",
   "future quarter selected. Build relationships today that generate referrals tomorrow.",
   "the next quarter is ahead. Strong customer experiences create future opportunities.",
   "that referral quarter is still coming. Stay focused on earning trust now.",
