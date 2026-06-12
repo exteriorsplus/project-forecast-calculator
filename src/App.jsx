@@ -1991,62 +1991,20 @@ const totalSelectedRpp = selectedTradeConfigs.reduce(
 
 const pmCommissionName = currentPM?.name || projectManagers[0].name;
 
-const commissionDetails = selectedTradeConfigs.map((item) => {
-  const allocationRatio =
-    saleAmount > 0 && totalSelectedRpp > 0
-      ? item.rpp / totalSelectedRpp
-      : selectedTradeConfigs.length > 0
-      ? 1 / selectedTradeConfigs.length
-      : 0;
-
-  const allocatedSaleAmount = saleAmount * allocationRatio;
-  const allocatedJobCost = jobCost * allocationRatio;
-
-  const overheadRate = getOverheadRate(item.tradeType);
-  const overheadAmount =
-  Math.round(allocatedSaleAmount * overheadRate * 100) / 100;
-    
 const grossProfit = Math.max(
-  Math.round(
-    (allocatedSaleAmount - allocatedJobCost - overheadAmount) * 100
-  ) / 100,
+  Math.round((saleAmount - jobCost) * 0.9 * 100) / 100,
   0
 );
 
-  const commissionRate = getPMCommissionRate(
-    pmCommissionName,
-    item.workType
-  );
+const commissionRate = getPMCommissionRate(pmCommissionName);
 
 const commission = roundCommission(
-  grossProfit * (commissionRate / (1 - commissionRate))
-);
-  return {
-    ...item,
-    allocatedSaleAmount,
-    allocatedJobCost,
-    overheadRate,
-    overheadAmount,
-    grossProfit,
-    commissionRate,
-    commission,
-  };
-});
-
-const commission = commissionDetails.reduce(
-  (sum, line) => sum + line.commission,
-  0
+  grossProfit * commissionRate
 );
 
-const totalGrossProfit = commissionDetails.reduce(
-  (sum, line) => sum + line.grossProfit,
-  0
-);
+const totalGrossProfit = grossProfit;
 
-const effectiveCommissionRate =
-  commissionDetails.length > 0
-    ? commissionDetails[0].commissionRate
-    : getPMCommissionRate(pmCommissionName);
+const effectiveCommissionRate = commissionRate;
 const individualGoal =
   PM_GOALS[currentPM?.name || projectManagers[0].name] || 0;
 
