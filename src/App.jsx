@@ -889,7 +889,6 @@ const [debouncedPmJobCost, setDebouncedPmJobCost] = useState("0");
   const [pmStartDate, setPmStartDate] = useState("");
 const [pmEndDate, setPmEndDate] = useState("");
 const [pmDateMode, setPmDateMode] = useState("month");
-const [commissionCelebrated, setCommissionCelebrated] = useState(false);
 
 
   const defaultTotalMarketingSpend = marketingChannels.reduce(
@@ -2593,7 +2592,6 @@ useEffect(() => {
     const currentCommission = Number(pmData?.commission || 0);
 
     if (!hasSale || !hasJobCost || currentCommission <= 0) {
-      setCommissionCelebrated(false);
       previousCommissionRef.current = currentCommission;
       return;
     }
@@ -2602,37 +2600,26 @@ useEffect(() => {
       return;
     }
 
-    setCommissionCelebrated(false);
+    const confettiDelay = setTimeout(() => {
+      const rect = commissionCardRef.current?.getBoundingClientRect();
 
-    let popDelay;
+      if (rect) {
+        confetti({
+          particleCount: 60,
+          spread: 85,
+          startVelocity: 35,
+          scalar: 1.25,
+          origin: {
+            x: (rect.left + rect.width / 2) / window.innerWidth,
+            y: (rect.top + rect.height / 2) / window.innerHeight,
+          },
+        });
+      }
 
-    const greenRevealDelay = setTimeout(() => {
-      setCommissionCelebrated(true);
+      previousCommissionRef.current = currentCommission;
+    }, 900);
 
-      popDelay = setTimeout(() => {
-        const rect = commissionCardRef.current?.getBoundingClientRect();
-
-        if (rect) {
-          confetti({
-            particleCount: 60,
-            spread: 85,
-            startVelocity: 35,
-            scalar: 1.25,
-            origin: {
-              x: (rect.left + rect.width / 2) / window.innerWidth,
-              y: (rect.top + rect.height / 2) / window.innerHeight,
-            },
-          });
-        }
-
-        previousCommissionRef.current = currentCommission;
-      }, 100);
-    }, 500);
-
-    return () => {
-      clearTimeout(greenRevealDelay);
-      if (popDelay) clearTimeout(popDelay);
-    };
+    return () => clearTimeout(confettiDelay);
   }, [pmSaleAmount, pmJobCost, pmData?.commission]);
 
   const leadTotals = getLeadTotals();
@@ -3940,7 +3927,7 @@ const quarterlyGoalClass =
 <div
   ref={commissionCardRef}
   className={`pm-commission-reward ${
-    commissionCelebrated ? "active" : ""
+    Number(cleanMoneyInput(pmJobCost)) > 0 ? "active" : ""
   }`}
 >
   <span>Your Estimated Commission</span>
