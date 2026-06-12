@@ -3882,17 +3882,14 @@ const quarterlyGoalClass =
 <div className="pm-commission-summary">
   <div>
     <span>Commission Rate</span>
-    <strong>{displayPercent(commissionRate, 0)}</strong>
+    <strong>{displayPercent(pmData.commissionRate, 0)}</strong>
   </div>
 
-  <div className="commission-reward-card">
-    <span>YOUR ESTIMATED COMMISSION</span>
-
-    <strong className="commission-reward-value">
-      {money(commission)}
-    </strong>
-  </div>
-</div>
+              <div>
+                <span>Total Estimated Commission</span>
+                <strong>{money(pmData.commission)}</strong>
+              </div>
+            </div>
           </div>
         </section>
       </div>
