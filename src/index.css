@@ -776,3 +776,32 @@ input::placeholder {
   color: #0f172a;
   font-size: 15px;
 }
+
+.commission-reward-card {
+  background: linear-gradient(
+    135deg,
+    #f0fdf4 0%,
+    #ffffff 100%
+  ) !important;
+
+  border: 3px solid #16a34a !important;
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 25px rgba(22,163,74,.15),
+    0 0 40px rgba(22,163,74,.08);
+
+  padding: 18px;
+}
+
+.commission-reward-card span {
+  color: #166534 !important;
+  font-weight: 900 !important;
+  letter-spacing: .08em;
+}
+
+.commission-reward-value {
+  font-size: 3rem !important;
+  font-weight: 900 !important;
+  color: #15803d !important;
+}
