@@ -777,6 +777,37 @@ input::placeholder {
   font-size: 15px;
 }
 
+.pm-commission-summary {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.pm-commission-summary > div {
+  background: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+}
+
+.pm-commission-summary span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.pm-commission-summary strong {
+  display: block;
+  color: #111827;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
 .commission-reward-card {
   background: linear-gradient(
     135deg,
