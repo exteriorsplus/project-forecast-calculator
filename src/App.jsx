@@ -2605,19 +2605,13 @@ useEffect(() => {
 
       if (rect) {
 confetti({
-  particleCount: 35,
-  spread: 80,
+  particleCount: 60,
+  spread: 85,
   startVelocity: 35,
-  scalar: 1.8,
+  scalar: 1.25,
   origin: {
     x: (rect.left + rect.width / 2) / window.innerWidth,
     y: (rect.top + rect.height / 2) / window.innerHeight,
-  },
-  shapes: ["text"],
-  shapeOptions: {
-    text: {
-      value: ["💵", "💸", "💰", "$"],
-    },
   },
 });
       }
