@@ -3878,49 +3878,6 @@ const quarterlyGoalClass =
               </div>
             </div>
 
-            <div className="pm-commission-selector-card">
-              <span>Trade Types</span>
-              <div className="commission-checkbox-row commission-trade-row">
-                {getJobTradeTypeOptions().map((tradeType) => (
-                  <label key={tradeType} className="commission-option">
-                    <input
-                      type="checkbox"
-                      checked={selectedCommissionTrades.includes(tradeType)}
-                      onChange={() => {
-                        setSelectedCommissionTrades((currentTrades) =>
-                          currentTrades.includes(tradeType)
-                            ? currentTrades.filter((item) => item !== tradeType)
-                            : [...currentTrades, tradeType]
-                        );
-                      }}
-                    />
-                    <span>{tradeType}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="pm-commission-selector-card">
-              <span>Work Type</span>
-              <div className="commission-checkbox-row commission-work-row">
-                {getCommissionWorkTypeOptions().map((workType) => (
-                  <label key={workType} className="commission-option">
-                    <input
-                      type="checkbox"
-                      checked={selectedCommissionWorkTypes.includes(workType)}
-                      onChange={() => {
-                        setSelectedCommissionWorkTypes((currentWorkTypes) =>
-                          currentWorkTypes.includes(workType)
-                            ? currentWorkTypes.filter((item) => item !== workType)
-                            : [...currentWorkTypes, workType]
-                        );
-                      }}
-                    />
-                    <span>{workType}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
 
 <div className="pm-commission-summary">
   <div>
