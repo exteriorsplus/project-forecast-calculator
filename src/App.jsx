@@ -914,7 +914,8 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const [projectEndDate, setProjectEndDate] = useState(initialDateRange.end);
 
   const flashTimeoutRef = useRef(null);
-  const previousCommissionRef = useRef(0);
+  
+  const hasFiredConfettiRef = useRef(false);
 
   const currentPM = getCurrentProjectManager();
   const isPMPortal = Boolean(currentPM);
@@ -2607,6 +2608,37 @@ useEffect(() => {
         },
       });
     }
+
+    useEffect(() => {
+  const hasSale =
+    Number(cleanMoneyInput(pmSaleAmount)) > 0;
+
+  const hasJobCost =
+    Number(cleanMoneyInput(pmJobCost)) > 0;
+
+  if (
+    hasSale &&
+    hasJobCost &&
+    !hasFiredConfettiRef.current
+  ) {
+    confetti({
+      particleCount: 75,
+      spread: 90,
+      startVelocity: 35,
+      scalar: 1.3,
+      origin: {
+        x: 0.75,
+        y: 0.65,
+      },
+    });
+
+    hasFiredConfettiRef.current = true;
+  }
+
+  if (!hasSale || !hasJobCost) {
+    hasFiredConfettiRef.current = false;
+  }
+}, [pmSaleAmount, pmJobCost]);
 
     previousCommissionRef.current = currentCommission;
   }, [pmData?.commission, pmSaleAmount, pmJobCost]);
