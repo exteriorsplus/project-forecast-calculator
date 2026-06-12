@@ -883,6 +883,7 @@ export default function App() {
 const [debouncedPmSaleAmount, setDebouncedPmSaleAmount] = useState("0");
 const [pmJobCost, setPmJobCost] = useState("0");
 const [debouncedPmJobCost, setDebouncedPmJobCost] = useState("0");
+const [commissionCelebrated, setCommissionCelebrated] = useState(false);
   const [selectedCommissionTrades, setSelectedCommissionTrades] = useState([]);
   const [selectedCommissionWorkTypes, setSelectedCommissionWorkTypes] = useState([]);
   const [selectedPMMonth, setSelectedPMMonth] = useState("");
@@ -2592,6 +2593,7 @@ useEffect(() => {
     const currentCommission = Number(pmData?.commission || 0);
 
     if (!hasSale || !hasJobCost || currentCommission <= 0) {
+      setCommissionCelebrated(false);
       previousCommissionRef.current = currentCommission;
       return;
     }
@@ -2600,8 +2602,12 @@ useEffect(() => {
       return;
     }
 
+    setCommissionCelebrated(false);
+
     const confettiDelay = setTimeout(() => {
       const rect = commissionCardRef.current?.getBoundingClientRect();
+
+      setCommissionCelebrated(true);
 
       if (rect) {
         confetti({
@@ -3927,7 +3933,7 @@ const quarterlyGoalClass =
 <div
   ref={commissionCardRef}
   className={`pm-commission-reward ${
-    Number(cleanMoneyInput(pmSaleAmount)) > 0 ? "active" : ""
+    commissionCelebrated ? "active" : ""
   }`}
 >
   <span>Your Estimated Commission</span>
