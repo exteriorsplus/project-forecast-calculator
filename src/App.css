@@ -2005,17 +2005,18 @@ input::placeholder {
   }
 }
 .pm-commission-summary > .pm-commission-reward {
-  background: #ecfdf5 !important;
-  border: 3px solid #16a34a !important;
-  box-shadow: 0 12px 30px rgba(22, 163, 74, 0.25) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 2px solid #b91c1c !important;
+  box-shadow: 0 14px 32px rgba(185, 28, 28, 0.16) !important;
 }
 
 .pm-commission-summary > .pm-commission-reward span {
-  color: #166534 !important;
+  color: #7f1d1d !important;
+  letter-spacing: 0.08em;
 }
 
 .pm-commission-summary > .pm-commission-reward strong {
-  color: #15803d !important;
-  font-size: 42px !important;
+  color: #b91c1c !important;
+  font-size: 38px !important;
   font-weight: 900 !important;
 }
