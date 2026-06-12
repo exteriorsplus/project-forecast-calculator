@@ -2587,32 +2587,47 @@ useEffect(() => {
   const pmData = currentPM ? getPMDashboardData() : null;
 
   useEffect(() => {
-    const hasSale = Number(cleanMoneyInput(pmSaleAmount)) > 0;
-    const hasJobCost = Number(cleanMoneyInput(pmJobCost)) > 0;
+  const hasSale =
+    Number(cleanMoneyInput(pmSaleAmount)) > 0;
 
-    if (hasSale && hasJobCost && !hasFiredConfettiRef.current) {
-      const rect = commissionCardRef.current?.getBoundingClientRect();
+  const hasJobCost =
+    Number(cleanMoneyInput(pmJobCost)) > 0;
 
-      if (rect) {
-        confetti({
-          particleCount: 75,
-          spread: 90,
-          startVelocity: 35,
-          scalar: 1.3,
-          origin: {
-            x: (rect.left + rect.width / 2) / window.innerWidth,
-            y: (rect.top + rect.height / 2) / window.innerHeight,
-          },
-        });
-      }
+  if (!hasSale || !hasJobCost) {
+    hasFiredConfettiRef.current = false;
+    return;
+  }
 
-      hasFiredConfettiRef.current = true;
+  if (hasFiredConfettiRef.current) {
+    return;
+  }
+
+  const confettiDelay = setTimeout(() => {
+    const rect =
+      commissionCardRef.current?.getBoundingClientRect();
+
+    if (rect) {
+      confetti({
+        particleCount: 75,
+        spread: 90,
+        startVelocity: 35,
+        scalar: 1.3,
+        origin: {
+          x:
+            (rect.left + rect.width / 2) /
+            window.innerWidth,
+          y:
+            (rect.top + rect.height / 2) /
+            window.innerHeight,
+        },
+      });
     }
 
-    if (!hasSale || !hasJobCost) {
-      hasFiredConfettiRef.current = false;
-    }
-  }, [pmSaleAmount, pmJobCost]);
+    hasFiredConfettiRef.current = true;
+  }, 900);
+
+  return () => clearTimeout(confettiDelay);
+}, [pmSaleAmount, pmJobCost]);
 
   const leadTotals = getLeadTotals();
   const projectData = getProjectData();
