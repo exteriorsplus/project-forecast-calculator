@@ -3887,10 +3887,7 @@ const quarterlyGoalClass =
 
 <div
   className={`pm-commission-reward ${
-    Number(pmSaleAmount) > 0 &&
-    Number(pmJobCost) > 0
-      ? "active"
-      : ""
+    Number(pmSaleAmount) > 0 ? "active" : ""
   }`}
 >
   <span>Your Estimated Commission</span>
