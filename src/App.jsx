@@ -1991,8 +1991,10 @@ const totalSelectedRpp = selectedTradeConfigs.reduce(
 
 const pmCommissionName = currentPM?.name || projectManagers[0].name;
 
+const overheadAmount = Math.round(saleAmount * 0.1 * 100) / 100;
+
 const grossProfit = Math.max(
-  Math.round((saleAmount - jobCost) * 0.9 * 100) / 100,
+  Math.round((saleAmount - jobCost - overheadAmount) * 100) / 100,
   0
 );
 
