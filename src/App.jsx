@@ -2799,7 +2799,7 @@ const closingRateVsTeam = compareNumbers(
 );
 
 const exceededGoalMessages = [
-  "Outstanding work. You've surpassed your goal for this month. That's fire.",
+  "Outstanding work bub. You've surpassed your goal for this month. That's fire.",
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
   "You've reached your goal and are building momentum. That's fire.",
   "Fantastic job. Your production cleared the goal for this month. That's fire.",
