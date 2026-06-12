@@ -2005,12 +2005,12 @@ input::placeholder {
   }
 }
 /* Commission reward card
-   Starts dark/locked. Turns subtle green only when the JSX adds the active class. */
+   Starts neutral/white. Turns subtle green only when the JSX adds the active class. */
 
 .pm-commission-reward,
 .pm-commission-summary > .pm-commission-reward {
-  background: #111827 !important;
-  border: 1px solid #111827 !important;
+  background: #ffffff !important;
+  border: 2px solid #e5e7eb !important;
   box-shadow: none !important;
   transition:
     background 0.25s ease,
@@ -2020,22 +2020,22 @@ input::placeholder {
 
 .pm-commission-reward span,
 .pm-commission-summary > .pm-commission-reward span {
-  color: #d1d5db !important;
+  color: #6b7280 !important;
   letter-spacing: 0.08em;
 }
 
 .pm-commission-reward strong,
 .pm-commission-summary > .pm-commission-reward strong {
-  color: #ffffff !important;
-  font-size: 38px !important;
+  color: #9ca3af !important;
+  font-size: 42px !important;
   font-weight: 900 !important;
 }
 
 .pm-commission-reward.active,
 .pm-commission-summary > .pm-commission-reward.active {
-  background: #f7fbf8 !important;
-  border: 1px solid #86efac !important;
-  box-shadow: 0 10px 24px rgba(22, 163, 74, 0.10) !important;
+  background: #f8fffa !important;
+  border: 2px solid #86efac !important;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.08) !important;
 }
 
 .pm-commission-reward.active span,
