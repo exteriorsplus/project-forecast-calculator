@@ -2004,3 +2004,18 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.pm-commission-summary > .pm-commission-reward {
+  background: #ecfdf5 !important;
+  border: 3px solid #16a34a !important;
+  box-shadow: 0 12px 30px rgba(22, 163, 74, 0.25) !important;
+}
+
+.pm-commission-summary > .pm-commission-reward span {
+  color: #166534 !important;
+}
+
+.pm-commission-summary > .pm-commission-reward strong {
+  color: #15803d !important;
+  font-size: 42px !important;
+  font-weight: 900 !important;
+}
