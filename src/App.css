@@ -2026,11 +2026,10 @@ input::placeholder {
 
 .pm-commission-reward strong,
 .pm-commission-summary > .pm-commission-reward strong {
-  color: #9ca3af !important;
-  font-size: 42px !important;
+  color: #111827 !important;
+  font-size: 38px !important;
   font-weight: 900 !important;
 }
-
 .pm-commission-reward.active,
 .pm-commission-summary > .pm-commission-reward.active {
   background: #f8fffa !important;
