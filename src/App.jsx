@@ -2932,7 +2932,7 @@ const closeMessages = [
 
 
 const needsPushMessages = [
-  "Keep grinding. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
+  "Keep grinding bub. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
   "The month isn't over yet. Stay focused. One strong week can completely change the trajectory of your results.",
   "Every opportunity matters from this point forward. Keep creating conversations and the numbers will follow.",
   "Small wins add up quickly. Focus on the next appointment, the next estimate, and the next contract.",
@@ -3885,10 +3885,14 @@ const quarterlyGoalClass =
     <strong>{displayPercent(pmData.commissionRate, 0)}</strong>
   </div>
 
-  <div className="pm-commission-reward">
-    <span>Your Estimated Commission</span>
-    <strong>{money(pmData.commission)}</strong>
-  </div>
+<div
+  className={`pm-commission-reward ${
+    pmData.commission > 0 ? "active" : ""
+  }`}
+>
+  <span>Your Estimated Commission</span>
+  <strong>{money(pmData.commission)}</strong>
+</div>
 </div>
           </div>
         </section>
