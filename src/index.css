@@ -808,31 +808,19 @@ input::placeholder {
   line-height: 1.1;
 }
 
-
-
-.pm-commission-summary > .pm-commission-reward {
+.pm-commission-summary > .pm-commission-reward,
+.pm-commission-summary > .pm-commission-reward.active {
   background: #111827 !important;
   border: 1px solid #111827 !important;
   box-shadow: none !important;
 }
 
-.pm-commission-summary > .pm-commission-reward span {
+.pm-commission-summary > .pm-commission-reward span,
+.pm-commission-summary > .pm-commission-reward.active span {
   color: #d1d5db !important;
 }
 
-.pm-commission-summary > .pm-commission-reward strong {
-  color: #ffffff !important;
-}
-
-.pm-commission-summary > .pm-commission-reward.active {
-  background: #f7fbf8 !important;
-  border: 1px solid #86efac !important;
-}
-
-.pm-commission-summary > .pm-commission-reward.active span {
-  color: #166534 !important;
-}
-
+.pm-commission-summary > .pm-commission-reward strong,
 .pm-commission-summary > .pm-commission-reward.active strong {
-  color: #16a34a !important;
+  color: #ffffff !important;
 }
