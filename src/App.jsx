@@ -1318,6 +1318,27 @@ const getTeamMetricRow = (metric) => {
         averageContract: 0,
       };
     }
+    const getRevenueRankForRange = (
+  startDate,
+  endDate,
+  pmName = currentPM?.name || projectManagers[0].name
+) => {
+  const ranked = projectManagers
+    .filter((pm) => pm.activeGoal)
+    .map((pm) => ({
+      name: pm.name,
+      value: getPMSalesDataForRange(pm.name, startDate, endDate).contractTotal,
+    }))
+    .filter((pm) => Number(pm.value || 0) > 0)
+    .sort((a, b) => b.value - a.value);
+
+  const index = ranked.findIndex((pm) => pm.name === pmName);
+
+  return {
+    rank: index >= 0 ? index + 1 : null,
+    total: ranked.length,
+  };
+};
 
     const start = dateOnly(startDate);
     const end = dateOnly(endDate);
@@ -1939,11 +1960,19 @@ const teamClosingRate =
     ? ytdTeamClosingRate
     : getTeamMetric("Closing Rate", selectedMonth);
 
-    const revenueRank = getRankForMetric(
-      "Contract Total",
-      selectedMonth,
-      (currentPM?.name || projectManagers[0].name)
-    );
+const rankDateRange =
+  pmDateMode === "fiscalYTD"
+    ? { start: fiscalYTDStartDate, end: fiscalYTDEndDate }
+    : pmDateMode === "custom" && pmStartDate && pmEndDate
+    ? {
+        start: parseInputDate(pmStartDate),
+        end: parseInputDate(pmEndDate),
+      }
+    : getMonthDateBoundsForSales(selectedMonth);
+
+const revenueRank = rankDateRange
+  ? getRevenueRankForRange(rankDateRange.start, rankDateRange.end, pmName)
+  : { rank: null, total: 0 };
     const closingRateRank = getRankForMetric(
       "Closing Rate",
       selectedMonth,
