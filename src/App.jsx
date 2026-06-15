@@ -2611,7 +2611,7 @@ useEffect(() => {
       if (rect) {
 jsConfettiRef.current?.addConfetti({
   emojis: ["💵", "💸", "💰"],
-  emojiSize: 35,
+  emojiSize: 75,
   confettiNumber: 100,
 });
       }
@@ -3115,7 +3115,7 @@ const quarterNeedsPushMessages = [
 "Momentum can shift quickly when activity increases.",
 "Continue building the sales pipeline and creating opportunities.",
 "Stay engaged bub and keep attacking the next opportunity.",
-"Persistence now can create a much stronger finish later.",
+"Persistence now can create a much stronger finish later - you got this!",
 "One productive stretch can change the entire quarter.",
 "Keep your energy high and focus on execution. You can do this!",
 "The quarter is still being written. Keep pushing forward."
