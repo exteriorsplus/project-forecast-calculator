@@ -2611,8 +2611,8 @@ useEffect(() => {
       if (rect) {
 jsConfettiRef.current?.addConfetti({
   emojis: ["💵", "💸", "💰", "🤑"],
-  emojiSize: 55,
-  confettiNumber: 175,
+  emojiSize: 35,
+  confettiNumber: 50,
 });
       }
 
@@ -2858,7 +2858,7 @@ const progressMessages = [
   "Momentum is building and there is still plenty of opportunity ahead.",
   "Consistent effort now can create a strong finish to the period.",
   "The foundation is there. Continue focusing on quality opportunities.",
-  "Progress remains positive and there is room to accelerate."
+  "Progress remains positive and there is room to accelerate, keep pushing."
 ];
 
 const pushMessages = [
@@ -2996,7 +2996,7 @@ const futureMonthMessages = [
   "Future-you is counting on present-you. Let's get after it.",
   "You know the playbook. Now it's time to run it.",
   "Preparation today becomes production tomorrow.",
-  "The month hasn't started yet bub, but confidence should.",
+  "The month hasn't started yet bub, but the confidence should.",
   "We're not there yet, bub, but I already know you're going to be ready.",
   "The work you do now is what makes future months look easy."
 ];
