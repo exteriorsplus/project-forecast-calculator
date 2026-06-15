@@ -2610,9 +2610,9 @@ useEffect(() => {
 
       if (rect) {
 jsConfettiRef.current?.addConfetti({
-  emojis: ["💵", "💸", "💰", "🤑"],
+  emojis: ["💵", "💸", "💰"],
   emojiSize: 35,
-  confettiNumber: 50,
+  confettiNumber: 100,
 });
       }
 
@@ -2947,7 +2947,7 @@ const onTrackMessages = [
   "You're on track to achieve your goal bub. Continue focusing on consistent activity and strong follow-up. The momentum you're building now can create an exceptional finish.",
   "Great progress. Keep pushing toward the finish line. Staying disciplined over the next few weeks will put you in a strong position to exceed expectations.",
   "You're in a strong position to finish successfully. Continue working your pipeline and capitalizing on opportunities. The goal is well within reach.",
-  "Steady effort is producing solid results. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
+  "Steady effort is producing solid results bub. Keep executing the fundamentals and trust the process. Consistency is often what separates good months from great ones.",
   "The goal is well within reach. Continue focusing on quality opportunities and maintaining urgency. A strong finish could put you comfortably over target.",
   "Momentum is building in the right direction. Stay committed to the daily activities that drive results. You're putting yourself in a position to succeed.",
   "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
