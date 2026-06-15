@@ -2070,3 +2070,25 @@ input::placeholder {
 .pm-commission-summary > .pm-commission-reward.active strong {
   color: #16a34a !important;
 }
+@media (max-width: 768px) {
+  .pm-date-controls {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    justify-self: center;
+  }
+
+  .pm-month-selector {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .pm-month-selector select {
+    width: 100%;
+  }
+
+  .pm-custom-date-row {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+  }
+}
