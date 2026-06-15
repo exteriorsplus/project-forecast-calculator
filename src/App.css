@@ -2082,3 +2082,17 @@ input::placeholder {
   width: 100%;
   min-width: 0;
 }
+@media (max-width: 768px) {
+  .pm-date-controls {
+    width: calc(100% - 24px);
+    max-width: calc(100% - 24px);
+    margin: 0 auto;
+    transform: translateX(-12px);
+  }
+
+  .pm-month-selector,
+  .pm-custom-date-row,
+  .pm-fiscal-button {
+    width: 100%;
+  }
+}
