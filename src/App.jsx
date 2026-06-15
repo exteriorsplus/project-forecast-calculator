@@ -2951,7 +2951,7 @@ const onTrackMessages = [
   "The goal is well within reach. Continue focusing on quality opportunities and maintaining urgency. A strong finish could put you comfortably over target.",
   "Momentum is building in the right direction. Stay committed to the daily activities that drive results. You're putting yourself in a position to succeed.",
   "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
-  "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction.",
+  "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction bub!",
   "Your consistency is paying off. Continue building on the progress you've already made. Every additional contract strengthens your position.",
   "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues."
 ];
