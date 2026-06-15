@@ -1309,15 +1309,6 @@ const getTeamMetricRow = (metric) => {
       total: ranked.length,
     };
   };
-
-  const getPMSalesDataForRange = (pmName, startDate, endDate) => {
-    if (!pmName || !startDate || !endDate) {
-      return {
-        contractTotal: 0,
-        contracts: 0,
-        averageContract: 0,
-      };
-    }
     const getRevenueRankForRange = (
   startDate,
   endDate,
@@ -1339,6 +1330,15 @@ const getTeamMetricRow = (metric) => {
     total: ranked.length,
   };
 };
+  const getPMSalesDataForRange = (pmName, startDate, endDate) => {
+    if (!pmName || !startDate || !endDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
 
     const start = dateOnly(startDate);
     const end = dateOnly(endDate);
