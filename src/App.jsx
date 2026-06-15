@@ -2611,8 +2611,8 @@ useEffect(() => {
       if (rect) {
 jsConfettiRef.current?.addConfetti({
   emojis: ["💵", "💸", "💰", "🤑"],
-  emojiSize: 75,
-  confettiNumber: 75,
+  emojiSize: 55,
+  confettiNumber: 175,
 });
       }
 
@@ -2996,7 +2996,7 @@ const futureMonthMessages = [
   "Future-you is counting on present-you. Let's get after it.",
   "You know the playbook. Now it's time to run it.",
   "Preparation today becomes production tomorrow.",
-  "The month hasn't started yet, but confidence should.",
+  "The month hasn't started yet bub, but confidence should.",
   "We're not there yet, bub, but I already know you're going to be ready.",
   "The work you do now is what makes future months look easy."
 ];
