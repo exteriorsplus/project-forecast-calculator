@@ -2114,13 +2114,9 @@ input::placeholder {
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader {
-  background: linear-gradient(
-    180deg,
-    #fffef7 0%,
-    #fffbe6 100%
-  );
+  background: #ffffff;
 
-  border-color: #d4af37;
+  border: 2px solid #21c331;
 
   animation: topDawgGlow 3s ease-in-out infinite;
 }
@@ -2128,21 +2124,21 @@ input::placeholder {
 @keyframes topDawgGlow {
   0% {
     box-shadow:
-      0 0 0 1px rgba(212,175,55,.15),
-      0 0 8px rgba(212,175,55,.18);
+      0 0 8px rgba(212,175,55,.20),
+      0 0 16px rgba(212,175,55,.10);
   }
 
   50% {
     box-shadow:
-      0 0 0 1px rgba(212,175,55,.25),
-      0 0 20px rgba(212,175,55,.35),
-      0 0 40px rgba(212,175,55,.18);
+      0 0 16px rgba(212,175,55,.40),
+      0 0 32px rgba(212,175,55,.22),
+      0 0 48px rgba(212,175,55,.12);
   }
 
   100% {
     box-shadow:
-      0 0 0 1px rgba(212,175,55,.15),
-      0 0 8px rgba(212,175,55,.18);
+      0 0 8px rgba(212,175,55,.20),
+      0 0 16px rgba(212,175,55,.10);
   }
 }
 
@@ -2153,12 +2149,14 @@ input::placeholder {
 .top-dawg-label {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid rgb(23, 123, 9);
-  color: #03cd00;
+
+  border-top: 1px solid rgba(212,175,55,.30);
+
+  color: #b8860b;
+
   font-size: 11px;
   font-weight: 900;
-  letter-spacing: 1.8px;
-  line-height: 1;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
