@@ -2901,11 +2901,11 @@ const pushMessages = [
 ];
 
 const revenueStrongMessages = [
-  "Revenue production is outperforming the team average.",
-  "Your revenue generation continues to lead the way.",
+  "Revenue production is outperforming the team average - that's fire.",
+  "Your revenue generation continues to lead the way - great job.",
   "You're producing above the team's current pace.",
-  "Revenue performance remains a key strength.",
-  "Your production levels are setting a strong example."
+  "Revenue performance remains a key strength - keep up the great work.",
+  "Your production levels are setting a strong example - way to go bub."
 ];
 
 const revenueEliteMessages = [
