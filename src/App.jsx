@@ -2824,6 +2824,8 @@ const revenueRankLabel = pmData.revenueRank.rank
 const closingRankLabel = pmData.closingRateRank.rank
   ? `#${pmData.closingRateRank.rank}`
   : "N/A";
+  const isRevenueLeader = pmData.revenueRank?.rank === 1;
+const isClosingLeader = pmData.closingRateRank?.rank === 1;
 const revenueVsLY = compareNumbers(
   pmData.contractTotal,
   pmData.lyContractTotal
