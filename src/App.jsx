@@ -3612,15 +3612,16 @@ const quarterlyGoalClass =
   {!isCustomMode && (
 <div className="pm-rank-row">
   <div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
-    {isRevenueLeader && (
-      <div className="elite-rank-seal">
-        <b>1st</b>
-      </div>
-    )}
+  <small>Revenue Rank</small>
 
-    <small>Revenue Rank</small>
-    <strong>{revenueRankLabel}</strong>
-  </div>
+  <strong>{revenueRankLabel}</strong>
+
+  {isRevenueLeader && (
+    <div className="top-dawg-label">
+      TOP DAWG
+    </div>
+  )}
+</div>
 
   <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
     {isClosingLeader && (
