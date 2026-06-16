@@ -2116,20 +2116,6 @@ input::placeholder {
   color: #b8860b !important;
 }
 
-.pm-rank-row > .pm-rank-card .rank-champion-badge {
-  position: absolute !important;
-  top: 6px !important;
-  right: 6px !important;
-  min-width: auto !important;
-  padding: 4px 8px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(135deg, #f7d046, #b8860b) !important;
-  color: white !important;
-  font-size: 10px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  z-index: 2 !important;
-}
 .pm-rank-card {
   position: relative;
   overflow: visible;
@@ -2152,19 +2138,37 @@ input::placeholder {
 .pm-rank-card.rank-leader strong {
   color: #b8860b !important;
 }
+.pm-rank-card {
+  position: relative;
+  overflow: hidden;
+}
 
-.leader-crown {
+.pm-rank-card.rank-leader {
+  background: linear-gradient(180deg, #fff9dc 0%, #fff4bd 100%) !important;
+  border: 2px solid #d4af37 !important;
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.25);
+  padding-top: 30px !important;
+}
+
+.pm-rank-card.rank-leader strong {
+  color: #b8860b !important;
+}
+
+.leader-banner {
   position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
 
-  font-size: 34px;
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  color: white;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+
+  padding: 5px 0;
   line-height: 1;
-
-  filter: drop-shadow(
-    0 4px 8px rgba(0,0,0,.25)
-  );
-
-  z-index: 10;
 }
