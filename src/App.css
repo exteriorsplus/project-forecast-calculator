@@ -2096,26 +2096,37 @@ input::placeholder {
     width: 100%;
   }
 }
-.pm-rank-card {
-  position: relative;
-  overflow: hidden;
+.pm-rank-row > .pm-rank-card {
+  position: relative !important;
+  overflow: hidden !important;
+  background: #f9fafb;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 16px 18px 14px;
+  min-width: 160px;
 }
 
-.pm-rank-card.rank-leader {
-  border: 2px solid #d4af37;
-  background: linear-gradient(180deg, #fffdf3 0%, #f8f8f8 100%);
-  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.28);
+.pm-rank-row > .pm-rank-card.rank-leader {
+  background: linear-gradient(180deg, #fff8d8 0%, #fffdf3 100%) !important;
+  border-color: #d4af37 !important;
+  box-shadow: 0 10px 24px rgba(212, 175, 55, 0.35) !important;
 }
 
-.rank-champion-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: linear-gradient(135deg, #f7d046, #b8860b);
-  color: white;
-  border-radius: 999px;
-  padding: 5px 9px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.4px;
+.pm-rank-row > .pm-rank-card.rank-leader strong {
+  color: #b8860b !important;
+}
+
+.pm-rank-row > .pm-rank-card .rank-champion-badge {
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  min-width: auto !important;
+  padding: 4px 8px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #f7d046, #b8860b) !important;
+  color: white !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  z-index: 2 !important;
 }
