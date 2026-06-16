@@ -2153,21 +2153,35 @@ input::placeholder {
   color: #b8860b !important;
 }
 
-.leader-banner {
-  position: absolute;
-  top: 8px;
-  left: 8px;
 
-  background: #d4af37;
-  color: #ffffff;
+.pm-rank-row > .pm-rank-card {
+  position: relative !important;
+  overflow: visible !important;
+  background: #f9fafb !important;
+  border: 2px solid transparent !important;
+  border-radius: 14px !important;
+  padding: 16px 18px 14px !important;
+  min-width: 160px !important;
+  text-align: center !important;
+}
 
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
+.pm-rank-row > .pm-rank-card.rank-leader {
+  background: linear-gradient(180deg, #fff9dc 0%, #fff4bd 100%) !important;
+  border-color: #d4af37 !important;
+  box-shadow: 0 12px 28px rgba(212, 175, 55, 0.32) !important;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader strong {
+  color: #b8860b !important;
+}
+
+.top-performer-label {
+  margin-top: 8px;
+  color: #b8860b;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
   text-transform: uppercase;
-
-  padding: 3px 8px;
-  border-radius: 999px;
-
-  z-index: 5;
+  border-top: 1px solid rgba(212, 175, 55, 0.4);
+  padding-top: 6px;
 }
