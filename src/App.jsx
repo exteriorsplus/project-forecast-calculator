@@ -2911,9 +2911,9 @@ const revenueStrongMessages = [
 const revenueEliteMessages = [
   "Revenue production is significantly outperforming the team average.",
   "You're operating well above the team's current production pace.",
-  "Your revenue performance ranks among the strongest on the team.",
-  "Production continues to separate you from the field.",
-  "You're creating substantial value compared with team benchmarks."
+  "Your revenue performance ranks among the strongest on the team - amazing job.",
+  "Production continues to separate you from the field - keep pushing the needle.",
+  "You're creating substantial value compared with team benchmarks. Great work."
 ];
 
 const revenueNeedsMessages = [
