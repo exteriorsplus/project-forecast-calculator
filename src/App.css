@@ -2114,11 +2114,36 @@ input::placeholder {
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader {
-  background: #f9fafb;
-  border-color: #21c331;
-  box-shadow:
-    0 0 0 1px rgba(212, 175, 55, 0.12),
-    0 10px 22px rgba(212, 175, 55, 0.16);
+  background: linear-gradient(
+    180deg,
+    #fffef7 0%,
+    #fffbe6 100%
+  );
+
+  border-color: #d4af37;
+
+  animation: topDawgGlow 3s ease-in-out infinite;
+}
+
+@keyframes topDawgGlow {
+  0% {
+    box-shadow:
+      0 0 0 1px rgba(212,175,55,.15),
+      0 0 8px rgba(212,175,55,.18);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(212,175,55,.25),
+      0 0 20px rgba(212,175,55,.35),
+      0 0 40px rgba(212,175,55,.18);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(212,175,55,.15),
+      0 0 8px rgba(212,175,55,.18);
+  }
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader strong {
