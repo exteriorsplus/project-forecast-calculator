@@ -2098,9 +2098,9 @@ input::placeholder {
 }
 
 /* Top Dawg rank callout
-   Clean replacement for prior gold/crown/badge experiments.
-   The normal rank card keeps its original look; #1 cards only receive a gold border
-   and can show a subtle "TOP DAWG" label when the JSX renders .top-dawg-label. */
+   Clean #1 treatment for Revenue Rank / Closing Rate Rank cards.
+   Normal cards stay neutral. #1 cards stay white inside and receive the animated neon glow.
+*/
 
 .pm-rank-row > .pm-rank-card {
   position: relative;
@@ -2115,13 +2115,28 @@ input::placeholder {
 
 .pm-rank-row > .pm-rank-card.rank-leader {
   background: #ffffff;
-
   border: 2px solid #fffb00;
-
   animation: topDawgGlow 3s ease-in-out infinite;
 }
 
-@keyframes topDawgGlow {  
+.pm-rank-row > .pm-rank-card.rank-leader strong {
+  color: #b91c1c;
+}
+
+.top-dawg-label {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(212, 175, 55, 0.30);
+  color: #262626;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  line-height: 1;
+  text-transform: uppercase;
+  animation: topDawgTextGlow 3s ease-in-out infinite;
+}
+
+@keyframes topDawgGlow {
   0% {
     box-shadow:
       0 0 8px rgb(255, 247, 0),
@@ -2142,25 +2157,6 @@ input::placeholder {
   }
 }
 
-.pm-rank-row > .pm-rank-card.rank-leader strong {
-  color: #b91c1c;
-}
-
-.top-dawg-label {
-  margin-top: 10px;
-  padding-top: 8px;
-
-  border-top: 1px solid rgba(212,175,55,.30);
-
-  color: #262626;
-
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-
-  animation: topDawgTextGlow 3s ease-in-out infinite;
-}
 @keyframes topDawgTextGlow {
   0% {
     text-shadow:
@@ -2180,47 +2176,4 @@ input::placeholder {
       0 0 6px rgb(255, 0, 179),
       0 0 12px rgb(255, 247, 0);
   }
-}
-
-.top-dawg-label {
-  margin-top: 10px;
-  padding-top: 8px;
-
-  border-top: 1px solid rgba(212,175,55,.30);
-
-  color: #262626;
-
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-
-  animation: topDawgTextGlow 3s ease-in-out infinite;
-}
-@keyframes topDawgTextGlow {
-  0% {
-    text-shadow:
-      0 0 4px rgb(255, 247, 0),
-      0 0 8px rgb(255, 0, 179);
-  }
-
-  50% {
-    text-shadow:
-      0 0 8px rgb(0, 98, 255),
-      0 0 16px rgb(255, 0, 179),
-      0 0 24px rgb(255, 247, 0);
-  }
-
-  100% {
-    text-shadow:
-      0 0 4px rgb(255, 0, 179),
-      0 0 8px rgb(255, 247, 0);
-  }
-}
-.pm-rank-card.rank-leader {
-  animation: topDawgGlow 3s ease-in-out infinite;
-}
-
-.top-dawg-label {
-  animation: topDawgGlowText 3s ease-in-out infinite;
 }
