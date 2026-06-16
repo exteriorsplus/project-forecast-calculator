@@ -2148,7 +2148,8 @@ input::placeholder {
 
 .top-dawg-label {
   margin-top: 10px;
-  padding-top: 8px;
+  padding: 8px 12px;
+  display: inline-block;
 
   border-top: 1px solid rgba(212,175,55,.30);
 
@@ -2159,9 +2160,12 @@ input::placeholder {
   letter-spacing: 2px;
   text-transform: uppercase;
 
-  text-shadow:
-    0 0 6px rgba(255,215,0,.50),
-    0 0 12px rgba(255,215,0,.35),
-    0 0 20px rgba(255,215,0,.20);
+  background: rgba(255,215,0,.10);
+
+  box-shadow:
+    0 0 10px rgba(255,215,0,.25),
+    0 0 20px rgba(255,215,0,.12);
+
+  border-radius: 999px;
 }
 
