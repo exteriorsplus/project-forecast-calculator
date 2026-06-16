@@ -2174,14 +2174,76 @@ input::placeholder {
 .pm-rank-row > .pm-rank-card.rank-leader strong {
   color: #b8860b !important;
 }
+.pm-rank-row > .pm-rank-card {
+  position: relative !important;
+  overflow: visible !important;
+  background: #f9fafb !important;
+  border: 1px solid #eef0f4 !important;
+  border-radius: 14px !important;
+  padding: 18px 20px 16px !important;
+  min-width: 160px !important;
+  text-align: center !important;
+}
 
-.top-performer-label {
-  margin-top: 8px;
-  color: #b8860b;
-  font-size: 10px;
+.pm-rank-row > .pm-rank-card.rank-leader {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 42%),
+    linear-gradient(180deg, #fffdf3 0%, #fff7cf 100%) !important;
+
+  border: 2px solid #c9a227 !important;
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.85) inset,
+    0 14px 30px rgba(201, 162, 39, 0.28) !important;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader small {
+  color: #8a6d12 !important;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader strong {
+  color: #a98200 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7);
+}
+
+.elite-rank-seal {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(circle at 35% 25%, #fff4a8 0%, #f3c742 32%, #b8860b 100%);
+
+  border: 2px solid #fff6c7;
+
+  box-shadow:
+    0 6px 14px rgba(120, 84, 0, 0.28),
+    0 0 0 1px rgba(184, 134, 11, 0.35);
+
+  color: #ffffff;
+  z-index: 5;
+}
+
+.elite-rank-seal span {
+  font-size: 11px;
+  line-height: 1;
+  margin-bottom: 1px;
+  color: #fff7c2;
+}
+
+.elite-rank-seal b {
+  font-size: 13px;
+  line-height: 1;
   font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-top: 1px solid rgba(212, 175, 55, 0.4);
-  padding-top: 6px;
+  letter-spacing: -0.3px;
+  color: #ffffff;
 }
