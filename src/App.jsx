@@ -3029,7 +3029,7 @@ const futureMonthMessages = [
   "Preparation today becomes production tomorrow.",
   "The month hasn't started yet bub, but the confidence should.",
   "We're not there yet, bub, but I already know you're going to be ready.",
-  "The work you do now is what makes future months look easy."
+  "The work you do now is what makes future months successful."
 ];
 
 
