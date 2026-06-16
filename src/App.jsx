@@ -3018,7 +3018,7 @@ const futureMonthMessages = [
   "We're not here yet, bub, but I know you'll be ready for whatever comes your way.",
   "The scoreboard is still blank, but champions prepare before the game starts.",
   "Every great month starts at zero. Let's go build something special.",
-  "The opportunity is in front of you bub. Trust your process and attack the month.",
+  "The opportunity is in front of you bub. Trust the process and attack the month.",
   "Success leaves clues, and you've already proven you know how to win.",
   "A strong month begins long before the first contract is signed.",
   "Stay focused, stay hungry, and let the results take care of themselves.",
