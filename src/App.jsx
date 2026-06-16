@@ -3623,16 +3623,17 @@ const quarterlyGoalClass =
   )}
 </div>
 
-  <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
-    {isClosingLeader && (
-      <div className="elite-rank-seal">
-        <b>1st</b>
-      </div>
-    )}
+<div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
+  <small>Closing Rate Rank</small>
 
-    <small>Closing Rate Rank</small>
-    <strong>{closingRankLabel}</strong>
-  </div>
+  <strong>{closingRankLabel}</strong>
+
+  {isClosingLeader && (
+    <div className="top-dawg-label">
+      TOP DAWG
+    </div>
+  )}
+</div>
 </div>
   )}
 </div>
