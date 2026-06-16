@@ -3153,7 +3153,7 @@ const quarterNeedsPushMessages = [
 ];
 
 const futureQuarterMessages = [
-  "We're not in this quarter just yet, bub, but I know you'll be ready when it gets here.",
+  "We're not in this quarter just yet bub, but I know you'll be ready when it gets here.",
   "This quarter hasn't started yet bub, but preparation starts now.",
   "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
   "Future quarters are won by the habits you build today bub.",
