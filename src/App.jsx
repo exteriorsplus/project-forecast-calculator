@@ -2824,8 +2824,8 @@ const revenueRankLabel = pmData.revenueRank.rank
 const closingRankLabel = pmData.closingRateRank.rank
   ? `#${pmData.closingRateRank.rank}`
   : "N/A";
-  const isRevenueLeader = pmData.revenueRank?.rank === 1;
-const isClosingLeader = pmData.closingRateRank?.rank === 1;
+const isRevenueLeader = Number(pmData.revenueRank?.rank) === 1;
+const isClosingLeader = Number(pmData.closingRateRank?.rank) === 1;
 const revenueVsLY = compareNumbers(
   pmData.contractTotal,
   pmData.lyContractTotal
@@ -3610,17 +3610,19 @@ const quarterlyGoalClass =
   <h2>{currentPM?.name || projectManagers[0].name}</h2>
 
   {!isCustomMode && (
-    <div className="pm-rank-row">
-      <div>
-        <small>Revenue Rank</small>
-        <strong>{revenueRankLabel}</strong>
-      </div>
+<div className="pm-rank-row">
+  <div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
+    {isRevenueLeader && <div className="rank-champion-badge">🏆 #1</div>}
+    <small>Revenue Rank</small>
+    <strong>{revenueRankLabel}</strong>
+  </div>
 
-      <div>
-        <small>Closing Rate Rank</small>
-        <strong>{closingRankLabel}</strong>
-      </div>
-    </div>
+  <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
+    {isClosingLeader && <div className="rank-champion-badge">🏆 #1</div>}
+    <small>Closing Rate Rank</small>
+    <strong>{closingRankLabel}</strong>
+  </div>
+</div>
   )}
 </div>
 
