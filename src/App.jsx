@@ -3420,7 +3420,7 @@ else if (monthlyGoalPercent >= 0.9) {
 }
 else if (monthlyGoalPercent >= 0.75) {
   messages.push(
-    "Monthly production remains on a competitive pace with opportunity to finish strong."
+    "Monthly production remains on a competitive pace with the opportunity to finish strong."
   );
 }
 else {
@@ -3432,7 +3432,7 @@ else {
   // Quarterly Performance
 if (quarterlyGoalPercent >= 1) {
   messages.push(
-    "Quarterly goal has already been achieved."
+    "Quarterly goal has already been achieved. That's fire."
   );
 }
 else if (quarterlyGoalPercent >= 0.9) {
