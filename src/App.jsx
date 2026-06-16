@@ -3025,7 +3025,7 @@ const futureMonthMessages = [
   "You've built momentum before, and there's no reason this month can't be another great one.",
   "The month is unwritten, but I like our chances.",
   "Future-you is counting on present-you. Let's get after it.",
-  "You know the playbook. Now it's time to run it.",
+  "You know the playbook. Now it's time to execute it.",
   "Preparation today becomes production tomorrow.",
   "The month hasn't started yet bub, but the confidence should.",
   "We're not there yet, bub, but I already know you're going to be ready.",
