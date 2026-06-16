@@ -2164,22 +2164,38 @@ input::placeholder {
 @keyframes topDawgTextGlow {
   0% {
     text-shadow:
-      0 0 4px rgb(255, 247, 0),
-      0 0 8px rgb(255, 0, 179);
+      0 0 6px rgb(255, 247, 0),
+      0 0 12px rgb(255, 0, 179);
   }
 
   50% {
     text-shadow:
-      0 0 8px rgb(0, 98, 255),
-      0 0 16px rgb(255, 0, 179),
-      0 0 24px rgb(255, 247, 0);
+      0 0 10px rgb(0, 98, 255),
+      0 0 20px rgb(255, 0, 179),
+      0 0 32px rgb(255, 247, 0);
   }
 
   100% {
     text-shadow:
-      0 0 4px rgb(255, 0, 179),
-      0 0 8px rgb(255, 247, 0);
+      0 0 6px rgb(255, 0, 179),
+      0 0 12px rgb(255, 247, 0);
   }
+}
+
+.top-dawg-label {
+  margin-top: 10px;
+  padding-top: 8px;
+
+  border-top: 1px solid rgba(212,175,55,.30);
+
+  color: #262626;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  animation: topDawgTextGlow 3s ease-in-out infinite;
 }
 .pm-rank-card.rank-leader {
   animation: topDawgGlow 3s ease-in-out infinite;
