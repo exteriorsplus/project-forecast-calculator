@@ -2147,7 +2147,6 @@ input::placeholder {
   background: linear-gradient(180deg, #fff9dc 0%, #fff4bd 100%) !important;
   border: 2px solid #d4af37 !important;
   box-shadow: 0 10px 24px rgba(212, 175, 55, 0.25);
-  padding-top: 30px !important;
 }
 
 .pm-rank-card.rank-leader strong {
@@ -2156,19 +2155,19 @@ input::placeholder {
 
 .leader-banner {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 8px;
+  left: 8px;
 
-  background: linear-gradient(135deg, #d4af37, #b8860b);
-  color: white;
+  background: #d4af37;
+  color: #ffffff;
 
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  text-align: center;
 
-  padding: 5px 0;
-  line-height: 1;
+  padding: 3px 8px;
+  border-radius: 999px;
+
+  z-index: 5;
 }
