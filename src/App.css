@@ -2124,21 +2124,21 @@ input::placeholder {
 @keyframes topDawgGlow {
   0% {
     box-shadow:
-      0 0 8px rgb(0, 0, 0),
-      0 0 16px rgb(255, 238, 0);
+      0 0 8px rgb(255, 0, 195),
+      0 0 16px rgb(0, 225, 255);
   }
 
   50% {
     box-shadow:
-      0 0 16px rgb(0, 0, 0),
-      0 0 32px rgb(255, 238, 0),
-      0 0 48px rgb(0, 0, 0);
+      0 0 16px rgb(0, 51, 255),
+      0 0 32px rgb(255, 0, 0),
+      0 0 48px rgb(255, 0, 217);
   }
 
   100% {
     box-shadow:
-      0 0 8px rgb(255, 238, 0),
-      0 0 16px rgb(0, 0, 0);
+      0 0 8px rgb(170, 0, 255),
+      0 0 16px rgb(255, 0, 93);
   }
 }
 
