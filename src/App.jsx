@@ -3252,7 +3252,7 @@ const referralGoalNotMetMessages = [
 
 const referralInProgressMessages = [
   "the referral goal has not been reached yet. Keep asking happy customers who else you can help.",
-  "there is still room to build more referral opportunities this month.",
+  "there is still room to build more referral opportunities this month - you got this.",
   "referrals need a little more focus. Every satisfied customer can open another door.",
   "keep planting referral seeds. The best leads often come from people who already trust us.",
   "the referral activity is behind goal, but a few intentional asks can close the gap quickly."
