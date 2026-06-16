@@ -1455,6 +1455,10 @@ input::placeholder {
   font-size: 22px;
 }
 
+.pm-rank-card.rank-leader strong {
+  animation: revenueRankGlow 3s ease-in-out infinite;
+}
+
 .pm-month-selector {
   display: flex;
   flex-direction: column;
@@ -2175,5 +2179,25 @@ input::placeholder {
     text-shadow:
       0 0 6px rgb(255, 0, 179),
       0 0 12px rgb(255, 247, 0);
+  }
+}
+@keyframes revenueRankGlow {
+  0% {
+    text-shadow:
+      0 0 8px rgb(255, 247, 0),
+      0 0 16px rgb(255, 0, 179);
+  }
+
+  50% {
+    text-shadow:
+      0 0 14px rgb(0, 98, 255),
+      0 0 28px rgb(255, 0, 179),
+      0 0 40px rgb(255, 247, 0);
+  }
+
+  100% {
+    text-shadow:
+      0 0 8px rgb(255, 0, 179),
+      0 0 16px rgb(255, 247, 0);
   }
 }
