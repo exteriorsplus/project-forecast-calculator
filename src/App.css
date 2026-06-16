@@ -2124,7 +2124,7 @@ input::placeholder {
 @keyframes topDawgGlow {
   0% {
     box-shadow:
-      0 0 8px rgb(255, 0, 195),
+      0 0 8px rgb(255, 0, 0),
       0 0 16px rgb(0, 225, 255);
   }
 
@@ -2138,7 +2138,7 @@ input::placeholder {
   100% {
     box-shadow:
       0 0 8px rgb(170, 0, 255),
-      0 0 16px rgb(255, 0, 93);
+      0 0 16px rgb(0, 255, 255);
   }
 }
 
