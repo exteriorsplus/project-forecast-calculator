@@ -2137,8 +2137,8 @@ input::placeholder {
 
   100% {
     box-shadow:
-      0 0 8px rgb(255, 238, 0),
-      0 0 16px rgb(251, 255, 0);
+      0 0 8px rgb(21, 0, 255),
+      0 0 16px rgb(51, 255, 0);
   }
 }
 
