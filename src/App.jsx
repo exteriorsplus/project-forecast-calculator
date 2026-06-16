@@ -3626,7 +3626,6 @@ const quarterlyGoalClass =
   <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
     {isClosingLeader && (
       <div className="elite-rank-seal">
-        <span>★</span>
         <b>1st</b>
       </div>
     )}
