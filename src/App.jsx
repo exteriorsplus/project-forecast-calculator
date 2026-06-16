@@ -2893,7 +2893,7 @@ const progressMessages = [
 ];
 
 const pushMessages = [
-  "Keep pushing. A strong finish can still put you back on pace.",
+  "Keep pushing bub. A strong finish can still put you back on pace.",
   "There is plenty of opportunity remaining to improve results.",
   "Focus on the trainings we've had and the numbers will follow.",
   "A few strong weeks can quickly change the trajectory. You got this!",
