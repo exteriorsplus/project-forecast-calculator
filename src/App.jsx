@@ -3618,7 +3618,7 @@ const quarterlyGoalClass =
 
   {isRevenueLeader && (
     <div className="top-dawg-label">
-      TOP DAWG
+     <strong> TOP DAWG </strong>
     </div>
   )}
 </div>
