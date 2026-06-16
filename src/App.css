@@ -2130,3 +2130,41 @@ input::placeholder {
   line-height: 1 !important;
   z-index: 2 !important;
 }
+.pm-rank-card {
+  position: relative;
+  overflow: visible;
+}
+
+.pm-rank-card.rank-leader {
+  background: linear-gradient(
+    180deg,
+    #fff9dc 0%,
+    #fff3b0 100%
+  ) !important;
+
+  border: 2px solid #d4af37 !important;
+
+  box-shadow:
+    0 0 0 2px rgba(212,175,55,.15),
+    0 12px 28px rgba(212,175,55,.25);
+}
+
+.pm-rank-card.rank-leader strong {
+  color: #b8860b !important;
+}
+
+.leader-crown {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-size: 34px;
+  line-height: 1;
+
+  filter: drop-shadow(
+    0 4px 8px rgba(0,0,0,.25)
+  );
+
+  z-index: 10;
+}
