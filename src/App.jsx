@@ -2991,7 +2991,7 @@ const closeMessages = [
   "You're closer than you think. Keep pushing. A few additional contracts could completely change the outcome of this month.",
   "A strong finish can put you over the top. Stay focused on the opportunities directly in front of you.",
   "The goal remains within reach. Consistent activity over the next few days can make all the difference.",
-  "Keep building momentum. You're not far away. Continue working your process and trust the results will come.",
+  "Keep building momentum. You're not too far away. Continue working your process and trust the results will come.",
   "Stay focused. A few more wins could make the difference. The opportunity to finish strong is still there.",
   "The goal is still achievable. Continue following up and creating opportunities. Success often comes from persistence.",
   "You're in striking distance of your target. Keep your energy high and maintain urgency in every conversation.",
