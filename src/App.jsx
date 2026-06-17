@@ -1493,14 +1493,15 @@ const getTeamMetricRow = (metric) => {
     let contracts = 0;
 
     salesRows.forEach((row) => {
-      const rowPMValues = [
-        row["Project Manager"],
-        row["Salesperson"],
-        row["Sales Rep"],
-        row["Sales Representative"],
-        row["Primary Salesperson"],
-        row["Estimator"],
-      ].map((value) => String(value || "").trim());
+const rowPMValues = [
+  row["Project Manager"],
+  row["Salesperson"],
+  row["Sales Rep"],
+  row["Sales Representative"],
+  row["Primary Salesperson"],
+  row["Sales Owner"],
+  row["Estimator"],
+].map((value) => String(value || "").trim());
 
       if (!rowPMValues.includes(pmName)) return;
 
