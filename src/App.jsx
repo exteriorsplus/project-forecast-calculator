@@ -4149,27 +4149,33 @@ const quarterlyGoalClass =
   }}
 />
 
-<PMMetricCard
-  label="Quarterly Remaining"
-  value={money(pmData.quarterlyRemaining)}
-  comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
-  comparisonValue=""
-  customMessage={quarterlyMotivation}
-/>
+<<div className="pm-metric-card">
+  <span>
+    {pmData.quarterlyRemaining >= 0
+      ? "Quarterly Remaining"
+      : "Over Quarterly Goal"}
+  </span>
+
+  <strong>{money(Math.abs(pmData.quarterlyRemaining))}</strong>
+
+  <div className="pm-comparison-line">
+    <small>{pmData.quarterDaysRemaining} days quarterly remaining</small>
+    <small>{pmData.quarterDateRangeLabel}</small>
+  </div>
+
+  <div className="mike-moment-mini">
+    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
+
+    <div className="mike-moment-mini-bubble">
+      <div className="mike-moment-mini-title">
+        ✨MAGIC MIKE MOMENT✨
+      </div>
+
+      <p>{quarterlyMotivation}</p>
+    </div>
   </div>
 </div>
-<div
-  style={{
-    fontSize: "12px",
-    fontWeight: 700,
-    color: "#6b7280",
-    textTransform: "uppercase",
-    letterSpacing: ".08em",
-    marginTop: "4px"
-  }}
->
-  {pmData.quarterDateRangeLabel}
-</div>
+
 
 <div className="pm-section-card">
   <h2>Referral Information</h2>
