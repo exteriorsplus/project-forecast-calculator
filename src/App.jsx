@@ -3294,6 +3294,65 @@ const futureMonthMessages = [
   "The future month is waiting. Let's make sure it meets a prepared version of you.",
   "You got this. When the month opens, attack it like it already belongs to you."
 ];
+
+
+const generatePMInsight = ({
+  monthlyGoalPercent = 0,
+  quarterlyGoalPercent = 0,
+  revenueVsTeam = 0,
+  averageVsTeam = 0,
+  closingRateVsTeam = 0,
+  isPastMonth = false,
+  isFutureMonth = false,
+  isCustomMode = false,
+}) => {
+  if (isFutureMonth) {
+    return pickRandom(futureMonthMessages);
+  }
+
+  const goalMessage = (() => {
+    if (monthlyGoalPercent >= 1) return pickRandom(exceededGoalMessages);
+    if (monthlyGoalPercent >= 0.85) return pickRandom(onPaceMessages);
+    if (monthlyGoalPercent >= 0.5) return pickRandom(progressMessages);
+    if (isPastMonth) return pickRandom(needsPushMessages);
+    return pickRandom(pushMessages);
+  })();
+
+  const revenueMessage = (() => {
+    if (revenueVsTeam >= 0.25) return pickRandom(revenueEliteMessages);
+    if (revenueVsTeam >= 0.05) return pickRandom(revenueStrongMessages);
+    if (revenueVsTeam <= -0.05) return pickRandom(revenueNeedsMessages);
+    return "";
+  })();
+
+  const averageMessage = (() => {
+    if (averageVsTeam >= 0.05) return pickRandom(avgStrongMessages);
+    if (averageVsTeam <= -0.05) return pickRandom(avgNeedsMessages);
+    return "";
+  })();
+
+  const closingMessage = (() => {
+    if (closingRateVsTeam >= 0.02) return pickRandom(closeStrongMessages);
+    if (closingRateVsTeam <= -0.02) return pickRandom(closeNeedsMessages);
+    return "";
+  })();
+
+  const quarterMessage = (() => {
+    if (isCustomMode) return "";
+    if (quarterlyGoalPercent >= 1) {
+      return "Quarterly goal is already handled, bub. That's fire. Keep pushing and keep deep driving.";
+    }
+    if (quarterlyGoalPercent >= 0.75) {
+      return "Quarterly finish is still right there. One team one dream. Keep pushing.";
+    }
+    return "";
+  })();
+
+  return [goalMessage, quarterMessage, revenueMessage, averageMessage, closingMessage]
+    .filter(Boolean)
+    .join(" ");
+};
+
 const isFutureMonth =
   selectedMonthDate.getFullYear() > now.getFullYear() ||
   (selectedMonthDate.getFullYear() === now.getFullYear() &&
