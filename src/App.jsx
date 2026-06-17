@@ -3371,7 +3371,12 @@ const goalMotivation = (() => {
       msg = pickRandom(needsPushMessages);
   }
 
-  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+const quarterTiming =
+  pmData.quarterDateRangeLabel
+    ? ` This quarter runs ${pmData.quarterDateRangeLabel}, with ${pmData.quarterDaysRemaining} days remaining.`
+    : "";
+
+return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}${quarterTiming}`;
 })();;
 const quarterCrushingMessages = [
 "You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
