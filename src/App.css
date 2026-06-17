@@ -2134,4 +2134,23 @@ input::placeholder {
   line-height: 1;
   text-transform: uppercase;
 }
+@keyframes topDawgGlow {
+  0% {
+    box-shadow:
+      0 0 8px rgb(255, 247, 0),
+      0 0 16px rgb(255, 0, 179);
+  }
 
+  50% {
+    box-shadow:
+      0 0 16px rgb(0, 98, 255),
+      0 0 32px rgb(255, 0, 179),
+      0 0 48px rgb(255, 247, 0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 8px rgb(255, 0, 179),
+      0 0 16px rgb(255, 247, 0);
+  }
+}
