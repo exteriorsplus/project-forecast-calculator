@@ -2222,6 +2222,70 @@ const quarterlyReferralStatus = getReferralStatusForRange(
     ? { start: quarterStartDate, end: quarterEndDate }
     : null
 );
+
+const getClosedMonthOptions = () => {
+  const today = dateOnly(new Date());
+
+  return monthOptions
+    .filter((month) => {
+      const bounds = getMonthDateBoundsForSales(month);
+      return bounds && dateOnly(bounds.end) < today;
+    })
+    .sort((a, b) => getMonthSortValue(b) - getMonthSortValue(a));
+};
+
+const getTopRevenueDawgForMonth = (month) => {
+  const bounds = getMonthDateBoundsForSales(month);
+  if (!bounds) return null;
+
+  const ranked = projectManagers
+    .filter((pm) => pm.activeGoal)
+    .map((pm) => ({
+      name: pm.name,
+      value: getPMSalesDataForRange(pm.name, bounds.start, bounds.end)
+        .contractTotal,
+    }))
+    .filter((pm) => Number(pm.value || 0) > 0)
+    .sort((a, b) => b.value - a.value);
+
+  if (!ranked.length) return null;
+
+  const topValue = ranked[0].value;
+
+  return {
+    month,
+    names: ranked.filter((pm) => pm.value === topValue).map((pm) => pm.name),
+    value: topValue,
+  };
+};
+
+const getTopClosingDawgForMonth = (month) => {
+  const ranked = projectManagers
+    .filter((pm) => pm.activeGoal)
+    .map((pm) => ({
+      name: pm.name,
+      value: getPMMetric(pm.name, "Closing Rate", month),
+    }))
+    .filter((pm) => Number(pm.value || 0) > 0)
+    .sort((a, b) => b.value - a.value);
+
+  if (!ranked.length) return null;
+
+  const topValue = ranked[0].value;
+
+  return {
+    month,
+    names: ranked.filter((pm) => pm.value === topValue).map((pm) => pm.name),
+    value: topValue,
+  };
+};
+
+const closedMonths = getClosedMonthOptions();
+
+const topDawgLeaderboards = {
+  revenue: closedMonths.map(getTopRevenueDawgForMonth).filter(Boolean),
+  closingRate: closedMonths.map(getTopClosingDawgForMonth).filter(Boolean),
+};
   
 return {
   monthOptions,
@@ -2246,6 +2310,7 @@ return {
       teamClosingRate,
       revenueRank,
       closingRateRank,
+      topDawgLeaderboards,
       saleAmount,
 jobCost,
 commission,
@@ -3979,6 +4044,48 @@ const quarterlyGoalClass =
   <strong>{money(pmData.commission)}</strong>
 </div>
 </div>
+          </div>
+
+          <div className="pm-section-card top-dawg-leaderboard-card">
+            <h2>Top Dawg Leaderboard</h2>
+
+            <p className="top-dawg-leaderboard-note">
+              Month-end winners only. Current open month is excluded.
+            </p>
+
+            <div className="top-dawg-leaderboard-grid">
+              <div className="top-dawg-board">
+                <h3>Revenue Top Dawgs</h3>
+
+                {pmData.topDawgLeaderboards?.revenue?.length ? (
+                  pmData.topDawgLeaderboards.revenue.map((item) => (
+                    <div className="top-dawg-board-row" key={`revenue-${item.month}`}>
+                      <span>{item.month}</span>
+                      <strong>{item.names.join(", ")}</strong>
+                      <b>{money(item.value)}</b>
+                    </div>
+                  ))
+                ) : (
+                  <p className="top-dawg-empty">No closed-month revenue winners yet.</p>
+                )}
+              </div>
+
+              <div className="top-dawg-board">
+                <h3>Closing Rate Top Dawgs</h3>
+
+                {pmData.topDawgLeaderboards?.closingRate?.length ? (
+                  pmData.topDawgLeaderboards.closingRate.map((item) => (
+                    <div className="top-dawg-board-row" key={`closing-${item.month}`}>
+                      <span>{item.month}</span>
+                      <strong>{item.names.join(", ")}</strong>
+                      <b>{displayPercent(item.value, 1)}</b>
+                    </div>
+                  ))
+                ) : (
+                  <p className="top-dawg-empty">No closed-month closing-rate winners yet.</p>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       </div>

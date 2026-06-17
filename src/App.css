@@ -2135,11 +2135,7 @@ input::placeholder {
   text-transform: uppercase;
 }
 @keyframes topDawgGlow {
-  0% {
-    box-shadow:
-      0 0 8px rgb(255, 247, 0),
-      0 0 16px rgb(255, 0, 179);
-  }
+ 
 
   50% {
     box-shadow:
@@ -2152,5 +2148,89 @@ input::placeholder {
     box-shadow:
       0 0 8px rgb(255, 0, 179),
       0 0 16px rgb(255, 247, 0);
+  }
+}
+
+.top-dawg-leaderboard-card {
+  border-top: 10px solid #111827;
+}
+
+.top-dawg-leaderboard-note {
+  margin: -8px 0 22px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.top-dawg-leaderboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.top-dawg-board {
+  background: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.top-dawg-board h3 {
+  margin: 0 0 14px;
+  text-align: center;
+  color: #111827;
+  font-size: 18px;
+}
+
+.top-dawg-board-row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.top-dawg-board-row:first-of-type {
+  border-top: none;
+}
+
+.top-dawg-board-row span {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.top-dawg-board-row strong {
+  color: #111827;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.top-dawg-board-row b {
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.top-dawg-empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .top-dawg-leaderboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-dawg-board-row {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 }
