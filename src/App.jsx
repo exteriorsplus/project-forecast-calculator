@@ -1162,12 +1162,16 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       }, {});
     };
 
-    const hasRequiredSalesColumns = (rows) => {
-      if (!rows.length) return false;
+    const getSalesHeaders = (rows) => {
+      if (!rows.length) return [];
 
-      const headers = Object.keys(rows[0]).map((header) =>
+      return Object.keys(rows[0]).map((header) =>
         String(header || "").replace(/^\uFEFF/, "").trim()
       );
+    };
+
+    const hasRequiredSalesColumns = (rows) => {
+      const headers = getSalesHeaders(rows);
 
       const hasApprovedDate = headers.includes("Approved Date");
       const hasContractAmount = headers.includes("Contract Amount");
@@ -1210,6 +1214,45 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
       });
     };
 
+    const getRowsFromSheet = (sheet) => {
+      return XLSX.utils
+        .sheet_to_json(sheet, {
+          defval: "",
+        })
+        .map(normalizeSalesRowKeys);
+    };
+
+    const findSalesRowsInWorkbook = (workbook) => {
+      const sheetNames = workbook.SheetNames || [];
+      const checkedSheets = [];
+
+      for (const sheetName of sheetNames) {
+        const sheet = workbook.Sheets[sheetName];
+        if (!sheet) continue;
+
+        const rows = getRowsFromSheet(sheet);
+        checkedSheets.push({
+          sheetName,
+          columns: getSalesHeaders(rows),
+          rowCount: rows.length,
+        });
+
+        if (hasRequiredSalesColumns(rows)) {
+          return {
+            sheetName,
+            rows,
+            checkedSheets,
+          };
+        }
+      }
+
+      return {
+        sheetName: "",
+        rows: [],
+        checkedSheets,
+      };
+    };
+
     for (const filePath of salesFileOptions) {
       try {
         setDataStatus(`Loading ${filePath.replace("/", "")}...`);
@@ -1222,33 +1265,29 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
 
         const buffer = await response.arrayBuffer();
         const workbook = await readSalesWorkbook(buffer);
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const result = findSalesRowsInWorkbook(workbook);
 
-        if (!sheet) {
-          throw new Error(`${filePath} did not contain a readable sheet.`);
-        }
-
-        const rows = XLSX.utils
-          .sheet_to_json(sheet, {
-            defval: "",
-          })
-          .map(normalizeSalesRowKeys);
-
-        if (!hasRequiredSalesColumns(rows)) {
-          const foundColumns = rows.length
-            ? Object.keys(rows[0]).join(", ")
-            : "No columns found";
+        if (!result.rows.length) {
+          const checkedSheetSummary = result.checkedSheets
+            .map(
+              (sheet) =>
+                `${sheet.sheetName}: ${sheet.columns.join(", ") || "No columns found"}`
+            )
+            .join(" | ");
 
           throw new Error(
-            `${filePath} loaded, but it does not look like the AccuLynx sales export. Found columns: ${foundColumns}`
+            `${filePath} loaded, but no sheet looked like the AccuLynx sales export. Checked sheets: ${checkedSheetSummary}`
           );
         }
 
-        const normalizedRows = rows.map(addNormalizedJobTradeType2);
+        const normalizedRows = result.rows.map(addNormalizedJobTradeType2);
 
         setSalesRows(normalizedRows);
         setDataStatus(
-          `${normalizedRows.length} rows loaded from ${filePath.replace("/", "")}`
+          `${normalizedRows.length} rows loaded from ${filePath.replace(
+            "/",
+            ""
+          )} / ${result.sheetName}`
         );
         return;
       } catch (error) {
