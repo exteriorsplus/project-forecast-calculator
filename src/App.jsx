@@ -3591,12 +3591,7 @@ const referralMotivation = (() => {
 
   const msg = pickRandom(messages);
 
-const quarterTiming =
-  pmData.quarterDateRangeLabel
-    ? ` This quarter runs ${pmData.quarterDateRangeLabel}, with ${pmData.quarterDaysRemaining} days remaining.`
-    : "";
-
-return `${firstName}, ${msg}${quarterTiming}`;
+return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 })();
 
 const quarterlyReferralGoalMetMessages = [
@@ -4159,14 +4154,11 @@ const quarterlyGoalClass =
 />
 
 <PMMetricCard
-  label={
-    pmData.quarterlyRemaining >= 0
-      ? "Quarterly Remaining"
-      : "Over Quarterly Goal"
-  }
-  value={money(Math.abs(pmData.quarterlyRemaining))}
+  label="Quarterly Remaining"
+  value={money(pmData.quarterlyRemaining)}
+  comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
+  comparisonValue={`(${pmData.quarterDateRangeLabel})`}
   customMessage={quarterlyMotivation}
-  messageTitle="✨MAGIC MIKE MOMENT✨"
 />
   </div>
 </div>
