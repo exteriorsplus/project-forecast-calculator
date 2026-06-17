@@ -3334,7 +3334,7 @@ const goalMotivation = (() => {
     else
       msg = "that month is behind you. Reset, refocus, and attack the next opportunity.";
   } else {
-    if (pct >= 1.5)
+    if (pct >= 1)
       msg = pickRandom(exceededGoalMessages);
     else if (pct >= 0.9)
       msg = pickRandom(onTrackMessages);
