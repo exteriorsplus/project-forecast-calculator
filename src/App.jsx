@@ -2095,6 +2095,31 @@ const quarterEndDate = quarterStartDate
     )
   : null;
 
+  const formatShortDate = (date) =>
+  date
+    ? date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "";
+
+const quarterDateRangeLabel =
+  quarterStartDate && quarterEndDate
+    ? `${formatShortDate(quarterStartDate)} - ${formatShortDate(quarterEndDate)}`
+    : "";
+
+const quarterDaysRemaining =
+  quarterEndDate
+    ? Math.max(
+        Math.ceil(
+          (dateOnly(quarterEndDate) - dateOnly(new Date())) /
+            (1000 * 60 * 60 * 24)
+        ),
+        0
+      )
+    : 0;
+
 const quarterMonths = quarterStartDate
   ? [0, 1, 2].map((offset) => {
       const date = new Date(
@@ -2328,6 +2353,8 @@ quarterlyGoal,
 quarterlyGoalPercent: quarterlyActualPercent,
 quarterlyProjectedPercent,
 quarterlyRemaining,
+quarterDateRangeLabel,
+quarterDaysRemaining,
 referralTotal: referralData.referralTotal,
 referralGoal: referralData.referralGoal,
 referralDelta: referralData.referralDelta,
@@ -2943,7 +2970,7 @@ const exceededGoalMessages = [
   "One team one dream. You're showing everybody what championship-level effort looks like.",
   "You're killing it bub. The work you've put in is showing up in a big way.",
   "No excuses, only progress. That's exactly the mindset that creates results like this.",
-  "You got this. The goal was the target, but you're proving there's another level available.",
+  "Mission accomplished. The goal was the target, but you're proving there's another level available.",
   "Keep pushing bub. Great performers stay hungry even after they win.",
   "That's fire. You're building momentum that can carry through the entire quarter.",
   "Deep driving every day created this result. Don't let off the gas now.",
@@ -3559,7 +3586,12 @@ const referralMotivation = (() => {
 
   const msg = pickRandom(messages);
 
-  return `${firstName}, ${msg}`;
+const quarterTiming =
+  pmData.quarterDateRangeLabel
+    ? ` This quarter runs ${pmData.quarterDateRangeLabel}, with ${pmData.quarterDaysRemaining} days remaining.`
+    : "";
+
+return `${firstName}, ${msg}${quarterTiming}`;
 })();
 
 const quarterlyReferralGoalMetMessages = [
