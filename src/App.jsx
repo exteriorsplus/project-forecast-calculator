@@ -3371,12 +3371,8 @@ const goalMotivation = (() => {
       msg = pickRandom(needsPushMessages);
   }
 
-const quarterTiming =
-  pmData.quarterDateRangeLabel
-    ? ` This quarter runs ${pmData.quarterDateRangeLabel}, with ${pmData.quarterDaysRemaining} days remaining.`
-    : "";
+return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
 
-return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}${quarterTiming}`;
 })();;
 const quarterCrushingMessages = [
 "You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
@@ -4157,10 +4153,22 @@ const quarterlyGoalClass =
   label="Quarterly Remaining"
   value={money(pmData.quarterlyRemaining)}
   comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
-  comparisonValue={`(${pmData.quarterDateRangeLabel})`}
+  comparisonValue=""
   customMessage={quarterlyMotivation}
 />
   </div>
+</div>
+<div
+  style={{
+    fontSize: "12px",
+    fontWeight: 700,
+    color: "#6b7280",
+    textTransform: "uppercase",
+    letterSpacing: ".08em",
+    marginTop: "4px"
+  }}
+>
+  {pmData.quarterDateRangeLabel}
 </div>
 
 <div className="pm-section-card">
