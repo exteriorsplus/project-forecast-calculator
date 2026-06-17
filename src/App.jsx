@@ -1151,20 +1151,57 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const loadSalesFile = async () => {
     const salesFileOptions = ["/sales.xlsx", "/sales.csv"];
 
+    const normalizeSalesRowKeys = (row) => {
+      return Object.entries(row).reduce((cleanRow, [key, value]) => {
+        const cleanKey = String(key || "")
+          .replace(/^\uFEFF/, "")
+          .trim();
+
+        cleanRow[cleanKey] = value;
+        return cleanRow;
+      }, {});
+    };
+
+    const hasRequiredSalesColumns = (rows) => {
+      if (!rows.length) return false;
+
+      const headers = Object.keys(rows[0]).map((header) =>
+        String(header || "").replace(/^\uFEFF/, "").trim()
+      );
+
+      const hasApprovedDate = headers.includes("Approved Date");
+      const hasContractAmount = headers.includes("Contract Amount");
+      const hasSalesperson =
+        headers.includes("Primary Salesperson") ||
+        headers.includes("Sales Owner") ||
+        headers.includes("Project Manager") ||
+        headers.includes("Salesperson") ||
+        headers.includes("Sales Rep") ||
+        headers.includes("Sales Representative") ||
+        headers.includes("Estimator");
+
+      return hasApprovedDate && hasContractAmount && hasSalesperson;
+    };
+
     const readSalesWorkbook = async (buffer) => {
       const bytes = new Uint8Array(buffer);
-      const isRealExcelFile =
-        bytes[0] === 0x50 && bytes[1] === 0x4b; // .xlsx files start with PK
 
-      if (isRealExcelFile) {
+      const isXlsxFile = bytes[0] === 0x50 && bytes[1] === 0x4b;
+      const isXlsFile =
+        bytes[0] === 0xd0 &&
+        bytes[1] === 0xcf &&
+        bytes[2] === 0x11 &&
+        bytes[3] === 0xe0;
+
+      if (isXlsxFile || isXlsFile) {
         return XLSX.read(buffer, {
           type: "array",
           cellDates: true,
         });
       }
 
-      // AccuLynx exports CSV files. If you rename the CSV to sales.xlsx,
-      // this keeps the dashboard working instead of trying to read it as Excel.
+      // AccuLynx exports CSV files. If the CSV is renamed to sales.xlsx,
+      // this reads the file as CSV instead of treating it as a broken Excel file.
       const csvText = new TextDecoder("utf-8").decode(buffer);
 
       return XLSX.read(csvText, {
@@ -1185,11 +1222,27 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
 
         const buffer = await response.arrayBuffer();
         const workbook = await readSalesWorkbook(buffer);
-
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, {
-          defval: "",
-        });
+
+        if (!sheet) {
+          throw new Error(`${filePath} did not contain a readable sheet.`);
+        }
+
+        const rows = XLSX.utils
+          .sheet_to_json(sheet, {
+            defval: "",
+          })
+          .map(normalizeSalesRowKeys);
+
+        if (!hasRequiredSalesColumns(rows)) {
+          const foundColumns = rows.length
+            ? Object.keys(rows[0]).join(", ")
+            : "No columns found";
+
+          throw new Error(
+            `${filePath} loaded, but it does not look like the AccuLynx sales export. Found columns: ${foundColumns}`
+          );
+        }
 
         const normalizedRows = rows.map(addNormalizedJobTradeType2);
 
@@ -1204,7 +1257,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
     }
 
     setSalesRows([]);
-    setDataStatus("No public/sales.xlsx or public/sales.csv file found yet.");
+    setDataStatus("No valid public/sales.xlsx or public/sales.csv file found yet.");
   };
 
 
