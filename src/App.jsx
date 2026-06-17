@@ -587,68 +587,43 @@ function getInclusiveMonthCount(startDate, endDate) {
 }
 
 function normalizeTrade(value) {
-  const text = String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
+  const text = String(value || "").trim().toLowerCase();
 
-  if (!text || text === "nan") return "";
-
-  const has = (needle) => text.includes(needle);
-
-  const hasRoofing = has("roofing") || has("roof");
-  const hasMetalRoofing =
-    has("roofing - metal") ||
-    has("metal roofing") ||
-    has("metal roof");
-  const hasJamesHardie = has("james hardie") || has("hardie");
-  const hasSiding = has("siding");
-  const hasGutters = has("gutters") || has("gutter");
-  const hasWindows = has("windows") || has("window");
-  const hasDoors = has("doors") || has("door");
-  const hasOnlyExcludedWork =
-    text === "other" ||
-    text === "repair" ||
-    text === "wraps" ||
-    text === "fascia" ||
-    text === "soffits" ||
-    text === "skylights" ||
-    text === "free repair - google review" ||
-    text === "storm damage, fascia" ||
-    text === "soffits, fascia" ||
-    text === "wraps, fascia" ||
-    text === "other, skylights" ||
-    text === "other, fascia";
-
-  if (hasOnlyExcludedWork) return "";
-
-  // Highest-priority specialty categories.
-  if (hasMetalRoofing) return "Metal Roofing";
-  if (hasJamesHardie) return "James Hardie Siding";
-
-  // Combination categories used by the dashboard.
-  if (hasRoofing && hasSiding) return "Roofing & Siding";
-  if (hasRoofing && hasGutters) return "Roofing & Gutters";
-
-  // Single primary categories.
-  if (hasRoofing) return "Roofing";
-  if (hasSiding) return "Siding";
-  if (hasGutters) return "Gutters";
-  if (hasWindows) return "Windows";
-  if (hasDoors) return "Doors";
-
+    // EXCLUDED TRADE TYPES
+if (
+  text === "other" ||
+  text === "other, skylights" ||
+  text === "other, fascia" ||
+  text === "wraps, fascia" ||
+  text === "storm damage, fascia" ||
+  text === "soffits, fascia" ||
+  text === "repair" ||
+  text === "wraps"
+) {
   return "";
 }
 
-function addNormalizedJobTradeType2(row) {
-  const normalizedTrade =
-    normalizeTrade(row["Job Trade Type"]) ||
-    normalizeTrade(row["Job Trade Type 2"]);
+  if (text === "roofing & gutters") return "Roofing & Gutters";
+  if (text === "roofing & siding") return "Roofing & Siding";
+  if (text === "james hardie siding") return "James Hardie Siding";
+  if (text === "metal roofing") return "Metal Roofing";
+  if (text === "roofing") return "Roofing";
+  if (text === "siding") return "Siding";
+  if (text === "gutters") return "Gutters";
+  if (text === "doors") return "Doors";
+  if (text === "windows") return "Windows";
 
-  return {
-    ...row,
-    "Job Trade Type 2": normalizedTrade,
-  };
+  if (text.includes("roofing") && text.includes("gutters")) return "Roofing & Gutters";
+  if (text.includes("roofing") && text.includes("siding")) return "Roofing & Siding";
+  if (text.includes("james hardie")) return "James Hardie Siding";
+  if (text.includes("metal roofing")) return "Metal Roofing";
+  if (text.includes("roofing")) return "Roofing";
+  if (text.includes("siding")) return "Siding";
+  if (text.includes("gutters")) return "Gutters";
+  if (text.includes("doors")) return "Doors";
+  if (text.includes("windows")) return "Windows";
+
+  return "";
 }
 
 function normalizeWorkType(value) {
@@ -1149,154 +1124,33 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   };
 
   const loadSalesFile = async () => {
-    const salesFileOptions = ["/sales.xlsx", "/sales.csv"];
+    try {
+      setDataStatus("Loading sales.xlsx...");
 
-    const normalizeSalesRowKeys = (row) => {
-      return Object.entries(row).reduce((cleanRow, [key, value]) => {
-        const cleanKey = String(key || "")
-          .replace(/^\uFEFF/, "")
-          .trim();
+      const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
 
-        cleanRow[cleanKey] = value;
-        return cleanRow;
-      }, {});
-    };
-
-    const getSalesHeaders = (rows) => {
-      if (!rows.length) return [];
-
-      return Object.keys(rows[0]).map((header) =>
-        String(header || "").replace(/^\uFEFF/, "").trim()
-      );
-    };
-
-    const hasRequiredSalesColumns = (rows) => {
-      const headers = getSalesHeaders(rows);
-
-      const hasApprovedDate = headers.includes("Approved Date");
-      const hasContractAmount = headers.includes("Contract Amount");
-      const hasSalesperson =
-        headers.includes("Primary Salesperson") ||
-        headers.includes("Sales Owner") ||
-        headers.includes("Project Manager") ||
-        headers.includes("Salesperson") ||
-        headers.includes("Sales Rep") ||
-        headers.includes("Sales Representative") ||
-        headers.includes("Estimator");
-
-      return hasApprovedDate && hasContractAmount && hasSalesperson;
-    };
-
-    const readSalesWorkbook = async (buffer) => {
-      const bytes = new Uint8Array(buffer);
-
-      const isXlsxFile = bytes[0] === 0x50 && bytes[1] === 0x4b;
-      const isXlsFile =
-        bytes[0] === 0xd0 &&
-        bytes[1] === 0xcf &&
-        bytes[2] === 0x11 &&
-        bytes[3] === 0xe0;
-
-      if (isXlsxFile || isXlsFile) {
-        return XLSX.read(buffer, {
-          type: "array",
-          cellDates: true,
-        });
+      if (!response.ok) {
+        throw new Error("Could not find public/sales.xlsx");
       }
 
-      // AccuLynx exports CSV files. If the CSV is renamed to sales.xlsx,
-      // this reads the file as CSV instead of treating it as a broken Excel file.
-      const csvText = new TextDecoder("utf-8").decode(buffer);
-
-      return XLSX.read(csvText, {
-        type: "string",
+      const buffer = await response.arrayBuffer();
+      const workbook = XLSX.read(buffer, {
+        type: "array",
         cellDates: true,
       });
-    };
 
-    const getRowsFromSheet = (sheet) => {
-      return XLSX.utils
-        .sheet_to_json(sheet, {
-          defval: "",
-        })
-        .map(normalizeSalesRowKeys);
-    };
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, {
+        defval: "",
+      });
 
-    const findSalesRowsInWorkbook = (workbook) => {
-      const sheetNames = workbook.SheetNames || [];
-      const checkedSheets = [];
-
-      for (const sheetName of sheetNames) {
-        const sheet = workbook.Sheets[sheetName];
-        if (!sheet) continue;
-
-        const rows = getRowsFromSheet(sheet);
-        checkedSheets.push({
-          sheetName,
-          columns: getSalesHeaders(rows),
-          rowCount: rows.length,
-        });
-
-        if (hasRequiredSalesColumns(rows)) {
-          return {
-            sheetName,
-            rows,
-            checkedSheets,
-          };
-        }
-      }
-
-      return {
-        sheetName: "",
-        rows: [],
-        checkedSheets,
-      };
-    };
-
-    for (const filePath of salesFileOptions) {
-      try {
-        setDataStatus(`Loading ${filePath.replace("/", "")}...`);
-
-        const response = await fetch(`${filePath}?t=${Date.now()}`);
-
-        if (!response.ok) {
-          throw new Error(`Could not find public${filePath}`);
-        }
-
-        const buffer = await response.arrayBuffer();
-        const workbook = await readSalesWorkbook(buffer);
-        const result = findSalesRowsInWorkbook(workbook);
-
-        if (!result.rows.length) {
-          const checkedSheetSummary = result.checkedSheets
-            .map(
-              (sheet) =>
-                `${sheet.sheetName}: ${sheet.columns.join(", ") || "No columns found"}`
-            )
-            .join(" | ");
-
-          throw new Error(
-            `${filePath} loaded, but no sheet looked like the AccuLynx sales export. Checked sheets: ${checkedSheetSummary}`
-          );
-        }
-
-        const normalizedRows = result.rows.map(addNormalizedJobTradeType2);
-
-        setSalesRows(normalizedRows);
-        setDataStatus(
-          `${normalizedRows.length} rows loaded from ${filePath.replace(
-            "/",
-            ""
-          )} / ${result.sheetName}`
-        );
-        return;
-      } catch (error) {
-        console.warn(error);
-      }
+      setSalesRows(rows);
+      setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
+    } catch (error) {
+      setSalesRows([]);
+      setDataStatus("No public/sales.xlsx file found yet.");
+      console.error(error);
     }
-
-    setSalesRows([]);
-    setDataStatus("No valid public/sales.xlsx or public/sales.csv file found yet.");
   };
 
 
@@ -1493,15 +1347,14 @@ const getTeamMetricRow = (metric) => {
     let contracts = 0;
 
     salesRows.forEach((row) => {
-const rowPMValues = [
-  row["Project Manager"],
-  row["Salesperson"],
-  row["Sales Rep"],
-  row["Sales Representative"],
-  row["Primary Salesperson"],
-  row["Sales Owner"],
-  row["Estimator"],
-].map((value) => String(value || "").trim());
+      const rowPMValues = [
+        row["Project Manager"],
+        row["Salesperson"],
+        row["Sales Rep"],
+        row["Sales Representative"],
+        row["Primary Salesperson"],
+        row["Estimator"],
+      ].map((value) => String(value || "").trim());
 
       if (!rowPMValues.includes(pmName)) return;
 
@@ -2550,8 +2403,8 @@ quarterlyReferralStatus,
       if (cleanDate < start || cleanDate > end) return;
 
       const trade =
-        normalizeTrade(row["Job Trade Type"]) ||
-        normalizeTrade(row["Job Trade Type 2"]);
+        normalizeTrade(row["Job Trade Type 2"]) ||
+        normalizeTrade(row["Job Trade Type"]);
 
       const workType = normalizeWorkType(row["Work Type"]);
 
@@ -2680,8 +2533,8 @@ quarterlyReferralStatus,
       if (cleanDate < start || cleanDate > end) return;
 
       const trade =
-        normalizeTrade(row["Job Trade Type"]) ||
-        normalizeTrade(row["Job Trade Type 2"]);
+        normalizeTrade(row["Job Trade Type 2"]) ||
+        normalizeTrade(row["Job Trade Type"]);
 
       const workType = normalizeWorkType(row["Work Type"]);
       const config = findProjectConfig(trade, workType);
