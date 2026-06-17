@@ -2933,6 +2933,19 @@ const closingRateVsTeam = compareNumbers(
   true
 );
 
+const now = new Date();
+const isCustomMode = pmDateMode === "custom";
+const selectedMonthDate = pmData.selectedMonth
+  ? new Date(`${pmData.selectedMonth} 1`)
+  : new Date(now.getFullYear(), now.getMonth(), 1);
+
+const isPastMonth =
+  !isCustomMode &&
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (!isCustomMode &&
+    selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() < now.getMonth());
+
 const exceededGoalMessages = [
   "Outstanding work bub. You've surpassed your goal for this month. That's fire.",
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
