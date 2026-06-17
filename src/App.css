@@ -2116,15 +2116,10 @@ input::placeholder {
 .pm-rank-row > .pm-rank-card.rank-leader {
   background: #ffffff;
   border: 2px solid #fffb00;
-  animation: topDawgGlow 3s ease-in-out infinite;
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader strong {
   color: #b91c1c;
-}
-
-.pm-rank-row > .pm-rank-card.rank-leader small {
-  animation: topDawgTextGlow 3s ease-in-out infinite;
 }
 
 .top-dawg-label {
@@ -2137,47 +2132,5 @@ input::placeholder {
   letter-spacing: 2px;
   line-height: 1;
   text-transform: uppercase;
-  animation: topDawgTextGlow 3s ease-in-out infinite;
 }
 
-@keyframes topDawgGlow {
-  0% {
-    box-shadow:
-      0 0 8px rgb(255, 247, 0),
-      0 0 16px rgb(255, 0, 179);
-  }
-
-  50% {
-    box-shadow:
-      0 0 16px rgb(0, 98, 255),
-      0 0 32px rgb(255, 0, 179),
-      0 0 48px rgb(255, 247, 0);
-  }
-
-  100% {
-    box-shadow:
-      0 0 8px rgb(255, 0, 179),
-      0 0 16px rgb(255, 247, 0);
-  }
-}
-
-@keyframes topDawgTextGlow {
-  0% {
-    text-shadow:
-      0 0 6px rgb(255, 247, 0),
-      0 0 12px rgb(255, 0, 179);
-  }
-
-  50% {
-    text-shadow:
-      0 0 10px rgb(0, 98, 255),
-      0 0 20px rgb(255, 0, 179),
-      0 0 32px rgb(255, 247, 0);
-  }
-
-  100% {
-    text-shadow:
-      0 0 6px rgb(255, 0, 179),
-      0 0 12px rgb(255, 247, 0);
-  }
-}
