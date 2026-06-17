@@ -1151,6 +1151,28 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   const loadSalesFile = async () => {
     const salesFileOptions = ["/sales.xlsx", "/sales.csv"];
 
+    const readSalesWorkbook = async (buffer) => {
+      const bytes = new Uint8Array(buffer);
+      const isRealExcelFile =
+        bytes[0] === 0x50 && bytes[1] === 0x4b; // .xlsx files start with PK
+
+      if (isRealExcelFile) {
+        return XLSX.read(buffer, {
+          type: "array",
+          cellDates: true,
+        });
+      }
+
+      // AccuLynx exports CSV files. If you rename the CSV to sales.xlsx,
+      // this keeps the dashboard working instead of trying to read it as Excel.
+      const csvText = new TextDecoder("utf-8").decode(buffer);
+
+      return XLSX.read(csvText, {
+        type: "string",
+        cellDates: true,
+      });
+    };
+
     for (const filePath of salesFileOptions) {
       try {
         setDataStatus(`Loading ${filePath.replace("/", "")}...`);
@@ -1162,10 +1184,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
         }
 
         const buffer = await response.arrayBuffer();
-        const workbook = XLSX.read(buffer, {
-          type: "array",
-          cellDates: true,
-        });
+        const workbook = await readSalesWorkbook(buffer);
 
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, {
