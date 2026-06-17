@@ -2933,19 +2933,6 @@ const closingRateVsTeam = compareNumbers(
   true
 );
 
-const now = new Date();
-const isCustomMode = pmDateMode === "custom";
-const selectedMonthDate = pmData.selectedMonth
-  ? new Date(`${pmData.selectedMonth} 1`)
-  : new Date(now.getFullYear(), now.getMonth(), 1);
-
-const isPastMonth =
-  !isCustomMode &&
-  selectedMonthDate.getFullYear() < now.getFullYear() ||
-  (!isCustomMode &&
-    selectedMonthDate.getFullYear() === now.getFullYear() &&
-    selectedMonthDate.getMonth() < now.getMonth());
-
 const exceededGoalMessages = [
   "Outstanding work bub. You've surpassed your goal for this month. That's fire.",
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
@@ -3145,6 +3132,7 @@ const closeNeedsMessages = [
 ];
 
 
+
 const pickRandom = (messages) => {
   if (!messages || !messages.length) return "";
 
@@ -3226,6 +3214,7 @@ const closeMessages = [
   "Every conversation matters now. Treat it that way.",
   "Bub, don't coast into close. Attack the finish."
 ];
+
 
 const needsPushMessages = [
   "Keep grinding bub. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
@@ -3309,62 +3298,478 @@ const futureMonthMessages = [
 ];
 
 
-const generatePMInsight = ({
-  monthlyGoalPercent = 0,
-  quarterlyGoalPercent = 0,
-  revenueVsTeam = 0,
-  averageVsTeam = 0,
-  closingRateVsTeam = 0,
-  isPastMonth = false,
-  isFutureMonth = false,
-  isCustomMode = false,
-}) => {
-  if (isFutureMonth) {
-    return pickRandom(futureMonthMessages);
+
+const goalMotivation = (() => {
+  const pct = pmData.monthlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const selectedDate = new Date(pmData.selectedMonth);
+  const today = new Date();
+
+  const monthIsPast =
+    selectedDate.getFullYear() < today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() < today.getMonth()
+    );
+
+  const monthIsFuture =
+    selectedDate.getFullYear() > today.getFullYear() ||
+    (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() > today.getMonth()
+    );
+
+  let msg = "";
+
+  if (monthIsFuture) {
+    msg = pickRandom(futureMonthMessages);
+  } else if (monthIsPast) {
+    if (pct >= 1)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = "you finished close to goal. Carry that momentum into the next month.";
+    else if (pct >= 0.7)
+      msg = "you made progress, but the month finished short of goal. Use it as fuel for the next one.";
+    else
+      msg = "that month is behind you. Reset, refocus, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.5)
+      msg = pickRandom(exceededGoalMessages);
+    else if (pct >= 0.9)
+      msg = pickRandom(onTrackMessages);
+    else if (pct >= 0.7)
+      msg = pickRandom(closeMessages);
+    else
+      msg = pickRandom(needsPushMessages);
   }
 
-  const goalMessage = (() => {
-    if (monthlyGoalPercent >= 1) return pickRandom(exceededGoalMessages);
-    if (monthlyGoalPercent >= 0.85) return pickRandom(onPaceMessages);
-    if (monthlyGoalPercent >= 0.5) return pickRandom(progressMessages);
-    if (isPastMonth) return pickRandom(needsPushMessages);
-    return pickRandom(pushMessages);
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+})();;
+const quarterCrushingMessages = [
+"You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
+"Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
+"You're creating strong momentum that projects a successful quarter. Keep it up!",
+"If this pace continues, you'll comfortably surpass your quarterly target. Keep the drive alive!",
+"Outstanding work bub. The quarter is shaping up extremely well. That's fire.",
+"You're operating at an elite pace and setting the standard for the quarter.",
+"Your current trajectory puts you in position for a remarkable finish bub, keep it up!",
+"The consistency you've shown is creating outstanding quarterly results.",
+"You're well ahead of target and proving what's possible with disciplined execution.",
+"Every indicator suggests you're on track for an exceptional quarter. One team one dream!",
+"Your pace continues to outperform expectations across the board. You're killing it, bub!",
+"You're building a quarter that others will benchmark against. Keep it up!",
+"Keep attacking opportunities bub. The results are speaking for themselves!",
+"You're turning your leads into elite-level production. That's fire!",
+];
+
+const quarterGoalAchievedMessages = [
+"Quarter goal achieved bub. Great job! Now let's see how far above it we can finish.",
+"You've already reached your quarterly target. That's fire!",
+"Outstanding work. The goal is behind you and now it's time to build separation.",
+"Goal accomplished bub, congrats! Keep your foot on the gas and keep driving.",
+"You're officially over quarterly goal bub. Keep stacking wins.",
+"One team one dream! You've already hit the target and there's still runway left.",
+"Your hard work has paid off. Quarter goal achieved and momentum is still building.",
+"You've earned the right to celebrate for about five minutes. Then let's go get more.",
+"The goal is complete. Everything from here is bonus production bub.",
+"That's what winning looks like. Quarterly goal achieved and still climbing.",
+"You didn't just pace toward the goal — you got there. Keep pushing.",
+"Quarter goal secured. Now let's see what kind of number we can really put up.",
+"You're proving what's possible through consistency and execution. That's fire!",
+"Goal reached bub. Stay aggressive and keep attacking opportunities.",
+"The quarter is already a success. Now let's make it an exceptional one."
+];
+
+const quarterCloseMessages = [
+"The quarter remains within reach. A strong finish can make all the difference.",
+"You're close just a few more contracts could put you over goal.",
+"Keep your momentum and focus over the next appointments and great things will happen.",
+"The quarterly target remains achievable. Keep the grind alive.",
+"Keep pushing bub. The pace is right where it needs to be.",
+"You're within range of the goal and still have time to close the gap. Keep pushing!",
+"A strong finish is what you need to close out the quarter. You got this!",
+"Momentum over the next few weeks will be critical. Keep focused.",
+"The quarter remains highly achievable from this position. Keep pushing bub!",
+"Stay focused on your leads and the quarter is yours - You got this!",
+"You're not far from where you need to be. Keep pushing - you got this!",
+"A few more contracts can turn around your quarter. Keep up the hard work!",
+"The opportunity to finish strong remains very real, keep the grind alive!",
+"Stay disciplined and keep pushing forward. You are close to your quarterly goal!",
+"Keep applying pressure, your quarterly goal is in sight!"
+];
+
+const quarterNeedsPushMessages = [
+"The quarter needs additional momentum, but there is still time. Keep pushing.",
+"Focus on pipeline activity and creating opportunities.",
+"Several strong contracts can quickly improve the quarterly outlook.",
+"Stay disciplined and continue executing the fundamentals.",
+"The quarter isn't decided yet. Keep building momentum.",
+"There's still time to improve the outcome of the quarter.",
+"Focus on your leads and don't let off the gas - you got this!",
+"Every conversation creates a new opportunity. Keep grinding.",
+"Momentum can shift quickly when activity increases.",
+"Continue building the sales pipeline and creating opportunities.",
+"Stay engaged bub and keep attacking the next opportunity.",
+"Persistence now can create a much stronger finish later - you got this!",
+"One productive stretch can change the entire quarter.",
+"Keep your energy high and focus on execution. You can do this!",
+"The quarter is still being written. Keep pushing forward."
+];
+
+const futureQuarterMessages = [
+  "We're not in this quarter just yet bub, but I know you'll be ready when it gets here.",
+  "This quarter hasn't started yet bub, but preparation starts now.",
+  "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
+  "Future quarters are won by the habits you build today bub.",
+  "We're not there yet bub, but I like our chances when the time comes.",
+  "The quarter is still ahead of us bub. Stay sharp and be ready to attack it.",
+  "No numbers just yet bub, just opportunity. Be ready when the quarter opens.",
+  "This quarter is still waiting on us, bub. Let's be ready to make it count."
+];
+
+const quarterlyMotivation = (() => {
+  const pct = pmData.quarterlyGoalPercent;
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const selectedQuarterStart = (() => {
+    const selectedDate = new Date(pmData.selectedMonth);
+
+    if (Number.isNaN(selectedDate.getTime())) return null;
+
+    const fiscalYearStart =
+      selectedDate.getMonth() >= 10
+        ? new Date(selectedDate.getFullYear(), 10, 1)
+        : new Date(selectedDate.getFullYear() - 1, 10, 1);
+
+    const monthsSinceFiscalStart =
+      (selectedDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
+      selectedDate.getMonth() -
+      fiscalYearStart.getMonth();
+
+    const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
+
+    return new Date(
+      fiscalYearStart.getFullYear(),
+      fiscalYearStart.getMonth() + quarterStartOffset,
+      1
+    );
   })();
 
-  const revenueMessage = (() => {
-    if (revenueVsTeam >= 0.25) return pickRandom(revenueEliteMessages);
-    if (revenueVsTeam >= 0.05) return pickRandom(revenueStrongMessages);
-    if (revenueVsTeam <= -0.05) return pickRandom(revenueNeedsMessages);
-    return "";
-  })();
+  const selectedQuarterEnd = selectedQuarterStart
+    ? new Date(
+        selectedQuarterStart.getFullYear(),
+        selectedQuarterStart.getMonth() + 3,
+        0
+      )
+    : null;
 
-  const averageMessage = (() => {
-    if (averageVsTeam >= 0.05) return pickRandom(avgStrongMessages);
-    if (averageVsTeam <= -0.05) return pickRandom(avgNeedsMessages);
-    return "";
-  })();
+  const today = new Date();
+  const quarterIsPast = selectedQuarterEnd ? selectedQuarterEnd < today : false;
+  const quarterIsFuture = selectedQuarterStart ? selectedQuarterStart > today : false;
 
-  const closingMessage = (() => {
-    if (closingRateVsTeam >= 0.02) return pickRandom(closeStrongMessages);
-    if (closingRateVsTeam <= -0.02) return pickRandom(closeNeedsMessages);
-    return "";
-  })();
+  let msg = "";
 
-  const quarterMessage = (() => {
-    if (isCustomMode) return "";
-    if (quarterlyGoalPercent >= 1) {
-      return "Quarterly goal is already handled, bub. That's fire. Keep pushing and keep deep driving.";
-    }
-    if (quarterlyGoalPercent >= 0.75) {
-      return "Quarterly finish is still right there. One team one dream. Keep pushing.";
-    }
-    return "";
-  })();
+  if (quarterIsFuture) {
+    msg = pickRandom(futureQuarterMessages);
+  } else if (quarterIsPast) {
+    if (pct >= 1)
+      msg =
+        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter. That's fire.";
+    else if (pct >= 0.9)
+      msg =
+        "you finished just short of your quarterly goal. Carry that momentum into the next quarter.";
+    else if (pct >= 0.7)
+      msg =
+        "you made solid progress during the quarter. Use those lessons to build an even stronger next quarter.";
+    else
+      msg =
+        "that quarter is complete. Take what you learned, reset, and attack the next opportunity.";
+  } else {
+    if (pct >= 1.2)
+      msg = pickRandom(quarterCrushingMessages);
+    else if (pct >= 1.0)
+      msg = pickRandom(quarterGoalAchievedMessages);
+    else if (pct >= 0.85)
+      msg = pickRandom(quarterCloseMessages);
+    else
+      msg = pickRandom(quarterNeedsPushMessages);
+  }
 
-  return [goalMessage, quarterMessage, revenueMessage, averageMessage, closingMessage]
-    .filter(Boolean)
-    .join(" ");
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+})();
+
+const referralGoalMetMessages = [
+  "the referral goal was met bub! Great work creating opportunities through relationships!",
+  "you met the referral goal! That means people trust you enough to send opportunities your way.",
+  "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
+  "you reached the referral target bub. You're doing a great job!",
+  "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
+];
+
+const referralGoalNotMetMessages = [
+  "the referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
+  "the referral goal was not met. Use this as a reminder to make referral asks part of every closeout conversation.",
+  "the goal was not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
+  "the referral target was missed. A few intentional referral conversations can help turn that around next month.",
+  "the referral goal was not met. Reset, refocus, and keep asking satisfied customers for introductions."
+];
+
+const referralInProgressMessages = [
+  "the referral goal has not been reached yet. Keep asking happy customers who else you can help.",
+  "there is still room to build more referral opportunities this month - you got this.",
+  "referrals need a little more focus. Every satisfied customer can open another door.",
+  "keep planting referral seeds. The best leads often come from people who already trust us.",
+  "the referral activity is behind goal, but a few intentional asks can close the gap quickly."
+];
+
+const referralFutureMessages = [
+  "this referral month has not started yet, but the best referral opportunities are built before the scoreboard opens.",
+  "there is a future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
+  "we are not there yet bub, but every satisfied customer can become a future referral source.",
+  "a future month is selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
+  "that referral window is still ahead bub. Keep doing the kind of work people want to recommend."
+];
+
+const referralStatusLabel = (() => {
+  if (pmData.referralStatus === "goalMet") return "Goal Met";
+  if (pmData.referralStatus === "goalNotMet") return "Goal Not Met";
+  if (pmData.referralStatus === "future") return "Upcoming";
+  return "In Progress";
+})();
+
+const referralStatusClass =
+  pmData.referralStatus === "goalMet"
+    ? "positive"
+    : pmData.referralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
+
+const referralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const messages =
+    pmData.referralStatus === "goalMet"
+      ? referralGoalMetMessages
+      : pmData.referralStatus === "goalNotMet"
+      ? referralGoalNotMetMessages
+      : pmData.referralStatus === "future"
+      ? referralFutureMessages
+      : referralInProgressMessages;
+
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
+
+const quarterlyReferralGoalMetMessages = [
+  "quarterly referral goal achieved. Consistent relationship building is paying off.",
+  "you hit the quarterly referral target. That's the result of trust earned over time.",
+  "quarterly referral production is exactly where it needs to be. Great work.",
+  "the quarter referral goal has been met. Keep stacking wins through relationships.",
+  "strong quarter on referrals. Word-of-mouth momentum is growing."
+];
+
+const quarterlyReferralGoalNotMetMessages = [
+  "quarterly referral goal was missed. Review every completed project and identify referral opportunities.",
+  "the quarter is behind target. A stronger referral process can close that gap next quarter.",
+  "quarterly referrals fell short. Focus on asking every satisfied customer for introductions.",
+  "the referral target for the quarter was not reached. Consistency in referral conversations matters.",
+  "this quarter missed the referral mark. Build a plan to create more referral opportunities."
+];
+
+const quarterlyReferralInProgressMessages = [
+  "the quarter is still underway. Every referral conversation matters.",
+  "quarterly referral production is building. Stay consistent with referral asks.",
+  "there is time left in the quarter to create referral momentum.",
+  "quarterly referral progress is developing. Keep relationship building at the forefront.",
+  "the quarter is not finished yet. Small referral wins compound over time."
+];
+
+const quarterlyReferralFutureMessages = [
+  "this quarter has not started yet bub. Prepare now so referrals come naturally later.",
+  "future quarter selected. Build relationships today that generate referrals tomorrow.",
+  "the next quarter is ahead. Strong customer experiences create future opportunities.",
+  "that referral quarter is still coming. Stay focused on earning trust now.",
+  "future quarter selected. Set the foundation before the scoreboard opens."
+];
+
+const quarterlyReferralStatusClass =
+  pmData.quarterlyReferralStatus === "goalMet"
+    ? "positive"
+    : pmData.quarterlyReferralStatus === "goalNotMet"
+    ? "negative"
+    : "warning";
+
+const quarterlyReferralMotivation = (() => {
+  const firstName = (currentPM?.name || "").split(" ")[0];
+
+  const messages =
+    pmData.quarterlyReferralStatus === "goalMet"
+      ? quarterlyReferralGoalMetMessages
+      : pmData.quarterlyReferralStatus === "goalNotMet"
+      ? quarterlyReferralGoalNotMetMessages
+      : pmData.quarterlyReferralStatus === "future"
+      ? quarterlyReferralFutureMessages
+      : quarterlyReferralInProgressMessages;
+
+  const msg = pickRandom(messages);
+
+  return `${firstName}, ${msg}`;
+})();
+const generatePMInsight = ({
+  monthlyGoalPercent,
+  quarterlyGoalPercent,
+  revenueVsTeam,
+  averageVsTeam,
+  closingRateVsTeam,
+  isPastMonth,
+  isFutureMonth,
+  isCustomMode,
+}) => {
+  const messages = [];
+
+  // Custom Date Performance
+if (isCustomMode) {
+  messages.push(
+    "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
+  );
+
+  if (revenueVsTeam > 0.25) {
+    messages.push(
+      `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+    );
+  } else if (revenueVsTeam > 0) {
+    messages.push(
+      "Revenue production is above the team average for the selected date range."
+    );
+  } else {
+    messages.push(
+      "Revenue production trails the team average for the selected date range."
+    );
+  }
+
+  return messages.slice(0, 2).join(" ");
+}
+
+if (isFutureMonth) {
+  messages.push(
+    "Future month selected. The scoreboard is still blank, but preparation now creates production later."
+  );
+
+  messages.push(
+    pickRandom(futureMonthMessages)
+  );
+
+  return messages.slice(0, 2).join(" ");
+}
+// Monthly Performance
+if (isPastMonth) {
+  if (monthlyGoalPercent >= 1) {
+    messages.push(
+      "Congrats! This month has closed with the monthly goal achieved."
+    );
+  } else {
+    messages.push(
+      "This month unfortunately has closed below the monthly goal."
+    );
+  }
+}
+else if (monthlyGoalPercent >= 1) {
+  messages.push(
+    "Monthly goal has been achieved and production remains strong."
+  );
+}
+else if (monthlyGoalPercent >= 0.9) {
+  messages.push(
+    "Monthly goal is within striking distance and remains well within reach."
+  );
+}
+else if (monthlyGoalPercent >= 0.75) {
+  messages.push(
+    "Monthly production remains on a competitive pace with the opportunity to finish strong."
+  );
+}
+else {
+  messages.push(
+    "Monthly production is currently below the pace needed to reach goal."
+  );
+}
+
+  // Quarterly Performance
+if (quarterlyGoalPercent >= 1) {
+  messages.push(
+    "Quarterly goal has already been achieved. That's fire."
+  );
+}
+else if (quarterlyGoalPercent >= 0.9) {
+  messages.push(
+    "Quarterly goal is within striking distance and remains well within reach."
+  );
+}
+else if (quarterlyGoalPercent >= 0.75) {
+  messages.push(
+    "Quarterly production remains competitive with a strong finish still available."
+  );
+}
+else {
+  messages.push(
+    "Quarterly production currently trails the target pace."
+  );
+}
+
+  // Revenue vs Team
+if (revenueVsTeam > 0.25) {
+  messages.push(
+    `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else if (revenueVsTeam > 0) {
+  messages.push(
+    `Revenue production exceeds the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else {
+  messages.push(
+    `Revenue production trails the team average by ${Math.abs(revenueVsTeam * 100).toFixed(1)}%.`
+  );
+}
+
+  // Average Contract vs Team
+if (averageVsTeam > 0.1) {
+  messages.push(
+    `Average contract value exceeds the team benchmark by ${(averageVsTeam * 100).toFixed(1)}%.`
+  );
+}
+else if (averageVsTeam < -0.1) {
+  messages.push(
+    `Average contract value trails the team benchmark by ${Math.abs(averageVsTeam * 100).toFixed(1)}%.`
+  );
+}
+
+  // Closing Rate vs Team
+if (closingRateVsTeam > 0.05) {
+  messages.push(
+    `Closing rate exceeds the team average by ${(closingRateVsTeam * 100).toFixed(1)} percentage points.`
+  );
+}
+else if (closingRateVsTeam < -0.05) {
+  messages.push(
+    `Closing rate trails the team average by ${Math.abs(closingRateVsTeam * 100).toFixed(1)} percentage points.`
+  );
+}
+
+  return messages.slice(0, 4).join(" ");
 };
+
+const isCustomMode = pmDateMode === "custom";
+const selectedMonthDate = new Date(pmData.selectedMonth);
+const now = new Date();
+
+const isPastMonth =
+  selectedMonthDate.getFullYear() < now.getFullYear() ||
+  (selectedMonthDate.getFullYear() === now.getFullYear() &&
+    selectedMonthDate.getMonth() < now.getMonth());
 
 const isFutureMonth =
   selectedMonthDate.getFullYear() > now.getFullYear() ||
