@@ -2116,6 +2116,7 @@ input::placeholder {
 .pm-rank-row > .pm-rank-card.rank-leader {
   background: #ffffff;
   border: 2px solid #fffb00;
+  animation: topDawgGlow 3s ease-in-out infinite;
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader strong {
