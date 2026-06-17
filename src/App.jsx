@@ -2938,7 +2938,17 @@ const exceededGoalMessages = [
   "Excellent performance. You've exceeded expectations and continue to set the pace. That's fire.",
   "You've reached your goal and are building momentum. That's fire.",
   "Fantastic job. Your production cleared the goal for this month. That's fire.",
-  "You're operating at a very high level and have successfully exceeded your goal. That's fire."
+  "You're operating at a very high level and have successfully exceeded your goal. That's fire.",
+  "Bub, that's fire. You didn't just hit the goal, you blew right past it. Keep deep driving.",
+  "One team one dream. You're showing everybody what championship-level effort looks like.",
+  "You're killing it bub. The work you've put in is showing up in a big way.",
+  "No excuses, only progress. That's exactly the mindset that creates results like this.",
+  "You got this. The goal was the target, but you're proving there's another level available.",
+  "Keep pushing bub. Great performers stay hungry even after they win.",
+  "That's fire. You're building momentum that can carry through the entire quarter.",
+  "Deep driving every day created this result. Don't let off the gas now.",
+  "Bub, you're setting the standard right now and the numbers prove it.",
+  "One team one dream. Keep stacking wins and making things happen."
 ];
 
 const onPaceMessages = [
@@ -2946,7 +2956,17 @@ const onPaceMessages = [
   "Solid progress. You're on pace to reach your monthly goal. Keep it up!",
   "You're tracking well toward your goal and maintaining healthy momentum.",
   "Keep doing what you're doing. You're positioned to reach your target.",
-  "Performance remains strong and you're currently pacing toward success. That's fire."
+  "Performance remains strong and you're currently pacing toward success. That's fire.",
+  "Bub, you're right where you need to be. Keep pushing.",
+  "One team one dream. Consistency right now is your biggest advantage.",
+  "Stay focused and keep stacking wins - you got this!",
+  "You got this bub. The finish line is in sight.",
+  "No excuses, only progress. Keep moving forward one contract at a time.",
+  "Momentum is building. Keep deep driving and trust the process.",
+  "You're creating opportunities and that's exactly what winners do.",
+  "Stay locked in. A strong finish can turn a good month into a great month.",
+  "Keep your foot on the gas bub. You're trending in the right direction.",
+  "You're earning the right to succeed through consistent effort. Keep going."
 ];
 
 const progressMessages = [
@@ -2954,7 +2974,17 @@ const progressMessages = [
   "Momentum is building and there is still plenty of opportunity ahead.",
   "Consistent effort now can create a strong finish to the period.",
   "The foundation is there. Continue focusing on quality opportunities.",
-  "Progress remains positive and there is room to accelerate, keep pushing."
+  "Progress remains positive and there is room to accelerate, keep pushing.",
+  "Bub, good things are happening. Keep pushing.",
+  "One team one dream. Every opportunity matters.",
+  "That's fire. The momentum is starting to build.",
+  "You got this. Stay focused on the next opportunity.",
+  "No excuses, only progress. Keep moving forward.",
+  "Deep driving today creates results tomorrow.",
+  "The scoreboard doesn't tell the whole story. Keep working.",
+  "Stay consistent bub. Consistency wins over time.",
+  "The goal is still right in front of you. Stay after it.",
+  "Progress is progress. Keep stacking positive days."
 ];
 
 const pushMessages = [
@@ -2962,7 +2992,17 @@ const pushMessages = [
   "There is plenty of opportunity remaining to improve results - you got this.",
   "Focus on the trainings we've had and the numbers will follow.",
   "A few strong weeks can quickly change the trajectory. You got this!",
-  "Stay consistent and continue building momentum, there's still time!"
+  "Stay consistent and continue building momentum, there's still time!",
+  "Don't quit bub. The month isn't over.",
+  "One team one dream. Keep showing up and doing the work.",
+  "No excuses, only progress. Focus on the next opportunity.",
+  "You got this. One good week can change everything.",
+  "Keep deep driving. Results can change fast.",
+  "Stay positive and keep moving forward.",
+  "The comeback starts with the next appointment.",
+  "Bub, champions don't quit when things get hard.",
+  "Keep pushing. The scoreboard can change quicker than you think.",
+  "Every conversation is a chance to build momentum."
 ];
 
 const revenueStrongMessages = [
@@ -2970,7 +3010,17 @@ const revenueStrongMessages = [
   "Your revenue generation continues to lead the way - great job.",
   "You're producing above the team's current pace.",
   "Revenue performance remains a key strength - keep up the great work.",
-  "Your production levels are setting a strong example - way to go bub."
+  "Your production levels are setting a strong example - way to go bub.",
+  "Bub, that's fire. You're outperforming the team average.",
+  "One team one dream. You're helping raise the standard.",
+  "You're killing it. Revenue production continues to impress.",
+  "Keep pushing. Strong numbers come from strong habits.",
+  "No excuses, only progress. You're proving it every day.",
+  "Deep driving is paying off in a big way.",
+  "You're creating value and it shows in the numbers.",
+  "Stay hungry bub. There's still more out there.",
+  "The effort is showing up on the scoreboard.",
+  "That's fire. Keep stacking productive days."
 ];
 
 const revenueEliteMessages = [
@@ -2978,7 +3028,17 @@ const revenueEliteMessages = [
   "You're operating well above the team's current production pace.",
   "Your revenue performance ranks among the strongest on the team - amazing job.",
   "Production continues to separate you from the field - keep pushing the needle.",
-  "You're creating substantial value compared with team benchmarks. Great work."
+  "You're creating substantial value compared with team benchmarks. Great work.",
+  "Bub, that's fire. You're not just ahead, you're creating separation.",
+  "One team one dream, but you're carrying a big piece of the load right now.",
+  "You're killing it. Revenue production like this changes the game.",
+  "Keep pushing. Elite performers stay focused even when they're winning.",
+  "No excuses, only progress. The work is showing up in a huge way.",
+  "You got this. Keep creating opportunities and the results follow.",
+  "Deep driving every day is creating elite-level production.",
+  "Bub, don't get comfortable. There's another gear in there.",
+  "You're setting the pace for everyone else right now.",
+  "That's fire. Keep building on the momentum you've created."
 ];
 
 const revenueNeedsMessages = [
@@ -2986,7 +3046,17 @@ const revenueNeedsMessages = [
   "Closing a few additional projects could quickly narrow the gap.",
   "There is still time to improve revenue performance this period.",
   "The team benchmark remains within reach.",
-  "Focus on pipeline conversion and revenue growth will follow."
+  "Focus on pipeline conversion and revenue growth will follow.",
+  "Bub, don't quit. Revenue can move fast when you stay locked in.",
+  "No excuses, only progress. The next contract is where the comeback starts.",
+  "You got this. Keep deep driving and keep creating chances.",
+  "One team one dream. Lean into the process and the numbers will follow.",
+  "Keep pushing bub. A few strong closes can change the whole picture.",
+  "Stay focused on quality appointments and strong follow-up.",
+  "The scoreboard is not permanent. Keep working the pipeline.",
+  "Deep driving means staying after it when the gap is uncomfortable.",
+  "Bub, the opportunity is still there. Go take it one conversation at a time.",
+  "Progress starts with activity. Keep moving and don't quit."
 ];
 
 const avgStrongMessages = [
@@ -2994,7 +3064,17 @@ const avgStrongMessages = [
   "Customers are trusting you with larger projects than average.",
   "Contract quality remains one of your strengths.",
   "Higher-value projects are driving strong results.",
-  "Your average sale size remains above benchmark levels."
+  "Your average sale size remains above benchmark levels.",
+  "Bub, that's fire. You're not just selling, you're building real project value.",
+  "One team one dream. Bigger opportunities help lift the whole team.",
+  "You're killing it with project scope. Keep deep driving.",
+  "Strong average contracts tell me customers trust your process.",
+  "Keep pushing. Quality deals create quality months.",
+  "No excuses, only progress. You're showing what strong value-building looks like.",
+  "You got this. Keep asking the right questions and uncovering the full opportunity.",
+  "That's fire bub. Bigger projects come from deeper conversations.",
+  "Your average contract strength is giving you a real advantage.",
+  "Keep building value and the numbers will keep rewarding you."
 ];
 
 const avgNeedsMessages = [
@@ -3002,7 +3082,17 @@ const avgNeedsMessages = [
   "Larger project opportunities could accelerate growth.",
   "Focusing on project scope may improve overall production.",
   "Even modest gains in average contract size would create significant upside.",
-  "Exploring higher-value opportunities may strengthen results."
+  "Exploring higher-value opportunities may strengthen results.",
+  "Bub, keep deep driving into the full scope. There may be more opportunity there.",
+  "No excuses, only progress. Bigger questions can uncover bigger projects.",
+  "You got this. Focus on value, not just the first need they mention.",
+  "One team one dream. Stronger project scope helps everyone win.",
+  "Keep pushing to understand the whole problem, not just the obvious one.",
+  "Don't quit on the discovery process. That's where larger opportunities show up.",
+  "Bub, the next level may be hiding in better questions.",
+  "Build value, solve problems, and the average contract can climb.",
+  "Deep driving on scope can turn a small job into a real win.",
+  "Stay curious with the customer. There may be more on the table."
 ];
 
 const closeStrongMessages = [
@@ -3010,7 +3100,17 @@ const closeStrongMessages = [
   "Customers continue responding well to your sales process.",
   "Conversion performance is helping drive strong results.",
   "Your closing rate continues to outperform expectations.",
-  "Strong conversion efficiency remains a competitive advantage."
+  "Strong conversion efficiency remains a competitive advantage.",
+  "Bub, that's fire. You're turning opportunities into contracts.",
+  "You're killing it in the close. Keep trusting the process.",
+  "One team one dream. Strong conversion helps raise the whole standard.",
+  "Keep pushing. Your follow-up and execution are showing up.",
+  "No excuses, only progress. You're closing with confidence right now.",
+  "You got this. Keep listening, solving, and asking for the business.",
+  "Deep driving through objections is paying off.",
+  "That's fire bub. Customers are responding to how you're leading the conversation.",
+  "Your close rate says the process is working. Don't get loose now.",
+  "Keep stacking wins. Every close builds more confidence."
 ];
 
 const closeNeedsMessages = [
@@ -3018,9 +3118,18 @@ const closeNeedsMessages = [
   "Small gains in closing rate could have a large impact on production.",
   "More effective follow-up may improve conversion results.",
   "There is opportunity to strengthen closing performance.",
-  "Improved conversion rates could significantly boost revenue."
+  "Improved conversion rates could significantly boost revenue.",
+  "Bub, don't quit. Tighten the follow-up and the closes will come.",
+  "No excuses, only progress. Every appointment is a chance to sharpen the process.",
+  "You got this. Focus on listening, solving, and asking clearly for the business.",
+  "Keep deep driving through the customer's real concerns.",
+  "One team one dream. Use the training, trust the process, and keep pushing.",
+  "The close starts long before the paperwork. Stay engaged from the first conversation.",
+  "Bub, small improvements here can change the whole month.",
+  "Don't let one no slow you down. Learn from it and move forward.",
+  "Keep pushing. Better follow-up can turn maybe into yes.",
+  "Stay disciplined in the process. The next close is waiting."
 ];
-
 
 
 const pickRandom = (messages) => {
@@ -3049,7 +3158,27 @@ const onTrackMessages = [
   "You're trending toward a successful month. Keep creating opportunities and staying engaged with your prospects. The hard work is showing up in the numbers.",
   "Stay focused and keep stacking wins. Small victories compound quickly and can create significant momentum. You're heading in the right direction bub!",
   "Your consistency is paying off. Continue building on the progress you've already made. Every additional contract strengthens your position.",
-  "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues."
+  "Keep the pressure on and finish strong. You're tracking toward your goal and have a great opportunity to exceed it if the momentum continues.",
+  "Bub, that's fire. You're on track because you've been showing up and doing the work. Keep deep driving and don't let the pace slip.",
+  "One team one dream. You're putting yourself in a position to win, and that helps push the whole team forward.",
+  "You got this. The goal is not some faraway thing right now, it's right in front of you. Keep pushing.",
+  "No excuses, only progress. Stay locked into the daily actions that got you here.",
+  "You're killing it with consistency. Now keep stacking days and turn on-track into over-goal.",
+  "Bub, stay hungry. Being on pace is good, but finishing ahead is better.",
+  "That's fire. Your momentum is real, and now the job is to protect it.",
+  "Keep deep driving into every lead, every appointment, and every follow-up. That's how strong finishes happen.",
+  "One team one dream. Keep showing what disciplined execution looks like.",
+  "Don't coast now bub. You're in position, but the finish still matters.",
+  "Keep pushing. A few more wins can make this month special.",
+  "The process is working. Trust it, repeat it, and finish with urgency.",
+  "You're building a strong month one decision at a time. Stay focused.",
+  "Bub, every contract from here is extra pressure on the scoreboard in the best way.",
+  "That's fire. Keep the conversations moving and the pipeline active.",
+  "You are doing the right things. Now finish the job.",
+  "No excuses, only progress. Keep building momentum until the month closes.",
+  "Deep driving is the difference between being close and being over the top.",
+  "You're on track, bub. Now go make sure there is no doubt.",
+  "Keep pushing. The month is lining up for a strong finish if you stay locked in."
 ];
 
 const closeMessages = [
@@ -3062,9 +3191,28 @@ const closeMessages = [
   "You're in striking distance of your target. Keep your energy high and maintain urgency in every conversation.",
   "Now is the time to finish strong. Every appointment and estimate matters from this point forward.",
   "Stay disciplined and keep moving forward. The finish line is much closer than it appears.",
-  "Every contract matters from here. Continue stacking small wins and the larger results will follow."
+  "Every contract matters from here. Continue stacking small wins and the larger results will follow.",
+  "Bub, you're close. This is where you keep deep driving and refuse to let the month slip away.",
+  "One team one dream. You're right there, and now it's about finishing with urgency.",
+  "You got this. One strong close can change the whole feel of the month.",
+  "No excuses, only progress. Stay on the phone, stay in the follow-up, and stay active.",
+  "That's fire territory, bub. You're close enough to make this thing happen.",
+  "Keep pushing. The difference between close and done is execution.",
+  "Don't quit now. You're too close to start playing careful.",
+  "Deep driving on the next few opportunities could be the difference-maker.",
+  "Bub, stay locked in. The next yes matters.",
+  "The month is asking you to finish. Go answer it.",
+  "You are right there. Keep your energy high and your follow-up tight.",
+  "One team one dream. Finish strong for yourself and for the team.",
+  "Keep stacking small wins. Small wins are how big finishes happen.",
+  "No excuses, only progress. The scoreboard can still move.",
+  "You got this bub. Work the process and make the next opportunity count.",
+  "Keep deep driving. A strong close to the month is still on the table.",
+  "That's fire if you finish this thing right. Stay after it.",
+  "You're not far off. Keep pushing until the final whistle.",
+  "Every conversation matters now. Treat it that way.",
+  "Bub, don't coast into close. Attack the finish."
 ];
-
 
 const needsPushMessages = [
   "Keep grinding bub. Consistent effort pays off. The month is not defined by where you are today but by how you finish.",
@@ -3076,7 +3224,27 @@ const needsPushMessages = [
   "There's still time to improve your position. Continue executing the fundamentals and trust the process.",
   "Focus on the next opportunity, not the scoreboard. Daily activity creates long-term success.",
   "Progress starts with consistent activity. Continue building momentum one conversation and one contract at a time.",
-  "Keep your energy high and stay engaged. Every productive day moves you closer to your goals."
+  "Keep your energy high and stay engaged. Every productive day moves you closer to your goals.",
+  "Bub, don't quit. This is where you lean in and keep deep driving.",
+  "No excuses, only progress. The next action is what matters now.",
+  "You got this. A slow start does not mean a slow finish.",
+  "One team one dream. Stay connected, ask for help, and keep moving.",
+  "Keep pushing. The work you do today can change what the scoreboard says tomorrow.",
+  "Bub, champions respond. They don't make excuses and they don't disappear.",
+  "Deep driving through the tough stretch is how you build the comeback.",
+  "That's fire when you keep fighting even when the numbers are not where you want them.",
+  "The month is still alive. Go create momentum.",
+  "Stay focused on activity. Activity creates opportunity, and opportunity creates contracts.",
+  "Don't let frustration slow your feet. Keep moving.",
+  "Bub, the only bad response is quitting. Keep pushing.",
+  "No excuses, only progress. Make the next call and take the next step.",
+  "You are capable of more than this snapshot. Go prove it.",
+  "The comeback starts with one appointment, one estimate, one close.",
+  "Keep deep driving. The process still works when you work it.",
+  "One team one dream. We keep moving together.",
+  "You got this bub. Reset, refocus, and go win the next conversation.",
+  "Don't quit. There is still room to make progress.",
+  "Keep pushing until the month is done. That's how winners operate."
 ];
 
 const futureMonthMessages = [
@@ -3094,483 +3262,38 @@ const futureMonthMessages = [
   "Preparation today becomes production tomorrow.",
   "The month hasn't started yet bub, but the confidence should.",
   "We're not there yet, bub, but I already know you're going to be ready.",
-  "The work you do now is what makes future months successful."
+  "The work you do now is what makes future months successful.",
+  "Bub, that's fire. A blank scoreboard means nothing but opportunity.",
+  "One team one dream. We prepare before the month ever starts.",
+  "You got this. Start with belief, then back it up with activity.",
+  "No excuses, only progress. The next month is earned before it opens.",
+  "Keep pushing now so the future month starts with momentum.",
+  "Deep driving starts before the first appointment hits the calendar.",
+  "Don't wait for the month to begin before you decide to win it.",
+  "Bub, winners don't wait for perfect timing. They prepare early.",
+  "That's fire when preparation turns into production.",
+  "The opportunity is coming. Be ready to attack it.",
+  "One team one dream. The whole team wins when everybody prepares.",
+  "You are killing it when you treat future opportunity like current responsibility.",
+  "Keep your head right and your habits sharp.",
+  "The next month is a fresh field. Go plant something strong.",
+  "Bub, the goal starts at zero, but your preparation should not.",
+  "You got this. Build the plan now and execute when the time comes.",
+  "No excuses, only progress. Future wins are built by today's discipline.",
+  "Keep pushing in the quiet moments. That's where separation starts.",
+  "Deep driving now gives you a faster start later.",
+  "The best months are not accidents. They're prepared for.",
+  "Bub, get ready to make noise when this month opens up.",
+  "One team one dream. Stay ready so we don't have to get ready.",
+  "That's fire. The next opportunity is already getting lined up.",
+  "Don't quit on preparation just because the scoreboard hasn't started.",
+  "You know how to win. Now get ready to prove it again.",
+  "Keep building the pipeline before the month asks for results.",
+  "Bub, confidence comes from doing the work early.",
+  "No excuses, only progress. Start sharp, stay sharp, finish strong.",
+  "The future month is waiting. Let's make sure it meets a prepared version of you.",
+  "You got this. When the month opens, attack it like it already belongs to you."
 ];
-
-
-
-const goalMotivation = (() => {
-  const pct = pmData.monthlyGoalPercent;
-  const firstName = (currentPM?.name || "").split(" ")[0];
-
-  const selectedDate = new Date(pmData.selectedMonth);
-  const today = new Date();
-
-  const monthIsPast =
-    selectedDate.getFullYear() < today.getFullYear() ||
-    (
-      selectedDate.getFullYear() === today.getFullYear() &&
-      selectedDate.getMonth() < today.getMonth()
-    );
-
-  const monthIsFuture =
-    selectedDate.getFullYear() > today.getFullYear() ||
-    (
-      selectedDate.getFullYear() === today.getFullYear() &&
-      selectedDate.getMonth() > today.getMonth()
-    );
-
-  let msg = "";
-
-  if (monthIsFuture) {
-    msg = pickRandom(futureMonthMessages);
-  } else if (monthIsPast) {
-    if (pct >= 1)
-      msg = pickRandom(exceededGoalMessages);
-    else if (pct >= 0.9)
-      msg = "you finished close to goal. Carry that momentum into the next month.";
-    else if (pct >= 0.7)
-      msg = "you made progress, but the month finished short of goal. Use it as fuel for the next one.";
-    else
-      msg = "that month is behind you. Reset, refocus, and attack the next opportunity.";
-  } else {
-    if (pct >= 1.5)
-      msg = pickRandom(exceededGoalMessages);
-    else if (pct >= 0.9)
-      msg = pickRandom(onTrackMessages);
-    else if (pct >= 0.7)
-      msg = pickRandom(closeMessages);
-    else
-      msg = pickRandom(needsPushMessages);
-  }
-
-  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
-})();;
-const quarterCrushingMessages = [
-"You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
-"Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
-"You're creating strong momentum that projects a successful quarter. Keep it up!",
-"If this pace continues, you'll comfortably surpass your quarterly target. Keep the drive alive!",
-"Outstanding work bub. The quarter is shaping up extremely well. That's fire.",
-"You're operating at an elite pace and setting the standard for the quarter.",
-"Your current trajectory puts you in position for a remarkable finish bub, keep it up!",
-"The consistency you've shown is creating outstanding quarterly results.",
-"You're well ahead of target and proving what's possible with disciplined execution.",
-"Every indicator suggests you're on track for an exceptional quarter. One team one dream!",
-"Your pace continues to outperform expectations across the board. You're killing it, bub!",
-"You're building a quarter that others will benchmark against. Keep it up!",
-"Keep attacking opportunities bub. The results are speaking for themselves!",
-"You're turning your leads into elite-level production. That's fire!",
-];
-
-const quarterGoalAchievedMessages = [
-"Quarter goal achieved bub. Great job! Now let's see how far above it we can finish.",
-"You've already reached your quarterly target. That's fire!",
-"Outstanding work. The goal is behind you and now it's time to build separation.",
-"Goal accomplished bub, congrats! Keep your foot on the gas and keep driving.",
-"You're officially over quarterly goal bub. Keep stacking wins.",
-"One team one dream! You've already hit the target and there's still runway left.",
-"Your hard work has paid off. Quarter goal achieved and momentum is still building.",
-"You've earned the right to celebrate for about five minutes. Then let's go get more.",
-"The goal is complete. Everything from here is bonus production bub.",
-"That's what winning looks like. Quarterly goal achieved and still climbing.",
-"You didn't just pace toward the goal — you got there. Keep pushing.",
-"Quarter goal secured. Now let's see what kind of number we can really put up.",
-"You're proving what's possible through consistency and execution. That's fire!",
-"Goal reached bub. Stay aggressive and keep attacking opportunities.",
-"The quarter is already a success. Now let's make it an exceptional one."
-];
-
-const quarterCloseMessages = [
-"The quarter remains within reach. A strong finish can make all the difference.",
-"You're close just a few more contracts could put you over goal.",
-"Keep your momentum and focus over the next appointments and great things will happen.",
-"The quarterly target remains achievable. Keep the grind alive.",
-"Keep pushing bub. The pace is right where it needs to be.",
-"You're within range of the goal and still have time to close the gap. Keep pushing!",
-"A strong finish is what you need to close out the quarter. You got this!",
-"Momentum over the next few weeks will be critical. Keep focused.",
-"The quarter remains highly achievable from this position. Keep pushing bub!",
-"Stay focused on your leads and the quarter is yours - You got this!",
-"You're not far from where you need to be. Keep pushing - you got this!",
-"A few more contracts can turn around your quarter. Keep up the hard work!",
-"The opportunity to finish strong remains very real, keep the grind alive!",
-"Stay disciplined and keep pushing forward. You are close to your quarterly goal!",
-"Keep applying pressure, your quarterly goal is in sight!"
-];
-
-const quarterNeedsPushMessages = [
-"The quarter needs additional momentum, but there is still time. Keep pushing.",
-"Focus on pipeline activity and creating opportunities.",
-"Several strong contracts can quickly improve the quarterly outlook.",
-"Stay disciplined and continue executing the fundamentals.",
-"The quarter isn't decided yet. Keep building momentum.",
-"There's still time to improve the outcome of the quarter.",
-"Focus on your leads and don't let off the gas - you got this!",
-"Every conversation creates a new opportunity. Keep grinding.",
-"Momentum can shift quickly when activity increases.",
-"Continue building the sales pipeline and creating opportunities.",
-"Stay engaged bub and keep attacking the next opportunity.",
-"Persistence now can create a much stronger finish later - you got this!",
-"One productive stretch can change the entire quarter.",
-"Keep your energy high and focus on execution. You can do this!",
-"The quarter is still being written. Keep pushing forward."
-];
-
-const futureQuarterMessages = [
-  "We're not in this quarter just yet bub, but I know you'll be ready when it gets here.",
-  "This quarter hasn't started yet bub, but preparation starts now.",
-  "The scoreboard is still blank for this quarter bub, but the opportunity is coming.",
-  "Future quarters are won by the habits you build today bub.",
-  "We're not there yet bub, but I like our chances when the time comes.",
-  "The quarter is still ahead of us bub. Stay sharp and be ready to attack it.",
-  "No numbers just yet bub, just opportunity. Be ready when the quarter opens.",
-  "This quarter is still waiting on us, bub. Let's be ready to make it count."
-];
-
-const quarterlyMotivation = (() => {
-  const pct = pmData.quarterlyGoalPercent;
-  const firstName = (currentPM?.name || "").split(" ")[0];
-
-  const selectedQuarterStart = (() => {
-    const selectedDate = new Date(pmData.selectedMonth);
-
-    if (Number.isNaN(selectedDate.getTime())) return null;
-
-    const fiscalYearStart =
-      selectedDate.getMonth() >= 10
-        ? new Date(selectedDate.getFullYear(), 10, 1)
-        : new Date(selectedDate.getFullYear() - 1, 10, 1);
-
-    const monthsSinceFiscalStart =
-      (selectedDate.getFullYear() - fiscalYearStart.getFullYear()) * 12 +
-      selectedDate.getMonth() -
-      fiscalYearStart.getMonth();
-
-    const quarterStartOffset = Math.floor(monthsSinceFiscalStart / 3) * 3;
-
-    return new Date(
-      fiscalYearStart.getFullYear(),
-      fiscalYearStart.getMonth() + quarterStartOffset,
-      1
-    );
-  })();
-
-  const selectedQuarterEnd = selectedQuarterStart
-    ? new Date(
-        selectedQuarterStart.getFullYear(),
-        selectedQuarterStart.getMonth() + 3,
-        0
-      )
-    : null;
-
-  const today = new Date();
-  const quarterIsPast = selectedQuarterEnd ? selectedQuarterEnd < today : false;
-  const quarterIsFuture = selectedQuarterStart ? selectedQuarterStart > today : false;
-
-  let msg = "";
-
-  if (quarterIsFuture) {
-    msg = pickRandom(futureQuarterMessages);
-  } else if (quarterIsPast) {
-    if (pct >= 1)
-      msg =
-        "you exceeded your quarterly goal. Outstanding work and a strong finish to the quarter. That's fire.";
-    else if (pct >= 0.9)
-      msg =
-        "you finished just short of your quarterly goal. Carry that momentum into the next quarter.";
-    else if (pct >= 0.7)
-      msg =
-        "you made solid progress during the quarter. Use those lessons to build an even stronger next quarter.";
-    else
-      msg =
-        "that quarter is complete. Take what you learned, reset, and attack the next opportunity.";
-  } else {
-    if (pct >= 1.2)
-      msg = pickRandom(quarterCrushingMessages);
-    else if (pct >= 1.0)
-      msg = pickRandom(quarterGoalAchievedMessages);
-    else if (pct >= 0.85)
-      msg = pickRandom(quarterCloseMessages);
-    else
-      msg = pickRandom(quarterNeedsPushMessages);
-  }
-
-  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
-})();
-
-const referralGoalMetMessages = [
-  "the referral goal was met bub! Great work creating opportunities through relationships!",
-  "you met the referral goal! That means people trust you enough to send opportunities your way.",
-  "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
-  "you reached the referral target bub. You're doing a great job!",
-  "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
-];
-
-const referralGoalNotMetMessages = [
-  "the referral goal not met for this period. Review completed projects and look for customers who may still be willing to refer.",
-  "the referral goal was not met. Use this as a reminder to make referral asks part of every closeout conversation.",
-  "the goal was not met on referrals. The opportunity now is to follow up with happy customers and ask who else we can help.",
-  "the referral target was missed. A few intentional referral conversations can help turn that around next month.",
-  "the referral goal was not met. Reset, refocus, and keep asking satisfied customers for introductions."
-];
-
-const referralInProgressMessages = [
-  "the referral goal has not been reached yet. Keep asking happy customers who else you can help.",
-  "there is still room to build more referral opportunities this month - you got this.",
-  "referrals need a little more focus. Every satisfied customer can open another door.",
-  "keep planting referral seeds. The best leads often come from people who already trust us.",
-  "the referral activity is behind goal, but a few intentional asks can close the gap quickly."
-];
-
-const referralFutureMessages = [
-  "this referral month has not started yet, but the best referral opportunities are built before the scoreboard opens.",
-  "there is a future referral goal ahead. Keep creating great customer experiences now and the asks will feel natural later.",
-  "we are not there yet bub, but every satisfied customer can become a future referral source.",
-  "a future month is selected. Build the relationship now, ask when the timing is right, and the referrals will follow.",
-  "that referral window is still ahead bub. Keep doing the kind of work people want to recommend."
-];
-
-const referralStatusLabel = (() => {
-  if (pmData.referralStatus === "goalMet") return "Goal Met";
-  if (pmData.referralStatus === "goalNotMet") return "Goal Not Met";
-  if (pmData.referralStatus === "future") return "Upcoming";
-  return "In Progress";
-})();
-
-const referralStatusClass =
-  pmData.referralStatus === "goalMet"
-    ? "positive"
-    : pmData.referralStatus === "goalNotMet"
-    ? "negative"
-    : "warning";
-
-const referralMotivation = (() => {
-  const firstName = (currentPM?.name || "").split(" ")[0];
-
-  const messages =
-    pmData.referralStatus === "goalMet"
-      ? referralGoalMetMessages
-      : pmData.referralStatus === "goalNotMet"
-      ? referralGoalNotMetMessages
-      : pmData.referralStatus === "future"
-      ? referralFutureMessages
-      : referralInProgressMessages;
-
-  const msg = pickRandom(messages);
-
-  return `${firstName}, ${msg}`;
-})();
-
-const quarterlyReferralGoalMetMessages = [
-  "quarterly referral goal achieved. Consistent relationship building is paying off.",
-  "you hit the quarterly referral target. That's the result of trust earned over time.",
-  "quarterly referral production is exactly where it needs to be. Great work.",
-  "the quarter referral goal has been met. Keep stacking wins through relationships.",
-  "strong quarter on referrals. Word-of-mouth momentum is growing."
-];
-
-const quarterlyReferralGoalNotMetMessages = [
-  "quarterly referral goal was missed. Review every completed project and identify referral opportunities.",
-  "the quarter is behind target. A stronger referral process can close that gap next quarter.",
-  "quarterly referrals fell short. Focus on asking every satisfied customer for introductions.",
-  "the referral target for the quarter was not reached. Consistency in referral conversations matters.",
-  "this quarter missed the referral mark. Build a plan to create more referral opportunities."
-];
-
-const quarterlyReferralInProgressMessages = [
-  "the quarter is still underway. Every referral conversation matters.",
-  "quarterly referral production is building. Stay consistent with referral asks.",
-  "there is time left in the quarter to create referral momentum.",
-  "quarterly referral progress is developing. Keep relationship building at the forefront.",
-  "the quarter is not finished yet. Small referral wins compound over time."
-];
-
-const quarterlyReferralFutureMessages = [
-  "this quarter has not started yet bub. Prepare now so referrals come naturally later.",
-  "future quarter selected. Build relationships today that generate referrals tomorrow.",
-  "the next quarter is ahead. Strong customer experiences create future opportunities.",
-  "that referral quarter is still coming. Stay focused on earning trust now.",
-  "future quarter selected. Set the foundation before the scoreboard opens."
-];
-
-const quarterlyReferralStatusClass =
-  pmData.quarterlyReferralStatus === "goalMet"
-    ? "positive"
-    : pmData.quarterlyReferralStatus === "goalNotMet"
-    ? "negative"
-    : "warning";
-
-const quarterlyReferralMotivation = (() => {
-  const firstName = (currentPM?.name || "").split(" ")[0];
-
-  const messages =
-    pmData.quarterlyReferralStatus === "goalMet"
-      ? quarterlyReferralGoalMetMessages
-      : pmData.quarterlyReferralStatus === "goalNotMet"
-      ? quarterlyReferralGoalNotMetMessages
-      : pmData.quarterlyReferralStatus === "future"
-      ? quarterlyReferralFutureMessages
-      : quarterlyReferralInProgressMessages;
-
-  const msg = pickRandom(messages);
-
-  return `${firstName}, ${msg}`;
-})();
-const generatePMInsight = ({
-  monthlyGoalPercent,
-  quarterlyGoalPercent,
-  revenueVsTeam,
-  averageVsTeam,
-  closingRateVsTeam,
-  isPastMonth,
-  isFutureMonth,
-  isCustomMode,
-}) => {
-  const messages = [];
-
-  // Custom Date Performance
-if (isCustomMode) {
-  messages.push(
-    "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
-  );
-
-  if (revenueVsTeam > 0.25) {
-    messages.push(
-      `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-    );
-  } else if (revenueVsTeam > 0) {
-    messages.push(
-      "Revenue production is above the team average for the selected date range."
-    );
-  } else {
-    messages.push(
-      "Revenue production trails the team average for the selected date range."
-    );
-  }
-
-  return messages.slice(0, 2).join(" ");
-}
-
-if (isFutureMonth) {
-  messages.push(
-    "Future month selected. The scoreboard is still blank, but preparation now creates production later."
-  );
-
-  messages.push(
-    pickRandom(futureMonthMessages)
-  );
-
-  return messages.slice(0, 2).join(" ");
-}
-// Monthly Performance
-if (isPastMonth) {
-  if (monthlyGoalPercent >= 1) {
-    messages.push(
-      "Congrats! This month has closed with the monthly goal achieved."
-    );
-  } else {
-    messages.push(
-      "This month unfortunately has closed below the monthly goal."
-    );
-  }
-}
-else if (monthlyGoalPercent >= 1) {
-  messages.push(
-    "Monthly goal has been achieved and production remains strong."
-  );
-}
-else if (monthlyGoalPercent >= 0.9) {
-  messages.push(
-    "Monthly goal is within striking distance and remains well within reach."
-  );
-}
-else if (monthlyGoalPercent >= 0.75) {
-  messages.push(
-    "Monthly production remains on a competitive pace with the opportunity to finish strong."
-  );
-}
-else {
-  messages.push(
-    "Monthly production is currently below the pace needed to reach goal."
-  );
-}
-
-  // Quarterly Performance
-if (quarterlyGoalPercent >= 1) {
-  messages.push(
-    "Quarterly goal has already been achieved. That's fire."
-  );
-}
-else if (quarterlyGoalPercent >= 0.9) {
-  messages.push(
-    "Quarterly goal is within striking distance and remains well within reach."
-  );
-}
-else if (quarterlyGoalPercent >= 0.75) {
-  messages.push(
-    "Quarterly production remains competitive with a strong finish still available."
-  );
-}
-else {
-  messages.push(
-    "Quarterly production currently trails the target pace."
-  );
-}
-
-  // Revenue vs Team
-if (revenueVsTeam > 0.25) {
-  messages.push(
-    `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else if (revenueVsTeam > 0) {
-  messages.push(
-    `Revenue production exceeds the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else {
-  messages.push(
-    `Revenue production trails the team average by ${Math.abs(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-
-  // Average Contract vs Team
-if (averageVsTeam > 0.1) {
-  messages.push(
-    `Average contract value exceeds the team benchmark by ${(averageVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else if (averageVsTeam < -0.1) {
-  messages.push(
-    `Average contract value trails the team benchmark by ${Math.abs(averageVsTeam * 100).toFixed(1)}%.`
-  );
-}
-
-  // Closing Rate vs Team
-if (closingRateVsTeam > 0.05) {
-  messages.push(
-    `Closing rate exceeds the team average by ${(closingRateVsTeam * 100).toFixed(1)} percentage points.`
-  );
-}
-else if (closingRateVsTeam < -0.05) {
-  messages.push(
-    `Closing rate trails the team average by ${Math.abs(closingRateVsTeam * 100).toFixed(1)} percentage points.`
-  );
-}
-
-  return messages.slice(0, 4).join(" ");
-};
-
-const isCustomMode = pmDateMode === "custom";
-const selectedMonthDate = new Date(pmData.selectedMonth);
-const now = new Date();
-
-const isPastMonth =
-  selectedMonthDate.getFullYear() < now.getFullYear() ||
-  (selectedMonthDate.getFullYear() === now.getFullYear() &&
-    selectedMonthDate.getMonth() < now.getMonth());
-
 const isFutureMonth =
   selectedMonthDate.getFullYear() > now.getFullYear() ||
   (selectedMonthDate.getFullYear() === now.getFullYear() &&
