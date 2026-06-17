@@ -587,43 +587,68 @@ function getInclusiveMonthCount(startDate, endDate) {
 }
 
 function normalizeTrade(value) {
-  const text = String(value || "").trim().toLowerCase();
+  const text = String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
 
-    // EXCLUDED TRADE TYPES
-if (
-  text === "other" ||
-  text === "other, skylights" ||
-  text === "other, fascia" ||
-  text === "wraps, fascia" ||
-  text === "storm damage, fascia" ||
-  text === "soffits, fascia" ||
-  text === "repair" ||
-  text === "wraps"
-) {
+  if (!text || text === "nan") return "";
+
+  const has = (needle) => text.includes(needle);
+
+  const hasRoofing = has("roofing") || has("roof");
+  const hasMetalRoofing =
+    has("roofing - metal") ||
+    has("metal roofing") ||
+    has("metal roof");
+  const hasJamesHardie = has("james hardie") || has("hardie");
+  const hasSiding = has("siding");
+  const hasGutters = has("gutters") || has("gutter");
+  const hasWindows = has("windows") || has("window");
+  const hasDoors = has("doors") || has("door");
+  const hasOnlyExcludedWork =
+    text === "other" ||
+    text === "repair" ||
+    text === "wraps" ||
+    text === "fascia" ||
+    text === "soffits" ||
+    text === "skylights" ||
+    text === "free repair - google review" ||
+    text === "storm damage, fascia" ||
+    text === "soffits, fascia" ||
+    text === "wraps, fascia" ||
+    text === "other, skylights" ||
+    text === "other, fascia";
+
+  if (hasOnlyExcludedWork) return "";
+
+  // Highest-priority specialty categories.
+  if (hasMetalRoofing) return "Metal Roofing";
+  if (hasJamesHardie) return "James Hardie Siding";
+
+  // Combination categories used by the dashboard.
+  if (hasRoofing && hasSiding) return "Roofing & Siding";
+  if (hasRoofing && hasGutters) return "Roofing & Gutters";
+
+  // Single primary categories.
+  if (hasRoofing) return "Roofing";
+  if (hasSiding) return "Siding";
+  if (hasGutters) return "Gutters";
+  if (hasWindows) return "Windows";
+  if (hasDoors) return "Doors";
+
   return "";
 }
 
-  if (text === "roofing & gutters") return "Roofing & Gutters";
-  if (text === "roofing & siding") return "Roofing & Siding";
-  if (text === "james hardie siding") return "James Hardie Siding";
-  if (text === "metal roofing") return "Metal Roofing";
-  if (text === "roofing") return "Roofing";
-  if (text === "siding") return "Siding";
-  if (text === "gutters") return "Gutters";
-  if (text === "doors") return "Doors";
-  if (text === "windows") return "Windows";
+function addNormalizedJobTradeType2(row) {
+  const normalizedTrade =
+    normalizeTrade(row["Job Trade Type"]) ||
+    normalizeTrade(row["Job Trade Type 2"]);
 
-  if (text.includes("roofing") && text.includes("gutters")) return "Roofing & Gutters";
-  if (text.includes("roofing") && text.includes("siding")) return "Roofing & Siding";
-  if (text.includes("james hardie")) return "James Hardie Siding";
-  if (text.includes("metal roofing")) return "Metal Roofing";
-  if (text.includes("roofing")) return "Roofing";
-  if (text.includes("siding")) return "Siding";
-  if (text.includes("gutters")) return "Gutters";
-  if (text.includes("doors")) return "Doors";
-  if (text.includes("windows")) return "Windows";
-
-  return "";
+  return {
+    ...row,
+    "Job Trade Type 2": normalizedTrade,
+  };
 }
 
 function normalizeWorkType(value) {
@@ -1124,33 +1149,43 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   };
 
   const loadSalesFile = async () => {
-    try {
-      setDataStatus("Loading sales.xlsx...");
+    const salesFileOptions = ["/sales.xlsx", "/sales.csv"];
 
-      const response = await fetch(`/sales.xlsx?t=${Date.now()}`);
+    for (const filePath of salesFileOptions) {
+      try {
+        setDataStatus(`Loading ${filePath.replace("/", "")}...`);
 
-      if (!response.ok) {
-        throw new Error("Could not find public/sales.xlsx");
+        const response = await fetch(`${filePath}?t=${Date.now()}`);
+
+        if (!response.ok) {
+          throw new Error(`Could not find public${filePath}`);
+        }
+
+        const buffer = await response.arrayBuffer();
+        const workbook = XLSX.read(buffer, {
+          type: "array",
+          cellDates: true,
+        });
+
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+          defval: "",
+        });
+
+        const normalizedRows = rows.map(addNormalizedJobTradeType2);
+
+        setSalesRows(normalizedRows);
+        setDataStatus(
+          `${normalizedRows.length} rows loaded from ${filePath.replace("/", "")}`
+        );
+        return;
+      } catch (error) {
+        console.warn(error);
       }
-
-      const buffer = await response.arrayBuffer();
-      const workbook = XLSX.read(buffer, {
-        type: "array",
-        cellDates: true,
-      });
-
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, {
-        defval: "",
-      });
-
-      setSalesRows(rows);
-      setDataStatus(`${rows.length} rows loaded from sales.xlsx`);
-    } catch (error) {
-      setSalesRows([]);
-      setDataStatus("No public/sales.xlsx file found yet.");
-      console.error(error);
     }
+
+    setSalesRows([]);
+    setDataStatus("No public/sales.xlsx or public/sales.csv file found yet.");
   };
 
 
@@ -2403,8 +2438,8 @@ quarterlyReferralStatus,
       if (cleanDate < start || cleanDate > end) return;
 
       const trade =
-        normalizeTrade(row["Job Trade Type 2"]) ||
-        normalizeTrade(row["Job Trade Type"]);
+        normalizeTrade(row["Job Trade Type"]) ||
+        normalizeTrade(row["Job Trade Type 2"]);
 
       const workType = normalizeWorkType(row["Work Type"]);
 
@@ -2533,8 +2568,8 @@ quarterlyReferralStatus,
       if (cleanDate < start || cleanDate > end) return;
 
       const trade =
-        normalizeTrade(row["Job Trade Type 2"]) ||
-        normalizeTrade(row["Job Trade Type"]);
+        normalizeTrade(row["Job Trade Type"]) ||
+        normalizeTrade(row["Job Trade Type 2"]);
 
       const workType = normalizeWorkType(row["Work Type"]);
       const config = findProjectConfig(trade, workType);
