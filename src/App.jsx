@@ -2001,18 +2001,7 @@ const teamClosingRate =
     ? customTeamClosingRate
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
-    : activeGoalProjectManagers.length > 0
-    ? activeGoalProjectManagers.reduce((sum, pm) => {
-        return (
-          sum +
-          getPMMetric(
-            pm.name,
-            "Monthly Closing Rate",
-            selectedMonth
-          )
-        );
-      }, 0) / activeGoalProjectManagers.length
-    : 0;
+    : getTeamMetric("Monthly Closing Rate Average", selectedMonth);
 
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
@@ -2035,19 +2024,10 @@ const ninetyDayClosingRate = getPMMetric(
   selectedMonth
 );
 
-const ninetyDayTeamClosingRates = activeGoalProjectManagers
-  .map((pm) =>
-    getPMMetric(pm.name, "Rolling 90-Day Closing Rate", selectedMonth)
-  )
-  .filter((rate) => Number(rate || 0) > 0);
-
-const ninetyDayTeamClosingRate =
-  ninetyDayTeamClosingRates.length > 0
-    ? ninetyDayTeamClosingRates.reduce(
-        (sum, rate) => sum + Number(rate || 0),
-        0
-      ) / ninetyDayTeamClosingRates.length
-    : 0;
+const ninetyDayTeamClosingRate = getTeamMetric(
+  "Rolling 90-Day Closing Rate Average",
+  selectedMonth
+);
 
 const rankDateRange =
   pmDateMode === "fiscalYTD"
