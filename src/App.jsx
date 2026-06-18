@@ -972,7 +972,20 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
           appointments *
           channel.averageRevenuePerAppointment *
           scenario.factor;
-
+const renderTopDawgNames = (names) =>
+  names.map((name, index) => (
+    <span
+      key={`${name}-${index}`}
+      className={
+        name === currentPM?.name
+          ? "top-dawg-current-pm"
+          : ""
+      }
+    >
+      {index > 0 ? ", " : ""}
+      {name}
+    </span>
+  ));
         return {
           ...scenario,
           leads,
@@ -3904,24 +3917,27 @@ const quarterlyGoalClass =
 
   {!isCustomMode && (
 <div className="pm-rank-row">
-<div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
-  {isRevenueLeader && (
-    <div className="glitter-field" aria-hidden="true">
-      {Array.from({ length: 18 }).map((_, index) => (
-        <span key={index} className={`glitter-dot glitter-${index + 1}`} />
-      ))}
-    </div>
-  )}
+  <div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
+    <small>Revenue Rank</small>
+    <strong>{revenueRankLabel}</strong>
 
-  <small>Revenue Rank</small>
-  <strong>{revenueRankLabel}</strong>
+    {isRevenueLeader && (
+      <div className="top-dawg-label">
+        <b>TOP DAWG</b>
+      </div>
+    )}
+  </div>
 
-  {isRevenueLeader && (
-    <div className="top-dawg-label">
-      <b>TOP DAWG</b>
-    </div>
-  )}
-</div>
+  <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
+    <small>Closing Rate Rank</small>
+    <strong>{closingRankLabel}</strong>
+
+    {isClosingLeader && (
+      <div className="top-dawg-label">
+        TOP DAWG
+      </div>
+    )}
+  </div>
 
 <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
   {isClosingLeader && (
