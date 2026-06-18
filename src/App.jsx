@@ -2020,12 +2020,8 @@ const teamClosingRate =
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
     : getTeamMetric("Monthly Closing Rate Average", selectedMonth);
-    console.log(
-  "Monthly Closing Rate Average",
-  selectedMonth,
-  getTeamMetric("Monthly Closing Rate Average", selectedMonth)
-);
 
+    
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
 ninetyDayStartDate.setDate(ninetyDayStartDate.getDate() - 89);
