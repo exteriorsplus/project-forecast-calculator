@@ -2274,7 +2274,7 @@ input::placeholder {
   content: "✦";
   position: absolute;
   color: gold;
-  font-size: 22px;
+  font-size: 42px;
   z-index: 5;
   pointer-events: none;
   animation: sparkle 2s infinite ease-in-out;
