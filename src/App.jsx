@@ -2021,7 +2021,7 @@ const teamClosingRate =
     ? ytdTeamClosingRate
     : getTeamMetric("Monthly Closing Rate Average", selectedMonth);
 
-    
+
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
 ninetyDayStartDate.setDate(ninetyDayStartDate.getDate() - 89);
@@ -4203,7 +4203,7 @@ const quarterlyGoalClass =
               />
 
               <PMMetricCard
-                label="Rolling 90-Day Closing Rate vs Team"
+                label="90-DAY CLOSING RATE VS TEAM"
                 value={displayPercent(pmData.ninetyDayClosingRate, 1)}
                 comparisonLabel="Team Avg"
                 comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
