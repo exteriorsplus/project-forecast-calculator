@@ -2234,7 +2234,7 @@ input::placeholder {
     text-align: center;
   }
 }
-/* Premium golden micro-glitter */
+/* Premium random gold glitter */
 
 .pm-rank-row > .pm-rank-card.rank-leader {
   position: relative;
@@ -2245,41 +2245,74 @@ input::placeholder {
 .pm-rank-row > .pm-rank-card.rank-leader::after {
   content: "";
   position: absolute;
-  inset: -18px;
   pointer-events: none;
-  z-index: 10;
+  z-index: 20;
 
-  background-image:
-    radial-gradient(circle, rgba(255, 215, 0, 0.95) 1.2px, transparent 2px),
-    radial-gradient(circle, rgba(255, 244, 180, 0.9) 1px, transparent 2px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 2px);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: transparent;
 
-  background-size: 34px 34px, 46px 46px, 58px 58px;
-  background-position: 0 0, 18px 12px, 8px 28px;
+  animation: randomGoldGlitter 5s infinite ease-in-out;
+}
 
-  animation: goldDustFloat 3.5s infinite ease-in-out;
+.pm-rank-row > .pm-rank-card.rank-leader::before {
+  top: 8px;
+  left: 12px;
+
+  box-shadow:
+    18px -16px 0 #ffd700,
+    52px -10px 0 #fff3a3,
+    96px -14px 0 #ffd700,
+    132px 4px 0 #fff8c6,
+    145px 46px 0 #ffd700,
+    112px 88px 0 #fff3a3,
+    74px 102px 0 #ffd700,
+    28px 84px 0 #fff8c6,
+    -10px 42px 0 #ffd700;
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader::after {
-  inset: -24px;
-  opacity: 0.55;
-  filter: blur(0.3px);
-  animation-delay: 1.4s;
+  top: 18px;
+  left: 24px;
+  animation-delay: 2.5s;
+
+  box-shadow:
+    8px 18px 0 #fff8c6,
+    42px -8px 0 #ffd700,
+    76px 36px 0 #fff3a3,
+    118px 18px 0 #ffd700,
+    138px 76px 0 #fff8c6,
+    92px 104px 0 #ffd700,
+    46px 96px 0 #fff3a3,
+    -14px 74px 0 #ffd700;
 }
 
-@keyframes goldDustFloat {
-  0% {
-    opacity: 0.15;
-    transform: translateY(2px) scale(0.98);
+@keyframes randomGoldGlitter {
+  0%, 70%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(0.2px);
   }
 
-  50% {
+  76% {
     opacity: 0.9;
-    transform: translateY(-3px) scale(1.02);
+    transform: scale(1.15);
+    filter: blur(0);
   }
 
-  100% {
-    opacity: 0.2;
-    transform: translateY(1px) scale(1);
+  82% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+
+  88% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+
+  94% {
+    opacity: 0.15;
+    transform: scale(0.7);
   }
 }
