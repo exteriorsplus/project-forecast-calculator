@@ -3937,24 +3937,6 @@ const quarterlyGoalClass =
     )}
   </div>
 
-<div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
-  {isClosingLeader && (
-    <div className="glitter-field" aria-hidden="true">
-      {Array.from({ length: 18 }).map((_, index) => (
-        <span key={index} className={`glitter-dot glitter-${index + 1}`} />
-      ))}
-    </div>
-  )}
-
-  <small>Closing Rate Rank</small>
-  <strong>{closingRankLabel}</strong>
-
-  {isClosingLeader && (
-    <div className="top-dawg-label">
-      TOP DAWG
-    </div>
-  )}
-</div>
 </div>
   )}
 </div>
