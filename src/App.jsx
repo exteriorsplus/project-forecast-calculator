@@ -3904,21 +3904,35 @@ const quarterlyGoalClass =
 
   {!isCustomMode && (
 <div className="pm-rank-row">
-  <div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
-  <small>Revenue Rank</small>
+<div className={`pm-rank-card ${isRevenueLeader ? "rank-leader" : ""}`}>
+  {isRevenueLeader && (
+    <div className="glitter-field" aria-hidden="true">
+      {Array.from({ length: 18 }).map((_, index) => (
+        <span key={index} className={`glitter-dot glitter-${index + 1}`} />
+      ))}
+    </div>
+  )}
 
+  <small>Revenue Rank</small>
   <strong>{revenueRankLabel}</strong>
 
   {isRevenueLeader && (
     <div className="top-dawg-label">
-     <b>TOP DAWG</b>
+      <b>TOP DAWG</b>
     </div>
   )}
 </div>
 
 <div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
-  <small>Closing Rate Rank</small>
+  {isClosingLeader && (
+    <div className="glitter-field" aria-hidden="true">
+      {Array.from({ length: 18 }).map((_, index) => (
+        <span key={index} className={`glitter-dot glitter-${index + 1}`} />
+      ))}
+    </div>
+  )}
 
+  <small>Closing Rate Rank</small>
   <strong>{closingRankLabel}</strong>
 
   {isClosingLeader && (
