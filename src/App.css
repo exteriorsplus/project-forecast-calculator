@@ -2234,47 +2234,17 @@ input::placeholder {
     text-align: center;
   }
 }
-/* ===== TOP DAWG SPARKLES ===== */
-
-.pm-rank-row > .pm-rank-card.rank-leader {
-  position: relative;
-  overflow: visible;
-}
-
-.pm-rank-row > .pm-rank-card.rank-leader::before,
-.pm-rank-row > .pm-rank-card.rank-leader::after {
-  content: "✨";
-  position: absolute;
-  font-size: 24px;
-  z-index: 20;
-  pointer-events: none;
-  animation: sparkleTwinkle 2.5s infinite ease-in-out;
-}
-
 .pm-rank-row > .pm-rank-card.rank-leader::before {
-  top: -12px;
-  left: -12px;
-}
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 
-.pm-rank-row > .pm-rank-card.rank-leader::after {
-  bottom: -12px;
-  right: -12px;
-  animation-delay: 1.25s;
-}
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255,215,0,.9) 1px, transparent 2px),
+    radial-gradient(circle at 75% 30%, rgba(255,255,255,.9) 1px, transparent 2px),
+    radial-gradient(circle at 30% 80%, rgba(255,215,0,.8) 1px, transparent 2px),
+    radial-gradient(circle at 85% 75%, rgba(255,255,255,.8) 1px, transparent 2px);
 
-@keyframes sparkleTwinkle {
-  0% {
-    opacity: 0;
-    transform: scale(0.5) rotate(0deg);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.4) rotate(20deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(0.5) rotate(40deg);
-  }
+  animation: floatingDust 4s infinite alternate ease-in-out;
 }
