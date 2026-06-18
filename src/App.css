@@ -2234,92 +2234,47 @@ input::placeholder {
     text-align: center;
   }
 }
-.champion {
-  position: relative;
-}
+/* ===== TOP DAWG SPARKLES ===== */
 
-.champion::before,
-.champion::after {
-  content: "✦";
-  position: absolute;
-  color: gold;
-  font-size: 18px;
-  animation: sparkle 2s infinite;
-}
-
-.champion::before {
-  top: -10px;
-  left: -10px;
-}
-
-.champion::after {
-  bottom: -10px;
-  right: -10px;
-  animation-delay: 1s;
-}
-
-@keyframes sparkle {
-  0%,100% {
-    opacity: 0;
-    transform: scale(.4);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.4);
-  }
 .pm-rank-row > .pm-rank-card.rank-leader {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader::before,
+.pm-rank-row > .pm-rank-card.rank-leader::after {
+  content: "✨";
+  position: absolute;
+  font-size: 24px;
+  z-index: 20;
+  pointer-events: none;
+  animation: sparkleTwinkle 2.5s infinite ease-in-out;
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader::before {
-  content: "";
-  position: absolute;
-  top: -60%;
-  left: -90%;
-  width: 55%;
-  height: 220%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255, 255, 255, 0.85),
-    transparent
-  );
-  transform: rotate(20deg);
-  animation: shine 3.5s infinite;
-  z-index: 1;
+  top: -12px;
+  left: -12px;
 }
 
 .pm-rank-row > .pm-rank-card.rank-leader::after {
-  content: "✦";
-  position: absolute;
-  top: -12px;
-  right: -10px;
-  color: gold;
-  font-size: 28px;
-  z-index: 3;
-  animation: sparkle 1.8s infinite ease-in-out;
+  bottom: -12px;
+  right: -12px;
+  animation-delay: 1.25s;
 }
 
-.pm-rank-card > * {
-  position: relative;
-  z-index: 2;
-}
-
-@keyframes shine {
-  0% { left: -90%; }
-  35% { left: 140%; }
-  100% { left: 140%; }
-}
-
-@keyframes sparkle {
-  0%, 100% {
-    opacity: 0.2;
-    transform: scale(0.6) rotate(0deg);
+@keyframes sparkleTwinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
   }
+
   50% {
     opacity: 1;
-    transform: scale(1.35) rotate(25deg);
+    transform: scale(1.4) rotate(20deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(40deg);
   }
 }
