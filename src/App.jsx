@@ -1793,7 +1793,7 @@ const closingRate =
           0
         ) / activeMonths.length
       : 0
-    : getPMMetric(pmName, "Closing Rate", selectedMonth);
+    : getPMMetric(pmName, "Monthly Closing Rate", selectedMonth);
 
 
 const lastYearSalesData = getSalesDataForMonths([lastYearMonth]);
@@ -1804,7 +1804,7 @@ const lyAverageContract = lastYearSalesData.averageContract;
 
 const lyClosingRate = getPMMetric(
   pmName,
-  "Closing Rate",
+  "Monthly Closing Rate",
   lastYearMonth
 );
 
@@ -1969,7 +1969,7 @@ const teamClosingRate =
     ? customTeamClosingRate
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
-    : getTeamMetric("Closing Rate", selectedMonth);
+    : getTeamMetric("Monthly Closing Rate", selectedMonth);
 
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
@@ -1986,33 +1986,24 @@ const ninetyDayTeamSalesData = getTeamSalesDataForRange(
   ninetyDayEndDate
 );
 
-const ninetyDayMonths = monthOptions.filter((month) => {
-  const bounds = getMonthDateBoundsForSales(month);
-  if (!bounds) return false;
+const ninetyDayClosingRate = getPMMetric(
+  pmName,
+  "Rolling 90-Day Closing Rate",
+  selectedMonth
+);
 
-  return bounds.end >= ninetyDayStartDate && bounds.start <= ninetyDayEndDate;
-});
-
-const ninetyDayClosingRate =
-  ninetyDayMonths.length > 0
-    ? ninetyDayMonths.reduce(
-        (sum, month) => sum + getPMMetric(pmName, "Closing Rate", month),
-        0
-      ) / ninetyDayMonths.length
-    : 0;
+const ninetyDayTeamClosingRates = activeGoalProjectManagers
+  .map((pm) =>
+    getPMMetric(pm.name, "Rolling 90-Day Closing Rate", selectedMonth)
+  )
+  .filter((rate) => Number(rate || 0) > 0);
 
 const ninetyDayTeamClosingRate =
-  ninetyDayMonths.length > 0 && activeGoalProjectManagers.length > 0
-    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
-        const pmRate =
-          ninetyDayMonths.reduce(
-            (monthSum, month) =>
-              monthSum + getPMMetric(pm.name, "Closing Rate", month),
-            0
-          ) / ninetyDayMonths.length;
-
-        return pmSum + pmRate;
-      }, 0) / activeGoalProjectManagers.length
+  ninetyDayTeamClosingRates.length > 0
+    ? ninetyDayTeamClosingRates.reduce(
+        (sum, rate) => sum + Number(rate || 0),
+        0
+      ) / ninetyDayTeamClosingRates.length
     : 0;
 
 const rankDateRange =
@@ -2028,11 +2019,11 @@ const rankDateRange =
 const revenueRank = rankDateRange
   ? getRevenueRankForRange(rankDateRange.start, rankDateRange.end, pmName)
   : { rank: null, total: 0 };
-    const closingRateRank = getRankForMetric(
-      "Closing Rate",
-      selectedMonth,
-      (currentPM?.name || projectManagers[0].name)
-    );
+const closingRateRank = getRankForMetric(
+  "Monthly Closing Rate",
+  selectedMonth,
+  (currentPM?.name || projectManagers[0].name)
+);
 
     const companyTake = 0.10;
 
@@ -2344,7 +2335,7 @@ const getTopClosingDawgForMonth = (month) => {
     .filter((pm) => pm.activeGoal)
     .map((pm) => ({
       name: pm.name,
-      value: getPMMetric(pm.name, "Closing Rate", month),
+      value: getPMMetric(pm.name, "Monthly Closing Rate", month),
     }))
     .filter((pm) => Number(pm.value || 0) > 0)
     .sort((a, b) => b.value - a.value);
@@ -3987,16 +3978,6 @@ const quarterlyGoalClass =
         TOP DAWG
       </div>
     )}
-  </div>
-
-<div className={`pm-rank-card ${isClosingLeader ? "rank-leader" : ""}`}>
-  {isClosingLeader && (
-    <div className="glitter-field" aria-hidden="true">
-      {Array.from({ length: 18 }).map((_, index) => (
-        <span key={index} className={`glitter-dot glitter-${index + 1}`} />
-      ))}
-    </div>
-  )}
 
   <small>Closing Rate Rank</small>
   <strong>{closingRankLabel}</strong>
@@ -4189,7 +4170,7 @@ const quarterlyGoalClass =
               />
 
               <PMMetricCard
-                label="Closing Rate vs Team"
+                label="Rolling 90-Day Closing Rate vs Team"
                 value={displayPercent(pmData.ninetyDayClosingRate, 1)}
                 comparisonLabel="Team Avg"
                 comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
