@@ -3420,7 +3420,7 @@ const quarterCloseMessages = [
 "Momentum over the next few weeks will be critical. Keep focused.",
 "The quarter remains highly achievable from this position. Keep pushing bub!",
 "Stay focused on your leads and the quarter is yours - You got this!",
-"You're not far from where you need to be. Keep pushing - you got this!",
+"You're not far from where you need to be. Keep pushing, you got this!",
 "A few more contracts can turn around your quarter. Keep up the hard work!",
 "The opportunity to finish strong remains very real, keep the grind alive!",
 "Stay disciplined and keep pushing forward. You are close to your quarterly goal!",
@@ -3727,7 +3727,7 @@ else {
   // Quarterly Performance
 if (quarterlyGoalPercent >= 1) {
   messages.push(
-    "Quarterly goal has already been achieved. That's fire."
+    "Quarterly goal has already been achieved."
   );
 }
 else if (quarterlyGoalPercent >= 0.9) {
@@ -4149,30 +4149,13 @@ const quarterlyGoalClass =
   }}
 />
 
-<<div className="pm-metric-card">
-  <span>
-    {pmData.quarterlyRemaining >= 0
-      ? "Quarterly Remaining"
-      : "Over Quarterly Goal"}
-  </span>
-
-  <strong>{money(Math.abs(pmData.quarterlyRemaining))}</strong>
-
-  <div className="pm-comparison-line">
-    <small>{pmData.quarterDaysRemaining} days quarterly remaining</small>
-    <small>{pmData.quarterDateRangeLabel}</small>
-  </div>
-
-  <div className="mike-moment-mini">
-    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
-
-    <div className="mike-moment-mini-bubble">
-      <div className="mike-moment-mini-title">
-        ✨MAGIC MIKE MOMENT✨
-      </div>
-
-      <p>{quarterlyMotivation}</p>
-    </div>
+<PMMetricCard
+  label="Quarterly Remaining"
+  value={money(pmData.quarterlyRemaining)}
+  comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
+  comparisonValue=""
+  customMessage={quarterlyMotivation}
+/>
   </div>
 </div>
 
