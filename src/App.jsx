@@ -4418,7 +4418,7 @@ const quarterlyGoalClass =
           </div>
 
           <div className="pm-section-card top-dawg-leaderboard-card">
-            <h2>TOP DAWG HALL OF FAME</h2>
+            <h2>Top Dawg Hall of Fame</h2>
 
             <p className="top-dawg-leaderboard-note">
               Month-end winners only. Current open month is excluded.
