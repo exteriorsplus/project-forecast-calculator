@@ -2233,6 +2233,8 @@ input::placeholder {
     grid-template-columns: 1fr;
     text-align: center;
   }
+}
+
 .top-dawg-current-pm {
   color: #b91c1c;
   font-weight: 900;
