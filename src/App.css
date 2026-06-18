@@ -2248,3 +2248,14 @@ input::placeholder {
 
   animation: floatingDust 4s infinite alternate ease-in-out;
 }
+@keyframes floatingDust {
+  from {
+    transform: translateY(0px);
+    opacity: .35;
+  }
+
+  to {
+    transform: translateY(-4px);
+    opacity: .9;
+  }
+}
