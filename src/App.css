@@ -2234,28 +2234,52 @@ input::placeholder {
     text-align: center;
   }
 }
-.pm-rank-row > .pm-rank-card.rank-leader::before {
+/* Premium golden micro-glitter */
+
+.pm-rank-row > .pm-rank-card.rank-leader {
+  position: relative;
+  overflow: visible;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader::before,
+.pm-rank-row > .pm-rank-card.rank-leader::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -18px;
   pointer-events: none;
+  z-index: 10;
 
   background-image:
-    radial-gradient(circle at 15% 20%, rgba(255,215,0,.9) 1px, transparent 2px),
-    radial-gradient(circle at 75% 30%, rgba(255,255,255,.9) 1px, transparent 2px),
-    radial-gradient(circle at 30% 80%, rgba(255,215,0,.8) 1px, transparent 2px),
-    radial-gradient(circle at 85% 75%, rgba(255,255,255,.8) 1px, transparent 2px);
+    radial-gradient(circle, rgba(255, 215, 0, 0.95) 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 244, 180, 0.9) 1px, transparent 2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 2px);
 
-  animation: floatingDust 4s infinite alternate ease-in-out;
+  background-size: 34px 34px, 46px 46px, 58px 58px;
+  background-position: 0 0, 18px 12px, 8px 28px;
+
+  animation: goldDustFloat 3.5s infinite ease-in-out;
 }
-@keyframes floatingDust {
-  from {
-    transform: translateY(0px);
-    opacity: .35;
+
+.pm-rank-row > .pm-rank-card.rank-leader::after {
+  inset: -24px;
+  opacity: 0.55;
+  filter: blur(0.3px);
+  animation-delay: 1.4s;
+}
+
+@keyframes goldDustFloat {
+  0% {
+    opacity: 0.15;
+    transform: translateY(2px) scale(0.98);
   }
 
-  to {
-    transform: translateY(-4px);
-    opacity: .9;
+  50% {
+    opacity: 0.9;
+    transform: translateY(-3px) scale(1.02);
+  }
+
+  100% {
+    opacity: 0.2;
+    transform: translateY(1px) scale(1);
   }
 }
