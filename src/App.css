@@ -2139,14 +2139,14 @@ input::placeholder {
 
   50% {
     box-shadow:
-      0 0 16px rgb(0, 98, 255),
-      0 0 32px rgb(255, 0, 179),
+      0 0 16px rgb(255, 234, 0),
+      0 0 32px rgb(255, 221, 0),
       0 0 48px rgb(255, 247, 0);
   }
 
   100% {
     box-shadow:
-      0 0 8px rgb(255, 0, 179),
+      0 0 8px rgb(255, 242, 0),
       0 0 16px rgb(255, 247, 0);
   }
 }
