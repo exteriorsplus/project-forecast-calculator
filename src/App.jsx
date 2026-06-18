@@ -1224,6 +1224,28 @@ const rawRate =
     );
   };
 
+const normalizeMetricLabel = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[–—]/g, "-")
+    .replace(/\s+/g, " ");
+
+const metricLabelMatches = (rowLabel, requestedMetric) => {
+  const rowMetric = normalizeMetricLabel(rowLabel);
+  const requested = normalizeMetricLabel(requestedMetric);
+
+  if (rowMetric === requested) return true;
+
+  // Backward compatibility: old code/data used "Closing Rate".
+  // New monthly PM sheet row is "Monthly Closing Rate".
+  if (requested === "closing rate" && rowMetric === "monthly closing rate") {
+    return true;
+  }
+
+  return false;
+};
+
 const getTeamMetricRow = (metric) => {
   const teamSectionStart = pmRows.findIndex(
     (row) =>
@@ -1234,12 +1256,8 @@ const getTeamMetricRow = (metric) => {
   if (teamSectionStart < 0) return null;
 
   return pmRows
-    .slice(teamSectionStart, teamSectionStart + 8)
-    .find(
-      (row) =>
-        String(row?.[0] || "").trim().toLowerCase() ===
-        metric.toLowerCase()
-    );
+    .slice(teamSectionStart, teamSectionStart + 14)
+    .find((row) => metricLabelMatches(row?.[0], metric));
 };
 
   const getPMMonthOptions = (pmName = currentPM?.name || projectManagers[0].name) => {
@@ -1263,12 +1281,26 @@ const getTeamMetricRow = (metric) => {
     if (startIndex < 0 || !monthLabel) return 0;
 
     const headerRow = pmRows[startIndex] || [];
-    const metricRow = pmRows
-  .slice(startIndex + 1, startIndex + 10)
-      .find(
-        (row) =>
-          String(row?.[0] || "").trim().toLowerCase() === metric.toLowerCase()
+
+    const nextSectionIndex = pmRows.findIndex((row, index) => {
+      if (index <= startIndex) return false;
+
+      const label = String(row?.[0] || "").trim();
+
+      return (
+        projectManagers.some((pm) => pm.name === label) ||
+        label.toLowerCase() === "contract total average"
       );
+    });
+
+    const blockRows = pmRows.slice(
+      startIndex + 1,
+      nextSectionIndex > startIndex ? nextSectionIndex : startIndex + 20
+    );
+
+    const metricRow = blockRows.find((row) =>
+      metricLabelMatches(row?.[0], metric)
+    );
 
     if (!metricRow) return 0;
 
@@ -1789,7 +1821,7 @@ const closingRate =
     ? activeMonths.length > 0
       ? activeMonths.reduce(
           (sum, month) =>
-            sum + getPMMetric(pmName, "Closing Rate", month),
+            sum + getPMMetric(pmName, "Monthly Closing Rate", month),
           0
         ) / activeMonths.length
       : 0
@@ -1859,7 +1891,7 @@ const customTeamClosingRate =
         const pmClosingRate =
           activeMonths.reduce(
             (monthSum, month) =>
-              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+              monthSum + getPMMetric(pm.name, "Monthly Closing Rate", month),
             0
           ) / activeMonths.length;
 
@@ -1939,7 +1971,7 @@ const ytdTeamClosingRate =
         const pmClosingRate =
           ytdMonths.reduce(
             (monthSum, month) =>
-              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+              monthSum + getPMMetric(pm.name, "Monthly Closing Rate", month),
             0
           ) / ytdMonths.length;
 
@@ -3978,16 +4010,7 @@ const quarterlyGoalClass =
         TOP DAWG
       </div>
     )}
-
-  <small>Closing Rate Rank</small>
-  <strong>{closingRankLabel}</strong>
-
-  {isClosingLeader && (
-    <div className="top-dawg-label">
-      TOP DAWG
-    </div>
-  )}
-</div>
+  </div>
 </div>
   )}
 </div>
