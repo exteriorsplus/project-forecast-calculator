@@ -922,11 +922,22 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
   jsConfettiRef.current = new JSConfetti();
 }, []);
 
-  const currentPM = getCurrentProjectManager();
-  const isPMPortal = Boolean(currentPM);
+ const currentPM = getCurrentProjectManager();
+const isPMPortal = Boolean(currentPM);
 
-  const rawRate =
-    closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
+const renderTopDawgNames = (names) =>
+  names.map((name, index) => (
+    <span
+      key={`${name}-${index}`}
+      className={name === currentPM?.name ? "top-dawg-current-pm" : ""}
+    >
+      {index > 0 ? ", " : ""}
+      {name}
+    </span>
+  ));
+
+const rawRate =
+  closeRate === "custom" ? Number(customCloseRate || 0) / 100 : closeRate;
 
   const activeCloseRate = Math.min(Math.max(rawRate, 0), 1);
 
@@ -972,20 +983,7 @@ const [marketingSpendByChannel, setMarketingSpendByChannel] = useState(() =>
           appointments *
           channel.averageRevenuePerAppointment *
           scenario.factor;
-const renderTopDawgNames = (names) =>
-  names.map((name, index) => (
-    <span
-      key={`${name}-${index}`}
-      className={
-        name === currentPM?.name
-          ? "top-dawg-current-pm"
-          : ""
-      }
-    >
-      {index > 0 ? ", " : ""}
-      {name}
-    </span>
-  ));
+
         return {
           ...scenario,
           leads,
@@ -4317,7 +4315,7 @@ const quarterlyGoalClass =
                   pmData.topDawgLeaderboards.revenue.map((item) => (
                     <div className="top-dawg-board-row" key={`revenue-${item.month}`}>
                       <span>{item.month}</span>
-                      <strong>{item.names.join(", ")}</strong>
+                      <strong>{renderTopDawgNames(item.names)}</strong>
                       <b>{money(item.value)}</b>
                     </div>
                   ))
@@ -4333,7 +4331,7 @@ const quarterlyGoalClass =
                   pmData.topDawgLeaderboards.closingRate.map((item) => (
                     <div className="top-dawg-board-row" key={`closing-${item.month}`}>
                       <span>{item.month}</span>
-                      <strong>{item.names.join(", ")}</strong>
+                      <strong>{renderTopDawgNames(item.names)}</strong>
                       <b>{displayPercent(item.value, 1)}</b>
                     </div>
                   ))
