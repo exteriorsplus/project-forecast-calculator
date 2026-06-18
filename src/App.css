@@ -2269,3 +2269,36 @@ input::placeholder {
     transform: scale(1.4);
   }
 }
+.pm-rank-row > .pm-rank-card.rank-leader::before,
+.pm-rank-row > .pm-rank-card.rank-leader::after {
+  content: "✦";
+  position: absolute;
+  color: gold;
+  font-size: 22px;
+  z-index: 5;
+  pointer-events: none;
+  animation: sparkle 2s infinite ease-in-out;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader::before {
+  top: -14px;
+  left: -12px;
+}
+
+.pm-rank-row > .pm-rank-card.rank-leader::after {
+  bottom: -14px;
+  right: -12px;
+  animation-delay: 1s;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.5) rotate(25deg);
+  }
+}
