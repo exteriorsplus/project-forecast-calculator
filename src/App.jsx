@@ -1986,33 +1986,24 @@ const ninetyDayTeamSalesData = getTeamSalesDataForRange(
   ninetyDayEndDate
 );
 
-const ninetyDayMonths = monthOptions.filter((month) => {
-  const bounds = getMonthDateBoundsForSales(month);
-  if (!bounds) return false;
+const ninetyDayClosingRate = getPMMetric(
+  pmName,
+  "Rolling 90-Day Closing Rate",
+  selectedMonth
+);
 
-  return bounds.end >= ninetyDayStartDate && bounds.start <= ninetyDayEndDate;
-});
-
-const ninetyDayClosingRate =
-  ninetyDayMonths.length > 0
-    ? ninetyDayMonths.reduce(
-        (sum, month) => sum + getPMMetric(pmName, "Closing Rate", month),
-        0
-      ) / ninetyDayMonths.length
-    : 0;
+const ninetyDayTeamClosingRates = activeGoalProjectManagers
+  .map((pm) =>
+    getPMMetric(pm.name, "Rolling 90-Day Closing Rate", selectedMonth)
+  )
+  .filter((rate) => Number(rate || 0) > 0);
 
 const ninetyDayTeamClosingRate =
-  ninetyDayMonths.length > 0 && activeGoalProjectManagers.length > 0
-    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
-        const pmRate =
-          ninetyDayMonths.reduce(
-            (monthSum, month) =>
-              monthSum + getPMMetric(pm.name, "Closing Rate", month),
-            0
-          ) / ninetyDayMonths.length;
-
-        return pmSum + pmRate;
-      }, 0) / activeGoalProjectManagers.length
+  ninetyDayTeamClosingRates.length > 0
+    ? ninetyDayTeamClosingRates.reduce(
+        (sum, rate) => sum + Number(rate || 0),
+        0
+      ) / ninetyDayTeamClosingRates.length
     : 0;
 
 const rankDateRange =
@@ -4189,7 +4180,7 @@ const quarterlyGoalClass =
               />
 
               <PMMetricCard
-                label="Closing Rate vs Team"
+                label="Rolling 90-Day Closing Rate vs Team"
                 value={displayPercent(pmData.ninetyDayClosingRate, 1)}
                 comparisonLabel="Team Avg"
                 comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
