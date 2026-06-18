@@ -2274,7 +2274,7 @@ input::placeholder {
   content: "✦";
   position: absolute;
   color: gold;
-  font-size: 42px;
+  font-size: 22px;
   z-index: 5;
   pointer-events: none;
   animation: sparkle 2s infinite ease-in-out;
@@ -2300,5 +2300,43 @@ input::placeholder {
   50% {
     opacity: 1;
     transform: scale(1.5) rotate(25deg);
+  }
+}
+.champion {
+  position: relative;
+  overflow: hidden;
+}
+
+.champion::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.7),
+    transparent
+  );
+
+  transform: rotate(20deg);
+
+  animation: shine 4s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+
+  20% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
   }
 }
