@@ -1970,6 +1970,38 @@ const teamClosingRate =
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
     : getTeamMetric("Closing Rate", selectedMonth);
+    const ninetyDayEndDate = dateOnly(new Date());
+const ninetyDayStartDate = new Date(ninetyDayEndDate);
+ninetyDayStartDate.setDate(ninetyDayStartDate.getDate() - 90);
+
+const ninetyDayMonths = monthOptions.filter((month) => {
+  const bounds = getMonthDateBoundsForSales(month);
+  if (!bounds) return false;
+
+  return bounds.end >= ninetyDayStartDate && bounds.start <= ninetyDayEndDate;
+});
+
+const ninetyDayClosingRate =
+  ninetyDayMonths.length > 0
+    ? ninetyDayMonths.reduce(
+        (sum, month) => sum + getPMMetric(pmName, "Closing Rate", month),
+        0
+      ) / ninetyDayMonths.length
+    : 0;
+
+const ninetyDayTeamClosingRate =
+  ninetyDayMonths.length > 0 && activeGoalProjectManagers.length > 0
+    ? activeGoalProjectManagers.reduce((pmSum, pm) => {
+        const pmRate =
+          ninetyDayMonths.reduce(
+            (monthSum, month) =>
+              monthSum + getPMMetric(pm.name, "Closing Rate", month),
+            0
+          ) / ninetyDayMonths.length;
+
+        return pmSum + pmRate;
+      }, 0) / activeGoalProjectManagers.length
+    : 0;
 
 const rankDateRange =
   pmDateMode === "fiscalYTD"
@@ -2344,6 +2376,8 @@ return {
       teamContracts,
       teamAverageContract,
       teamClosingRate,
+      ninetyDayClosingRate,
+ninetyDayTeamClosingRate,
       revenueRank,
       closingRateRank,
       topDawgLeaderboards,
@@ -4071,13 +4105,17 @@ const quarterlyGoalClass =
         difference={averageVsTeam}
       />
 
-      <PMMetricCard
-        label="Closing Rate vs Team"
-        value={displayPercent(pmData.closingRate, 1)}
-        comparisonLabel="Team Avg"
-        comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
-        difference={closingRateVsTeam}
-      />
+<PMMetricCard
+  label="90-Day Closing Rate vs Team"
+  value={displayPercent(pmData.ninetyDayClosingRate, 1)}
+  comparisonLabel="Team Avg"
+  comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
+  difference={compareNumbers(
+    pmData.ninetyDayClosingRate,
+    pmData.ninetyDayTeamClosingRate,
+    true
+  )}
+/>
     </div>
   </div>
 
