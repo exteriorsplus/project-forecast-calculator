@@ -2268,75 +2268,58 @@ input::placeholder {
     opacity: 1;
     transform: scale(1.4);
   }
-}
-.pm-rank-row > .pm-rank-card.rank-leader::before,
-.pm-rank-row > .pm-rank-card.rank-leader::after {
-  content: "✦";
-  position: absolute;
-  color: gold;
-  font-size: 22px;
-  z-index: 5;
-  pointer-events: none;
-  animation: sparkle 2s infinite ease-in-out;
-}
-
-.pm-rank-row > .pm-rank-card.rank-leader::before {
-  top: -14px;
-  left: -12px;
-}
-
-.pm-rank-row > .pm-rank-card.rank-leader::after {
-  bottom: -14px;
-  right: -12px;
-  animation-delay: 1s;
-}
-
-@keyframes sparkle {
-  0%, 100% {
-    opacity: 0;
-    transform: scale(0.4) rotate(0deg);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.5) rotate(25deg);
-  }
-}
-.champion {
+.pm-rank-row > .pm-rank-card.rank-leader {
   position: relative;
   overflow: hidden;
 }
 
-.champion::before {
+.pm-rank-row > .pm-rank-card.rank-leader::before {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -100%;
-  width: 60%;
-  height: 200%;
-
+  top: -60%;
+  left: -90%;
+  width: 55%;
+  height: 220%;
   background: linear-gradient(
     120deg,
     transparent,
-    rgba(255,255,255,.7),
+    rgba(255, 255, 255, 0.85),
     transparent
   );
-
   transform: rotate(20deg);
+  animation: shine 3.5s infinite;
+  z-index: 1;
+}
 
-  animation: shine 4s infinite;
+.pm-rank-row > .pm-rank-card.rank-leader::after {
+  content: "✦";
+  position: absolute;
+  top: -12px;
+  right: -10px;
+  color: gold;
+  font-size: 28px;
+  z-index: 3;
+  animation: sparkle 1.8s infinite ease-in-out;
+}
+
+.pm-rank-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes shine {
-  0% {
-    left: -100%;
-  }
+  0% { left: -90%; }
+  35% { left: 140%; }
+  100% { left: 140%; }
+}
 
-  20% {
-    left: 150%;
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.6) rotate(0deg);
   }
-
-  100% {
-    left: 150%;
+  50% {
+    opacity: 1;
+    transform: scale(1.35) rotate(25deg);
   }
 }
