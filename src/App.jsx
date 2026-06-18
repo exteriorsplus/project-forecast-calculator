@@ -565,6 +565,24 @@ function parseMoney(value) {
 
   return Number.isNaN(number) ? 0 : number;
 }
+function parseMetricValue(value) {
+  if (value === null || value === undefined || value === "") return 0;
+
+  if (typeof value === "number") {
+    return value > 1 ? value / 100 : value;
+  }
+
+  const text = String(value).trim();
+
+  if (text.includes("%")) {
+    const number = Number(text.replace("%", "").trim());
+    return Number.isNaN(number) ? 0 : number / 100;
+  }
+
+  const number = Number(text);
+
+  return Number.isNaN(number) ? 0 : number;
+}
 
 function dateOnly(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -1310,7 +1328,7 @@ const getTeamMetricRow = (metric) => {
 
     if (columnIndex < 0) return 0;
 
-    return Number(metricRow[columnIndex] || 0);
+    return parseMetricValue(metricRow[columnIndex]);
   };
 
   const getTeamMetric = (metric, monthLabel) => {
@@ -1328,7 +1346,7 @@ const getTeamMetricRow = (metric) => {
 
     if (columnIndex < 0) return 0;
 
-    return Number(row[columnIndex] || 0);
+    return parseMetricValue(row[columnIndex]);
   };
 
   const getRankForMetric = (
@@ -2002,6 +2020,11 @@ const teamClosingRate =
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
     : getTeamMetric("Monthly Closing Rate Average", selectedMonth);
+    console.log(
+  "Monthly Closing Rate Average",
+  selectedMonth,
+  getTeamMetric("Monthly Closing Rate Average", selectedMonth)
+);
 
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
