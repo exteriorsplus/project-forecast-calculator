@@ -4166,7 +4166,7 @@ const quarterlyGoalClass =
   </div>
 
           <div className="pm-section-card">
-            <h2>90-Day Team Comparison</h2>
+            <h2>Rolling 90-Day Team Comparison</h2>
 
             <div className="pm-metric-grid">
               <PMMetricCard
