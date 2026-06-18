@@ -2001,7 +2001,18 @@ const teamClosingRate =
     ? customTeamClosingRate
     : pmDateMode === "fiscalYTD"
     ? ytdTeamClosingRate
-    : getTeamMetric("Monthly Closing Rate", selectedMonth);
+    : activeGoalProjectManagers.length > 0
+    ? activeGoalProjectManagers.reduce((sum, pm) => {
+        return (
+          sum +
+          getPMMetric(
+            pm.name,
+            "Monthly Closing Rate",
+            selectedMonth
+          )
+        );
+      }, 0) / activeGoalProjectManagers.length
+    : 0;
 
 const ninetyDayEndDate = dateOnly(new Date());
 const ninetyDayStartDate = new Date(ninetyDayEndDate);
