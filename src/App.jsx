@@ -4145,97 +4145,100 @@ const quarterlyGoalClass =
 />
             </div>
           </div>
+          
+{pmDateMode !== "fiscalYTD" && (
+  <>
+    <div className="pm-section-card">
+      <h2>Month-to-Date Team Comparison</h2>
 
-          <div className="pm-section-card">
-            <h2>Month-to-Date Team Comparison</h2>
+      <div className="pm-metric-grid">
+        <PMMetricCard
+          label="Revenue vs Team"
+          value={money(pmData.contractTotal)}
+          comparisonLabel="Team Avg"
+          comparisonValue={money(pmData.teamContractTotal)}
+          difference={revenueVsTeam}
+        />
 
-    <div className="pm-metric-grid">
-      <PMMetricCard
-        label="Revenue vs Team"
-        value={money(pmData.contractTotal)}
-        comparisonLabel="Team Avg"
-        comparisonValue={money(pmData.teamContractTotal)}
-        difference={revenueVsTeam}
-      />
+        <PMMetricCard
+          label="Contracts vs Team"
+          value={Math.round(pmData.contracts || 0)}
+          comparisonLabel="Team Avg"
+          comparisonValue={Math.round(pmData.teamContracts || 0)}
+          difference={contractsVsTeam}
+        />
 
-      <PMMetricCard
-        label="Contracts vs Team"
-        value={Math.round(pmData.contracts || 0)}
-        comparisonLabel="Team Avg"
-        comparisonValue={Math.round(pmData.teamContracts || 0)}
-        difference={contractsVsTeam}
-      />
+        <PMMetricCard
+          label="Avg Contract vs Team"
+          value={money(pmData.averageContract)}
+          comparisonLabel="Team Avg"
+          comparisonValue={money(pmData.teamAverageContract)}
+          difference={averageVsTeam}
+        />
 
-      <PMMetricCard
-        label="Avg Contract vs Team"
-        value={money(pmData.averageContract)}
-        comparisonLabel="Team Avg"
-        comparisonValue={money(pmData.teamAverageContract)}
-        difference={averageVsTeam}
-      />
-
-      <PMMetricCard
-        label="Closing Rate vs Team"
-        value={displayPercent(pmData.closingRate, 1)}
-        comparisonLabel="Team Avg"
-        comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
-        difference={closingRateVsTeam}
-      />
+        <PMMetricCard
+          label="Closing Rate vs Team"
+          value={displayPercent(pmData.closingRate, 1)}
+          comparisonLabel="Team Avg"
+          comparisonValue={displayPercent(pmData.teamClosingRate, 1)}
+          difference={closingRateVsTeam}
+        />
+      </div>
     </div>
-  </div>
 
-          <div className="pm-section-card">
-            <h2>Rolling 90-Day Team Comparison</h2>
+    <div className="pm-section-card">
+      <h2>Rolling 90-Day Team Comparison</h2>
 
-            <div className="pm-metric-grid">
-              <PMMetricCard
-                label="Revenue vs Team"
-                value={money(pmData.ninetyDayContractTotal)}
-                comparisonLabel="Team Avg"
-                comparisonValue={money(pmData.ninetyDayTeamContractTotal)}
-                difference={compareNumbers(
-                  pmData.ninetyDayContractTotal,
-                  pmData.ninetyDayTeamContractTotal
-                )}
-              />
+      <div className="pm-metric-grid">
+        <PMMetricCard
+          label="Revenue vs Team"
+          value={money(pmData.ninetyDayContractTotal)}
+          comparisonLabel="Team Avg"
+          comparisonValue={money(pmData.ninetyDayTeamContractTotal)}
+          difference={compareNumbers(
+            pmData.ninetyDayContractTotal,
+            pmData.ninetyDayTeamContractTotal
+          )}
+        />
 
-              <PMMetricCard
-                label="Contracts vs Team"
-                value={Math.round(pmData.ninetyDayContracts || 0)}
-                comparisonLabel="Team Avg"
-                comparisonValue={Math.round(pmData.ninetyDayTeamContracts || 0)}
-                difference={compareNumbers(
-                  pmData.ninetyDayContracts,
-                  pmData.ninetyDayTeamContracts
-                )}
-              />
+        <PMMetricCard
+          label="Contracts vs Team"
+          value={Math.round(pmData.ninetyDayContracts || 0)}
+          comparisonLabel="Team Avg"
+          comparisonValue={Math.round(pmData.ninetyDayTeamContracts || 0)}
+          difference={compareNumbers(
+            pmData.ninetyDayContracts,
+            pmData.ninetyDayTeamContracts
+          )}
+        />
 
-              <PMMetricCard
-                label="Avg Contract vs Team"
-                value={money(pmData.ninetyDayAverageContract)}
-                comparisonLabel="Team Avg"
-                comparisonValue={money(pmData.ninetyDayTeamAverageContract)}
-                difference={compareNumbers(
-                  pmData.ninetyDayAverageContract,
-                  pmData.ninetyDayTeamAverageContract
-                )}
-              />
+        <PMMetricCard
+          label="Avg Contract vs Team"
+          value={money(pmData.ninetyDayAverageContract)}
+          comparisonLabel="Team Avg"
+          comparisonValue={money(pmData.ninetyDayTeamAverageContract)}
+          difference={compareNumbers(
+            pmData.ninetyDayAverageContract,
+            pmData.ninetyDayTeamAverageContract
+          )}
+        />
 
-              <PMMetricCard
-                label="90-DAY CLOSING RATE VS TEAM"
-                value={displayPercent(pmData.ninetyDayClosingRate, 1)}
-                comparisonLabel="Team Avg"
-                comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
-                difference={compareNumbers(
-                  pmData.ninetyDayClosingRate,
-                  pmData.ninetyDayTeamClosingRate,
-                  true
-                )}
-              />
-            </div>
-          </div>
-
-          {!isCustomMode && (
+        <PMMetricCard
+          label="90-Day Closing Rate vs Team"
+          value={displayPercent(pmData.ninetyDayClosingRate, 1)}
+          comparisonLabel="Team Avg"
+          comparisonValue={displayPercent(pmData.ninetyDayTeamClosingRate, 1)}
+          difference={compareNumbers(
+            pmData.ninetyDayClosingRate,
+            pmData.ninetyDayTeamClosingRate,
+            true
+          )}
+        />
+      </div>
+    </div>
+  </>
+)}
+          {pmDateMode === "fiscalYTD" && (
             <>
               <div className="pm-goal-card">
             <div className="pm-goal-top">
