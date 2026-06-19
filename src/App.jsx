@@ -2071,15 +2071,18 @@ const ninetyDayTeamSalesData = getTeamSalesDataForRange(
   ninetyDayEndDate
 );
 
+const ninetyDayMonth =
+  selectedMonth || monthOptions[0] || "";
+
 const ninetyDayClosingRate = getPMMetric(
   pmName,
   "Rolling 90-Day Closing Rate",
-  selectedMonth
+  ninetyDayMonth
 );
 
 const ninetyDayTeamClosingRate = getTeamMetric(
   "Rolling 90-Day Closing Rate Average",
-  selectedMonth
+  ninetyDayMonth
 );
 
 const rankDateRange =
