@@ -1849,17 +1849,35 @@ const closingRate =
     : getPMMetric(pmName, "Monthly Closing Rate", selectedMonth);
 
 
-const lastYearSalesData = getSalesDataForMonths([lastYearMonth]);
+const priorFiscalYTDStartDate = new Date(
+  fiscalYTDStartDate.getFullYear() - 1,
+  fiscalYTDStartDate.getMonth(),
+  fiscalYTDStartDate.getDate()
+);
+
+const priorFiscalYTDEndDate = new Date(
+  fiscalYTDEndDate.getFullYear() - 1,
+  fiscalYTDEndDate.getMonth(),
+  fiscalYTDEndDate.getDate()
+);
+
+const lastYearSalesData =
+  pmDateMode === "fiscalYTD"
+    ? getPMSalesDataForRange(
+        pmName,
+        priorFiscalYTDStartDate,
+        priorFiscalYTDEndDate
+      )
+    : getSalesDataForMonths([lastYearMonth]);
 
 const lyContractTotal = lastYearSalesData.contractTotal;
 const lyContracts = lastYearSalesData.contracts;
 const lyAverageContract = lastYearSalesData.averageContract;
 
-const lyClosingRate = getPMMetric(
-  pmName,
-  "Monthly Closing Rate",
-  lastYearMonth
-);
+const lyClosingRate =
+  pmDateMode === "fiscalYTD"
+    ? 0
+    : getPMMetric(pmName, "Monthly Closing Rate", lastYearMonth);
 
 const activeGoalProjectManagers = projectManagers.filter(
   (pm) =>
@@ -4279,7 +4297,7 @@ const quarterlyGoalClass =
               </div>
             </div>
           </div>
-<div className="pm-section-card">
+<div className={`pm-section-card ${pmDateMode === "fiscalYTD" ? "pm-hide-fiscal-ytd" : ""}`}>
   <h2>Goal Pace Breakdown</h2>
 
   <div className="pm-metric-grid">
@@ -4327,7 +4345,7 @@ const quarterlyGoalClass =
 </div>
 
 
-<div className="pm-section-card">
+<div className={`pm-section-card ${pmDateMode === "fiscalYTD" ? "pm-hide-fiscal-ytd" : ""}`}>
   <h2>Referral Information</h2>
 
   <div className="pm-metric-grid">
