@@ -3888,93 +3888,6 @@ const generatePMInsight = ({
   };
 };
 }
-else if (monthlyGoalPercent >= 1) {
-  messages.push(
-    "Monthly goal has been achieved and production remains strong."
-  );
-}
-else if (monthlyGoalPercent >= 0.9) {
-  messages.push(
-    "Monthly goal is within striking distance and remains well within reach."
-  );
-}
-else if (monthlyGoalPercent >= 0.75) {
-  messages.push(
-    "Monthly production remains on a competitive pace with the opportunity to finish strong."
-  );
-}
-else {
-  messages.push(
-    "Monthly production is currently below the pace needed to reach goal."
-  );
-}
-
-  // Quarterly Performance
-if (quarterlyGoalPercent >= 1) {
-  messages.push(
-    "Quarterly goal has already been achieved."
-  );
-}
-else if (quarterlyGoalPercent >= 0.9) {
-  messages.push(
-    "Quarterly goal is within striking distance and remains well within reach."
-  );
-}
-else if (quarterlyGoalPercent >= 0.75) {
-  messages.push(
-    "Quarterly production remains competitive with a strong finish still available."
-  );
-}
-else {
-  messages.push(
-    "Quarterly production currently trails the target pace."
-  );
-}
-
-  // Revenue vs Team
-if (revenueVsTeam > 0.25) {
-  messages.push(
-    `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else if (revenueVsTeam > 0) {
-  messages.push(
-    `Revenue production exceeds the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else {
-  messages.push(
-    `Revenue production trails the team average by ${Math.abs(revenueVsTeam * 100).toFixed(1)}%.`
-  );
-}
-
-  // Average Contract vs Team
-if (averageVsTeam > 0.1) {
-  messages.push(
-    `Average contract value exceeds the team benchmark by ${(averageVsTeam * 100).toFixed(1)}%.`
-  );
-}
-else if (averageVsTeam < -0.1) {
-  messages.push(
-    `Average contract value trails the team benchmark by ${Math.abs(averageVsTeam * 100).toFixed(1)}%.`
-  );
-}
-
-  // Closing Rate vs Team
-if (closingRateVsTeam > 0.05) {
-  messages.push(
-    `Closing rate exceeds the team average by ${(closingRateVsTeam * 100).toFixed(1)} percentage points.`
-  );
-}
-else if (closingRateVsTeam < -0.05) {
-  messages.push(
-    `Closing rate trails the team average by ${Math.abs(closingRateVsTeam * 100).toFixed(1)} percentage points.`
-  );
-}
-
-  return messages.slice(0, 4).join(" ");
-};
-
 const isCustomMode = pmDateMode === "custom";
 const selectedMonthDate = new Date(pmData.selectedMonth);
 const now = new Date();
@@ -5137,3 +5050,4 @@ onChange={(event) => {
       )}
     </div>
   );
+}
