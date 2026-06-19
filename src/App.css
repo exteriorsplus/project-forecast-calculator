@@ -2337,3 +2337,6 @@ input::placeholder {
   background: rgba(107, 114, 128, 0.25);
   margin: 2px 0;
 }
+.pm-hide-fiscal-ytd {
+  display: none;
+}
