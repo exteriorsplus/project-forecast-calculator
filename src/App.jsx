@@ -3984,9 +3984,6 @@ const quarterlyGoalClass =
     <h1>{currentPM.name} Dashboard</h1>
 
     <div className="pm-insight-box">
-      <div className="pm-insight-title">
-        Performance Insight
-      </div>
 
      <div className="pm-insight-copy">
   <div>
