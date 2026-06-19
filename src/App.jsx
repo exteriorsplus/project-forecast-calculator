@@ -4091,12 +4091,12 @@ const quarterlyGoalClass =
   <label className="pm-month-selector">
     Month
     <select
-      value={pmData.selectedMonth}
-      onChange={(event) => {
-        setSelectedPMMonth(event.target.value);
-        setPmDateMode("month");
-      }}
-    >
+  value={selectedPMMonth}
+  onChange={(event) => {
+    setSelectedPMMonth(event.target.value);
+    setPmDateMode("month");
+  }}
+>
       {pmData.monthOptions.map((month) => (
         <option key={month} value={month}>
           {month}
