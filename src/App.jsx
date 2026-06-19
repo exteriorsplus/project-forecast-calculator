@@ -4474,7 +4474,7 @@ const quarterlyGoalClass =
 
             <div className="best-of-best-grid">
               <div className="best-of-best-item">
-                <span>Best Ever Revenue Top Dawg</span>
+                <span>Revenue GOAT</span>
 
                 {pmData.bestEverTopDawgs?.revenue ? (
                   <>
@@ -4490,7 +4490,7 @@ const quarterlyGoalClass =
               </div>
 
               <div className="best-of-best-item">
-                <span>Best Ever Closing Rate Top Dawg</span>
+                <span>Closing Rate GOAT</span>
 
                 {pmData.bestEverTopDawgs?.closingRate ? (
                   <>
@@ -4504,6 +4504,7 @@ const quarterlyGoalClass =
                   <p>No closing-rate winner yet.</p>
                 )}
               </div>
+            </div>
             </div>
         </section>
       </div>
