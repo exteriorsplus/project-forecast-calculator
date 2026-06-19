@@ -4356,10 +4356,12 @@ const quarterlyGoalClass =
       ? "Monthly Remaining"
       : "Over Goal"
   }
-  value={money(Math.abs(pmData.monthlyRemaining))}
+  value={`${
+    pmData.monthlyRemaining < 0 ? "+" : "-"
+  }${money(Math.abs(pmData.monthlyRemaining)).replace("$", "$")}`}
   customMessage={goalMotivation}
   messageTitle="✨MAGIC MIKE MOMENT✨"
-/> 
+/>
 <PMMetricCard
   label="Quarterly Goal"
   value={money(pmData.quarterlyGoal)}
@@ -4377,7 +4379,9 @@ const quarterlyGoalClass =
       ? "Quarterly Remaining"
       : "Over Goal"
   }
-  value={money(Math.abs(pmData.quarterlyRemaining))}
+  value={`${
+    pmData.quarterlyRemaining < 0 ? "+" : "-"
+  }${money(Math.abs(pmData.quarterlyRemaining)).replace("$", "$")}`}
   comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
   comparisonValue=""
   customMessage={quarterlyMotivation}
