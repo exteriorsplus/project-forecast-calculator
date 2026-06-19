@@ -4130,18 +4130,6 @@ const quarterlyGoalClass =
       />
     </label>
   </div>
-
-<button
-  type="button"
-  className="pm-fiscal-button"
-  onClick={() => {
-    setPmDateMode("fiscalYTD");
-    setPmStartDate("2025-11-01");
-    setPmEndDate(new Date().toISOString().slice(0, 10));
-  }}
->
-  Fiscal YTD
-</button>
 </div>
           </div>
 
