@@ -3846,8 +3846,7 @@ const generatePMInsight = ({
       monthly:
         "Future month selected. The scoreboard is still blank, but preparation now creates production later.",
       quarterly:
-      <br>
-        "Quarter-to-date performance will update once production begins for the selected period.",</br>
+        "Quarter-to-date performance will update once production begins for the selected period.",
     };
   }
 
