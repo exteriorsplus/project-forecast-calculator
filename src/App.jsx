@@ -4372,8 +4372,12 @@ const quarterlyGoalClass =
 />
 
 <PMMetricCard
-  label="Quarterly Remaining"
-  value={money(pmData.quarterlyRemaining)}
+  label={
+    pmData.quarterlyRemaining >= 0
+      ? "Quarterly Remaining"
+      : "Over Goal"
+  }
+  value={money(Math.abs(pmData.quarterlyRemaining))}
   comparisonLabel={`${pmData.quarterDaysRemaining} days quarterly remaining`}
   comparisonValue=""
   customMessage={quarterlyMotivation}
