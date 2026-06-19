@@ -3990,16 +3990,20 @@ const quarterlyGoalClass =
 
      <div className="pm-insight-copy">
   <div>
-    <strong>Month-to-Date Performance</strong>
-    <p>{pmInsight.monthly}</p>
-  </div>
+  <strong>Month-to-Date Performance</strong>
+  <p>{pmInsight.monthly}</p>
+</div>
 
-  {pmInsight.quarterly && (
+{pmInsight.quarterly && (
+  <>
+    <div className="pm-insight-divider" />
+
     <div>
       <strong>Quarter-to-Date Performance</strong>
       <p>{pmInsight.quarterly}</p>
     </div>
-  )}
+  </>
+)}
 </div>
     </div>
 
