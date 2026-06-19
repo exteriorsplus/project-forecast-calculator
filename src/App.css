@@ -2241,3 +2241,58 @@ input::placeholder {
   font-weight: inherit;
   padding: 0;
 }
+.best-of-best-card {
+  border-top: 10px solid #b91c1c;
+}
+
+.best-of-best-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.best-of-best-item {
+  background: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+}
+
+.best-of-best-item span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.best-of-best-item strong {
+  display: block;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.best-of-best-item b {
+  display: block;
+  color: #b91c1c;
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.best-of-best-item small {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .best-of-best-grid {
+    grid-template-columns: 1fr;
+  }
+}
