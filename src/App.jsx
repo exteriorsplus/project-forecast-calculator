@@ -3579,9 +3579,8 @@ const goalMotivation = (() => {
       msg = pickRandom(needsPushMessages);
   }
 
-return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
-
-})();;
+  return `${firstName}, ${msg.charAt(0).toLowerCase()}${msg.slice(1)}`;
+})();
 const quarterCrushingMessages = [
 "You're projected to finish the quarter well above goal bub. Keep your foot on the gas!",
 "Your quarterly pace is exceptional and currently exceeds expectations. Well done!",
