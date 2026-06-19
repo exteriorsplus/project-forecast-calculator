@@ -2344,11 +2344,11 @@ const getReferralStatusForRange = (data, range) => {
     return data.referralDelta >= 0 ? "goalMet" : "goalNotMet";
   }
 
-  if (dateOnly(range.start) > currentMonthEnd) {
-    return "future";
-  }
+if (dateOnly(range.start) > currentMonthEnd) {
+  return "future";
+}
 
-  return data.referralDelta >= 0 ? "goalMet" : "inProgress";
+return data.referralDelta >= 0 ? "goalMet" : "inProgress";
 };
 
 const referralStatus =
@@ -3885,9 +3885,9 @@ const generatePMInsight = ({
     )} team benchmark levels. Quarter-to-date closing rate is ${pointPhrase(
       quarterClosingRateVsTeam
     )} the team average.`,
-  };
+  }; 
 };
-}
+
 const isCustomMode = pmDateMode === "custom";
 const selectedMonthDate = new Date(pmData.selectedMonth);
 const now = new Date();
@@ -4543,6 +4543,7 @@ const quarterlyGoalClass =
         </section>
       </div>
     );
+  }
 
   if (!authorized) {
     return (
