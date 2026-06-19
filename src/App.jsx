@@ -4482,36 +4482,63 @@ const quarterlyGoalClass =
 
             <div className="best-of-best-grid">
               <div className="best-of-best-item">
-                <span>Revenue GOAT</span>
+  <span>Revenue GOAT</span>
 
-                {pmData.bestEverTopDawgs?.revenue ? (
-                  <>
-                    <strong>
-                      {renderTopDawgNames(pmData.bestEverTopDawgs.revenue.names)}
-                    </strong>
-                    <b>{money(pmData.bestEverTopDawgs.revenue.value)}</b>
-                    <small>{pmData.bestEverTopDawgs.revenue.month}</small>
-                  </>
-                ) : (
-                  <p>No revenue winner yet.</p>
-                )}
-              </div>
+  {pmData.bestEverTopDawgs?.revenue ? (
+    <>
+      {revenueGoatPM && (
+        <img
+          className="goat-photo"
+          src={revenueGoatPM.image}
+          alt={revenueGoatPM.name}
+        />
+      )}
+
+      <strong>
+        {renderTopDawgNames(pmData.bestEverTopDawgs.revenue.names)}
+      </strong>
+
+      <b>{money(pmData.bestEverTopDawgs.revenue.value)}</b>
+
+      <small>{pmData.bestEverTopDawgs.revenue.month}</small>
+    </>
+  ) : (
+    <p>No revenue winner yet.</p>
+  )}
+</div>
 
               <div className="best-of-best-item">
-                <span>Closing Rate GOAT</span>
+  <span>Closing Rate GOAT</span>
 
-                {pmData.bestEverTopDawgs?.closingRate ? (
-                  <>
-                    <strong>
-                      {renderTopDawgNames(pmData.bestEverTopDawgs.closingRate.names)}
-                    </strong>
-                    <b>{displayPercent(pmData.bestEverTopDawgs.closingRate.value, 1)}</b>
-                    <small>{pmData.bestEverTopDawgs.closingRate.month}</small>
-                  </>
-                ) : (
-                  <p>No closing-rate winner yet.</p>
-                )}
-              </div>
+  {pmData.bestEverTopDawgs?.closingRate ? (
+    <>
+      {closingRateGoatPM && (
+        <img
+          className="goat-photo"
+          src={closingRateGoatPM.image}
+          alt={closingRateGoatPM.name}
+        />
+      )}
+
+      <strong>
+        {renderTopDawgNames(pmData.bestEverTopDawgs.closingRate.names)}
+      </strong>
+
+      <b>
+        {displayPercent(
+          pmData.bestEverTopDawgs.closingRate.value,
+          1
+        )}
+      </b>
+
+      <small>
+        {pmData.bestEverTopDawgs.closingRate.month}
+      </small>
+    </>
+  ) : (
+    <p>No closing-rate winner yet.</p>
+  )}
+</div>
             </div>
             </div>
         </section>

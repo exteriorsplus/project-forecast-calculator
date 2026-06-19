@@ -2296,3 +2296,13 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 }
+.goat-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 12px;
+  display: block;
+  border: 4px solid gold;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+}
