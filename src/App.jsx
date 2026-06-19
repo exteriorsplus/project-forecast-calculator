@@ -465,6 +465,31 @@ function compareNumbers(current, comparison, isRate = false) {
       rawDifference: 0,
     };
   }
+
+  if (isRate) {
+    const pointDifference = currentNumber - comparisonNumber;
+
+    return {
+      label: `${pointDifference >= 0 ? "+" : ""}${(
+        pointDifference * 100
+      ).toFixed(1)} pts`,
+      className: pointDifference >= 0 ? "positive" : "negative",
+      rawDifference: pointDifference,
+    };
+  }
+
+  const percentDifference =
+    (currentNumber - comparisonNumber) / comparisonNumber;
+
+  return {
+    label: `${percentDifference >= 0 ? "+" : ""}${(
+      percentDifference * 100
+    ).toFixed(1)}%`,
+    className: percentDifference >= 0 ? "positive" : "negative",
+    rawDifference: percentDifference,
+  };
+}
+
 function getMonthDateBounds(monthLabel) {
   const [monthName, yearText] = String(monthLabel || "").split(" ");
   const monthIndex = monthNames.indexOf(monthName);
@@ -477,29 +502,6 @@ function getMonthDateBounds(monthLabel) {
   return {
     start: new Date(year, monthIndex, 1),
     end: new Date(year, monthIndex + 1, 0),
-  };
-}
-
-  if (isRate) {
-    const pointDifference = currentNumber - comparisonNumber;
-
-    return {
-      label: `${pointDifference >= 0 ? "+" : ""}${(pointDifference * 100).toFixed(
-        1
-      )} pts`,
-      className: pointDifference >= 0 ? "positive" : "negative",
-      rawDifference: pointDifference,
-    };
-  }
-
-  const percentDifference = (currentNumber - comparisonNumber) / comparisonNumber;
-
-  return {
-    label: `${percentDifference >= 0 ? "+" : ""}${(
-      percentDifference * 100
-    ).toFixed(1)}%`,
-    className: percentDifference >= 0 ? "positive" : "negative",
-    rawDifference: percentDifference,
   };
 }
 
@@ -856,19 +858,20 @@ function PMMetricCard({
           {difference.label}
         </div>
       )}
-    {customMessage && (
-  <div className="mike-moment-mini">
-    <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
 
-    <div className="mike-moment-mini-bubble">
-<div className="mike-moment-mini-title">
-  {messageTitle}
-</div>
+      {customMessage && (
+        <div className="mike-moment-mini">
+          <img src="/pm/mikeharr.jpg" alt="Mike Harr" />
 
-      <p>{customMessage}</p>
-    </div>
-  </div>
-)}
+          <div className="mike-moment-mini-bubble">
+            <div className="mike-moment-mini-title">
+              {messageTitle}
+            </div>
+
+            <p>{customMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2230,6 +2233,32 @@ const quarterSalesData =
       };
 
 const quarterRevenue = quarterSalesData.contractTotal;
+const quarterTeamSalesData =
+  quarterStartDate && quarterEndDate
+    ? getTeamSalesDataForRange(quarterStartDate, quarterEndDate)
+    : {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+
+const quarterClosingRate =
+  quarterMonths.length > 0
+    ? quarterMonths.reduce(
+        (sum, month) =>
+          sum + getPMMetric(pmName, "Monthly Closing Rate", month),
+        0
+      ) / quarterMonths.length
+    : 0;
+
+const quarterTeamClosingRate =
+  quarterMonths.length > 0
+    ? quarterMonths.reduce(
+        (sum, month) =>
+          sum + getTeamMetric("Monthly Closing Rate Average", month),
+        0
+      ) / quarterMonths.length
+    : 0;
 
 const getInclusiveDays = (start, end) => {
   const msPerDay = 1000 * 60 * 60 * 24;
@@ -2456,6 +2485,11 @@ goalPercent,
 monthlyGoalPercent,
 monthlyRemaining,
 quarterRevenue,
+quarterTeamContractTotal: quarterTeamSalesData.contractTotal,
+quarterTeamContracts: quarterTeamSalesData.contracts,
+quarterTeamAverageContract: quarterTeamSalesData.averageContract,
+quarterClosingRate,
+quarterTeamClosingRate,
 quarterlyGoal,
 quarterlyGoalPercent: quarterlyActualPercent,
 quarterlyProjectedPercent,
@@ -3072,6 +3106,21 @@ const averageVsTeam = compareNumbers(
 const closingRateVsTeam = compareNumbers(
   pmData.closingRate,
   pmData.teamClosingRate,
+  true
+);
+const quarterRevenueVsTeam = compareNumbers(
+  pmData.quarterRevenue,
+  pmData.quarterTeamContractTotal
+);
+
+const quarterContractsVsTeam = compareNumbers(
+  pmData.contracts,
+  pmData.teamContracts
+);
+
+const quarterClosingRateVsTeam = compareNumbers(
+  pmData.quarterClosingRate,
+  pmData.quarterTeamClosingRate,
   true
 );
 
@@ -3763,60 +3812,81 @@ const quarterlyReferralMotivation = (() => {
 const generatePMInsight = ({
   monthlyGoalPercent,
   quarterlyGoalPercent,
+  quarterlyProjectedPercent,
   revenueVsTeam,
   averageVsTeam,
   closingRateVsTeam,
+  quarterRevenueVsTeam,
+  quarterContractsVsTeam,
+  quarterClosingRateVsTeam,
   isPastMonth,
   isFutureMonth,
   isCustomMode,
 }) => {
-  const messages = [];
+  const percentPhrase = (value) =>
+    `${Math.abs(value * 100).toFixed(1)}% ${
+      value >= 0 ? "above" : "below"
+    }`;
 
-  // Custom Date Performance
-if (isCustomMode) {
-  messages.push(
-    "Custom date range selected. Performance insight is based on production and team comparison for the selected dates."
-  );
+  const pointPhrase = (value) =>
+    `${Math.abs(value * 100).toFixed(1)} points ${
+      value >= 0 ? "above" : "below"
+    }`;
 
-  if (revenueVsTeam > 0.25) {
-    messages.push(
-      `Revenue production is outperforming the team average by ${(revenueVsTeam * 100).toFixed(1)}%.`
-    );
-  } else if (revenueVsTeam > 0) {
-    messages.push(
-      "Revenue production is above the team average for the selected date range."
-    );
-  } else {
-    messages.push(
-      "Revenue production trails the team average for the selected date range."
-    );
+  if (isCustomMode) {
+    return {
+      monthly:
+        "Custom date range selected. Performance insight is based on production and team comparison for the selected dates.",
+      quarterly: null,
+    };
   }
 
-  return messages.slice(0, 2).join(" ");
-}
-
-if (isFutureMonth) {
-  messages.push(
-    "Future month selected. The scoreboard is still blank, but preparation now creates production later."
-  );
-
-  messages.push(
-    pickRandom(futureMonthMessages)
-  );
-
-  return messages.slice(0, 2).join(" ");
-}
-// Monthly Performance
-if (isPastMonth) {
-  if (monthlyGoalPercent >= 1) {
-    messages.push(
-      "Congrats! This month has closed with the monthly goal achieved."
-    );
-  } else {
-    messages.push(
-      "This month unfortunately has closed below the monthly goal."
-    );
+  if (isFutureMonth) {
+    return {
+      monthly:
+        "Future month selected. The scoreboard is still blank, but preparation now creates production later.",
+      quarterly:
+        "Quarter-to-date performance will update once production begins for the selected period.",
+    };
   }
+
+  const monthlyLead = isPastMonth
+    ? monthlyGoalPercent >= 1
+      ? "Monthly goal closed above target."
+      : "Monthly goal closed below target."
+    : monthlyGoalPercent >= 1
+    ? "Monthly goal has been achieved and production remains strong."
+    : monthlyGoalPercent >= 0.9
+    ? "Monthly goal is within striking distance and remains well within reach."
+    : "Monthly production is still building toward goal pace.";
+
+  const quarterlyLead =
+    quarterlyGoalPercent >= 1
+      ? "Quarterly goal has already been achieved."
+      : quarterlyProjectedPercent >= 1
+      ? "Quarter-to-date production is pacing toward the quarterly goal."
+      : quarterlyProjectedPercent >= 0.85
+      ? "Quarter-to-date production remains within reach with a strong finish."
+      : "Quarter-to-date production needs additional momentum to reach goal pace.";
+
+  return {
+    monthly: `${monthlyLead} Revenue production is ${percentPhrase(
+      revenueVsTeam
+    )} the team average this month. Average contract value is ${percentPhrase(
+      averageVsTeam
+    )} the team benchmark, and closing rate is ${pointPhrase(
+      closingRateVsTeam
+    )} the team average.`,
+
+    quarterly: `${quarterlyLead} Quarter-to-date revenue production is ${percentPhrase(
+      quarterRevenueVsTeam
+    )} the team average, while contract volume is ${percentPhrase(
+      quarterContractsVsTeam
+    )} team benchmark levels. Quarter-to-date closing rate is ${pointPhrase(
+      quarterClosingRateVsTeam
+    )} the team average.`,
+  };
+};
 }
 else if (monthlyGoalPercent >= 1) {
   messages.push(
@@ -3919,15 +3989,19 @@ const isFutureMonth =
   (selectedMonthDate.getFullYear() === now.getFullYear() &&
     selectedMonthDate.getMonth() > now.getMonth());
 
-  const pmInsight = generatePMInsight({
+const pmInsight = generatePMInsight({
   monthlyGoalPercent: pmData.monthlyGoalPercent || 0,
   quarterlyGoalPercent: pmData.quarterlyGoalPercent || 0,
+  quarterlyProjectedPercent: pmData.quarterlyProjectedPercent || 0,
   revenueVsTeam: revenueVsTeam?.rawDifference || 0,
   averageVsTeam: averageVsTeam?.rawDifference || 0,
   closingRateVsTeam: closingRateVsTeam?.rawDifference || 0,
-   isPastMonth,
-    isFutureMonth,
-    isCustomMode,
+  quarterRevenueVsTeam: quarterRevenueVsTeam?.rawDifference || 0,
+  quarterContractsVsTeam: quarterContractsVsTeam?.rawDifference || 0,
+  quarterClosingRateVsTeam: quarterClosingRateVsTeam?.rawDifference || 0,
+  isPastMonth,
+  isFutureMonth,
+  isCustomMode,
 });
 
 const monthlyGoalClass =
@@ -4001,7 +4075,19 @@ const quarterlyGoalClass =
         Performance Insight
       </div>
 
-      <p>{pmInsight}</p>
+     <div className="pm-insight-copy">
+  <div>
+    <strong>Month-to-Date Performance</strong>
+    <p>{pmInsight.monthly}</p>
+  </div>
+
+  {pmInsight.quarterly && (
+    <div>
+      <strong>Quarter-to-Date Performance</strong>
+      <p>{pmInsight.quarterly}</p>
+    </div>
+  )}
+</div>
     </div>
 
   </div>
@@ -4544,7 +4630,6 @@ const quarterlyGoalClass =
         </section>
       </div>
     );
-  }
 
   if (!authorized) {
     return (
@@ -5052,4 +5137,3 @@ onChange={(event) => {
       )}
     </div>
   );
-}
