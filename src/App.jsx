@@ -1776,13 +1776,17 @@ const ytdSalesData = getPMSalesDataForRange(
 const ytdRevenue = ytdSalesData.contractTotal;
 const ytdContracts = ytdSalesData.contracts;
 const ytdAverageContract = ytdSalesData.averageContract;
+const ytdClosingRateMonths = monthOptions.filter(
+  (month) => getMonthSortValue(month) >= getMonthSortValue("January 2025")
+);
+
 const ytdClosingRate =
-  ytdMonths.length > 0
-    ? ytdMonths.reduce(
+  ytdClosingRateMonths.length > 0
+    ? ytdClosingRateMonths.reduce(
         (sum, month) =>
           sum + getPMMetric(pmName, "Monthly Closing Rate", month),
         0
-      ) / ytdMonths.length
+      ) / ytdClosingRateMonths.length
     : 0;
 
 const customMonths = (() => {
