@@ -4318,10 +4318,17 @@ const quarterlyGoalClass =
                 <strong>{displayPercent(pmData.goalPercent, 1)}</strong>
               </div>
 
-              <div>
-                <span>Remaining</span>
-                <strong>{money(pmData.remainingToGoal)}</strong>
-              </div>
+<div>
+  <span>
+    {pmData.remainingToGoal >= 0 ? "Remaining" : "Over Goal"}
+  </span>
+
+  <strong>
+    {`${pmData.remainingToGoal < 0 ? "+" : "-"}${money(
+      Math.abs(pmData.remainingToGoal)
+    )}`}
+  </strong>
+</div>
 
               <div>
                 <span>YTD Contracts</span>
