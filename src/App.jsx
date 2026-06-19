@@ -1776,7 +1776,14 @@ const ytdSalesData = getPMSalesDataForRange(
 const ytdRevenue = ytdSalesData.contractTotal;
 const ytdContracts = ytdSalesData.contracts;
 const ytdAverageContract = ytdSalesData.averageContract;
-const ytdClosingRate = 0;
+const ytdClosingRate =
+  ytdMonths.length > 0
+    ? ytdMonths.reduce(
+        (sum, month) =>
+          sum + getPMMetric(pmName, "Monthly Closing Rate", month),
+        0
+      ) / ytdMonths.length
+    : 0;
 
 const customMonths = (() => {
   if (pmDateMode !== "custom" || !pmStartDate || !pmEndDate) {
@@ -1838,7 +1845,9 @@ const contracts = activeSalesData.contracts;
 const averageContract = activeSalesData.averageContract;
 
 const closingRate =
-  pmDateMode === "custom"
+  pmDateMode === "fiscalYTD"
+    ? ytdClosingRate
+    : pmDateMode === "custom"
     ? activeMonths.length > 0
       ? activeMonths.reduce(
           (sum, month) =>
