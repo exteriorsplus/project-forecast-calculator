@@ -4306,7 +4306,7 @@ const quarterlyGoalClass =
     </div>
   </>
 )}
-          {pmDateMode === "fiscalYTD" && (
+          {!isCustomMode && (
             <>
               <div className="pm-goal-card">
             <div className="pm-goal-top">
@@ -4395,7 +4395,7 @@ const quarterlyGoalClass =
 </div>
 
 
-<div className={`pm-section-card ${pmDateMode === "fiscalYTD" ? "pm-hide-fiscal-ytd" : ""}`}>
+<div className="pm-section-card">
   <h2>Referral Information</h2>
 
   <div className="pm-metric-grid">
