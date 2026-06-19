@@ -1887,9 +1887,22 @@ const lyContractTotal = lastYearSalesData.contractTotal;
 const lyContracts = lastYearSalesData.contracts;
 const lyAverageContract = lastYearSalesData.averageContract;
 
+const priorFiscalYTDMonths = monthOptions.filter(
+  (month) =>
+    getMonthSortValue(month) >= getMonthSortValue("January 2025") &&
+    getMonthSortValue(month) <= getMonthSortValue("June 2025")
+);
+
+const priorFiscalYTDClosingRates = priorFiscalYTDMonths
+  .map((month) => getPMMetric(pmName, "Monthly Closing Rate", month))
+  .filter((rate) => Number(rate || 0) > 0);
+
 const lyClosingRate =
   pmDateMode === "fiscalYTD"
-    ? 0
+    ? priorFiscalYTDClosingRates.length > 0
+      ? priorFiscalYTDClosingRates.reduce((sum, rate) => sum + rate, 0) /
+        priorFiscalYTDClosingRates.length
+      : 0
     : getPMMetric(pmName, "Monthly Closing Rate", lastYearMonth);
 
 const activeGoalProjectManagers = projectManagers.filter(
