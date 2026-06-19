@@ -3158,11 +3158,11 @@ const revenueStrongMessages = [
   "You're killing it. Revenue production continues to impress.",
   "Keep pushing. Strong numbers come from strong habits.",
   "No excuses, only progress. You're proving it every day.",
-  "Deep driving is paying off in a big way.",
+  "Hard work is paying off in a big way.",
   "You're creating value and it shows in the numbers.",
-  "Stay hungry bub. There's still more out there.",
+  "Stay hungry. There's still more out there.",
   "The effort is showing up on the scoreboard.",
-  "That's fire. Keep stacking productive days."
+  "Keep stacking productive days."
 ];
 
 const revenueEliteMessages = [
