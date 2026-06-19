@@ -4494,9 +4494,9 @@ const quarterlyGoalClass =
         />
       )}
 
-      <strong>
-        {renderTopDawgNames(pmData.bestEverTopDawgs.revenue.names)}
-      </strong>
+<strong>
+  {pmData.bestEverTopDawgs.revenue.names.join(", ")}
+</strong>
 
       <b>{money(pmData.bestEverTopDawgs.revenue.value)}</b>
 
@@ -4520,9 +4520,9 @@ const quarterlyGoalClass =
         />
       )}
 
-      <strong>
-        {renderTopDawgNames(pmData.bestEverTopDawgs.closingRate.names)}
-      </strong>
+<strong>
+  {pmData.bestEverTopDawgs.closingRate.names.join(", ")}
+</strong>
 
       <b>
         {displayPercent(
