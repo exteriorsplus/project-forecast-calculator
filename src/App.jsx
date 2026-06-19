@@ -4478,7 +4478,7 @@ const quarterlyGoalClass =
             </div>
           </div>
                     <div className="pm-section-card best-of-best-card">
-            <h2>All Time GOATS</h2>
+            <h2>All Time GOATs</h2>
 
             <div className="best-of-best-grid">
               <div className="best-of-best-item">
