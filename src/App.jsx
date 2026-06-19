@@ -4214,7 +4214,7 @@ const quarterlyGoalClass =
             </div>
           </div>
           
-{pmDateMode !== "fiscalYTD" && (
+{pmDateMode !== "fiscalYTD" && !isCustomMode && (
   <>
     <div className="pm-section-card">
       <h2>Month-to-Date Team Comparison</h2>
