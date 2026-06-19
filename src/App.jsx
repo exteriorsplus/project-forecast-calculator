@@ -2819,6 +2819,14 @@ useEffect(() => {
 
   const pmData = currentPM ? getPMDashboardData() : null;
 
+  const revenueGoatPM = projectManagers.find((pm) =>
+  pmData?.bestEverTopDawgs?.revenue?.names?.includes(pm.name)
+);
+
+const closingRateGoatPM = projectManagers.find((pm) =>
+  pmData?.bestEverTopDawgs?.closingRate?.names?.includes(pm.name)
+);
+
   useEffect(() => {
     const hasSale = Number(cleanMoneyInput(pmSaleAmount)) > 0;
     const hasJobCost = Number(cleanMoneyInput(pmJobCost)) > 0;
@@ -4470,7 +4478,7 @@ const quarterlyGoalClass =
             </div>
           </div>
                     <div className="pm-section-card best-of-best-card">
-            <h2>Best of the Best</h2>
+            <h2>All Time GOATS</h2>
 
             <div className="best-of-best-grid">
               <div className="best-of-best-item">
