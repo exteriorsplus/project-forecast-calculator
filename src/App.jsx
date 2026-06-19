@@ -4133,7 +4133,13 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Contract Total"
   value={money(pmData.contractTotal)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonLabel={
+    pmDateMode === "fiscalYTD"
+      ? "vs 11/1/2024 - 6/19/2025"
+      : isCustomMode
+      ? null
+      : `vs ${pmData.lastYearMonth}`
+  }
   comparisonValue={isCustomMode ? null : money(pmData.lyContractTotal)}
   difference={isCustomMode ? null : revenueVsLY}
 />
@@ -4141,7 +4147,13 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Contracts"
   value={Math.round(pmData.contracts || 0)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonLabel={
+    pmDateMode === "fiscalYTD"
+      ? "vs 11/1/2024 - 6/19/2025"
+      : isCustomMode
+      ? null
+      : `vs ${pmData.lastYearMonth}`
+  }
   comparisonValue={isCustomMode ? null : Math.round(pmData.lyContracts || 0)}
   difference={isCustomMode ? null : contractsVsLY}
 />
@@ -4149,7 +4161,13 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Average Contract"
   value={money(pmData.averageContract)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonLabel={
+    pmDateMode === "fiscalYTD"
+      ? "vs 11/1/2024 - 6/19/2025"
+      : isCustomMode
+      ? null
+      : `vs ${pmData.lastYearMonth}`
+  }
   comparisonValue={isCustomMode ? null : money(pmData.lyAverageContract)}
   difference={isCustomMode ? null : averageVsLY}
 />
@@ -4157,7 +4175,13 @@ const quarterlyGoalClass =
 <PMMetricCard
   label="Closing Rate"
   value={displayPercent(pmData.closingRate, 1)}
-  comparisonLabel={isCustomMode ? null : `vs ${pmData.lastYearMonth}`}
+  comparisonLabel={
+    pmDateMode === "fiscalYTD"
+      ? "vs 11/1/2024 - 6/19/2025"
+      : isCustomMode
+      ? null
+      : `vs ${pmData.lastYearMonth}`
+  }
   comparisonValue={isCustomMode ? null : displayPercent(pmData.lyClosingRate, 1)}
   difference={isCustomMode ? null : closingRateVsLY}
 />
