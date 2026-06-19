@@ -2399,6 +2399,16 @@ const topDawgLeaderboards = {
   revenue: closedMonths.map(getTopRevenueDawgForMonth).filter(Boolean),
   closingRate: closedMonths.map(getTopClosingDawgForMonth).filter(Boolean),
 };
+const bestEverTopDawgs = {
+  revenue: topDawgLeaderboards.revenue.reduce(
+    (best, item) => (!best || item.value > best.value ? item : best),
+    null
+  ),
+  closingRate: topDawgLeaderboards.closingRate.reduce(
+    (best, item) => (!best || item.value > best.value ? item : best),
+    null
+  ),
+};
   
 return {
   monthOptions,
@@ -2432,6 +2442,7 @@ return {
       revenueRank,
       closingRateRank,
       topDawgLeaderboards,
+      bestEverTopDawgs,
       saleAmount,
 jobCost,
 commission,
@@ -4458,6 +4469,42 @@ const quarterlyGoalClass =
               </div>
             </div>
           </div>
+                    <div className="pm-section-card best-of-best-card">
+            <h2>Best of the Best</h2>
+
+            <div className="best-of-best-grid">
+              <div className="best-of-best-item">
+                <span>Best Ever Revenue Top Dawg</span>
+
+                {pmData.bestEverTopDawgs?.revenue ? (
+                  <>
+                    <strong>
+                      {renderTopDawgNames(pmData.bestEverTopDawgs.revenue.names)}
+                    </strong>
+                    <b>{money(pmData.bestEverTopDawgs.revenue.value)}</b>
+                    <small>{pmData.bestEverTopDawgs.revenue.month}</small>
+                  </>
+                ) : (
+                  <p>No revenue winner yet.</p>
+                )}
+              </div>
+
+              <div className="best-of-best-item">
+                <span>Best Ever Closing Rate Top Dawg</span>
+
+                {pmData.bestEverTopDawgs?.closingRate ? (
+                  <>
+                    <strong>
+                      {renderTopDawgNames(pmData.bestEverTopDawgs.closingRate.names)}
+                    </strong>
+                    <b>{displayPercent(pmData.bestEverTopDawgs.closingRate.value, 1)}</b>
+                    <small>{pmData.bestEverTopDawgs.closingRate.month}</small>
+                  </>
+                ) : (
+                  <p>No closing-rate winner yet.</p>
+                )}
+              </div>
+            </div>
         </section>
       </div>
     );
