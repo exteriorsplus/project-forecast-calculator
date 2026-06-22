@@ -3736,7 +3736,7 @@ const quarterlyMotivation = (() => {
 
 const referralGoalMetMessages = [
   "the referral goal was met bub! Great work creating opportunities through relationships!",
-  "you met the referral goal! That means people trust you enough to send opportunities your way.",
+  "you met the referral goal! That means people trust you enough to send opportunities your way. That's fire.",
   "the referral goal was achieved!  Relationship-driven business is working strong. Let's go!",
   "you reached the referral target bub. You're doing a great job!",
   "the goal was met on referrals. That kind of trust is earned not given, and that's fire."
