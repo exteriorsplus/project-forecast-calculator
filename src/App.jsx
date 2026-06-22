@@ -3480,7 +3480,7 @@ const needsPushMessages = [
   "Keep deep driving. The process still works when you work it.",
   "One team one dream. We keep moving together.",
   "You got this bub. Reset, refocus, and go win the next conversation.",
-  "Don't quit. There is still room to make progress.",
+  "Don't slow down. There is still room to make progress, you got this.",
   "Keep pushing until the month is done. That's how winners operate."
 ];
 
