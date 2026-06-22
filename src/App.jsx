@@ -4219,7 +4219,7 @@ const quarterlyGoalClass =
           label="Contracts vs Team"
           value={Math.round(pmData.contracts || 0)}
           comparisonLabel="Team Avg"
-          comparisonValue={Math.round(pmData.teamContracts || 0)}
+          comparisonValue={Number(pmData.teamContracts || 0).toFixed(2)}
           difference={contractsVsTeam}
         />
 
@@ -4260,7 +4260,7 @@ const quarterlyGoalClass =
           label="Contracts vs Team"
           value={Math.round(pmData.ninetyDayContracts || 0)}
           comparisonLabel="Team Avg"
-          comparisonValue={Math.round(pmData.ninetyDayTeamContracts || 0)}
+          comparisonValue={Number(pmData.ninetyDayTeamContracts || 0).toFixed(2)}
           difference={compareNumbers(
             pmData.ninetyDayContracts,
             pmData.ninetyDayTeamContracts
