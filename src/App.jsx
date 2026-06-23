@@ -3410,7 +3410,7 @@ const onTrackMessages = [
   "You're building a strong month one decision at a time. Stay focused.",
   "Bub, every contract from here is extra pressure on the scoreboard in the best way.",
   "That's fire. Keep the conversations moving and the pipeline active.",
-  "You are doing the right things. Now finish the job.",
+  "You are doing the right things bub. Now finish the job.",
   "No excuses, only progress. Keep building momentum until the month closes.",
   "Deep driving is the difference between being close and being over the top.",
   "You're on track, bub. Now go make sure there is no doubt.",

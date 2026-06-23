@@ -694,7 +694,7 @@ input::placeholder {
   }
 }
 .date-controls button {
-  margin-left: 0;
+  margin-left: 6px;
 }
 .project-date-panel,
 .project-count-panel {
