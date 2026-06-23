@@ -2115,7 +2115,7 @@ input::placeholder {
 
 .pm-rank-row > .pm-rank-card.rank-leader {
   background: #f9fafb;
-  border: 4px solid rgba(226, 203, 74, 0.951);
+  border: 4px solid rgba(255, 234, 117, 0.951);
   animation: topDawgGlow 6s ease-in-out infinite;
 }
 
@@ -2307,7 +2307,7 @@ input::placeholder {
   object-fit: cover;
   margin: 0 auto 12px;
   display: block;
-  border: 4px solid rgba(226, 203, 74, 0.951);
+  border: 4px solid rgba(255, 234, 117, 0.951);
   animation: topDawgGlow 6s ease-in-out infinite;
   box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
 }
