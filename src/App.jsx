@@ -3371,17 +3371,7 @@ const closeNeedsMessages = [
 const pickRandom = (messages) => {
   if (!messages || !messages.length) return "";
 
-  const key = messages.join("|");
-
-  let hash = 0;
-
-  for (let i = 0; i < key.length; i += 1) {
-    hash = (hash * 31 + key.charCodeAt(i)) | 0;
-  }
-
-  const index = Math.abs(hash) % messages.length;
-
-  return messages[index];
+  return messages[Math.floor(Math.random() * messages.length)];
 };
 
 const onTrackMessages = [
