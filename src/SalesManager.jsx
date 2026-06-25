@@ -255,6 +255,7 @@ const metricLabelMatches = (rowLabel, requestedMetric) => {
 export default function SalesManager() {
   const [salesRows, setSalesRows] = useState([]);
   const [pmRows, setPmRows] = useState([]);
+  const [invoiceRows, setInvoiceRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading manager data...");
 
   useEffect(() => {
@@ -310,10 +311,41 @@ export default function SalesManager() {
         console.error(error);
       }
     };
+    const loadInvoiceFile = async () => {
+  try {
+    const response = await fetch(`/Invoicing.xlsx?t=${Date.now()}`);
 
-    Promise.all([loadSalesFile(), loadPMFile()]).finally(() => {
-      setDataStatus("");
+    if (!response.ok) {
+      throw new Error("Could not find public/Invoicing.xlsx");
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    const workbook = XLSX.read(buffer, {
+      type: "array",
+      cellDates: true,
     });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    const rows = XLSX.utils.sheet_to_json(sheet, {
+      defval: "",
+    });
+
+    setInvoiceRows(rows);
+  } catch (error) {
+    setInvoiceRows([]);
+    console.error(error);
+  }
+};
+
+Promise.all([
+    loadSalesFile(),
+    loadPMFile(),
+    loadInvoiceFile(),
+]).finally(() => {
+    setDataStatus("");
+});
   }, []);
 
   const getPMBlockStart = (pmName) => {
@@ -601,7 +633,38 @@ const getManagerMetrics = () => {
     },
   };
 };
+const getInvoicePipeline = () => {
+  const pipeline = {
+    scheduledForBuild: 0,
+    needsToBeInvoiced: 0,
+    balanceDue: 0,
+    totalPipeline: 0,
+  };
 
+  invoiceRows.forEach((row) => {
+    Object.entries(row).forEach(([key, value]) => {
+      const label = String(value || "").trim().toLowerCase();
+
+      if (label === "scheduled for build") {
+        pipeline.scheduledForBuild = parseMoney(row["__EMPTY_1"]);
+      }
+
+      if (label === "needs to be invoiced") {
+        pipeline.needsToBeInvoiced = parseMoney(row["__EMPTY_1"]);
+      }
+
+      if (label.includes("money invoiced")) {
+        pipeline.balanceDue = parseMoney(row["__EMPTY_1"]);
+      }
+
+      if (label === "total") {
+        pipeline.totalPipeline = parseMoney(row["__EMPTY_1"]);
+      }
+    });
+  });
+
+  return pipeline;
+};
 const ProgressBar = ({ value }) => {
   const cappedValue = Math.min(Math.max(Number(value || 0), 0), 1.25);
 
@@ -615,6 +678,7 @@ const ProgressBar = ({ value }) => {
 const SalesManagerDashboard = () => {
   const managerMetrics = getManagerMetrics();
   const { rows, totals } = managerMetrics;
+  const invoicePipeline = getInvoicePipeline();
 
   return (
     <div className="sales-manager-page">
@@ -654,6 +718,42 @@ const SalesManagerDashboard = () => {
           <small>{totals.totalContracts} contracts</small>
         </div>
       </section>
+
+<section className="manager-panel">
+  <div className="manager-panel-header">
+    <div>
+      <span>Cash Flow</span>
+      <h2>Future Cash Pipeline</h2>
+    </div>
+    <p>Expected future payments from Invoicing.xlsx.</p>
+  </div>
+
+  <div className="manager-kpi-grid">
+    <div className="manager-kpi-card">
+      <span>Scheduled for Build</span>
+      <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
+      <small>Future production money</small>
+    </div>
+
+    <div className="manager-kpi-card">
+      <span>Needs to be Invoiced</span>
+      <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
+      <small>Ready to invoice</small>
+    </div>
+
+    <div className="manager-kpi-card">
+      <span>Balance Due</span>
+      <strong>{money(invoicePipeline.balanceDue)}</strong>
+      <small>Already invoiced / owed</small>
+    </div>
+
+    <div className="manager-kpi-card primary">
+      <span>Total Future Cash</span>
+      <strong>{money(invoicePipeline.totalPipeline)}</strong>
+      <small>Build + invoice + receivables</small>
+    </div>
+  </div>
+</section>
 
       <section className="manager-panel">
         <div className="manager-panel-header">
