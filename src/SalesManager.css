@@ -319,10 +319,38 @@ body {
   line-height: 1.05;
 }
 
-.manager-metric-strip {
+ .manager-metric-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.manager-metric-strip.v21 {
+  width: 100%;
+}
+
+.manager-metric-row {
   display: grid;
   grid-template-columns: repeat(5, minmax(150px, 1fr));
-  align-items: stretch;
+  align-items: start;
+}
+
+.manager-metric-row .manager-mini-metric {
+  min-height: 78px;
+  padding: 0 18px;
+  border-left: 1px solid #e5e7eb;
+}
+
+.manager-metric-row .manager-mini-metric:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.manager-metric-row-divider {
+  height: 1px;
+  width: 100%;
+  background: #e5e7eb;
 }
 
 .manager-performance-section {
@@ -367,11 +395,13 @@ body {
 
 .manager-performance-bottomline {
   display: grid;
-  grid-template-columns: minmax(280px, 430px) minmax(620px, 1fr);
-  gap: 28px;
+  grid-template-columns: minmax(300px, 440px) minmax(720px, 1fr);
+  gap: 36px;
   align-items: center;
-  margin-top: 22px;
-  padding-left: 76px;
+  margin-top: 24px;
+  padding-left: 0;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 22px;
 }
 
 .manager-synopsis-card {
@@ -398,10 +428,10 @@ body {
 
 .manager-goal-thermometers.v2 {
   display: grid;
-  grid-template-columns: repeat(3, minmax(190px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 24px;
   justify-self: center;
-  width: min(100%, 900px);
+  width: min(100%, 1080px);
 }
 
 .manager-thermometer-row {
@@ -443,8 +473,14 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .manager-metric-strip {
+  .manager-metric-row {
     grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 16px 0;
+  }
+
+  .manager-metric-row .manager-mini-metric:nth-child(4) {
+    border-left: none;
+    padding-left: 0;
   }
 
   .manager-performance-section.main-metrics {
@@ -483,7 +519,7 @@ body {
   }
 
   .manager-kpi-grid,
-  .manager-metric-strip,
+  .manager-metric-row,
   .manager-goal-thermometers.v2 {
     grid-template-columns: 1fr;
   }
@@ -499,6 +535,14 @@ body {
 
   .manager-rank-name-block {
     grid-template-columns: 44px 1fr;
+  }
+
+  .manager-metric-row .manager-mini-metric,
+  .manager-metric-row .manager-mini-metric:first-child,
+  .manager-metric-row .manager-mini-metric:nth-child(4) {
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    padding: 14px 0 0;
   }
 
   .manager-performance-section,

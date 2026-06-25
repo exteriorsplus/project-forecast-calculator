@@ -1053,17 +1053,9 @@ export default function SalesManager() {
                       </div>
                     </div>
 
-                    <div className="manager-metric-strip">
-                      <div className="manager-performance-section main-metrics">
+                    <div className="manager-metric-strip v21">
+                      <div className="manager-metric-row revenue-row">
                         <MetricMiniBlock label="FYTD Revenue" value={money(row.annualRevenue)} />
-                        <MetricMiniBlock
-                          label="FYTD Close Rate"
-                          value={displayPercent(row.closingRate, 1)}
-                          difference={row.closingVsTeam}
-                        />
-                      </div>
-
-                      <div className="manager-performance-section">
                         <MetricMiniBlock
                           label="vs LY Revenue"
                           value={row.revenueVsLY.label}
@@ -1071,19 +1063,28 @@ export default function SalesManager() {
                           subValue={`${money(row.lyRevenue)} LY`}
                         />
                         <MetricMiniBlock
-                          label="vs LY Close Rate"
-                          value={row.closingVsLY.label}
-                          difference={row.closingVsLY}
-                          subValue={`${displayPercent(row.lyClosingRate, 1)} LY`}
-                        />
-                      </div>
-
-                      <div className="manager-performance-section">
-                        <MetricMiniBlock
                           label="vs Team Revenue"
                           value={row.revenueVsTeam.label}
                           difference={row.revenueVsTeam}
                           subValue={`${money(totals.teamAverageRevenue)} avg`}
+                        />
+                        <MetricMiniBlock label="Rolling 90 Revenue" value={money(row.rolling90Revenue)} />
+                        <MetricMiniBlock label="Quarter MTD Revenue" value={money(row.quarterMTDRevenue)} />
+                      </div>
+
+                      <div className="manager-metric-row-divider" />
+
+                      <div className="manager-metric-row close-row">
+                        <MetricMiniBlock
+                          label="FYTD Close Rate"
+                          value={displayPercent(row.closingRate, 1)}
+                          difference={row.closingVsTeam}
+                        />
+                        <MetricMiniBlock
+                          label="vs LY Close Rate"
+                          value={row.closingVsLY.label}
+                          difference={row.closingVsLY}
+                          subValue={`${displayPercent(row.lyClosingRate, 1)} LY`}
                         />
                         <MetricMiniBlock
                           label="vs Team Close Rate"
@@ -1091,15 +1092,7 @@ export default function SalesManager() {
                           difference={row.closingVsTeam}
                           subValue={`${displayPercent(totals.teamClosingRate, 1)} avg`}
                         />
-                      </div>
-
-                      <div className="manager-performance-section">
-                        <MetricMiniBlock label="Rolling 90 Revenue" value={money(row.rolling90Revenue)} />
                         <MetricMiniBlock label="Rolling 90 Close Rate" value={displayPercent(row.rolling90ClosingRate, 1)} />
-                      </div>
-
-                      <div className="manager-performance-section">
-                        <MetricMiniBlock label="Quarter MTD Revenue" value={money(row.quarterMTDRevenue)} />
                         <MetricMiniBlock label="Quarter MTD Close Rate" value={displayPercent(row.quarterMTDClosingRate, 1)} />
                       </div>
                     </div>
