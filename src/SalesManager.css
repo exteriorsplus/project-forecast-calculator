@@ -331,17 +331,23 @@ body {
   margin-top: 18px;
 }
 
+
 .manager-performance-card {
   display: grid;
-  grid-template-columns: 64px 230px minmax(180px, 1.1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(260px, 1.5fr);
-  gap: 16px;
-  align-items: center;
-  padding: 22px 0;
+  gap: 18px;
+  padding: 24px 0;
   border-top: 1px solid #e5e7eb;
 }
 
 .manager-performance-card:first-child {
   border-top: none;
+}
+
+.manager-performance-top {
+  display: grid;
+  grid-template-columns: 64px 230px minmax(180px, 1.1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr);
+  gap: 16px;
+  align-items: center;
 }
 
 .manager-performance-rank {
@@ -387,7 +393,8 @@ body {
 }
 
 .manager-mini-metric span,
-.manager-thermometer-topline span {
+.manager-thermometer-topline span,
+.manager-performance-synopsis span {
   display: block;
   color: #6b7280;
   font-size: 11px;
@@ -413,9 +420,39 @@ body {
   font-weight: 800;
 }
 
+.manager-performance-bottom {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(520px, 1.4fr);
+  gap: 22px;
+  align-items: end;
+  padding-left: 294px;
+}
+
+.manager-performance-synopsis {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  min-height: 100%;
+}
+
+.manager-performance-synopsis span {
+  color: #b91c1c;
+  margin-bottom: 8px;
+}
+
+.manager-performance-synopsis p {
+  margin: 0;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
 .manager-goal-thermometers {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
   min-width: 0;
 }
 
@@ -451,25 +488,39 @@ body {
 }
 
 @media (max-width: 1400px) {
-  .manager-performance-card {
+  .manager-performance-top {
     grid-template-columns: 52px 210px repeat(3, minmax(165px, 1fr));
   }
 
-  .manager-goal-thermometers {
+  .manager-performance-bottom {
+    padding-left: 262px;
+  }
+
+  .manager-performance-section:nth-of-type(5),
+  .manager-performance-section:nth-of-type(6) {
     grid-column: 3 / -1;
   }
 }
 
+@media (max-width: 1100px) {
+  .manager-performance-bottom {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  .manager-goal-thermometers {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1000px) {
-  .manager-performance-card {
+  .manager-performance-top {
     grid-template-columns: 48px 1fr;
     align-items: start;
-    padding: 22px 0;
   }
 
   .manager-performance-section,
-  .manager-performance-section.main-metrics,
-  .manager-goal-thermometers {
+  .manager-performance-section.main-metrics {
     grid-column: 1 / -1;
     border-left: none;
     border-top: 1px solid #e5e7eb;

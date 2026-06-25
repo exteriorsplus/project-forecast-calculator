@@ -476,6 +476,9 @@ Promise.all([
 const getManagerSalesReps = () =>
   projectManagers.filter((pm) => pm.activeGoal && pm.name !== "Mike Harr");
 
+const getInvoicePipelineReps = () =>
+  projectManagers.filter((pm) => pm.activeGoal);
+
 const getFiscalYearBounds = () => ({
   start: new Date(2025, 10, 1),
   end: new Date(2026, 9, 31),
@@ -773,6 +776,7 @@ const normalizeInvoicePMName = (value) => {
   if (text === "john") return "John Fincher";
   if (text === "dani") return "Dani Cole";
   if (text === "megan") return "Megan Rice";
+  if (text === "mike" || text === "mike h" || text === "mike harr") return "Mike Harr";
 
   return "";
 };
@@ -790,7 +794,7 @@ const getInvoiceCell = (row, index) => {
 const getInvoicePipelineByRep = () => {
   const totalsByRep = {};
 
-  getManagerSalesReps().forEach((rep) => {
+  getInvoicePipelineReps().forEach((rep) => {
     totalsByRep[rep.name] = {
       name: rep.name,
       image: rep.image,
@@ -855,6 +859,38 @@ const GoalThermometer = ({ label, amount, percentValue }) => (
     <ProgressBar value={percentValue} />
   </div>
 );
+
+const getPerformanceSynopsis = (row, totals) => {
+  const notes = [];
+
+  if (row.annualGoalPercent >= 1) {
+    notes.push(`${row.name.split(" ")[0]} is already past annual goal.`);
+  } else if (row.annualGoalPercent >= 0.75) {
+    notes.push(`${row.name.split(" ")[0]} is pacing strongly toward annual goal.`);
+  } else if (row.annualGoalPercent < 0.35) {
+    notes.push(`${row.name.split(" ")[0]} is behind annual goal pace.`);
+  } else {
+    notes.push(`${row.name.split(" ")[0]} is still building toward annual goal.`);
+  }
+
+  if (row.revenueVsLY.className === "positive") {
+    notes.push(`Revenue is up ${row.revenueVsLY.label.replace("+", "")} vs the same period last year.`);
+  } else if (row.revenueVsLY.className === "negative") {
+    notes.push(`Revenue is ${row.revenueVsLY.label.replace("-", "")} below the same period last year.`);
+  }
+
+  if (row.closingVsTeam.rawDifference >= 0.02) {
+    notes.push(`Close rate is outperforming team average by ${row.closingVsTeam.label.replace("+", "")}.`);
+  } else if (row.closingVsTeam.rawDifference <= -0.02) {
+    notes.push(`Close rate is trailing team average by ${row.closingVsTeam.label.replace("-", "")}.`);
+  }
+
+  if (row.monthlyGoalPercent >= 1 || row.quarterlyGoalPercent >= 1) {
+    notes.push("Current period momentum is strong.");
+  }
+
+  return notes.slice(0, 3).join(" ");
+};
 
 const SalesManagerDashboard = () => {
   const managerMetrics = getManagerMetrics();
@@ -981,78 +1017,87 @@ const SalesManagerDashboard = () => {
         <div className="manager-performance-list">
           {rows.map((row) => (
             <article className="manager-performance-card" key={`${row.name}-performance`}>
-              <div className="manager-performance-rank">#{row.rank}</div>
+              <div className="manager-performance-top">
+                <div className="manager-performance-rank">#{row.rank}</div>
 
-              <div className="manager-performance-person">
-                <img src={row.image} alt={row.name} />
-                <h3>{row.name}</h3>
+                <div className="manager-performance-person">
+                  <img src={row.image} alt={row.name} />
+                  <h3>{row.name}</h3>
+                </div>
+
+                <div className="manager-performance-section main-metrics">
+                  <MetricMiniBlock label="Revenue" value={money(row.annualRevenue)} />
+                  <MetricMiniBlock
+                    label="Close Rate"
+                    value={displayPercent(row.closingRate, 1)}
+                    difference={row.closingVsTeam}
+                  />
+                </div>
+
+                <div className="manager-performance-section">
+                  <MetricMiniBlock
+                    label="vs LY Revenue"
+                    value={row.revenueVsLY.label}
+                    difference={row.revenueVsLY}
+                    subValue={`${money(row.lyRevenue)} LY`}
+                  />
+                  <MetricMiniBlock
+                    label="vs LY Close Rate"
+                    value={row.closingVsLY.label}
+                    difference={row.closingVsLY}
+                    subValue={`${displayPercent(row.lyClosingRate, 1)} LY`}
+                  />
+                </div>
+
+                <div className="manager-performance-section">
+                  <MetricMiniBlock
+                    label="vs Team Revenue"
+                    value={row.revenueVsTeam.label}
+                    difference={row.revenueVsTeam}
+                    subValue={`${money(totals.teamAverageRevenue)} avg`}
+                  />
+                  <MetricMiniBlock
+                    label="vs Team Close Rate"
+                    value={row.closingVsTeam.label}
+                    difference={row.closingVsTeam}
+                    subValue={`${displayPercent(totals.teamClosingRate, 1)} avg`}
+                  />
+                </div>
+
+                <div className="manager-performance-section">
+                  <MetricMiniBlock label="Rolling 90 Revenue" value={money(row.rolling90Revenue)} />
+                  <MetricMiniBlock label="Rolling 90 Close Rate" value={displayPercent(row.rolling90ClosingRate, 1)} />
+                </div>
+
+                <div className="manager-performance-section">
+                  <MetricMiniBlock label="Quarter MTD Revenue" value={money(row.quarterMTDRevenue)} />
+                  <MetricMiniBlock label="Quarter MTD Close Rate" value={displayPercent(row.quarterMTDClosingRate, 1)} />
+                </div>
               </div>
 
-              <div className="manager-performance-section main-metrics">
-                <MetricMiniBlock label="Revenue" value={money(row.annualRevenue)} />
-                <MetricMiniBlock
-                  label="Close Rate"
-                  value={displayPercent(row.closingRate, 1)}
-                  difference={row.closingVsTeam}
-                />
-              </div>
+              <div className="manager-performance-bottom">
+                <div className="manager-performance-synopsis">
+                  <span>Manager Synopsis</span>
+                  <p>{getPerformanceSynopsis(row, totals)}</p>
+                </div>
 
-              <div className="manager-performance-section">
-                <MetricMiniBlock
-                  label="vs LY Revenue"
-                  value={row.revenueVsLY.label}
-                  difference={row.revenueVsLY}
-                  subValue={`${money(row.lyRevenue)} LY`}
-                />
-                <MetricMiniBlock
-                  label="vs LY Close Rate"
-                  value={row.closingVsLY.label}
-                  difference={row.closingVsLY}
-                  subValue={`${displayPercent(row.lyClosingRate, 1)} LY`}
-                />
-              </div>
-
-              <div className="manager-performance-section">
-                <MetricMiniBlock
-                  label="vs Team Revenue"
-                  value={row.revenueVsTeam.label}
-                  difference={row.revenueVsTeam}
-                  subValue={`${money(totals.teamAverageRevenue)} avg`}
-                />
-                <MetricMiniBlock
-                  label="vs Team Close Rate"
-                  value={row.closingVsTeam.label}
-                  difference={row.closingVsTeam}
-                  subValue={`${displayPercent(totals.teamClosingRate, 1)} avg`}
-                />
-              </div>
-
-              <div className="manager-performance-section">
-                <MetricMiniBlock label="Rolling 90 Revenue" value={money(row.rolling90Revenue)} />
-                <MetricMiniBlock label="Rolling 90 Close Rate" value={displayPercent(row.rolling90ClosingRate, 1)} />
-              </div>
-
-              <div className="manager-performance-section">
-                <MetricMiniBlock label="Quarter MTD Revenue" value={money(row.quarterMTDRevenue)} />
-                <MetricMiniBlock label="Quarter MTD Close Rate" value={displayPercent(row.quarterMTDClosingRate, 1)} />
-              </div>
-
-              <div className="manager-goal-thermometers">
-                <GoalThermometer
-                  label="Monthly"
-                  amount={row.monthlyRevenue}
-                  percentValue={row.monthlyGoalPercent}
-                />
-                <GoalThermometer
-                  label="Quarterly"
-                  amount={row.quarterlyRevenue}
-                  percentValue={row.quarterlyGoalPercent}
-                />
-                <GoalThermometer
-                  label="Annual"
-                  amount={row.annualRevenue}
-                  percentValue={row.annualGoalPercent}
-                />
+                <div className="manager-goal-thermometers">
+                  <GoalThermometer
+                    label="Monthly"
+                    amount={row.monthlyRevenue}
+                    percentValue={row.monthlyGoalPercent}
+                  />
+                  <GoalThermometer
+                    label="Quarterly"
+                    amount={row.quarterlyRevenue}
+                    percentValue={row.quarterlyGoalPercent}
+                  />
+                  <GoalThermometer
+                    label="Annual"
+                    amount={row.annualRevenue}
+                    percentValue={row.annualGoalPercent}
+                  />
+                </div>
               </div>
             </article>
           ))}
