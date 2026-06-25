@@ -697,6 +697,7 @@ const normalizeInvoicePMName = (value) => {
   if (text === "john") return "John Fincher";
   if (text === "dani") return "Dani Cole";
   if (text === "megan") return "Megan Rice";
+  if (text === "mike") return "Mike Harr";
 
   return "";
 };
