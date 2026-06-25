@@ -684,11 +684,80 @@ const ProgressBar = ({ value }) => {
     </div>
   );
 };
+const normalizeInvoicePMName = (value) => {
+  const text = String(value || "").trim().toLowerCase();
 
+  if (text === "will" || text === "william") return "William Dye";
+  if (text === "jamie") return "Jamie Jenkins";
+  if (text === "andrew") return "Andrew Painter";
+  if (text === "george") return "George Anim";
+  if (text === "john") return "John Fincher";
+  if (text === "dani") return "Dani Cole";
+  if (text === "megan") return "Megan Rice";
+
+  return "";
+};
+
+const getInvoiceCell = (row, index) => {
+  const key = index === 0 ? "__EMPTY" : `__EMPTY_${index}`;
+
+  if (Object.prototype.hasOwnProperty.call(row, key)) {
+    return row[key];
+  }
+
+  return Object.values(row)[index];
+};
+
+const getInvoicePipelineByRep = () => {
+  const totalsByRep = {};
+
+  getManagerSalesReps().forEach((rep) => {
+    totalsByRep[rep.name] = {
+      name: rep.name,
+      image: rep.image,
+      scheduledForBuild: 0,
+      needsToBeInvoiced: 0,
+      balanceDue: 0,
+      totalPipeline: 0,
+    };
+  });
+
+  invoiceRows.forEach((row) => {
+    const scheduledPM = normalizeInvoicePMName(getInvoiceCell(row, 2));
+    const scheduledAmount = parseMoney(getInvoiceCell(row, 4));
+
+    if (scheduledPM && totalsByRep[scheduledPM]) {
+      totalsByRep[scheduledPM].scheduledForBuild += scheduledAmount;
+    }
+
+    const needsInvoicePM = normalizeInvoicePMName(getInvoiceCell(row, 8));
+    const needsInvoiceAmount = parseMoney(getInvoiceCell(row, 10));
+
+    if (needsInvoicePM && totalsByRep[needsInvoicePM]) {
+      totalsByRep[needsInvoicePM].needsToBeInvoiced += needsInvoiceAmount;
+    }
+
+    const balanceDuePM = normalizeInvoicePMName(getInvoiceCell(row, 15));
+    const balanceDueAmount = parseMoney(getInvoiceCell(row, 20));
+
+    if (balanceDuePM && totalsByRep[balanceDuePM]) {
+      totalsByRep[balanceDuePM].balanceDue += balanceDueAmount;
+    }
+  });
+
+  return Object.values(totalsByRep)
+    .map((rep) => ({
+      ...rep,
+      totalPipeline:
+        rep.scheduledForBuild + rep.needsToBeInvoiced + rep.balanceDue,
+    }))
+    .sort((a, b) => b.totalPipeline - a.totalPipeline);
+};
 const SalesManagerDashboard = () => {
   const managerMetrics = getManagerMetrics();
   const { rows, totals } = managerMetrics;
   const invoicePipeline = getInvoicePipeline();
+  const invoiceRepRows = getInvoicePipelineByRep();
 
   return (
     <div className="sales-manager-page">
@@ -762,6 +831,39 @@ const SalesManagerDashboard = () => {
       <strong>{money(invoicePipeline.totalPipeline)}</strong>
       <small>Build + invoice + receivables</small>
     </div>
+  </div>
+
+  <div className="manager-table-wrap">
+    <table className="manager-table">
+      <thead>
+        <tr>
+          <th>Salesperson</th>
+          <th>Scheduled</th>
+          <th>Needs Invoicing</th>
+          <th>Balance Due</th>
+          <th>Total Pipeline</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {invoiceRepRows.map((row) => (
+          <tr key={`${row.name}-invoice-pipeline`}>
+            <td>
+              <div className="manager-rep-cell">
+                <img src={row.image} alt={row.name} />
+                <strong>{row.name}</strong>
+              </div>
+            </td>
+            <td>{money(row.scheduledForBuild)}</td>
+            <td>{money(row.needsToBeInvoiced)}</td>
+            <td>{money(row.balanceDue)}</td>
+            <td>
+              <strong>{money(row.totalPipeline)}</strong>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 </section>
 
