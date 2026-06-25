@@ -534,28 +534,38 @@ const getManagerClosingRateForRange = (pmName, startDate, endDate) => {
 
 const getManagerMetrics = () => {
   const reps = getManagerSalesReps();
+
   const fiscalYear = getFiscalYearBounds();
   const currentMonth = getCurrentMonthBounds();
   const currentQuarter = getCurrentQuarterBounds();
-  const priorFiscalYear = {
-    start: new Date(
-      fiscalYear.start.getFullYear() - 1,
-      fiscalYear.start.getMonth(),
-      fiscalYear.start.getDate()
-    ),
-    end: new Date(
-      fiscalYear.end.getFullYear() - 1,
-      fiscalYear.end.getMonth(),
-      fiscalYear.end.getDate()
-    ),
+
+  const today = dateOnly(new Date());
+
+  // Current Fiscal Year-To-Date
+  const fiscalYTD = {
+    start: fiscalYear.start,
+    end: today > fiscalYear.end ? fiscalYear.end : today,
   };
 
+  // Same Fiscal Year-To-Date last year
+  const priorFiscalYTD = {
+    start: new Date(
+      fiscalYTD.start.getFullYear() - 1,
+      fiscalYTD.start.getMonth(),
+      fiscalYTD.start.getDate()
+    ),
+    end: new Date(
+      fiscalYTD.end.getFullYear() - 1,
+      fiscalYTD.end.getMonth(),
+      fiscalYTD.end.getDate()
+    ),
+  };
   const rows = reps.map((pm) => {
-    const annualSales = getPMSalesDataForRange(
-      pm.name,
-      fiscalYear.start,
-      fiscalYear.end
-    );
+const annualSales = getPMSalesDataForRange(
+  pm.name,
+  fiscalYTD.start,
+  fiscalYTD.end
+);
     const monthlySales = getPMSalesDataForRange(
       pm.name,
       currentMonth.start,
@@ -566,17 +576,17 @@ const getManagerMetrics = () => {
       currentQuarter.start,
       currentQuarter.end
     );
-    const lastYearSales = getPMSalesDataForRange(
-      pm.name,
-      priorFiscalYear.start,
-      priorFiscalYear.end
-    );
+const lastYearSales = getPMSalesDataForRange(
+  pm.name,
+  priorFiscalYTD.start,
+  priorFiscalYTD.end
+);
     const goal = Number(PM_GOALS[pm.name] || 0);
-    const closingRate = getManagerClosingRateForRange(
-      pm.name,
-      fiscalYear.start,
-      fiscalYear.end
-    );
+const closingRate = getManagerClosingRateForRange(
+  pm.name,
+  fiscalYTD.start,
+  fiscalYTD.end
+);
 
     return {
       name: pm.name,
