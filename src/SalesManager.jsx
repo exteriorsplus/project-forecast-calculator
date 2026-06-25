@@ -642,26 +642,36 @@ const getInvoicePipeline = () => {
   };
 
   invoiceRows.forEach((row) => {
-    Object.entries(row).forEach(([key, value]) => {
-      const label = String(value || "").trim().toLowerCase();
+    const values = Object.values(row);
 
-      if (label === "scheduled for build") {
-        pipeline.scheduledForBuild = parseMoney(row["__EMPTY_1"]);
+    values.forEach((cell, index) => {
+      const label = String(cell || "").trim().toLowerCase();
+      const nextValue = parseMoney(values[index + 1]);
+
+      if (label.includes("scheduled for build")) {
+        pipeline.scheduledForBuild += nextValue;
       }
 
-      if (label === "needs to be invoiced") {
-        pipeline.needsToBeInvoiced = parseMoney(row["__EMPTY_1"]);
+      if (label.includes("needs to be invoiced")) {
+        pipeline.needsToBeInvoiced += nextValue;
       }
 
-      if (label.includes("money invoiced")) {
-        pipeline.balanceDue = parseMoney(row["__EMPTY_1"]);
+      if (label.includes("balance due") || label.includes("money invoiced")) {
+        pipeline.balanceDue += nextValue;
       }
 
       if (label === "total") {
-        pipeline.totalPipeline = parseMoney(row["__EMPTY_1"]);
+        pipeline.totalPipeline += nextValue;
       }
     });
   });
+
+  if (!pipeline.totalPipeline) {
+    pipeline.totalPipeline =
+      pipeline.scheduledForBuild +
+      pipeline.needsToBeInvoiced +
+      pipeline.balanceDue;
+  }
 
   return pipeline;
 };
