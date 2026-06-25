@@ -476,6 +476,9 @@ Promise.all([
 const getManagerSalesReps = () =>
   projectManagers.filter((pm) => pm.activeGoal && pm.name !== "Mike Harr");
 
+const getInvoicePipelineReps = () =>
+  projectManagers.filter((pm) => pm.activeGoal);
+
 const getFiscalYearBounds = () => ({
   start: new Date(2025, 10, 1),
   end: new Date(2026, 9, 31),
@@ -711,7 +714,7 @@ const getInvoiceCell = (row, index) => {
 const getInvoicePipelineByRep = () => {
   const totalsByRep = {};
 
-  getManagerSalesReps().forEach((rep) => {
+getInvoicePipelineReps().forEach((rep) => {
     totalsByRep[rep.name] = {
       name: rep.name,
       image: rep.image,
