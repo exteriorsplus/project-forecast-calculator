@@ -852,17 +852,30 @@ export default function SalesManager() {
   );
 
   const getRepStatus = (row) => {
-    const strongRevenue = row.revenueVsLY.rawDifference > 0.1;
-    const strongGoal = row.annualGoalPercent >= 0.5;
-    const strongQuarter = row.quarterlyGoalPercent >= 1;
-    const weakClosing = row.closingVsTeam.rawDifference < -0.03;
-    const weakGoal = row.annualGoalPercent < 0.35;
+    const revenueWellAboveLY = row.revenueVsLY.rawDifference >= 0.15;
+    const revenueAboveTeam = row.revenueVsTeam.rawDifference >= 0.15;
+    const closingAboveTeam = row.closingVsTeam.rawDifference >= 0;
+    const quarterStrong = row.quarterlyGoalPercent >= 1;
+    const monthStrong = row.monthlyGoalPercent >= 1;
+    const annualHealthy = row.annualGoalPercent >= 0.5;
+    const annualWeak = row.annualGoalPercent < 0.35;
+    const closingWeak = row.closingVsTeam.rawDifference <= -0.03;
+    const revenueBehindLY = row.revenueVsLY.rawDifference <= -0.1;
 
-    if ((strongRevenue && strongQuarter) || (strongGoal && !weakClosing)) {
+    if (
+      revenueWellAboveLY &&
+      revenueAboveTeam &&
+      quarterStrong &&
+      (closingAboveTeam || monthStrong)
+    ) {
+      return { label: "Exceeding", className: "positive" };
+    }
+
+    if ((annualHealthy && !closingWeak) || quarterStrong || monthStrong) {
       return { label: "On Pace", className: "positive" };
     }
 
-    if (weakGoal || weakClosing) {
+    if (annualWeak || (revenueBehindLY && closingWeak)) {
       return { label: "Needs Coaching", className: "negative" };
     }
 
@@ -874,35 +887,86 @@ export default function SalesManager() {
 
     if (row.revenueVsLY.className === "positive") {
       notes.push(
-        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year.`
+        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year`
       );
     } else if (row.revenueVsLY.className === "negative") {
       notes.push(
-        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year.`
+        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year`
       );
     } else {
-      notes.push("Last-year comparison is limited because prior-year revenue is not available.");
+      notes.push("Prior-year revenue comparison is limited");
+    }
+
+    if (row.revenueVsTeam.className === "positive") {
+      notes.push(`${row.revenueVsTeam.label} above the team revenue average`);
+    } else if (row.revenueVsTeam.className === "negative") {
+      notes.push(`${row.revenueVsTeam.label} below the team revenue average`);
     }
 
     if (row.closingVsTeam.className === "positive") {
-      notes.push(`Close rate is ${row.closingVsTeam.label} above team average.`);
+      notes.push(`close rate is ${row.closingVsTeam.label} above team average`);
     } else if (row.closingVsTeam.className === "negative") {
-      notes.push(`Close rate trails team average by ${row.closingVsTeam.label.replace("-", "")}.`);
+      notes.push(
+        `close rate trails the team average by ${row.closingVsTeam.label.replace("-", "")}`
+      );
     } else {
-      notes.push("Close rate is roughly in line with the team average.");
+      notes.push("close rate is roughly aligned with team average");
     }
 
     if (row.quarterlyGoalPercent >= 1) {
-      notes.push("Quarterly goal has been exceeded, showing strong current-period production.");
+      notes.push("quarterly goal has already been exceeded");
     } else if (row.monthlyGoalPercent >= 1) {
-      notes.push("Monthly pace is ahead of goal, with an opportunity to convert that momentum into quarterly progress.");
+      notes.push("monthly pace is ahead of goal");
     } else if (row.annualGoalPercent < 0.35) {
-      notes.push("Annual goal progress needs attention; focus should remain on near-term revenue creation.");
+      notes.push("annual goal progress needs attention");
     } else {
-      notes.push("Goal progress is developing, but the next month will be important for staying on pace.");
+      notes.push("goal progress should be monitored closely through the next month");
     }
 
-    return notes.join(" ");
+    return `${notes.join(", ")}.`;
+  };
+
+  const getExecutiveSummary = (rows, totals, invoicePipeline) => {
+    const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
+    const topRep = rows[0];
+    const topTwoRevenue = rows
+      .slice(0, 2)
+      .reduce((sum, row) => sum + Number(row.annualRevenue || 0), 0);
+    const topTwoShare =
+      totals.totalRevenue > 0 ? topTwoRevenue / totals.totalRevenue : 0;
+    const belowClosingAverage = rows.filter(
+      (row) => row.closingVsTeam.className === "negative"
+    ).length;
+    const strongestAverageContract = activeRows
+      .slice()
+      .sort(
+        (a, b) => Number(b.averageContract || 0) - Number(a.averageContract || 0)
+      )[0];
+    const aboveGoalThisQuarter = rows.filter(
+      (row) => row.quarterlyGoalPercent >= 1
+    ).length;
+
+    return [
+      `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
+      topRep
+        ? `${topRep.name} currently leads FYTD production at ${money(topRep.annualRevenue)}.`
+        : "No FYTD production leader is available yet.",
+      topTwoShare > 0
+        ? `The top two salespeople represent ${displayPercent(topTwoShare, 1)} of FYTD production.`
+        : "Top producer concentration is not available yet.",
+      strongestAverageContract
+        ? `${strongestAverageContract.name} has the highest average contract at ${money(
+            strongestAverageContract.averageContract
+          )}.`
+        : "Average contract leader is not available yet.",
+      `${aboveGoalThisQuarter} salesperson${
+        aboveGoalThisQuarter === 1 ? " is" : "s are"
+      } at or above quarterly goal pace.`,
+      `${belowClosingAverage} salesperson${
+        belowClosingAverage === 1 ? " is" : "s are"
+      } below the team closing-rate average.`,
+      `Future cash pipeline is ${money(invoicePipeline.totalPipeline)}.`
+    ];
   };
 
   const SalesManagerDashboard = () => {
@@ -910,6 +974,7 @@ export default function SalesManager() {
     const { rows, totals, ranges } = managerMetrics;
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
+    const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
 
     return (
       <div className="sales-manager-page">
@@ -949,6 +1014,25 @@ export default function SalesManager() {
             <span>Average Contract</span>
             <strong>{money(totals.teamAverageContract)}</strong>
             <small>{totals.totalContracts} contracts</small>
+          </div>
+        </section>
+
+        <section className="manager-panel manager-executive-summary-panel">
+          <div className="manager-panel-header">
+            <div>
+              <span>Executive Brief</span>
+              <h2>Executive Summary</h2>
+            </div>
+            <p>Automatically generated from current sales, closing-rate, goal, and cash-pipeline data.</p>
+          </div>
+
+          <div className="manager-executive-summary-grid">
+            {executiveSummary.map((item, index) => (
+              <div className="manager-executive-summary-item" key={`executive-summary-${index}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <p>{item}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -1038,7 +1122,10 @@ export default function SalesManager() {
               const status = getRepStatus(row);
 
               return (
-                <article className="manager-performance-report" key={`${row.name}-performance`}>
+                <article
+                  className={`manager-performance-report ${status.className}`}
+                  key={`${row.name}-performance`}
+                >
                   <div className="manager-performance-topline">
                     <div className="manager-rank-name-block">
                       <div className="manager-performance-rank">#{row.rank}</div>
