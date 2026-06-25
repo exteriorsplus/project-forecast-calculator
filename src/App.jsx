@@ -3350,7 +3350,7 @@ const closeStrongMessages = [
   "Your closing efficiency remains one of your strongest advantages.",
   "Customers continue responding well to your sales process.",
   "Conversion performance is helping drive strong results.",
-  "Your closing rate continues to outperform expectations.",
+  "Your closing rate continues to outperform expectations, that's fire.",
   "Strong conversion efficiency remains a competitive advantage.",
   "Bub, that's fire. You're turning opportunities into contracts.",
   "You're killing it in the close. Keep trusting the process.",
