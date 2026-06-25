@@ -316,3 +316,168 @@ body {
     flex-direction: column;
   }
 }
+
+.manager-invoice-table-wrap {
+  margin-top: 22px;
+}
+
+.manager-salesperson-panel {
+  overflow: hidden;
+}
+
+.manager-performance-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.manager-performance-card {
+  display: grid;
+  grid-template-columns: 64px 230px minmax(180px, 1.1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(260px, 1.5fr);
+  gap: 16px;
+  align-items: center;
+  padding: 22px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.manager-performance-card:first-child {
+  border-top: none;
+}
+
+.manager-performance-rank {
+  color: #020617;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.manager-performance-person {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.manager-performance-person img {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+  flex: 0 0 auto;
+}
+
+.manager-performance-person h3 {
+  margin: 0;
+  color: #020617;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.manager-performance-section {
+  display: grid;
+  gap: 12px;
+  min-height: 96px;
+  padding-left: 16px;
+  border-left: 1px solid #e5e7eb;
+  align-content: center;
+}
+
+.manager-performance-section.main-metrics {
+  border-left: none;
+}
+
+.manager-mini-metric span,
+.manager-thermometer-topline span {
+  display: block;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+}
+
+.manager-mini-metric strong {
+  display: inline-block;
+  margin-top: 4px;
+  color: #020617;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: -0.3px;
+}
+
+.manager-mini-metric small {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.manager-goal-thermometers {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.manager-thermometer-row {
+  display: grid;
+  gap: 6px;
+}
+
+.manager-thermometer-topline {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.manager-thermometer-topline strong,
+.manager-thermometer-topline b {
+  color: #020617;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.manager-thermometer-topline strong {
+  text-align: left;
+}
+
+.manager-thermometer-topline b {
+  text-align: right;
+}
+
+.manager-thermometer-row .manager-progress-bar {
+  margin-top: 0;
+}
+
+@media (max-width: 1400px) {
+  .manager-performance-card {
+    grid-template-columns: 52px 210px repeat(3, minmax(165px, 1fr));
+  }
+
+  .manager-goal-thermometers {
+    grid-column: 3 / -1;
+  }
+}
+
+@media (max-width: 1000px) {
+  .manager-performance-card {
+    grid-template-columns: 48px 1fr;
+    align-items: start;
+    padding: 22px 0;
+  }
+
+  .manager-performance-section,
+  .manager-performance-section.main-metrics,
+  .manager-goal-thermometers {
+    grid-column: 1 / -1;
+    border-left: none;
+    border-top: 1px solid #e5e7eb;
+    padding-left: 0;
+    padding-top: 14px;
+  }
+
+  .manager-performance-person {
+    grid-column: 2;
+  }
+}

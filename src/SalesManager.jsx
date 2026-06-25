@@ -476,9 +476,6 @@ Promise.all([
 const getManagerSalesReps = () =>
   projectManagers.filter((pm) => pm.activeGoal && pm.name !== "Mike Harr");
 
-const getInvoicePipelineReps = () =>
-  projectManagers.filter((pm) => pm.activeGoal);
-
 const getFiscalYearBounds = () => ({
   start: new Date(2025, 10, 1),
   end: new Date(2026, 9, 31),
@@ -538,16 +535,13 @@ const getManagerMetrics = () => {
   const fiscalYear = getFiscalYearBounds();
   const currentMonth = getCurrentMonthBounds();
   const currentQuarter = getCurrentQuarterBounds();
-
   const today = dateOnly(new Date());
 
-  // Current Fiscal Year-To-Date
   const fiscalYTD = {
     start: fiscalYear.start,
     end: today > fiscalYear.end ? fiscalYear.end : today,
   };
 
-  // Same Fiscal Year-To-Date last year
   const priorFiscalYTD = {
     start: new Date(
       fiscalYTD.start.getFullYear() - 1,
@@ -560,33 +554,90 @@ const getManagerMetrics = () => {
       fiscalYTD.end.getDate()
     ),
   };
+
+  const rolling90End = today;
+  const rolling90Start = new Date(rolling90End);
+  rolling90Start.setDate(rolling90Start.getDate() - 89);
+
+  const quarterMTD = {
+    start: currentQuarter.start,
+    end: today > currentQuarter.end ? currentQuarter.end : today,
+  };
+
   const rows = reps.map((pm) => {
-const annualSales = getPMSalesDataForRange(
-  pm.name,
-  fiscalYTD.start,
-  fiscalYTD.end
-);
+    const annualSales = getPMSalesDataForRange(
+      pm.name,
+      fiscalYTD.start,
+      fiscalYTD.end
+    );
+
     const monthlySales = getPMSalesDataForRange(
       pm.name,
       currentMonth.start,
       currentMonth.end
     );
+
     const quarterlySales = getPMSalesDataForRange(
       pm.name,
       currentQuarter.start,
       currentQuarter.end
     );
-const lastYearSales = getPMSalesDataForRange(
-  pm.name,
-  priorFiscalYTD.start,
-  priorFiscalYTD.end
-);
+
+    const quarterMTDSales = getPMSalesDataForRange(
+      pm.name,
+      quarterMTD.start,
+      quarterMTD.end
+    );
+
+    const rolling90Sales = getPMSalesDataForRange(
+      pm.name,
+      rolling90Start,
+      rolling90End
+    );
+
+    const lastYearSales = getPMSalesDataForRange(
+      pm.name,
+      priorFiscalYTD.start,
+      priorFiscalYTD.end
+    );
+
     const goal = Number(PM_GOALS[pm.name] || 0);
-const closingRate = getManagerClosingRateForRange(
-  pm.name,
-  fiscalYTD.start,
-  fiscalYTD.end
-);
+
+    const closingRate = getManagerClosingRateForRange(
+      pm.name,
+      fiscalYTD.start,
+      fiscalYTD.end
+    );
+
+    const lyClosingRate = getManagerClosingRateForRange(
+      pm.name,
+      priorFiscalYTD.start,
+      priorFiscalYTD.end
+    );
+
+    const monthlyClosingRate = getManagerClosingRateForRange(
+      pm.name,
+      currentMonth.start,
+      currentMonth.end
+    );
+
+    const quarterlyClosingRate = getManagerClosingRateForRange(
+      pm.name,
+      currentQuarter.start,
+      currentQuarter.end
+    );
+
+    const quarterMTDClosingRate = getManagerClosingRateForRange(
+      pm.name,
+      quarterMTD.start,
+      quarterMTD.end
+    );
+
+    const rolling90ClosingRate = getManagerClosingRateForRange(
+      pm.name,
+      rolling90Start,
+      rolling90End
+    );
 
     return {
       name: pm.name,
@@ -596,8 +647,15 @@ const closingRate = getManagerClosingRateForRange(
       averageContract: annualSales.averageContract,
       monthlyRevenue: monthlySales.contractTotal,
       quarterlyRevenue: quarterlySales.contractTotal,
+      quarterMTDRevenue: quarterMTDSales.contractTotal,
+      rolling90Revenue: rolling90Sales.contractTotal,
       lyRevenue: lastYearSales.contractTotal,
       closingRate,
+      lyClosingRate,
+      monthlyClosingRate,
+      quarterlyClosingRate,
+      quarterMTDClosingRate,
+      rolling90ClosingRate,
       goal,
       monthlyGoal: goal / 12,
       quarterlyGoal: goal / 4,
@@ -625,6 +683,7 @@ const closingRate = getManagerClosingRateForRange(
       ...row,
       rank: index + 1,
       revenueVsLY: compareNumbers(row.annualRevenue, row.lyRevenue),
+      closingVsLY: compareNumbers(row.closingRate, row.lyClosingRate, true),
       revenueVsTeam: compareNumbers(row.annualRevenue, teamAverageRevenue),
       closingVsTeam: compareNumbers(row.closingRate, teamClosingRate, true),
     })),
@@ -642,7 +701,14 @@ const closingRate = getManagerClosingRateForRange(
     ranges: {
       currentMonth,
       currentQuarter,
+      quarterMTD,
       fiscalYear,
+      fiscalYTD,
+      priorFiscalYTD,
+      rolling90: {
+        start: rolling90Start,
+        end: rolling90End,
+      },
     },
   };
 };
@@ -707,7 +773,6 @@ const normalizeInvoicePMName = (value) => {
   if (text === "john") return "John Fincher";
   if (text === "dani") return "Dani Cole";
   if (text === "megan") return "Megan Rice";
-  if (text === "mike") return "Mike Harr";
 
   return "";
 };
@@ -725,7 +790,7 @@ const getInvoiceCell = (row, index) => {
 const getInvoicePipelineByRep = () => {
   const totalsByRep = {};
 
-getInvoicePipelineReps().forEach((rep) => {
+  getManagerSalesReps().forEach((rep) => {
     totalsByRep[rep.name] = {
       name: rep.name,
       image: rep.image,
@@ -767,6 +832,30 @@ getInvoicePipelineReps().forEach((rep) => {
     }))
     .sort((a, b) => b.totalPipeline - a.totalPipeline);
 };
+const MetricMiniBlock = ({ label, value, difference, subValue }) => (
+  <div className="manager-mini-metric">
+    <span>{label}</span>
+    <strong>{value}</strong>
+    {difference && (
+      <div className={`manager-difference ${difference.className}`}>
+        {difference.label}
+      </div>
+    )}
+    {subValue && <small>{subValue}</small>}
+  </div>
+);
+
+const GoalThermometer = ({ label, amount, percentValue }) => (
+  <div className="manager-thermometer-row">
+    <div className="manager-thermometer-topline">
+      <span>{label}</span>
+      <strong>{money(amount)}</strong>
+      <b>{displayPercent(percentValue, 1)}</b>
+    </div>
+    <ProgressBar value={percentValue} />
+  </div>
+);
+
 const SalesManagerDashboard = () => {
   const managerMetrics = getManagerMetrics();
   const { rows, totals } = managerMetrics;
@@ -812,172 +901,167 @@ const SalesManagerDashboard = () => {
         </div>
       </section>
 
-<section className="manager-panel">
-  <div className="manager-panel-header">
-    <div>
-      <span>Cash Flow</span>
-      <h2>Future Cash Pipeline</h2>
-    </div>
-    <p>Expected future payments from Invoicing.xlsx.</p>
-  </div>
-
-  <div className="manager-kpi-grid">
-    <div className="manager-kpi-card">
-      <span>Scheduled for Build</span>
-      <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
-      <small>Future production money</small>
-    </div>
-
-    <div className="manager-kpi-card">
-      <span>Needs to be Invoiced</span>
-      <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
-      <small>Ready to invoice</small>
-    </div>
-
-    <div className="manager-kpi-card">
-      <span>Balance Due</span>
-      <strong>{money(invoicePipeline.balanceDue)}</strong>
-      <small>Already invoiced / owed</small>
-    </div>
-
-    <div className="manager-kpi-card primary">
-      <span>Total Future Cash</span>
-      <strong>{money(invoicePipeline.totalPipeline)}</strong>
-      <small>Build + invoice + receivables</small>
-    </div>
-  </div>
-
-  <div className="manager-table-wrap">
-    <table className="manager-table">
-      <thead>
-        <tr>
-          <th>Salesperson</th>
-          <th>Scheduled</th>
-          <th>Needs Invoicing</th>
-          <th>Balance Due</th>
-          <th>Total Pipeline</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {invoiceRepRows.map((row) => (
-          <tr key={`${row.name}-invoice-pipeline`}>
-            <td>
-              <div className="manager-rep-cell">
-                <img src={row.image} alt={row.name} />
-                <strong>{row.name}</strong>
-              </div>
-            </td>
-            <td>{money(row.scheduledForBuild)}</td>
-            <td>{money(row.needsToBeInvoiced)}</td>
-            <td>{money(row.balanceDue)}</td>
-            <td>
-              <strong>{money(row.totalPipeline)}</strong>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</section>
-
       <section className="manager-panel">
         <div className="manager-panel-header">
           <div>
-            <span>Leaderboard</span>
-            <h2>Salesperson Scoreboard</h2>
+            <span>Cash Flow</span>
+            <h2>Future Cash Pipeline</h2>
           </div>
-          <p>Ranked by annual fiscal-year revenue.</p>
+          <p>Expected future payments from Invoicing.xlsx.</p>
         </div>
 
-        <div className="manager-table-wrap">
+        <div className="manager-kpi-grid">
+          <div className="manager-kpi-card">
+            <span>Scheduled for Build</span>
+            <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
+            <small>Future production money</small>
+          </div>
+
+          <div className="manager-kpi-card">
+            <span>Needs to be Invoiced</span>
+            <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
+            <small>Ready to invoice</small>
+          </div>
+
+          <div className="manager-kpi-card">
+            <span>Balance Due</span>
+            <strong>{money(invoicePipeline.balanceDue)}</strong>
+            <small>Already invoiced / owed</small>
+          </div>
+
+          <div className="manager-kpi-card primary">
+            <span>Total Future Cash</span>
+            <strong>{money(invoicePipeline.totalPipeline)}</strong>
+            <small>Build + invoice + receivables</small>
+          </div>
+        </div>
+
+        <div className="manager-table-wrap manager-invoice-table-wrap">
           <table className="manager-table">
             <thead>
               <tr>
-                <th>Rank</th>
                 <th>Salesperson</th>
-                <th>Revenue</th>
-                <th>Close Rate</th>
-                <th>vs LY</th>
-                <th>vs Team Avg</th>
-                <th>Annual Goal</th>
+                <th>Scheduled</th>
+                <th>Needs Invoicing</th>
+                <th>Balance Due</th>
+                <th>Total Pipeline</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.name}>
-                  <td>#{row.rank}</td>
-                  <td>
-                    <div className="manager-rep-cell">
-                      <img src={row.image} alt={row.name} />
-                      <strong>{row.name}</strong>
-                    </div>
-                  </td>
-                  <td>{money(row.annualRevenue)}</td>
-                  <td>
-                    {displayPercent(row.closingRate, 1)}
-                    <div className={`manager-difference ${row.closingVsTeam.className}`}>
-                      {row.closingVsTeam.label} vs team
-                    </div>
-                  </td>
-                  <td>
-                    <div className={`manager-difference ${row.revenueVsLY.className}`}>
-                      {row.revenueVsLY.label}
-                    </div>
-                    <small>{money(row.lyRevenue)} LY</small>
-                  </td>
-                  <td>
-                    <div className={`manager-difference ${row.revenueVsTeam.className}`}>
-                      {row.revenueVsTeam.label}
-                    </div>
-                    <small>{money(totals.teamAverageRevenue)} avg</small>
-                  </td>
-                  <td>
-                    <strong>{displayPercent(row.annualGoalPercent, 1)}</strong>
-                    <ProgressBar value={row.annualGoalPercent} />
-                    <small>{money(row.goal)}</small>
-                  </td>
-                </tr>
-              ))}
+              {invoiceRepRows
+                .filter((row) => row.totalPipeline > 0)
+                .map((row) => (
+                  <tr key={`${row.name}-invoice-pipeline`}>
+                    <td>
+                      <div className="manager-rep-cell">
+                        <img src={row.image} alt={row.name} />
+                        <strong>{row.name}</strong>
+                      </div>
+                    </td>
+                    <td>{money(row.scheduledForBuild)}</td>
+                    <td>{money(row.needsToBeInvoiced)}</td>
+                    <td>{money(row.balanceDue)}</td>
+                    <td><strong>{money(row.totalPipeline)}</strong></td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
       </section>
 
-      <section className="manager-goal-grid">
-        {rows.map((row) => (
-          <div className="manager-goal-card" key={`${row.name}-goals`}>
-            <div className="manager-goal-title">
-              <img src={row.image} alt={row.name} />
-              <h3>{row.name}</h3>
-            </div>
-
-            <div className="manager-goal-row">
-              <span>Monthly</span>
-              <strong>{money(row.monthlyRevenue)}</strong>
-              <b>{displayPercent(row.monthlyGoalPercent, 1)}</b>
-              <ProgressBar value={row.monthlyGoalPercent} />
-            </div>
-
-            <div className="manager-goal-row">
-              <span>Quarterly</span>
-              <strong>{money(row.quarterlyRevenue)}</strong>
-              <b>{displayPercent(row.quarterlyGoalPercent, 1)}</b>
-              <ProgressBar value={row.quarterlyGoalPercent} />
-            </div>
-
-            <div className="manager-goal-row">
-              <span>Annual</span>
-              <strong>{money(row.annualRevenue)}</strong>
-              <b>{displayPercent(row.annualGoalPercent, 1)}</b>
-              <ProgressBar value={row.annualGoalPercent} />
-            </div>
+      <section className="manager-panel manager-salesperson-panel">
+        <div className="manager-panel-header">
+          <div>
+            <span>Leaderboard</span>
+            <h2>Salesperson Performance</h2>
           </div>
-        ))}
+          <p>FYTD revenue, close rate, rolling 90, quarter MTD, and goal progress in one view.</p>
+        </div>
+
+        <div className="manager-performance-list">
+          {rows.map((row) => (
+            <article className="manager-performance-card" key={`${row.name}-performance`}>
+              <div className="manager-performance-rank">#{row.rank}</div>
+
+              <div className="manager-performance-person">
+                <img src={row.image} alt={row.name} />
+                <h3>{row.name}</h3>
+              </div>
+
+              <div className="manager-performance-section main-metrics">
+                <MetricMiniBlock label="Revenue" value={money(row.annualRevenue)} />
+                <MetricMiniBlock
+                  label="Close Rate"
+                  value={displayPercent(row.closingRate, 1)}
+                  difference={row.closingVsTeam}
+                />
+              </div>
+
+              <div className="manager-performance-section">
+                <MetricMiniBlock
+                  label="vs LY Revenue"
+                  value={row.revenueVsLY.label}
+                  difference={row.revenueVsLY}
+                  subValue={`${money(row.lyRevenue)} LY`}
+                />
+                <MetricMiniBlock
+                  label="vs LY Close Rate"
+                  value={row.closingVsLY.label}
+                  difference={row.closingVsLY}
+                  subValue={`${displayPercent(row.lyClosingRate, 1)} LY`}
+                />
+              </div>
+
+              <div className="manager-performance-section">
+                <MetricMiniBlock
+                  label="vs Team Revenue"
+                  value={row.revenueVsTeam.label}
+                  difference={row.revenueVsTeam}
+                  subValue={`${money(totals.teamAverageRevenue)} avg`}
+                />
+                <MetricMiniBlock
+                  label="vs Team Close Rate"
+                  value={row.closingVsTeam.label}
+                  difference={row.closingVsTeam}
+                  subValue={`${displayPercent(totals.teamClosingRate, 1)} avg`}
+                />
+              </div>
+
+              <div className="manager-performance-section">
+                <MetricMiniBlock label="Rolling 90 Revenue" value={money(row.rolling90Revenue)} />
+                <MetricMiniBlock label="Rolling 90 Close Rate" value={displayPercent(row.rolling90ClosingRate, 1)} />
+              </div>
+
+              <div className="manager-performance-section">
+                <MetricMiniBlock label="Quarter MTD Revenue" value={money(row.quarterMTDRevenue)} />
+                <MetricMiniBlock label="Quarter MTD Close Rate" value={displayPercent(row.quarterMTDClosingRate, 1)} />
+              </div>
+
+              <div className="manager-goal-thermometers">
+                <GoalThermometer
+                  label="Monthly"
+                  amount={row.monthlyRevenue}
+                  percentValue={row.monthlyGoalPercent}
+                />
+                <GoalThermometer
+                  label="Quarterly"
+                  amount={row.quarterlyRevenue}
+                  percentValue={row.quarterlyGoalPercent}
+                />
+                <GoalThermometer
+                  label="Annual"
+                  amount={row.annualRevenue}
+                  percentValue={row.annualGoalPercent}
+                />
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   );
 };
+
 
 
 
