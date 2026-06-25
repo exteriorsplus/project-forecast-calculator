@@ -261,18 +261,24 @@ body {
 }
 
 .manager-performance-report {
-  padding: 28px 0;
-  border-top: 2px solid #e5e7eb;
-  transition: background 0.18s ease, transform 0.18s ease;
+  background: #ffffff;
+  border-radius: 20px;
+  margin-bottom: 22px;
+  padding: 28px 24px;
+  box-shadow: 0 1px 4px rgba(15,23,42,.08);
+  transition: background .18s ease, transform .18s ease;
 }
 
-.manager-performance-report:first-child {
-  border-top: none;
-  padding-top: 8px;
+.manager-performance-report:nth-child(even) {
+  background: #f8fafc;
 }
 
 .manager-performance-report:hover {
-  background: #fafafa;
+  background: #f1f5f9;
+}
+
+.manager-performance-report:first-child {
+  padding-top: 28px;
 }
 
 .manager-performance-topline {
