@@ -558,3 +558,39 @@ body {
     padding: 14px 0 0;
   }
 }
+.manager-salesperson-panel {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  overflow: visible;
+}
+
+.manager-salesperson-panel .manager-panel-header {
+  background: white;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+}
+
+.manager-performance-list.v2 {
+  gap: 28px;
+}
+
+.manager-performance-report,
+.manager-performance-report:nth-child(even),
+.manager-performance-report:hover {
+  background: white;
+}
+
+.manager-performance-report {
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.07);
+  margin-bottom: 0;
+  padding: 30px;
+}
+
+.manager-performance-report:hover {
+  box-shadow: 0 14px 36px rgba(17, 24, 39, 0.11);
+  transform: translateY(-1px);
+}
