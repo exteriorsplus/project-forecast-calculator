@@ -4509,7 +4509,9 @@ const quarterlyGoalClass =
         <span>#{index + 2}</span>
         <strong>{pm.name}</strong>
         <b>{money(pm.revenue)}</b>
-        <em>{money(awayFromLeader)}</em>
+        <em>
+  {`${awayFromLeader > 0 ? "-" : ""}${money(Math.abs(awayFromLeader))}`}
+</em>
       </div>
     );
   })}
