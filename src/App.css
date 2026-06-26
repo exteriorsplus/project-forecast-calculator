@@ -2674,7 +2674,7 @@ input::placeholder {
 
 .ytd-leader-row {
   display: grid;
-  grid-template-columns: 45px 1fr auto;
+  grid-template-columns: 45px 1fr 170px;
   align-items: center;
   padding: 12px 14px;
   border-radius: 14px;
@@ -2689,6 +2689,5 @@ input::placeholder {
 .ytd-leader-row b {
   font-size: 17px;
   color: #aa211b;
-  justify-self: start;
   text-align: left;
 }
