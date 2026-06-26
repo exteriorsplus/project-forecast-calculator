@@ -2673,8 +2673,15 @@ input::placeholder {
   min-width: 0;
 }
 
-.ytd-leader-header,
 .ytd-leader-row {
+  display: grid;
+  grid-template-columns: 45px minmax(145px, 1fr) 135px 150px;
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+}
+
+.ytd-leader-header {
   display: grid;
   grid-template-columns: 45px minmax(145px, 1fr) 135px 150px;
   align-items: center;
@@ -2691,8 +2698,8 @@ input::placeholder {
 }
 
 .ytd-leader-header b {
-  position: relative;
-  left: 34px;
+  justify-self: center;
+  transform: translateX(28px);
 }
 
 .ytd-leader-row {
