@@ -4478,18 +4478,18 @@ const quarterlyGoalClass =
 <div className="pm-section-card ytd-leader-card">
   <h2>Fiscal YTD Revenue Leaderboard</h2>
 
-  {pmData.ytdRevenueLeaderboard?.length > 0 ? (
+  {pmData.ytdRevenueLeaderboard?.filter((pm) => pm.name !== "Mike Harr").length > 0 ? (
     <div className="ytd-leader-layout">
       <div className="ytd-leader-winner">
         <span>Year-to-Date Revenue Leader</span>
 
         <img
-          src={pmData.ytdRevenueLeaderboard[0].image}
-          alt={pmData.ytdRevenueLeaderboard[0].name}
+          src={pmData.ytdRevenueLeaderboard.filter((pm) => pm.name !== "Mike Harr")[0].image}
+          alt={pmData.ytdRevenueLeaderboard.filter((pm) => pm.name !== "Mike Harr")[0].name}
         />
 
-        <strong>{pmData.ytdRevenueLeaderboard[0].name}</strong>
-        <b>{money(pmData.ytdRevenueLeaderboard[0].revenue)}</b>
+        <strong>{pmData.ytdRevenueLeaderboard.filter((pm) => pm.name !== "Mike Harr")[0].name}</strong>
+        <b>{money(pmData.ytdRevenueLeaderboard.filter((pm) => pm.name !== "Mike Harr")[0].revenue)}</b>
       </div>
 
 <div className="ytd-leader-list">
@@ -4500,8 +4500,13 @@ const quarterlyGoalClass =
     <em>$ Away From Leader</em>
   </div>
 
-  {pmData.ytdRevenueLeaderboard.slice(1).map((pm, index) => {
-    const leaderRevenue = Number(pmData.ytdRevenueLeaderboard[0]?.revenue || 0);
+{pmData.ytdRevenueLeaderboard
+  .filter((pm) => pm.name !== "Mike Harr")
+  .slice(1)
+  .map((pm, index) => {
+    const leaderRevenue = Number(
+      pmData.ytdRevenueLeaderboard.filter((pm) => pm.name !== "Mike Harr")[0]?.revenue || 0
+    );
     const awayFromLeader = leaderRevenue - Number(pm.revenue || 0);
 
     return (
