@@ -2739,3 +2739,6 @@ input::placeholder {
   font-weight: 800;
   color: #6c7285;
 }
+.ytd-leader-header b {
+  transform: translateX(-35px) !important;
+}
