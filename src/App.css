@@ -2631,12 +2631,22 @@ input::placeholder {
   gap: 32px;
   align-items: center;
 }
+
 .ytd-leader-winner{
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     text-align:center;
+
+    background:#f7f8fa;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+
+    padding:32px 24px;
+    margin:0 10px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
 }
 
 /* BIG title ABOVE the winner */
