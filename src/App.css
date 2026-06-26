@@ -2664,8 +2664,8 @@ input::placeholder {
 }
 
 .ytd-leader-winner img{
-    width:150px;
-    height:150px;
+    width:135px;
+    height:135px;
     object-fit:cover;
     border-radius:50%;
 
@@ -2674,28 +2674,29 @@ input::placeholder {
     animation:topDawgGlow 6s ease-in-out infinite;
 
     box-shadow:
-        0 0 14px rgba(255,215,0,.70),
-        0 0 30px rgba(255,215,0,.55),
-        0 0 55px rgba(255,255,0,.40);
+        0 0 12px rgba(255,215,0,.65),
+        0 0 24px rgba(255,215,0,.50),
+        0 0 42px rgba(255,255,0,.35);
 }
 
 .ytd-leader-winner strong{
     display:block;
-    margin-top:18px;
+    margin-top:16px;
 
-    font-size:36px;
-    font-weight:900;
+    font-size:28px;
+    font-weight:800;
     color:#848484;
 }
 
 .ytd-leader-winner b{
     display:block;
-    margin-top:10px;
+    margin-top:8px;
 
-    font-size:48px;
+    font-size:40px;
     font-weight:900;
     color:#aa211b;
 }
+
 .ytd-leader-list {
   display: flex;
   flex-direction: column;
