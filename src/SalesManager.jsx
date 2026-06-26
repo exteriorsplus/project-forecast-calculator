@@ -667,7 +667,11 @@ export default function SalesManager() {
         : 0;
     const teamAverageContract = totalContracts > 0 ? totalRevenue / totalContracts : 0;
     const teamLYRevenue = rows.reduce((sum, row) => sum + row.lyRevenue, 0);
-
+console.log({
+  CurrentFYTD: totalRevenue,
+  PriorFYTD: teamLYRevenue,
+  Difference: compareNumbers(totalRevenue, teamLYRevenue),
+});
     return {
       rows: sortedRows.map((row, index) => ({
         ...row,
@@ -1217,11 +1221,7 @@ export default function SalesManager() {
       </div>
     );
   };
-console.log({
-  CurrentFYTD: totalRevenue,
-  PriorFYTD: teamLYRevenue,
-  Difference: compareNumbers(totalRevenue, teamLYRevenue),
-});
+
   return (
     <div className="page manager-shell">
       {dataStatus && <div className="manager-status">{dataStatus}</div>}
