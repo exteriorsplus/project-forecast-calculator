@@ -421,6 +421,42 @@ export default function SalesManager() {
       };
     }
 
+const getCompanySalesDataForRange = (startDate, endDate) => {
+  if (!startDate || !endDate) {
+    return {
+      contractTotal: 0,
+      contracts: 0,
+      averageContract: 0,
+    };
+  }
+
+  const start = dateOnly(startDate);
+  const end = dateOnly(endDate);
+
+  let contractTotal = 0;
+  let contracts = 0;
+
+  salesRows.forEach((row) => {
+    const rowDate = parseExcelDate(row["Approved Date"]);
+    if (!rowDate) return;
+
+    const cleanDate = dateOnly(rowDate);
+    if (cleanDate < start || cleanDate > end) return;
+
+    const amount = parseMoney(row["Contract Amount"]);
+    if (amount <= 0) return;
+
+    contractTotal += amount;
+    contracts += 1;
+  });
+
+  return {
+    contractTotal,
+    contracts,
+    averageContract: contracts > 0 ? contractTotal / contracts : 0,
+  };
+};
+
     const start = dateOnly(startDate);
     const end = dateOnly(endDate);
 
@@ -655,56 +691,74 @@ export default function SalesManager() {
       };
     });
 
-    const sortedRows = rows.sort((a, b) => b.annualRevenue - a.annualRevenue);
-    const activeRows = rows.filter((row) => row.annualRevenue > 0);
-    const totalRevenue = rows.reduce((sum, row) => sum + row.annualRevenue, 0);
-    const totalGoal = rows.reduce((sum, row) => sum + row.goal, 0);
-    const totalContracts = rows.reduce((sum, row) => sum + row.annualContracts, 0);
-    const teamAverageRevenue = activeRows.length > 0 ? totalRevenue / activeRows.length : 0;
-    const teamClosingRate =
-      activeRows.length > 0
-        ? activeRows.reduce((sum, row) => sum + row.closingRate, 0) / activeRows.length
-        : 0;
-    const teamAverageContract = totalContracts > 0 ? totalRevenue / totalContracts : 0;
-    const teamLYRevenue = rows.reduce((sum, row) => sum + row.lyRevenue, 0);
-console.log({
-  CurrentFYTD: totalRevenue,
-  PriorFYTD: teamLYRevenue,
-  Difference: compareNumbers(totalRevenue, teamLYRevenue),
-});
-    return {
-      rows: sortedRows.map((row, index) => ({
-        ...row,
-        rank: index + 1,
-        revenueVsLY: compareNumbers(row.annualRevenue, row.lyRevenue),
-        closingVsLY: compareNumbers(row.closingRate, row.lyClosingRate, true),
-        revenueVsTeam: compareNumbers(row.annualRevenue, teamAverageRevenue),
-        closingVsTeam: compareNumbers(row.closingRate, teamClosingRate, true),
-      })),
-      totals: {
-        totalRevenue,
-        totalGoal,
-        totalGoalPercent: totalGoal > 0 ? totalRevenue / totalGoal : 0,
-        totalContracts,
-        teamAverageRevenue,
-        teamClosingRate,
-        teamAverageContract,
-        teamLYRevenue,
-        teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
-      },
-      ranges: {
-        currentMonth,
-        currentQuarter,
-        quarterMTD,
-        fiscalYear,
-        fiscalYTD,
-        priorFiscalYTD,
-        rolling90: {
-          start: rolling90Start,
-          end: rolling90End,
-        },
-      },
-    };
+const sortedRows = rows.sort((a, b) => b.annualRevenue - a.annualRevenue);
+const activeRows = rows.filter((row) => row.annualRevenue > 0);
+
+const trackedTeamRevenue = rows.reduce(
+  (sum, row) => sum + row.annualRevenue,
+  0
+);
+
+const companyFYTD = getCompanySalesDataForRange(
+  fiscalYTD.start,
+  fiscalYTD.end
+);
+
+const companyLYFYTD = getCompanySalesDataForRange(
+  priorFiscalYTD.start,
+  priorFiscalYTD.end
+);
+
+const totalRevenue = companyFYTD.contractTotal;
+const totalContracts = companyFYTD.contracts;
+const teamAverageContract = companyFYTD.averageContract;
+
+const totalGoal = rows.reduce((sum, row) => sum + row.goal, 0);
+
+const teamAverageRevenue =
+  activeRows.length > 0 ? trackedTeamRevenue / activeRows.length : 0;
+
+const teamClosingRate =
+  activeRows.length > 0
+    ? activeRows.reduce((sum, row) => sum + row.closingRate, 0) /
+      activeRows.length
+    : 0;
+
+const teamLYRevenue = companyLYFYTD.contractTotal;
+
+return {
+  rows: sortedRows.map((row, index) => ({
+    ...row,
+    rank: index + 1,
+    revenueVsLY: compareNumbers(row.annualRevenue, row.lyRevenue),
+    closingVsLY: compareNumbers(row.closingRate, row.lyClosingRate, true),
+    revenueVsTeam: compareNumbers(row.annualRevenue, teamAverageRevenue),
+    closingVsTeam: compareNumbers(row.closingRate, teamClosingRate, true),
+  })),
+  totals: {
+    totalRevenue,
+    totalGoal,
+    totalGoalPercent: totalGoal > 0 ? trackedTeamRevenue / totalGoal : 0,
+    totalContracts,
+    teamAverageRevenue,
+    teamClosingRate,
+    teamAverageContract,
+    teamLYRevenue,
+    teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
+  },
+  ranges: {
+    currentMonth,
+    currentQuarter,
+    quarterMTD,
+    fiscalYear,
+    fiscalYTD,
+    priorFiscalYTD,
+    rolling90: {
+      start: rolling90Start,
+      end: rolling90End,
+    },
+  },
+};
   };
 
   const getInvoicePipeline = () => {
