@@ -2632,71 +2632,68 @@ input::placeholder {
   align-items: center;
 }
 
-.ytd-leader-winner {
-  text-align: center;
+.ytd-leader-winner{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
 }
 
-.ytd-leader-winner span,
-.ytd-leader-row span {
-  font-size: 12px;
-  font-weight: 800;
-  color: #687086;
-  text-transform: uppercase;
-}
-
-.ytd-leader-winner img {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 50%;
-
-  border: 5px solid gold;
-
-  animation: topDawgGlow 6s ease-in-out infinite;
-
-  box-shadow:
-    0 0 18px rgba(255,215,0,.45),
-    0 0 40px rgba(255,215,0,.30);
-}
-
-.ytd-leader-winner strong {
+/* BIG title ABOVE the winner */
+.ytd-leader-winner span{
     display:block;
-    font-size:34px;
+    margin-bottom:18px;
+
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:1px;
+    line-height:1.15;
+    text-transform:uppercase;
+
+    color:#0f172a;
+}
+
+.ytd-leader-winner img{
+    width:150px;
+    height:150px;
+    object-fit:cover;
+    border-radius:50%;
+
+    border:5px solid gold;
+
+    animation:topDawgGlow 6s ease-in-out infinite;
+
+    box-shadow:
+        0 0 14px rgba(255,215,0,.70),
+        0 0 30px rgba(255,215,0,.55),
+        0 0 55px rgba(255,255,0,.40);
+}
+
+.ytd-leader-winner strong{
+    display:block;
+    margin-top:18px;
+
+    font-size:36px;
     font-weight:900;
     color:#0f172a;
-    margin-top:14px;
 }
 
-.ytd-leader-winner b {
+.ytd-leader-winner b{
     display:block;
-    font-size:42px;
+    margin-top:10px;
+
+    font-size:48px;
     font-weight:900;
     color:#aa211b;
-    margin-top:8px;
 }
 
-.ytd-leader-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-}
-
-.ytd-leader-header,
-.ytd-leader-row {
-  display: grid;
-  grid-template-columns: 45px 1fr 170px 170px;
-  align-items: center;
-  column-gap: 10px;
-  width: 100%;
-}
-
-.ytd-leader-header b,
-.ytd-leader-row b,
-.ytd-leader-header em,
-.ytd-leader-row em {
-  justify-self: center;
-  text-align: center;
+/* Keep the leaderboard rows small */
+.ytd-leader-row span{
+    font-size:12px;
+    font-weight:800;
+    color:#687086;
+    text-transform:uppercase;
 }
 
 .ytd-leader-header {
