@@ -2627,11 +2627,10 @@ input::placeholder {
 
 .ytd-leader-layout {
   display: grid;
-  grid-template-columns: 0.8fr 1.8fr;
-  gap: 24px;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 32px;
   align-items: center;
 }
-
 .ytd-leader-winner{
     display:flex;
     flex-direction:column;
@@ -2645,7 +2644,7 @@ input::placeholder {
     display:block;
     margin-bottom:18px;
 
-    font-size:26px;
+    font-size:22px;
     font-weight:900;
     letter-spacing:1px;
     line-height:1.15;
