@@ -748,3 +748,49 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Larger salesperson profile ===== */
+
+.manager-performance-topline {
+    grid-template-columns: 355px 1fr;
+    align-items: start;
+}
+
+.manager-rank-name-block {
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.manager-performance-person {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding-top: 14px;
+}
+
+.manager-performance-person img {
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+    border: 3px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+.manager-performance-person h3 {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    font-size: 24px;
+    line-height: 1.05;
+}
+
+.manager-status-pill {
+    margin-top: 10px;
+}
+
+.manager-performance-rank {
+    font-size: 22px;
+    padding-top: 32px;
+}
