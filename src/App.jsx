@@ -4546,7 +4546,7 @@ const quarterlyGoalClass =
               </div>
 
               <div className="pm-sale-input">
-                <label>Job Cost (Labor and Materials)</label>
+                <label>Job Cost</label>
                 <input
                   type="text"
                   inputMode="decimal"
