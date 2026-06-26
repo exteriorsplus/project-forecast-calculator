@@ -1187,15 +1187,16 @@ return {
                   <div className="manager-performance-topline">
                     <div className="manager-rank-name-block">
                       <div className="manager-performance-rank">#{row.rank}</div>
-                      <div className="manager-performance-person">
-                        <img src={row.image} alt={row.name} />
-                        <div>
-                          <h3>{row.name}</h3>
-                          <div className={`manager-status-pill ${status.className}`}>
-                            {status.label}
-                          </div>
-                        </div>
-                      </div>
+<div className="manager-performance-person">
+  <div>
+    <h3>{row.name}</h3>
+    <div className={`manager-status-pill ${status.className}`}>
+      {status.label}
+    </div>
+  </div>
+
+  <img src={row.image} alt={row.name} />
+</div>
                     </div>
 
                     <div className="manager-metric-strip v21">
