@@ -2673,20 +2673,21 @@ input::placeholder {
   min-width: 0;
 }
 
+.ytd-leader-header,
 .ytd-leader-row {
   display: grid;
-  grid-template-columns: 45px minmax(145px, 1fr) 135px 150px;
+  grid-template-columns: 45px 1fr 170px 170px;
   align-items: center;
   column-gap: 10px;
   width: 100%;
 }
 
-.ytd-leader-header {
-  display: grid;
-  grid-template-columns: 45px minmax(145px, 1fr) 135px 150px;
-  align-items: center;
-  column-gap: 10px;
-  width: 100%;
+.ytd-leader-header b,
+.ytd-leader-row b,
+.ytd-leader-header em,
+.ytd-leader-row em {
+  justify-self: center;
+  text-align: center;
 }
 
 .ytd-leader-header {
@@ -2695,11 +2696,6 @@ input::placeholder {
   font-weight: 800;
   color: #6c7285;
   text-transform: uppercase;
-}
-
-.ytd-leader-header b {
-  justify-self: center;
-  transform: translateX(8px);
 }
 
 .ytd-leader-row {
