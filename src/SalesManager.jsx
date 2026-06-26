@@ -1217,7 +1217,11 @@ export default function SalesManager() {
       </div>
     );
   };
-
+console.log({
+  CurrentFYTD: totalRevenue,
+  PriorFYTD: teamLYRevenue,
+  Difference: compareNumbers(totalRevenue, teamLYRevenue),
+});
   return (
     <div className="page manager-shell">
       {dataStatus && <div className="manager-status">{dataStatus}</div>}
