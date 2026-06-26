@@ -2672,10 +2672,22 @@ input::placeholder {
   gap: 10px;
 }
 
+.ytd-leader-header,
 .ytd-leader-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 55px 220px 180px 180px;
   align-items: center;
-  gap: 14px;
+}
+
+.ytd-leader-header {
+  padding: 0 14px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6c7285;
+  text-transform: uppercase;
+}
+
+.ytd-leader-row {
   padding: 12px 14px;
   border-radius: 14px;
   background: #f7f8fa;
@@ -2683,24 +2695,34 @@ input::placeholder {
 }
 
 .ytd-leader-row span {
-  width: 40px;
-}
-
-.ytd-leader-row strong {
-  width: 180px;
-}
-
-.ytd-leader-row b {
-  color: #aa211b;
-  font-size: 17px;
+  font-weight: 700;
+  color: #5d6785;
 }
 
 .ytd-leader-row strong {
   font-size: 16px;
+  font-weight: 700;
+  color: #1d2747;
 }
 
 .ytd-leader-row b {
   font-size: 17px;
+  font-weight: 700;
   color: #aa211b;
   text-align: left;
+}
+
+.ytd-leader-row em {
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 700;
+  color: #444;
+}
+
+.ytd-leader-header b,
+.ytd-leader-header em {
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6c7285;
 }
