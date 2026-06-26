@@ -2686,7 +2686,20 @@ input::placeholder {
     font-weight:900;
     color:#aa211b;
 }
-
+.ytd-leader-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.ytd-leader-header,
+.ytd-leader-row {
+  display: grid;
+  grid-template-columns: 45px minmax(170px, 1fr) 170px 170px;
+  align-items: center;
+  column-gap: 12px;
+  width: 100%;
+}
 /* Keep the leaderboard rows small */
 .ytd-leader-row span{
     font-size:12px;
