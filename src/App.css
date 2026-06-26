@@ -2742,3 +2742,14 @@ input::placeholder {
 .ytd-leader-header b {
   transform: translateX(135px) !important;
 }
+Add this at the very bottom of your CSS:
+
+/* Move the YTD Revenue column */
+.ytd-leader-row b {
+  transform: translateX(135px) !important;
+}
+
+/* Move the header the exact same amount */
+.ytd-leader-header b {
+  transform: translateX(135px) !important;
+}
