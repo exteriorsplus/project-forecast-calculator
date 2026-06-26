@@ -4475,6 +4475,37 @@ const quarterlyGoalClass =
             </>
           )}
 
+<div className="pm-section-card ytd-leader-card">
+  <h2>Fiscal YTD Revenue Leaderboard</h2>
+
+  {pmData.ytdRevenueLeaderboard?.length > 0 ? (
+    <div className="ytd-leader-layout">
+      <div className="ytd-leader-winner">
+        <span>Year-to-Date Revenue Leader</span>
+
+        <img
+          src={pmData.ytdRevenueLeaderboard[0].image}
+          alt={pmData.ytdRevenueLeaderboard[0].name}
+        />
+
+        <strong>{pmData.ytdRevenueLeaderboard[0].name}</strong>
+        <b>{money(pmData.ytdRevenueLeaderboard[0].revenue)}</b>
+      </div>
+
+      <div className="ytd-leader-list">
+        {pmData.ytdRevenueLeaderboard.slice(1).map((pm, index) => (
+          <div className="ytd-leader-row" key={pm.name}>
+            <span>#{index + 2}</span>
+            <strong>{pm.name}</strong>
+            <b>{money(pm.revenue)}</b>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <p className="top-dawg-empty">No Fiscal YTD revenue data found yet.</p>
+  )}
+</div>
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
 
