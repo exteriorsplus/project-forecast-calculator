@@ -2673,13 +2673,26 @@ input::placeholder {
 }
 
 .ytd-leader-row {
-  display: grid;
-  grid-template-columns: 45px 1fr 170px;
+  display: flex;
   align-items: center;
+  gap: 14px;
   padding: 12px 14px;
   border-radius: 14px;
   background: #f7f8fa;
   border: 1px solid #e5e7eb;
+}
+
+.ytd-leader-row span {
+  width: 40px;
+}
+
+.ytd-leader-row strong {
+  width: 180px;
+}
+
+.ytd-leader-row b {
+  color: #aa211b;
+  font-size: 17px;
 }
 
 .ytd-leader-row strong {
