@@ -2739,16 +2739,8 @@ input::placeholder {
   font-weight: 800;
   color: #6c7285;
 }
-.ytd-leader-header b {
-  transform: translateX(-105px) !important;
-}
-
-/* Move the YTD Revenue column */
+/* Align YTD Revenue header and values */
+.ytd-leader-header b,
 .ytd-leader-row b {
-  transform: translateX(-105px) !important;
-}
-
-/* Move the header the exact same amount */
-.ytd-leader-header b {
-  transform: translateX(-105px) !important;
+  transform: translateX(-105px);
 }
