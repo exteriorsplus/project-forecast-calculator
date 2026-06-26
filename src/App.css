@@ -2301,15 +2301,21 @@ input::placeholder {
   }
 }
 .goat-photo {
-  width: 90px;
-  height: 90px;
+  width: 135px;
+  height: 135px;
   border-radius: 50%;
   object-fit: cover;
-  margin: 0 auto 12px;
+  margin: 0 auto 16px;
   display: block;
-  border: 4px solid gold;
+
+  border: 5px solid gold;
+
   animation: topDawgGlow 6s ease-in-out infinite;
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+
+  box-shadow:
+    0 0 12px rgba(255,215,0,.65),
+    0 0 24px rgba(255,215,0,.50),
+    0 0 42px rgba(255,255,0,.35);
 }
 .pm-insight-copy {
   display: grid;
