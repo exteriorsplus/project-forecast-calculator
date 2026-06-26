@@ -2265,11 +2265,16 @@ input::placeholder {
 
 .best-of-best-item span {
   display: block;
-  color: #6b7280;
-  font-size: 12px;
+
+  color: #848484;
+
+  font-size: 22px;
   font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1.15;
   text-transform: uppercase;
-  margin-bottom: 10px;
+
+  margin-bottom: 18px;
 }
 
 .best-of-best-item strong {
