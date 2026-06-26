@@ -2675,9 +2675,10 @@ input::placeholder {
 .ytd-leader-header,
 .ytd-leader-row {
   display: grid;
-  grid-template-columns: 45px 1fr 140px 150px;
+  grid-template-columns: 45px minmax(145px, 1fr) 150px 170px;
   align-items: center;
   column-gap: 10px;
+  width: 100%;
 }
 
 .ytd-leader-header {
@@ -2831,4 +2832,13 @@ input::placeholder {
 }
 .ytd-leader-header b {
   transform: translateX(-20px);
+}
+.ytd-leader-header b,
+.ytd-leader-row b {
+  justify-self: center;
+}
+
+.ytd-leader-header em,
+.ytd-leader-row em {
+  justify-self: center;
 }
