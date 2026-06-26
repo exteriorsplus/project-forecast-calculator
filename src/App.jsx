@@ -4492,15 +4492,28 @@ const quarterlyGoalClass =
         <b>{money(pmData.ytdRevenueLeaderboard[0].revenue)}</b>
       </div>
 
-      <div className="ytd-leader-list">
-        {pmData.ytdRevenueLeaderboard.slice(1).map((pm, index) => (
-          <div className="ytd-leader-row" key={pm.name}>
-            <span>#{index + 2}</span>
-            <strong>{pm.name}</strong>
-            <b>{money(pm.revenue)}</b>
-          </div>
-        ))}
+<div className="ytd-leader-list">
+  <div className="ytd-leader-header">
+    <span>Rank</span>
+    <strong>Project Manager</strong>
+    <b>YTD Revenue</b>
+    <em>$ Away From Leader</em>
+  </div>
+
+  {pmData.ytdRevenueLeaderboard.slice(1).map((pm, index) => {
+    const leaderRevenue = Number(pmData.ytdRevenueLeaderboard[0]?.revenue || 0);
+    const awayFromLeader = leaderRevenue - Number(pm.revenue || 0);
+
+    return (
+      <div className="ytd-leader-row" key={pm.name}>
+        <span>#{index + 2}</span>
+        <strong>{pm.name}</strong>
+        <b>{money(pm.revenue)}</b>
+        <em>{money(awayFromLeader)}</em>
       </div>
+    );
+  })}
+</div>
     </div>
   ) : (
     <p className="top-dawg-empty">No Fiscal YTD revenue data found yet.</p>
