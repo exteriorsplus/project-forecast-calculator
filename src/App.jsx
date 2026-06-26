@@ -2494,7 +2494,22 @@ const bestEverTopDawgs = {
     null
   ),
 };
-  
+  const ytdRevenueLeaderboard = activeGoalProjectManagers
+  .map((pm) => {
+    const data = getPMSalesDataForRange(
+      pm.name,
+      fiscalYTDStartDate,
+      fiscalYTDEndDate
+    );
+
+    return {
+      name: pm.name,
+      image: pm.image,
+      revenue: data.contractTotal,
+    };
+  })
+  .filter((pm) => Number(pm.revenue || 0) > 0)
+  .sort((a, b) => b.revenue - a.revenue);
 return {
   monthOptions,
   selectedMonth,
@@ -2527,8 +2542,9 @@ return {
       revenueRank,
       closingRateRank,
       topDawgLeaderboards,
-      bestEverTopDawgs,
-      saleAmount,
+  bestEverTopDawgs,
+ytdRevenueLeaderboard,
+saleAmount,
 jobCost,
 commission,
 commissionRate: effectiveCommissionRate,
