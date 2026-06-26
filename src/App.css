@@ -2772,3 +2772,41 @@ input::placeholder {
 .ytd-leader-row b {
   transform: translateX(-105px);
 }
+
+@media (max-width: 768px) {
+  .ytd-leader-layout {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .ytd-leader-list {
+    width: 100%;
+  }
+
+  .ytd-leader-header,
+  .ytd-leader-row {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .ytd-leader-header b,
+  .ytd-leader-header em {
+    display: none;
+  }
+
+  .ytd-leader-row b,
+  .ytd-leader-row em {
+    grid-column: 2;
+    transform: none;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .ytd-leader-row b {
+    margin-top: 4px;
+  }
+
+  .ytd-leader-row em {
+    font-size: 14px;
+    color: #6b7280;
+  }
+}
