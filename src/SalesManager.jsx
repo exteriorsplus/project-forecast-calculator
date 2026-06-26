@@ -421,42 +421,6 @@ export default function SalesManager() {
       };
     }
 
-const getCompanySalesDataForRange = (startDate, endDate) => {
-  if (!startDate || !endDate) {
-    return {
-      contractTotal: 0,
-      contracts: 0,
-      averageContract: 0,
-    };
-  }
-
-  const start = dateOnly(startDate);
-  const end = dateOnly(endDate);
-
-  let contractTotal = 0;
-  let contracts = 0;
-
-  salesRows.forEach((row) => {
-    const rowDate = parseExcelDate(row["Approved Date"]);
-    if (!rowDate) return;
-
-    const cleanDate = dateOnly(rowDate);
-    if (cleanDate < start || cleanDate > end) return;
-
-    const amount = parseMoney(row["Contract Amount"]);
-    if (amount <= 0) return;
-
-    contractTotal += amount;
-    contracts += 1;
-  });
-
-  return {
-    contractTotal,
-    contracts,
-    averageContract: contracts > 0 ? contractTotal / contracts : 0,
-  };
-};
-
     const start = dateOnly(startDate);
     const end = dateOnly(endDate);
 
@@ -483,6 +447,42 @@ const getCompanySalesDataForRange = (startDate, endDate) => {
 
       const amount = parseMoney(row["Contract Amount"]);
 
+      if (amount <= 0) return;
+
+      contractTotal += amount;
+      contracts += 1;
+    });
+
+    return {
+      contractTotal,
+      contracts,
+      averageContract: contracts > 0 ? contractTotal / contracts : 0,
+    };
+  };
+
+  const getCompanySalesDataForRange = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
+    const start = dateOnly(startDate);
+    const end = dateOnly(endDate);
+
+    let contractTotal = 0;
+    let contracts = 0;
+
+    salesRows.forEach((row) => {
+      const rowDate = parseExcelDate(row["Approved Date"]);
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      const amount = parseMoney(row["Contract Amount"]);
       if (amount <= 0) return;
 
       contractTotal += amount;
