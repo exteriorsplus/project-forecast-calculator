@@ -2745,7 +2745,7 @@ input::placeholder {
 
 /* Move the YTD Revenue column */
 .ytd-leader-row b {
-  transform: translateX(135px) !important;
+  transform: translateX(5px) !important;
 }
 
 /* Move the header the exact same amount */
