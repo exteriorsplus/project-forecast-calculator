@@ -153,7 +153,7 @@ const getMarginSafetyStatus = ({ selectedTrades, saleAmount, marginPercent, marg
     return {
       className: "neutral",
       label: "Select Trade Type",
-      message: "Choose at least one job trade type and enter the sale details to run the margin safety check.** In order to receive the full amount of the Agreed upon Commission, the job must close out at the Agreed Upon Net Profit Percentage. If the Agreed Upon Net Profit Percentage is not initially met, Commission will be reduced until it is met. **			",
+      message: "In order to receive the full amount of the Agreed upon Commission, the job must close out at the Agreed Upon Net Profit Percentage. If the Agreed Upon Net Profit Percentage is not initially met, Commission will be reduced until it is met.",
     };
   }
 
