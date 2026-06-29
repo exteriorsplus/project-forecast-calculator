@@ -4650,6 +4650,22 @@ const quarterlyGoalClass =
               </div>
             </div>
 
+            {selectedCommissionTrades.length === 0 ? (
+              <div
+                style={{
+                  background: "#f9fafb",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "14px",
+                  padding: "18px",
+                  textAlign: "center",
+                  color: "#4b5563",
+                  fontWeight: 800,
+                }}
+              >
+                Please select at least one Job Trade Type to continue.
+              </div>
+            ) : (
+              <>
             <div
               className="pm-sale-input-grid"
               style={{
@@ -4818,6 +4834,8 @@ const quarterlyGoalClass =
                 </strong>
               </div>
             </div>
+              </>
+            )}
           </div>
 )}
 
