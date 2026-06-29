@@ -121,6 +121,65 @@ const getOverheadRate = (tradeType) => {
   return 0.10;
 };
 
+const MARGIN_SAFETY_RULES = {
+  Roofing: { minimum: 0.18, warning: 0.22 },
+  "Roofing & Gutters": { minimum: 0.18, warning: 0.22 },
+  "Roofing & Siding": { minimum: 0.20, warning: 0.24 },
+  Siding: { minimum: 0.20, warning: 0.24 },
+  "James Hardie Siding": { minimum: 0.20, warning: 0.24 },
+  "Metal Roofing": { minimum: 0.18, warning: 0.22 },
+  Windows: { minimum: 0.20, warning: 0.24 },
+  Gutters: { minimum: 0.18, warning: 0.22 },
+  Doors: { minimum: 0.20, warning: 0.24 },
+};
+
+const DEFAULT_MARGIN_SAFETY_RULE = { minimum: 0.20, warning: 0.24 };
+
+const getRequiredMarginRule = (selectedTrades) => {
+  const selectedRules = (selectedTrades || [])
+    .map((trade) => MARGIN_SAFETY_RULES[trade])
+    .filter(Boolean);
+
+  if (!selectedRules.length) return DEFAULT_MARGIN_SAFETY_RULE;
+
+  return {
+    minimum: Math.max(...selectedRules.map((rule) => rule.minimum)),
+    warning: Math.max(...selectedRules.map((rule) => rule.warning)),
+  };
+};
+
+const getMarginSafetyStatus = ({ selectedTrades, saleAmount, marginPercent, marginRule }) => {
+  if (!selectedTrades?.length || !saleAmount) {
+    return {
+      className: "neutral",
+      label: "Select Trade Type",
+      message: "Choose at least one job trade type and enter the sale details to run the margin safety check.",
+    };
+  }
+
+  if (marginPercent < marginRule.minimum) {
+    return {
+      className: "danger",
+      label: "Not Acceptable",
+      message: "Commission blocked. This project is below the required company margin.",
+    };
+  }
+
+  if (marginPercent < marginRule.warning) {
+    return {
+      className: "warning",
+      label: "Low Margin Alert",
+      message: "Margin is above the minimum, but it is close enough to need extra review before approval.",
+    };
+  }
+
+  return {
+    className: "safe",
+    label: "Acceptable",
+    message: "This project clears the required company margin safety threshold.",
+  };
+};
+
 const projectManagers = [
   {
     name: "Jamie Jenkins",
@@ -2175,18 +2234,43 @@ const totalSelectedRpp = selectedTradeConfigs.reduce(
 
 const pmCommissionName = currentPM?.name || projectManagers[0].name;
 
-const overheadAmount = Math.round(saleAmount * 0.1 * 100) / 100;
+const selectedOverheadRate =
+  selectedCommissionTrades.length > 0
+    ? Math.max(
+        ...selectedCommissionTrades.map((tradeType) =>
+          getOverheadRate(tradeType)
+        )
+      )
+    : 0.10;
+
+const overheadAmount = Math.round(saleAmount * selectedOverheadRate * 100) / 100;
 
 const grossProfit = Math.max(
   Math.round((saleAmount - jobCost - overheadAmount) * 100) / 100,
   0
 );
 
+const marginPercent =
+  saleAmount > 0
+    ? (saleAmount - jobCost - overheadAmount) / saleAmount
+    : 0;
+
+const marginRule = getRequiredMarginRule(selectedCommissionTrades);
+
+const marginSafety = getMarginSafetyStatus({
+  selectedTrades: selectedCommissionTrades,
+  saleAmount,
+  marginPercent,
+  marginRule,
+});
+
+const canCalculateCommission = marginSafety.className !== "danger";
+
 const commissionRate = getPMCommissionRate(pmCommissionName);
 
-const commission = roundCommission(
-  grossProfit * commissionRate
-);
+const commission = canCalculateCommission
+  ? roundCommission(grossProfit * commissionRate)
+  : 0;
 
 const totalGrossProfit = grossProfit;
 
@@ -2546,6 +2630,13 @@ return {
 ytdRevenueLeaderboard,
 saleAmount,
 jobCost,
+overheadAmount,
+selectedOverheadRate,
+marginPercent,
+requiredMargin: marginRule.minimum,
+warningMargin: marginRule.warning,
+marginSafety,
+canCalculateCommission,
 commission,
 commissionRate: effectiveCommissionRate,
 grossProfit: totalGrossProfit,
@@ -4526,9 +4617,38 @@ const quarterlyGoalClass =
     <p className="top-dawg-empty">No Fiscal YTD revenue data found yet.</p>
   )}
 </div>
-{false && (
+{true && (
           <div className="pm-commission-card">
             <h2>Commission Calculator</h2>
+
+            <div className="pm-commission-selector-card">
+              <span>Job Trade Type</span>
+
+              <div className="commission-checkbox-row">
+                {getJobTradeTypeOptions().map((trade) => (
+                  <label key={trade} className="commission-option">
+                    <input
+                      type="checkbox"
+                      checked={selectedCommissionTrades.includes(trade)}
+                      onChange={(event) => {
+                        if (event.target.checked) {
+                          setSelectedCommissionTrades((currentTrades) => [
+                            ...currentTrades,
+                            trade,
+                          ]);
+                        } else {
+                          setSelectedCommissionTrades((currentTrades) =>
+                            currentTrades.filter((item) => item !== trade)
+                          );
+                        }
+                      }}
+                    />
+
+                    <span>{trade}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
             <div
               className="pm-sale-input-grid"
@@ -4564,23 +4684,140 @@ const quarterlyGoalClass =
               </div>
             </div>
 
+            <div
+              className={`margin-safety-card ${pmData.marginSafety.className}`}
+              style={{
+                background:
+                  pmData.marginSafety.className === "safe"
+                    ? "#f0fdf4"
+                    : pmData.marginSafety.className === "warning"
+                    ? "#fff7d6"
+                    : pmData.marginSafety.className === "danger"
+                    ? "#fee2e2"
+                    : "#f9fafb",
+                border:
+                  pmData.marginSafety.className === "safe"
+                    ? "2px solid #86efac"
+                    : pmData.marginSafety.className === "warning"
+                    ? "2px solid #facc15"
+                    : pmData.marginSafety.className === "danger"
+                    ? "2px solid #fca5a5"
+                    : "1px solid #e5e7eb",
+                borderRadius: "14px",
+                padding: "18px",
+                textAlign: "center",
+                marginBottom: "18px",
+              }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  color: "#6b7280",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  marginBottom: "8px",
+                }}
+              >
+                Margin Safety Check
+              </span>
 
-<div className="pm-commission-summary">
-  <div>
-    <span>Commission Rate</span>
-    <strong>{displayPercent(pmData.commissionRate, 0)}</strong>
-  </div>
+              <strong
+                style={{
+                  display: "block",
+                  color:
+                    pmData.marginSafety.className === "safe"
+                      ? "#16a34a"
+                      : pmData.marginSafety.className === "warning"
+                      ? "#9a6a00"
+                      : pmData.marginSafety.className === "danger"
+                      ? "#b91c1c"
+                      : "#111827",
+                  fontSize: "38px",
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  marginBottom: "8px",
+                }}
+              >
+                {displayPercent(pmData.marginPercent, 1)}
+              </strong>
 
-<div
-  ref={commissionCardRef}
-  className={`pm-commission-reward ${
-    Number(cleanMoneyInput(pmJobCost)) > 0 ? "active" : ""
-  }`}
->
-  <span>Your Estimated Commission</span>
-  <strong>{money(pmData.commission)}</strong>
-</div>
-</div>
+              <p
+                style={{
+                  margin: "0 0 8px",
+                  color: "#4b5563",
+                  fontWeight: 800,
+                }}
+              >
+                Required Minimum: {displayPercent(pmData.requiredMargin, 0)} | Low Margin Alert Below: {displayPercent(pmData.warningMargin, 0)}
+              </p>
+
+              <b
+                style={{
+                  display: "block",
+                  fontSize: "18px",
+                  fontWeight: 900,
+                  color:
+                    pmData.marginSafety.className === "safe"
+                      ? "#166534"
+                      : pmData.marginSafety.className === "warning"
+                      ? "#9a6a00"
+                      : pmData.marginSafety.className === "danger"
+                      ? "#991b1b"
+                      : "#4b5563",
+                }}
+              >
+                {pmData.marginSafety.className === "safe" && "🟢 "}
+                {pmData.marginSafety.className === "warning" && "🟡 "}
+                {pmData.marginSafety.className === "danger" && "🔴 "}
+                {pmData.marginSafety.label}
+              </b>
+
+              <small
+                style={{
+                  display: "block",
+                  marginTop: "8px",
+                  color: "#4b5563",
+                  fontWeight: 700,
+                }}
+              >
+                {pmData.marginSafety.message}
+              </small>
+            </div>
+
+            <div className="pm-commission-summary">
+              <div>
+                <span>Commission Rate</span>
+                <strong>{displayPercent(pmData.commissionRate, 0)}</strong>
+              </div>
+
+              <div>
+                <span>Overhead Rate</span>
+                <strong>{displayPercent(pmData.selectedOverheadRate, 0)}</strong>
+              </div>
+
+              <div>
+                <span>Gross Profit</span>
+                <strong>{money(pmData.grossProfit)}</strong>
+              </div>
+
+              <div
+                ref={commissionCardRef}
+                className={`pm-commission-reward ${
+                  Number(cleanMoneyInput(pmJobCost)) > 0 &&
+                  pmData.canCalculateCommission
+                    ? "active"
+                    : ""
+                }`}
+              >
+                <span>Your Estimated Commission</span>
+                <strong>
+                  {pmData.canCalculateCommission
+                    ? money(pmData.commission)
+                    : "$0.00"}
+                </strong>
+              </div>
+            </div>
           </div>
 )}
 
