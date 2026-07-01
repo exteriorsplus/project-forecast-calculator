@@ -1003,6 +1003,15 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     (row) => !REPAIR_SPECIALISTS.includes(row.name)
   );
 
+const hour = new Date().getHours();
+
+const greeting =
+  hour < 12
+    ? "Good Morning Mike,"
+    : hour < 17
+    ? "Good Afternoon Mike,"
+    : "Good Evening Mike,";
+
   const getHighest = (list, key) =>
     list
       .slice()
@@ -1053,11 +1062,11 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     return "attention";
   };
 
-  const statusLabel = {
-    good: "Healthy",
-    watch: "Watch",
-    attention: "Attention",
-  };
+const statusLabel = {
+  good: "Ahead of Plan",
+  watch: "Slightly Behind Plan",
+  attention: "Needs Immediate Attention",
+};
 
   const monthlyRevenueLeader = getHighest(activeRows, "monthlyRevenue");
   const monthlyClosingLeader = getHighest(activeRows, "monthlyClosingRate");
@@ -1153,7 +1162,9 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     healthCards.find((card) => card.status === "watch");
 
   const briefParts = [
-    `Revenue is ${statusLabel[revenueStatus].toLowerCase()} at ${money(totals.totalRevenue)} and ${totals.teamVsLY.label} versus last fiscal year.`,
+    `Revenue is ${statusLabel[revenueStatus]} at ${money(
+  totals.totalRevenue
+)}, (${totals.teamVsLY.label} versus last fiscal year).`,
     annualRevenueLeader
       ? `${annualRevenueLeader.name} leads FYTD production at ${money(annualRevenueLeader.annualRevenue)}.`
       : "FYTD production leader is not available yet.",
@@ -1182,7 +1193,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   ];
 
   return {
-    brief: briefParts.join(" "),
+    brief: `${greeting} ${briefParts.join(" ")}`,
     healthCards,
     priorities,
     sections: [
@@ -1315,8 +1326,8 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
         <header className="manager-header executive-command-header">
           <img src="/logo.png" alt="Logo" className="manager-logo" />
           <div>
-            <span>Executive Command Center</span>
-            <h1>Good Morning Mike.</h1>
+            <span>Exteriors Plus</span>
+            <h1>Executive Command Center</h1>
             <p>{todayLabel}</p>
           </div>
         </header>
