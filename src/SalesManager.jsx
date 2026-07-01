@@ -99,9 +99,6 @@ const fiscalMonths = [
   "October 2026",
 ];
 
-const revenueCoachingRows = activeRows.filter(
-  (row) => !REPAIR_SPECIALISTS.includes(row.name)
-);
 
 
 const money = (value) =>
@@ -999,8 +996,11 @@ return {
   };
 
 const getExecutiveSummary = (rows, totals, invoicePipeline) => {
-  const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
+const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
 
+const revenueCoachingRows = activeRows.filter(
+  (row) => !REPAIR_SPECIALISTS.includes(row.name)
+);
   const aboveTeamRevenue = activeRows
     .filter((row) => row.revenueVsTeam.className === "positive")
     .sort((a, b) => b.revenueVsTeam.rawDifference - a.revenueVsTeam.rawDifference);
