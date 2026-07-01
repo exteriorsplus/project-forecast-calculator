@@ -1007,10 +1007,10 @@ const hour = new Date().getHours();
 
 const greeting =
   hour < 12
-    ? "Good Morning Mike,"
+    ? "Good Morning Mike -"
     : hour < 17
-    ? "Good Afternoon Mike,"
-    : "Good Evening Mike,";
+    ? "Good Afternoon Mike -"
+    : "Good Evening Mike -";
 
   const getHighest = (list, key) =>
     list
