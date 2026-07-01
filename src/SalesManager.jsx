@@ -990,48 +990,63 @@ return {
     return `${notes.join(", ")}.`;
   };
 
-  const getExecutiveSummary = (rows, totals, invoicePipeline) => {
-    const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
-    const topRep = rows[0];
-    const topTwoRevenue = rows
-      .slice(0, 2)
-      .reduce((sum, row) => sum + Number(row.annualRevenue || 0), 0);
-    const topTwoShare =
-      totals.totalRevenue > 0 ? topTwoRevenue / totals.totalRevenue : 0;
-    const belowClosingAverage = rows.filter(
-      (row) => row.closingVsTeam.className === "negative"
-    ).length;
-    const strongestAverageContract = activeRows
-      .slice()
-      .sort(
-        (a, b) => Number(b.averageContract || 0) - Number(a.averageContract || 0)
-      )[0];
-    const aboveGoalThisQuarter = rows.filter(
-      (row) => row.quarterlyGoalPercent >= 1
-    ).length;
+const getExecutiveSummary = (rows, totals, invoicePipeline) => {
+  const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
 
-    return [
+  const aboveTeamRevenue = activeRows
+    .filter((row) => row.revenueVsTeam.className === "positive")
+    .sort((a, b) => b.revenueVsTeam.rawDifference - a.revenueVsTeam.rawDifference);
+
+  const highestAvgContract = activeRows
+    .slice()
+    .sort((a, b) => Number(b.averageContract || 0) - Number(a.averageContract || 0))[0];
+
+  const lowestClosingRate = activeRows
+    .slice()
+    .sort((a, b) => Number(a.closingRate || 0) - Number(b.closingRate || 0))[0];
+
+  const lowestGoalProgress = activeRows
+    .slice()
+    .sort((a, b) => Number(a.annualGoalPercent || 0) - Number(b.annualGoalPercent || 0))[0];
+
+  const lowestVsTeamRevenue = activeRows
+    .slice()
+    .sort((a, b) => a.revenueVsTeam.rawDifference - b.revenueVsTeam.rawDifference)[0];
+
+  return {
+    positive: [
       `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
-      topRep
-        ? `${topRep.name} currently leads FYTD production at ${money(topRep.annualRevenue)}.`
-        : "No FYTD production leader is available yet.",
-      topTwoShare > 0
-        ? `The top two salespeople represent ${displayPercent(topTwoShare, 1)} of FYTD production.`
-        : "Top producer concentration is not available yet.",
-      strongestAverageContract
-        ? `${strongestAverageContract.name} has the highest average contract at ${money(
-            strongestAverageContract.averageContract
+      aboveTeamRevenue.length
+        ? `${aboveTeamRevenue.map((row) => row.name).join(", ")} ${
+            aboveTeamRevenue.length === 1 ? "is" : "are"
+          } above the team revenue average.`
+        : "No salesperson is currently above the team revenue average.",
+      highestAvgContract
+        ? `${highestAvgContract.name} has the highest average contract at ${money(
+            highestAvgContract.averageContract
           )}.`
         : "Average contract leader is not available yet.",
-      `${aboveGoalThisQuarter} salesperson${
-        aboveGoalThisQuarter === 1 ? " is" : "s are"
-      } at or above quarterly goal pace.`,
-      `${belowClosingAverage} salesperson${
-        belowClosingAverage === 1 ? " is" : "s are"
-      } below the team closing-rate average.`,
-      `Future cash pipeline is ${money(invoicePipeline.totalPipeline)}.`
-    ];
+      `Future cash pipeline is ${money(invoicePipeline.totalPipeline)}.`,
+    ],
+    coaching: [
+      lowestClosingRate
+        ? `${lowestClosingRate.name} has the lowest FYTD closing rate at ${displayPercent(
+            lowestClosingRate.closingRate,
+            1
+          )}.`
+        : "Lowest closing-rate data is not available yet.",
+      lowestGoalProgress
+        ? `${lowestGoalProgress.name} has the lowest annual goal progress at ${displayPercent(
+            lowestGoalProgress.annualGoalPercent,
+            1
+          )}.`
+        : "Goal progress coaching data is not available yet.",
+      lowestVsTeamRevenue
+        ? `${lowestVsTeamRevenue.name} is lowest versus team revenue average at ${lowestVsTeamRevenue.revenueVsTeam.label}.`
+        : "Revenue versus team average data is not available yet.",
+    ],
   };
+};
 
   const SalesManagerDashboard = () => {
     const managerMetrics = getManagerMetrics();
@@ -1090,14 +1105,37 @@ return {
             <p>Automatically generated from current sales, closing-rate, goal, and cash-pipeline data.</p>
           </div>
 
-          <div className="manager-executive-summary-grid">
-            {executiveSummary.map((item, index) => (
-              <div className="manager-executive-summary-item" key={`executive-summary-${index}`}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <p>{item}</p>
-              </div>
-            ))}
-          </div>
+<div className="manager-executive-summary-grid">
+
+  <div className="manager-summary-column positive">
+    <h3>Positive Momentum</h3>
+
+    {executiveSummary.positive.map((item, index) => (
+      <div
+        className="manager-executive-summary-item positive"
+        key={`positive-${index}`}
+      >
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <p>{item}</p>
+      </div>
+    ))}
+  </div>
+
+  <div className="manager-summary-column coaching">
+    <h3>Coaching Focus</h3>
+
+    {executiveSummary.coaching.map((item, index) => (
+      <div
+        className="manager-executive-summary-item coaching"
+        key={`coaching-${index}`}
+      >
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <p>{item}</p>
+      </div>
+    ))}
+  </div>
+
+</div>
         </section>
 
         <section className="manager-panel">
