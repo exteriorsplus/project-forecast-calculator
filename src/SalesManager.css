@@ -805,3 +805,56 @@ body {
     font-size: 22px;
     padding-top: 32px;
 }
+.manager-login-card {
+  max-width: 460px;
+  margin: 80px auto;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 34px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(17, 24, 39, 0.14);
+}
+
+.manager-login-logo {
+  width: 150px;
+  margin-bottom: 18px;
+}
+
+.manager-login-card h1 {
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.manager-login-card p {
+  margin: 0 0 22px;
+  color: #6b7280;
+  font-weight: 800;
+}
+
+.manager-login-card input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.manager-login-card button {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  background: #b91c1c;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.manager-login-error {
+  margin-top: 14px;
+  color: #991b1b;
+  font-weight: 900;
+}

@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import "./SalesManager.css";
 
+const MANAGER_PASSWORD = "Mike123";
 const PM_GOALS = {
+
   "William Dye": 1750000,
   "Jamie Jenkins": 1750000,
   "Andrew Painter": 1750000,
@@ -266,7 +268,11 @@ export default function SalesManager() {
   const [pmRows, setPmRows] = useState([]);
   const [invoiceRows, setInvoiceRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading manager data...");
-
+  const [managerAuthorized, setManagerAuthorized] = useState(
+  () => sessionStorage.getItem("managerAuthorized") === "true"
+);
+const [managerPassword, setManagerPassword] = useState("");
+const [managerLoginError, setManagerLoginError] = useState("");
   useEffect(() => {
     const loadSalesFile = async () => {
       try {
@@ -1276,7 +1282,46 @@ return {
       </div>
     );
   };
+if (!managerAuthorized) {
+  return (
+    <div className="page manager-shell">
+      <div className="manager-login-card">
+        <img src="/logo.png" alt="Logo" className="manager-login-logo" />
 
+        <h1>Sales Manager Portal</h1>
+        <p>Enter password to continue.</p>
+
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+
+            if (managerPassword === MANAGER_PASSWORD) {
+              sessionStorage.setItem("managerAuthorized", "true");
+              setManagerAuthorized(true);
+              setManagerPassword("");
+              setManagerLoginError("");
+            } else {
+              setManagerLoginError("Incorrect password. Please try again.");
+            }
+          }}
+        >
+          <input
+            type="password"
+            value={managerPassword}
+            onChange={(event) => setManagerPassword(event.target.value)}
+            placeholder="Password"
+          />
+
+          <button type="submit">Enter</button>
+        </form>
+
+        {managerLoginError && (
+          <div className="manager-login-error">{managerLoginError}</div>
+        )}
+      </div>
+    </div>
+  );
+}
   return (
     <div className="page manager-shell">
       {dataStatus && <div className="manager-status">{dataStatus}</div>}
