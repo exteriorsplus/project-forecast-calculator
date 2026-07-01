@@ -784,9 +784,9 @@ return {
           pipeline.needsToBeInvoiced += nextValue;
         }
 
-        if (label.includes("balance due") || label.includes("money invoiced")) {
-          pipeline.balanceDue += nextValue;
-        }
+   if (label.includes("money invoiced")) {
+  pipeline.balanceDue += nextValue;
+}
 
         if (label === "total") {
           pipeline.totalPipeline += nextValue;
