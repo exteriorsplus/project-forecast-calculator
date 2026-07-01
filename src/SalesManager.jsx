@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import "./SalesManager.css";
 
-const MANAGER_PASSWORD = "Mike123";
+const MANAGER_PASSWORD = "Lakeview2910";
 const PM_GOALS = {
 
   "William Dye": 1750000,
