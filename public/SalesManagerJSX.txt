@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import "./SalesManager.css";
 
+const MANAGER_PASSWORD = "Lakeview2910";
 const PM_GOALS = {
+
   "William Dye": 1750000,
   "Jamie Jenkins": 1750000,
   "Andrew Painter": 1750000,
@@ -63,6 +65,9 @@ const projectManagers = [
     activeGoal: true,
   },
 ];
+const REPAIR_SPECIALISTS = [
+  "George Anim",
+];
 
 const monthNames = [
   "January",
@@ -93,6 +98,8 @@ const fiscalMonths = [
   "September 2026",
   "October 2026",
 ];
+
+
 
 const money = (value) =>
   Number(value || 0).toLocaleString("en-US", {
@@ -266,7 +273,11 @@ export default function SalesManager() {
   const [pmRows, setPmRows] = useState([]);
   const [invoiceRows, setInvoiceRows] = useState([]);
   const [dataStatus, setDataStatus] = useState("Loading manager data...");
-
+  const [managerAuthorized, setManagerAuthorized] = useState(
+  () => sessionStorage.getItem("managerAuthorized") === "true"
+);
+const [managerPassword, setManagerPassword] = useState("");
+const [managerLoginError, setManagerLoginError] = useState("");
   useEffect(() => {
     const loadSalesFile = async () => {
       try {
@@ -447,6 +458,42 @@ export default function SalesManager() {
 
       const amount = parseMoney(row["Contract Amount"]);
 
+      if (amount <= 0) return;
+
+      contractTotal += amount;
+      contracts += 1;
+    });
+
+    return {
+      contractTotal,
+      contracts,
+      averageContract: contracts > 0 ? contractTotal / contracts : 0,
+    };
+  };
+
+  const getCompanySalesDataForRange = (startDate, endDate) => {
+    if (!startDate || !endDate) {
+      return {
+        contractTotal: 0,
+        contracts: 0,
+        averageContract: 0,
+      };
+    }
+
+    const start = dateOnly(startDate);
+    const end = dateOnly(endDate);
+
+    let contractTotal = 0;
+    let contracts = 0;
+
+    salesRows.forEach((row) => {
+      const rowDate = parseExcelDate(row["Approved Date"]);
+      if (!rowDate) return;
+
+      const cleanDate = dateOnly(rowDate);
+      if (cleanDate < start || cleanDate > end) return;
+
+      const amount = parseMoney(row["Contract Amount"]);
       if (amount <= 0) return;
 
       contractTotal += amount;
@@ -655,52 +702,74 @@ export default function SalesManager() {
       };
     });
 
-    const sortedRows = rows.sort((a, b) => b.annualRevenue - a.annualRevenue);
-    const activeRows = rows.filter((row) => row.annualRevenue > 0);
-    const totalRevenue = rows.reduce((sum, row) => sum + row.annualRevenue, 0);
-    const totalGoal = rows.reduce((sum, row) => sum + row.goal, 0);
-    const totalContracts = rows.reduce((sum, row) => sum + row.annualContracts, 0);
-    const teamAverageRevenue = activeRows.length > 0 ? totalRevenue / activeRows.length : 0;
-    const teamClosingRate =
-      activeRows.length > 0
-        ? activeRows.reduce((sum, row) => sum + row.closingRate, 0) / activeRows.length
-        : 0;
-    const teamAverageContract = totalContracts > 0 ? totalRevenue / totalContracts : 0;
-    const teamLYRevenue = rows.reduce((sum, row) => sum + row.lyRevenue, 0);
+const sortedRows = rows.sort((a, b) => b.annualRevenue - a.annualRevenue);
+const activeRows = rows.filter((row) => row.annualRevenue > 0);
 
-    return {
-      rows: sortedRows.map((row, index) => ({
-        ...row,
-        rank: index + 1,
-        revenueVsLY: compareNumbers(row.annualRevenue, row.lyRevenue),
-        closingVsLY: compareNumbers(row.closingRate, row.lyClosingRate, true),
-        revenueVsTeam: compareNumbers(row.annualRevenue, teamAverageRevenue),
-        closingVsTeam: compareNumbers(row.closingRate, teamClosingRate, true),
-      })),
-      totals: {
-        totalRevenue,
-        totalGoal,
-        totalGoalPercent: totalGoal > 0 ? totalRevenue / totalGoal : 0,
-        totalContracts,
-        teamAverageRevenue,
-        teamClosingRate,
-        teamAverageContract,
-        teamLYRevenue,
-        teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
-      },
-      ranges: {
-        currentMonth,
-        currentQuarter,
-        quarterMTD,
-        fiscalYear,
-        fiscalYTD,
-        priorFiscalYTD,
-        rolling90: {
-          start: rolling90Start,
-          end: rolling90End,
-        },
-      },
-    };
+const trackedTeamRevenue = rows.reduce(
+  (sum, row) => sum + row.annualRevenue,
+  0
+);
+
+const companyFYTD = getCompanySalesDataForRange(
+  fiscalYTD.start,
+  fiscalYTD.end
+);
+
+const companyLYFYTD = getCompanySalesDataForRange(
+  priorFiscalYTD.start,
+  priorFiscalYTD.end
+);
+
+const totalRevenue = companyFYTD.contractTotal;
+const totalContracts = companyFYTD.contracts;
+const teamAverageContract = companyFYTD.averageContract;
+
+const totalGoal = rows.reduce((sum, row) => sum + row.goal, 0);
+
+const teamAverageRevenue =
+  activeRows.length > 0 ? trackedTeamRevenue / activeRows.length : 0;
+
+const teamClosingRate =
+  activeRows.length > 0
+    ? activeRows.reduce((sum, row) => sum + row.closingRate, 0) /
+      activeRows.length
+    : 0;
+
+const teamLYRevenue = companyLYFYTD.contractTotal;
+
+return {
+  rows: sortedRows.map((row, index) => ({
+    ...row,
+    rank: index + 1,
+    revenueVsLY: compareNumbers(row.annualRevenue, row.lyRevenue),
+    closingVsLY: compareNumbers(row.closingRate, row.lyClosingRate, true),
+    revenueVsTeam: compareNumbers(row.annualRevenue, teamAverageRevenue),
+    closingVsTeam: compareNumbers(row.closingRate, teamClosingRate, true),
+  })),
+  totals: {
+    totalRevenue,
+    totalGoal,
+    totalGoalPercent: totalGoal > 0 ? trackedTeamRevenue / totalGoal : 0,
+    totalContracts,
+    teamAverageRevenue,
+    teamClosingRate,
+    teamAverageContract,
+    teamLYRevenue,
+    teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
+  },
+  ranges: {
+    currentMonth,
+    currentQuarter,
+    quarterMTD,
+    fiscalYear,
+    fiscalYTD,
+    priorFiscalYTD,
+    rolling90: {
+      start: rolling90Start,
+      end: rolling90End,
+    },
+  },
+};
   };
 
   const getInvoicePipeline = () => {
@@ -726,9 +795,9 @@ export default function SalesManager() {
           pipeline.needsToBeInvoiced += nextValue;
         }
 
-        if (label.includes("balance due") || label.includes("money invoiced")) {
-          pipeline.balanceDue += nextValue;
-        }
+   if (label.includes("money invoiced")) {
+  pipeline.balanceDue += nextValue;
+}
 
         if (label === "total") {
           pipeline.totalPipeline += nextValue;
@@ -852,17 +921,30 @@ export default function SalesManager() {
   );
 
   const getRepStatus = (row) => {
-    const strongRevenue = row.revenueVsLY.rawDifference > 0.1;
-    const strongGoal = row.annualGoalPercent >= 0.5;
-    const strongQuarter = row.quarterlyGoalPercent >= 1;
-    const weakClosing = row.closingVsTeam.rawDifference < -0.03;
-    const weakGoal = row.annualGoalPercent < 0.35;
+    const revenueWellAboveLY = row.revenueVsLY.rawDifference >= 0.15;
+    const revenueAboveTeam = row.revenueVsTeam.rawDifference >= 0.15;
+    const closingAboveTeam = row.closingVsTeam.rawDifference >= 0;
+    const quarterStrong = row.quarterlyGoalPercent >= 1;
+    const monthStrong = row.monthlyGoalPercent >= 1;
+    const annualHealthy = row.annualGoalPercent >= 0.5;
+    const annualWeak = row.annualGoalPercent < 0.35;
+    const closingWeak = row.closingVsTeam.rawDifference <= -0.03;
+    const revenueBehindLY = row.revenueVsLY.rawDifference <= -0.1;
 
-    if ((strongRevenue && strongQuarter) || (strongGoal && !weakClosing)) {
+    if (
+      revenueWellAboveLY &&
+      revenueAboveTeam &&
+      quarterStrong &&
+      (closingAboveTeam || monthStrong)
+    ) {
+      return { label: "Exceeding", className: "positive" };
+    }
+
+    if ((annualHealthy && !closingWeak) || quarterStrong || monthStrong) {
       return { label: "On Pace", className: "positive" };
     }
 
-    if (weakGoal || weakClosing) {
+    if (annualWeak || (revenueBehindLY && closingWeak)) {
       return { label: "Needs Coaching", className: "negative" };
     }
 
@@ -874,42 +956,113 @@ export default function SalesManager() {
 
     if (row.revenueVsLY.className === "positive") {
       notes.push(
-        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year.`
+        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year`
       );
     } else if (row.revenueVsLY.className === "negative") {
       notes.push(
-        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year.`
+        `Revenue is ${row.revenueVsLY.label} versus the same fiscal period last year`
       );
     } else {
-      notes.push("Last-year comparison is limited because prior-year revenue is not available.");
+      notes.push("Prior-year revenue comparison is limited");
+    }
+
+    if (row.revenueVsTeam.className === "positive") {
+      notes.push(`${row.revenueVsTeam.label} above the team revenue average`);
+    } else if (row.revenueVsTeam.className === "negative") {
+      notes.push(`${row.revenueVsTeam.label} below the team revenue average`);
     }
 
     if (row.closingVsTeam.className === "positive") {
-      notes.push(`Close rate is ${row.closingVsTeam.label} above team average.`);
+      notes.push(`close rate is ${row.closingVsTeam.label} above team average`);
     } else if (row.closingVsTeam.className === "negative") {
-      notes.push(`Close rate trails team average by ${row.closingVsTeam.label.replace("-", "")}.`);
+      notes.push(
+        `close rate trails the team average by ${row.closingVsTeam.label.replace("-", "")}`
+      );
     } else {
-      notes.push("Close rate is roughly in line with the team average.");
+      notes.push("close rate is roughly aligned with team average");
     }
 
     if (row.quarterlyGoalPercent >= 1) {
-      notes.push("Quarterly goal has been exceeded, showing strong current-period production.");
+      notes.push("quarterly goal has already been exceeded");
     } else if (row.monthlyGoalPercent >= 1) {
-      notes.push("Monthly pace is ahead of goal, with an opportunity to convert that momentum into quarterly progress.");
+      notes.push("monthly pace is ahead of goal");
     } else if (row.annualGoalPercent < 0.35) {
-      notes.push("Annual goal progress needs attention; focus should remain on near-term revenue creation.");
+      notes.push("annual goal progress needs attention");
     } else {
-      notes.push("Goal progress is developing, but the next month will be important for staying on pace.");
+      notes.push("goal progress should be monitored closely through the next month");
     }
 
-    return notes.join(" ");
+    return `${notes.join(", ")}.`;
   };
+
+const getExecutiveSummary = (rows, totals, invoicePipeline) => {
+const activeRows = rows.filter((row) => Number(row.annualRevenue || 0) > 0);
+
+const revenueCoachingRows = activeRows.filter(
+  (row) => !REPAIR_SPECIALISTS.includes(row.name)
+);
+  const aboveTeamRevenue = activeRows
+    .filter((row) => row.revenueVsTeam.className === "positive")
+    .sort((a, b) => b.revenueVsTeam.rawDifference - a.revenueVsTeam.rawDifference);
+
+  const highestAvgContract = activeRows
+    .slice()
+    .sort((a, b) => Number(b.averageContract || 0) - Number(a.averageContract || 0))[0];
+
+  const lowestClosingRate = activeRows
+    .slice()
+    .sort((a, b) => Number(a.closingRate || 0) - Number(b.closingRate || 0))[0];
+
+  const lowestGoalProgress = activeRows
+    .slice()
+    .sort((a, b) => Number(a.annualGoalPercent || 0) - Number(b.annualGoalPercent || 0))[0];
+
+
+const lowestVsTeamRevenue = revenueCoachingRows
+  .slice()
+  .sort((a, b) => a.revenueVsTeam.rawDifference - b.revenueVsTeam.rawDifference)[0];
+
+  return {
+    positive: [
+      `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
+      aboveTeamRevenue.length
+        ? `${aboveTeamRevenue.map((row) => row.name).join(", ")} ${
+            aboveTeamRevenue.length === 1 ? "is" : "are"
+          } above the team revenue average.`
+        : "No salesperson is currently above the team revenue average.",
+      highestAvgContract
+        ? `${highestAvgContract.name} has the highest average contract at ${money(
+            highestAvgContract.averageContract
+          )}.`
+        : "Average contract leader is not available yet.",
+      `Future cash pipeline is ${money(invoicePipeline.totalPipeline)}.`,
+    ],
+    coaching: [
+      lowestClosingRate
+        ? `${lowestClosingRate.name} has the lowest FYTD closing rate at ${displayPercent(
+            lowestClosingRate.closingRate,
+            1
+          )}.`
+        : "Lowest closing-rate data is not available yet.",
+      lowestGoalProgress
+        ? `${lowestGoalProgress.name} has the lowest annual goal progress at ${displayPercent(
+            lowestGoalProgress.annualGoalPercent,
+            1
+          )}.`
+        : "Goal progress coaching data is not available yet.",
+      lowestVsTeamRevenue
+        ? `${lowestVsTeamRevenue.name} is lowest versus team revenue average at ${lowestVsTeamRevenue.revenueVsTeam.label}.`
+        : "Revenue versus team average data is not available yet.",
+    ],
+  };
+};
 
   const SalesManagerDashboard = () => {
     const managerMetrics = getManagerMetrics();
     const { rows, totals, ranges } = managerMetrics;
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
+    const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
 
     return (
       <div className="sales-manager-page">
@@ -950,6 +1103,48 @@ export default function SalesManager() {
             <strong>{money(totals.teamAverageContract)}</strong>
             <small>{totals.totalContracts} contracts</small>
           </div>
+        </section>
+
+        <section className="manager-panel manager-executive-summary-panel">
+          <div className="manager-panel-header">
+            <div>
+              <span>Executive Brief</span>
+              <h2>Executive Summary</h2>
+            </div>
+            <p>Automatically generated from current sales, closing-rate, goal, and cash-pipeline data.</p>
+          </div>
+
+<div className="manager-executive-summary-grid">
+
+  <div className="manager-summary-column positive">
+    <h3>Positive Momentum</h3>
+
+    {executiveSummary.positive.map((item, index) => (
+      <div
+        className="manager-executive-summary-item positive"
+        key={`positive-${index}`}
+      >
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <p>{item}</p>
+      </div>
+    ))}
+  </div>
+
+  <div className="manager-summary-column coaching">
+    <h3>Coaching Focus</h3>
+
+    {executiveSummary.coaching.map((item, index) => (
+      <div
+        className="manager-executive-summary-item coaching"
+        key={`coaching-${index}`}
+      >
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <p>{item}</p>
+      </div>
+    ))}
+  </div>
+
+</div>
         </section>
 
         <section className="manager-panel">
@@ -1038,19 +1233,23 @@ export default function SalesManager() {
               const status = getRepStatus(row);
 
               return (
-                <article className="manager-performance-report" key={`${row.name}-performance`}>
+                <article
+                  className={`manager-performance-report ${status.className}`}
+                  key={`${row.name}-performance`}
+                >
                   <div className="manager-performance-topline">
                     <div className="manager-rank-name-block">
                       <div className="manager-performance-rank">#{row.rank}</div>
-                      <div className="manager-performance-person">
-                        <img src={row.image} alt={row.name} />
-                        <div>
-                          <h3>{row.name}</h3>
-                          <div className={`manager-status-pill ${status.className}`}>
-                            {status.label}
-                          </div>
-                        </div>
-                      </div>
+<div className="manager-performance-person">
+  <div>
+    <h3>{row.name}</h3>
+    <div className={`manager-status-pill ${status.className}`}>
+      {status.label}
+    </div>
+  </div>
+
+  <img src={row.image} alt={row.name} />
+</div>
                     </div>
 
                     <div className="manager-metric-strip v21">
@@ -1130,7 +1329,46 @@ export default function SalesManager() {
       </div>
     );
   };
+if (!managerAuthorized) {
+  return (
+    <div className="page manager-shell">
+      <div className="manager-login-card">
+        <img src="/logo.png" alt="Logo" className="manager-login-logo" />
 
+        <h1>Sales Manager Portal</h1>
+        <p>Enter password to continue.</p>
+
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+
+            if (managerPassword === MANAGER_PASSWORD) {
+              sessionStorage.setItem("managerAuthorized", "true");
+              setManagerAuthorized(true);
+              setManagerPassword("");
+              setManagerLoginError("");
+            } else {
+              setManagerLoginError("Incorrect password. Please try again.");
+            }
+          }}
+        >
+          <input
+            type="password"
+            value={managerPassword}
+            onChange={(event) => setManagerPassword(event.target.value)}
+            placeholder="Password"
+          />
+
+          <button type="submit">Enter</button>
+        </form>
+
+        {managerLoginError && (
+          <div className="manager-login-error">{managerLoginError}</div>
+        )}
+      </div>
+    </div>
+  );
+}
   return (
     <div className="page manager-shell">
       {dataStatus && <div className="manager-status">{dataStatus}</div>}
