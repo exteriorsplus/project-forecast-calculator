@@ -858,3 +858,50 @@ body {
   color: #991b1b;
   font-weight: 900;
 }
+/* Executive Summary Tabs */
+.manager-summary-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 20px;
+}
+
+.manager-summary-tabs button {
+  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  color: #111827;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.manager-summary-tabs button.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.manager-summary-section-card.active {
+  display: block;
+}
+
+.manager-summary-section-header {
+  margin-bottom: 14px;
+}
+
+.manager-summary-section-header span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+}
+
+.manager-summary-section-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+}

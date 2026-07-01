@@ -278,6 +278,7 @@ export default function SalesManager() {
 );
 const [managerPassword, setManagerPassword] = useState("");
 const [managerLoginError, setManagerLoginError] = useState("");
+const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Performance");
   useEffect(() => {
     const loadSalesFile = async () => {
       try {
@@ -1201,6 +1202,10 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
+    const activeSummarySection =
+      executiveSummary.sections.find(
+        (section) => section.title === activeSummaryTab
+      ) || executiveSummary.sections[0];
 
     return (
       <div className="sales-manager-page">
@@ -1252,21 +1257,34 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
             <p>Automatically generated from current sales, closing-rate, goal, and cash-pipeline data.</p>
           </div>
 
-<div className="manager-executive-summary-grid executive-summary-sections">
+<div className="manager-summary-tabs">
   {executiveSummary.sections.map((section) => (
-    <div className="manager-summary-section-card" key={section.title}>
-      <div className="manager-summary-section-header">
-        <span>{section.eyebrow}</span>
-        <h3>{section.title}</h3>
-      </div>
+    <button
+      type="button"
+      key={section.title}
+      className={activeSummarySection.title === section.title ? "active" : ""}
+      onClick={() => setActiveSummaryTab(section.title)}
+    >
+      {section.title.replace(" Performance", "").replace("Fiscal YTD", "Annual")}
+    </button>
+  ))}
+</div>
 
+{activeSummarySection && (
+  <div className="manager-summary-section-card active">
+    <div className="manager-summary-section-header">
+      <span>{activeSummarySection.eyebrow}</span>
+      <h3>{activeSummarySection.title}</h3>
+    </div>
+
+    <div className="manager-executive-summary-grid">
       <div className="manager-summary-column positive">
         <h4>Positive Momentum</h4>
 
-        {section.positive.map((item, index) => (
+        {activeSummarySection.positive.map((item, index) => (
           <div
             className="manager-executive-summary-item positive"
-            key={`${section.title}-positive-${index}`}
+            key={`${activeSummarySection.title}-positive-${index}`}
           >
             <span>{String(index + 1).padStart(2, "0")}</span>
             <p>{item}</p>
@@ -1277,10 +1295,10 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       <div className="manager-summary-column coaching">
         <h4>Coaching Focus</h4>
 
-        {section.coaching.map((item, index) => (
+        {activeSummarySection.coaching.map((item, index) => (
           <div
             className="manager-executive-summary-item coaching"
-            key={`${section.title}-coaching-${index}`}
+            key={`${activeSummarySection.title}-coaching-${index}`}
           >
             <span>{String(index + 1).padStart(2, "0")}</span>
             <p>{item}</p>
@@ -1288,8 +1306,8 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
         ))}
       </div>
     </div>
-  ))}
-</div>
+  </div>
+)}
         </section>
 
         <section className="manager-panel">
