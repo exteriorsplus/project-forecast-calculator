@@ -1063,9 +1063,9 @@ const greeting =
   };
 
 const statusLabel = {
-  good: "Ahead of Plan",
-  watch: "Slightly Behind Plan",
-  attention: "Needs Immediate Attention",
+  good: "ahead of plan",
+  watch: "slightly behind plan",
+  attention: "needs immediate attention",
 };
 
   const monthlyRevenueLeader = getHighest(activeRows, "monthlyRevenue");
