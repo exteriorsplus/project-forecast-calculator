@@ -65,6 +65,9 @@ const projectManagers = [
     activeGoal: true,
   },
 ];
+const REPAIR_SPECIALISTS = [
+  "George Anim",
+];
 
 const monthNames = [
   "January",
@@ -95,6 +98,11 @@ const fiscalMonths = [
   "September 2026",
   "October 2026",
 ];
+
+const revenueCoachingRows = activeRows.filter(
+  (row) => !REPAIR_SPECIALISTS.includes(row.name)
+);
+
 
 const money = (value) =>
   Number(value || 0).toLocaleString("en-US", {
@@ -1009,9 +1017,10 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     .slice()
     .sort((a, b) => Number(a.annualGoalPercent || 0) - Number(b.annualGoalPercent || 0))[0];
 
-  const lowestVsTeamRevenue = activeRows
-    .slice()
-    .sort((a, b) => a.revenueVsTeam.rawDifference - b.revenueVsTeam.rawDifference)[0];
+
+const lowestVsTeamRevenue = revenueCoachingRows
+  .slice()
+  .sort((a, b) => a.revenueVsTeam.rawDifference - b.revenueVsTeam.rawDifference)[0];
 
   return {
     positive: [
