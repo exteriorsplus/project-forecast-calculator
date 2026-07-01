@@ -1534,7 +1534,7 @@ const statusLabel = {
               <h2>Salesperson Performance</h2>
             </div>
             <p>
-              FYTD {formatShortDate(ranges.fiscalYTD.start)} – {formatShortDate(ranges.fiscalYTD.end)} compared to LY {formatShortDate(ranges.priorFiscalYTD.start)} – {formatShortDate(ranges.priorFiscalYTD.end)}.
+              FYTD {formatShortDate(ranges.fiscalYTD.start)} – {formatShortDate(ranges.fiscalYTD.end)} compared to LY {formatShortDate(ranges.priorFiscalYTD.start)} – {formatShortDate(ranges.priorFiscalYTD.end)}
             </p>
           </div>
 
