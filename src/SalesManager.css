@@ -905,3 +905,283 @@ body {
   color: #111827;
   font-size: 22px;
 }
+/* ===== Executive Command Center Upgrade ===== */
+.executive-command-header {
+  background:
+    radial-gradient(circle at top right, rgba(185, 28, 28, 0.35), transparent 34%),
+    linear-gradient(135deg, #0f172a, #111827 58%, #1f2937);
+}
+
+.executive-command-header h1 {
+  font-size: 42px;
+  letter-spacing: -1px;
+}
+
+.executive-command-panel {
+  border-top: 10px solid #111827;
+}
+
+.executive-brief-card {
+  background: #111827;
+  color: #ffffff;
+  border-radius: 22px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
+}
+
+.executive-brief-card p {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.5;
+  font-weight: 850;
+}
+
+.executive-health-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.executive-health-card {
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-left: 7px solid #6b7280;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.executive-health-card.good {
+  border-left-color: #16a34a;
+}
+
+.executive-health-card.watch {
+  border-left-color: #ca8a04;
+}
+
+.executive-health-card.attention {
+  border-left-color: #b91c1c;
+}
+
+.executive-health-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.executive-health-card strong {
+  display: block;
+  color: #111827;
+  font-size: 25px;
+  line-height: 1.05;
+}
+
+.executive-health-card small {
+  display: block;
+  color: #6b7280;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+.executive-health-card b {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.executive-health-card.good b {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.executive-health-card.watch b {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.executive-health-card.attention b {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.executive-priority-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.executive-priority-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.executive-priority-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 14px;
+}
+
+.executive-priority-item span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.executive-priority-item p {
+  margin: 0;
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 850;
+}
+
+.manager-summary-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 20px;
+}
+
+.manager-summary-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 950;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .35px;
+}
+
+.manager-summary-tabs button.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.summary-tab-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #6b7280;
+}
+
+.manager-summary-tabs button.good .summary-tab-status {
+  background: #16a34a;
+}
+
+.manager-summary-tabs button.watch .summary-tab-status {
+  background: #ca8a04;
+}
+
+.manager-summary-tabs button.attention .summary-tab-status {
+  background: #b91c1c;
+}
+
+.manager-summary-section-card.active {
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  border-left: 7px solid #6b7280;
+  background: #ffffff;
+  padding: 18px;
+}
+
+.manager-summary-section-card.active.good {
+  border-left-color: #16a34a;
+}
+
+.manager-summary-section-card.active.watch {
+  border-left-color: #ca8a04;
+}
+
+.manager-summary-section-card.active.attention {
+  border-left-color: #b91c1c;
+}
+
+.manager-summary-section-header {
+  margin-bottom: 14px;
+}
+
+.manager-summary-section-header span {
+  display: block;
+  color: #b91c1c;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
+.manager-summary-section-header h3 {
+  margin: 4px 0 0;
+  color: #111827;
+  font-size: 24px;
+}
+
+.manager-summary-column h4 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.manager-executive-summary-item.positive span {
+  background: #16a34a;
+}
+
+.manager-executive-summary-item.coaching span {
+  background: #b91c1c;
+}
+
+@media (max-width: 1100px) {
+  .executive-health-grid,
+  .executive-priority-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .executive-command-header h1 {
+    font-size: 32px;
+  }
+
+  .executive-health-grid,
+  .executive-priority-list {
+    grid-template-columns: 1fr;
+  }
+
+  .executive-brief-card p {
+    font-size: 16px;
+  }
+}
