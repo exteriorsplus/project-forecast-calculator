@@ -1745,14 +1745,37 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
                 </div>
               </div>
 
-              <div className="employee-of-week-reasons">
-                <span>Why they earned Top Dawg this week</span>
-                <ul>
-                  {weeklyTopDawg.reasons.map((reason, index) => (
-                    <li key={`weekly-top-dawg-reason-${index}`}>{reason}</li>
-                  ))}
-                </ul>
-              </div>
+<div className="employee-of-week-right">
+
+  <div className="employee-of-week-heading">
+    Performance Highlights
+  </div>
+
+  <div className="employee-of-week-reasons">
+
+    <div className="employee-of-week-columns">
+
+      <ul>
+        {weeklyTopDawg.reasons.slice(0, 3).map((reason, index) => (
+          <li key={`weekly-top-dawg-left-${index}`}>
+            {reason}
+          </li>
+        ))}
+      </ul>
+
+      <ul>
+        {weeklyTopDawg.reasons.slice(3, 6).map((reason, index) => (
+          <li key={`weekly-top-dawg-right-${index}`}>
+            {reason}
+          </li>
+        ))}
+      </ul>
+
+    </div>
+
+  </div>
+
+</div>
             </div>
           )}
 
