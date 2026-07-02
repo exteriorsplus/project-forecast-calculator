@@ -1120,7 +1120,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
 
   const averageRolling90Revenue = getAverage(activeRows, "rolling90Revenue");
 
-  const employeeOfWeekCandidates = activeRows
+  const weeklyTopDawgCandidates = activeRows
     .map((row) => {
       const annualGoalScore = Math.min(Number(row.annualGoalPercent || 0), 1.5) * 35;
       const quarterlyGoalScore = Math.min(Number(row.quarterlyGoalPercent || 0), 1.5) * 25;
@@ -1133,47 +1133,60 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
 
       return {
         ...row,
-        employeeOfWeekScore:
+        weeklyTopDawgScore:
           annualGoalScore + quarterlyGoalScore + closingScore + rollingRevenueScore,
       };
     })
-    .sort((a, b) => b.employeeOfWeekScore - a.employeeOfWeekScore);
+    .sort((a, b) => b.weeklyTopDawgScore - a.weeklyTopDawgScore);
 
-  const employeeOfWeek = employeeOfWeekCandidates[0];
+  const weeklyTopDawg = weeklyTopDawgCandidates[0];
 
-  const getEmployeeOfWeekReasons = (row) => {
+  const getWeeklyTopDawgReasons = (row) => {
     if (!row) return [];
 
     const reasons = [];
+    const teamRolling90Gap =
+      Number(row.rolling90ClosingRate || 0) - Number(rolling90ClosingAverage || 0);
 
     if (annualRevenueLeader?.name === row.name) {
-      reasons.push(`leads FYTD production at ${money(row.annualRevenue)}`);
+      reasons.push(`Leads FYTD production at ${money(row.annualRevenue)}`);
     }
 
     if (rolling90ClosingLeader?.name === row.name) {
-      reasons.push(`leads Rolling 90-Day Closing Rate at ${displayPercent(row.rolling90ClosingRate, 1)}`);
-    }
-
-    if (Number(row.quarterlyGoalPercent || 0) >= 1) {
-      reasons.push(`is above quarterly goal pace at ${displayPercent(row.quarterlyGoalPercent, 1)}`);
-    }
-
-    if (annualGoalLeader?.name === row.name) {
-      reasons.push(`has the strongest annual goal progress at ${displayPercent(row.annualGoalPercent, 1)}`);
+      reasons.push(`Leads the team in Rolling 90-Day Closing Rate at ${displayPercent(row.rolling90ClosingRate, 1)}`);
     }
 
     if (rolling90RevenueLeader?.name === row.name) {
-      reasons.push(`leads Rolling 90-Day revenue at ${money(row.rolling90Revenue)}`);
+      reasons.push(`Leads Rolling 90-Day revenue at ${money(row.rolling90Revenue)}`);
+    }
+
+    if (Number(row.quarterlyGoalPercent || 0) >= 1) {
+      reasons.push(`Is above quarterly goal pace at ${displayPercent(row.quarterlyGoalPercent, 1)}`);
+    }
+
+    if (annualGoalLeader?.name === row.name) {
+      reasons.push(`Has the strongest annual goal progress at ${displayPercent(row.annualGoalPercent, 1)}`);
+    }
+
+    if (teamRolling90Gap > 0) {
+      reasons.push(`Is ${Math.abs(teamRolling90Gap * 100).toFixed(1)} pts above the team Rolling 90-Day Closing Rate average`);
+    }
+
+    if (Number(row.rank || 0) > 0 && Number(row.rank || 0) <= 3) {
+      reasons.push(`Currently ranks #${row.rank} in FYTD production`);
+    }
+
+    if (Number(row.revenueVsTeam?.rawDifference || 0) > 0) {
+      reasons.push(`Is ${row.revenueVsTeam.label} above the team revenue average`);
     }
 
     if (!reasons.length) {
-      reasons.push(`is showing the strongest all-around score across revenue, goal pace, and Rolling 90-Day performance`);
+      reasons.push("Shows the strongest all-around score across revenue, goal pace, and Rolling 90-Day performance");
     }
 
-    return reasons.slice(0, 3);
+    return reasons.slice(0, 6);
   };
-
-  const employeeOfWeekReasons = getEmployeeOfWeekReasons(employeeOfWeek);
+  const weeklyTopDawgReasons = getWeeklyTopDawgReasons(weeklyTopDawg);
 
   const scheduledForBuild = Number(invoicePipeline.scheduledForBuild || 0);
   const needsToBeInvoiced = Number(invoicePipeline.needsToBeInvoiced || 0);
@@ -1292,9 +1305,9 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     )}. Reinforce the appointment and follow-up habits behind that performance.`;
   }
 
-  const employeeOfWeekText = employeeOfWeek
-    ? `Employee of the Week: ${employeeOfWeek.name}. Why: ${employeeOfWeekReasons.join("; ")}.`
-    : "Employee of the Week will appear once enough performance data is available.";
+  const weeklyTopDawgText = weeklyTopDawg
+    ? `Weekly Top Dawg: ${weeklyTopDawg.name}. Why: ${weeklyTopDawgReasons.join("; ")}.`
+    : "Weekly Top Dawg will appear once enough performance data is available.";
 
   const primaryLeadershipFocus = rolling90ClosingLow
     ? `${rolling90ClosingLow.name}'s Rolling 90-Day Closing Rate is the biggest coaching opportunity at ${displayPercent(
@@ -1306,8 +1319,8 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       )}).`
     : "Rolling 90-Day Closing Rate coaching data is still loading.";
 
-  const prioritySentence = employeeOfWeek
-    ? `Today's leadership focus: coach where performance is lagging and recognize ${employeeOfWeek.name} as Employee of the Week.`
+  const prioritySentence = weeklyTopDawg
+    ? `Today's leadership focus: coach where performance is lagging and recognize ${weeklyTopDawg.name} as Weekly Top Dawg.`
     : "Today's leadership focus: coach where performance is lagging and recognize strong execution.";
 
   const executiveBrief = [
@@ -1348,12 +1361,12 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     brief: executiveBrief,
     healthCards,
     priorities,
-    employeeOfWeek: employeeOfWeek
+    weeklyTopDawg: weeklyTopDawg
       ? {
-          name: employeeOfWeek.name,
-          image: employeeOfWeek.image,
-          score: employeeOfWeek.employeeOfWeekScore,
-          reasons: employeeOfWeekReasons,
+          name: weeklyTopDawg.name,
+          image: weeklyTopDawg.image,
+          score: weeklyTopDawg.weeklyTopDawgScore,
+          reasons: weeklyTopDawgReasons,
         }
       : null,
     sections: [
@@ -1487,7 +1500,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
-    const employeeOfWeek = executiveSummary.employeeOfWeek;
+    const weeklyTopDawg = executiveSummary.weeklyTopDawg;
     const activeSummarySection =
       executiveSummary.sections.find(
         (section) => section.title === activeSummaryTab
@@ -1722,21 +1735,21 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
             </p>
           </div>
 
-          {employeeOfWeek && (
+          {weeklyTopDawg && (
             <div className="employee-of-week-card">
               <div className="employee-of-week-person">
-                <img src={employeeOfWeek.image} alt={employeeOfWeek.name} />
+                <span>Weekly Top Dawg</span>
+                <img src={weeklyTopDawg.image} alt={weeklyTopDawg.name} />
                 <div>
-                  <span>Employee of the Week</span>
-                  <h3>{employeeOfWeek.name}</h3>
+                  <h3>{weeklyTopDawg.name}</h3>
                 </div>
               </div>
 
               <div className="employee-of-week-reasons">
-                <span>Why they earned it</span>
+                <span>Why they earned Top Dawg this week</span>
                 <ul>
-                  {employeeOfWeek.reasons.map((reason, index) => (
-                    <li key={`employee-of-week-reason-${index}`}>{reason}</li>
+                  {weeklyTopDawg.reasons.map((reason, index) => (
+                    <li key={`weekly-top-dawg-reason-${index}`}>{reason}</li>
                   ))}
                 </ul>
               </div>
