@@ -3480,7 +3480,7 @@ const closeNeedsMessages = [
   "Bub, don't quit. Tighten the follow-up and the closes will come.",
   "No excuses, only progress. Every appointment is a chance to sharpen the process.",
   "You got this. Focus on listening, solving, and asking clearly for the business.",
-  "Keep deep driving through the customer's real concerns.",
+  "Keep focusing on the training - you got this.",
   "One team one dream. Use the training, trust the process, and keep pushing.",
   "The close starts long before the paperwork. Stay engaged from the first conversation.",
   "Bub, small improvements here can change the whole month.",

@@ -908,7 +908,7 @@ body {
 /* ===== Executive Command Center Upgrade ===== */
 .executive-command-header {
   background:
-    radial-gradient(circle at top right, rgba(185, 28, 28, 0.35), transparent 34%),
+    radial-gradient(circle at top right, rgba(240, 1, 1, 0.761), transparent 34%),
     linear-gradient(135deg, #0f172a, #111827 58%, #1f2937);
 }
 
