@@ -556,6 +556,18 @@ const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Performance");
       return bounds.end >= startDate && bounds.start <= endDate;
     });
 
+    const getManagerClosingRateForRange = (pmName, startDate, endDate) => {
+  const months = getManagerMonthsInRange(startDate, endDate);
+
+  const rates = months
+    .map((month) => getPMMetric(pmName, "Monthly Closing Rate", month))
+    .filter((rate) => Number(rate || 0) > 0);
+
+  if (!rates.length) return 0;
+
+  return rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
+};
+
 const getLatestPMMetric = (pmName, metric) => {
   const availableMonths = fiscalMonths
     .filter((month) => Number(getPMMetric(pmName, metric, month) || 0) > 0);
