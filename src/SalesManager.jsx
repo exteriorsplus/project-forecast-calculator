@@ -1206,16 +1206,41 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     prioritySentence,
   ].join(" ");
 
+  const rolling90LeadershipRows = activeRows
+    .slice()
+    .filter((row) => Number(row.rolling90ClosingRate || 0) > 0)
+    .sort(
+      (a, b) =>
+        Number(a.rolling90ClosingRate || 0) -
+        Number(b.rolling90ClosingRate || 0)
+    );
+
+  const secondaryRolling90ClosingLow = rolling90LeadershipRows.find((row) => {
+    const alreadyCalledOut = [
+      rolling90ClosingLow?.name,
+      annualGoalLow?.name,
+    ].filter(Boolean);
+
+    return (
+      !alreadyCalledOut.includes(row.name) &&
+      Number(row.rolling90ClosingRate || 0) < rolling90ClosingAverage
+    );
+  });
+
   const priorities = [
     rolling90ClosingLow
-      ? `Coach ${rolling90ClosingLow.name} on Rolling 90-Day Closing Rate (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
+      ? `Meet with ${rolling90ClosingLow.name} to improve Rolling 90-Day Closing Rate (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
       : "Review rolling 90-day closing data once metrics are loaded.",
+
     annualGoalLow
-      ? `Review ${annualGoalLow.name}'s annual goal plan — ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
+      ? `Review ${annualGoalLow.name}'s annual production plan. ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
       : "Review annual goal pace once revenue data is loaded.",
-    annualRevenueLeader
+
+    secondaryRolling90ClosingLow
+      ? `Work with ${secondaryRolling90ClosingLow.name} on improving Rolling 90-Day Closing Rate (${displayPercent(secondaryRolling90ClosingLow.rolling90ClosingRate, 1)}, ${formatPointGap(secondaryRolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
+      : annualRevenueLeader
       ? `Recognize ${annualRevenueLeader.name} for leading FYTD production.`
-      : "Recognize the current revenue leader once rankings are available.",
+      : "Review the next leadership opportunity once rankings are available.",
   ];
 
   return {
@@ -1431,8 +1456,8 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
 
           <div className="executive-priority-card">
             <div className="manager-summary-section-header">
-              <span>Recommended Actions</span>
-              <h3>Today's Priorities</h3>
+              <span>Leadership Focus</span>
+              <h3>Leadership Opportunities</h3>
             </div>
 
             <div className="executive-priority-list">
