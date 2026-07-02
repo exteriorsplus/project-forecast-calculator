@@ -556,16 +556,14 @@ const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Performance");
       return bounds.end >= startDate && bounds.start <= endDate;
     });
 
-  const getManagerClosingRateForRange = (pmName, startDate, endDate) => {
-    const months = getManagerMonthsInRange(startDate, endDate);
-    const rates = months
-      .map((month) => getPMMetric(pmName, "Monthly Closing Rate", month))
-      .filter((rate) => Number(rate || 0) > 0);
+const getLatestPMMetric = (pmName, metric) => {
+  const availableMonths = fiscalMonths
+    .filter((month) => Number(getPMMetric(pmName, metric, month) || 0) > 0);
 
-    if (!rates.length) return 0;
+  const latestMonth = availableMonths[availableMonths.length - 1];
 
-    return rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
-  };
+  return latestMonth ? getPMMetric(pmName, metric, latestMonth) : 0;
+};
 
   const getManagerMetrics = () => {
     const reps = getManagerSalesReps();
@@ -671,11 +669,10 @@ const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Performance");
         quarterMTD.end
       );
 
-      const rolling90ClosingRate = getManagerClosingRateForRange(
-        pm.name,
-        rolling90Start,
-        rolling90End
-      );
+const rolling90ClosingRate = getLatestPMMetric(
+  pm.name,
+  "Rolling 90-Day Closing Rate"
+);
 
       return {
         name: pm.name,
