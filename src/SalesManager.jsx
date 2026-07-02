@@ -1118,6 +1118,63 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     .filter((row) => row.revenueVsTeam.className === "positive")
     .sort((a, b) => b.revenueVsTeam.rawDifference - a.revenueVsTeam.rawDifference);
 
+  const averageRolling90Revenue = getAverage(activeRows, "rolling90Revenue");
+
+  const employeeOfWeekCandidates = activeRows
+    .map((row) => {
+      const annualGoalScore = Math.min(Number(row.annualGoalPercent || 0), 1.5) * 35;
+      const quarterlyGoalScore = Math.min(Number(row.quarterlyGoalPercent || 0), 1.5) * 25;
+      const closingScore = rolling90ClosingAverage
+        ? Math.min(Number(row.rolling90ClosingRate || 0) / rolling90ClosingAverage, 1.5) * 25
+        : 0;
+      const rollingRevenueScore = averageRolling90Revenue
+        ? Math.min(Number(row.rolling90Revenue || 0) / averageRolling90Revenue, 1.5) * 15
+        : 0;
+
+      return {
+        ...row,
+        employeeOfWeekScore:
+          annualGoalScore + quarterlyGoalScore + closingScore + rollingRevenueScore,
+      };
+    })
+    .sort((a, b) => b.employeeOfWeekScore - a.employeeOfWeekScore);
+
+  const employeeOfWeek = employeeOfWeekCandidates[0];
+
+  const getEmployeeOfWeekReasons = (row) => {
+    if (!row) return [];
+
+    const reasons = [];
+
+    if (annualRevenueLeader?.name === row.name) {
+      reasons.push(`leads FYTD production at ${money(row.annualRevenue)}`);
+    }
+
+    if (rolling90ClosingLeader?.name === row.name) {
+      reasons.push(`leads Rolling 90-Day Closing Rate at ${displayPercent(row.rolling90ClosingRate, 1)}`);
+    }
+
+    if (Number(row.quarterlyGoalPercent || 0) >= 1) {
+      reasons.push(`is above quarterly goal pace at ${displayPercent(row.quarterlyGoalPercent, 1)}`);
+    }
+
+    if (annualGoalLeader?.name === row.name) {
+      reasons.push(`has the strongest annual goal progress at ${displayPercent(row.annualGoalPercent, 1)}`);
+    }
+
+    if (rolling90RevenueLeader?.name === row.name) {
+      reasons.push(`leads Rolling 90-Day revenue at ${money(row.rolling90Revenue)}`);
+    }
+
+    if (!reasons.length) {
+      reasons.push(`is showing the strongest all-around score across revenue, goal pace, and Rolling 90-Day performance`);
+    }
+
+    return reasons.slice(0, 3);
+  };
+
+  const employeeOfWeekReasons = getEmployeeOfWeekReasons(employeeOfWeek);
+
   const scheduledForBuild = Number(invoicePipeline.scheduledForBuild || 0);
   const needsToBeInvoiced = Number(invoicePipeline.needsToBeInvoiced || 0);
   const balanceDue = Number(invoicePipeline.balanceDue || 0);
@@ -1174,8 +1231,40 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     healthCards.find((card) => card.status === "attention") ||
     healthCards.find((card) => card.status === "watch");
 
+  const coachingOpportunityText = rolling90ClosingLow
+    ? `Meet with ${rolling90ClosingLow.name} to improve Rolling 90-Day Closing Rate. Current rate is ${displayPercent(
+        rolling90ClosingLow.rolling90ClosingRate,
+        1
+      )}, which is ${formatPointGap(
+        rolling90ClosingLow.rolling90ClosingRate,
+        rolling90ClosingAverage
+      )}.`
+    : "Review Rolling 90-Day Closing Rate once metrics are loaded.";
+
+  let recognitionOpportunityText = annualRevenueLeader
+    ? `Recognize ${annualRevenueLeader.name} for leading FYTD production at ${money(
+        annualRevenueLeader.annualRevenue
+      )}. Reinforce the habits driving that success.`
+    : "Recognize the current revenue leader once rankings are available.";
+
+  if (quarterlyGoalLeader && Number(quarterlyGoalLeader.quarterlyGoalPercent || 0) >= 1) {
+    recognitionOpportunityText = `Recognize ${quarterlyGoalLeader.name} for exceeding quarterly goal pace at ${displayPercent(
+      quarterlyGoalLeader.quarterlyGoalPercent,
+      1
+    )}. Reinforce the behaviors creating that momentum.`;
+  } else if (rolling90ClosingLeader && rolling90ClosingLeader.name !== rolling90ClosingLow?.name) {
+    recognitionOpportunityText = `Recognize ${rolling90ClosingLeader.name} for leading Rolling 90-Day Closing Rate at ${displayPercent(
+      rolling90ClosingLeader.rolling90ClosingRate,
+      1
+    )}. Reinforce the appointment and follow-up habits behind that performance.`;
+  }
+
+  const employeeOfWeekText = employeeOfWeek
+    ? `Employee of the Week: ${employeeOfWeek.name}. Why: ${employeeOfWeekReasons.join("; ")}.`
+    : "Employee of the Week will appear once enough performance data is available.";
+
   const primaryLeadershipFocus = rolling90ClosingLow
-    ? `${rolling90ClosingLow.name}'s Rolling 90-Day Closing Rate is the biggest leadership opportunity at ${displayPercent(
+    ? `${rolling90ClosingLow.name}'s Rolling 90-Day Closing Rate is the biggest coaching opportunity at ${displayPercent(
         rolling90ClosingLow.rolling90ClosingRate,
         1
       )} (${formatPointGap(
@@ -1184,12 +1273,9 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       )}).`
     : "Rolling 90-Day Closing Rate coaching data is still loading.";
 
-  const prioritySentence =
-    weakestHealthArea?.label === "Rolling 90-Day Closing Rate"
-      ? "Today's priority: improve the team's Rolling 90-Day Closing Rate."
-      : weakestHealthArea
-      ? `Today's priority: keep ${weakestHealthArea.label.toLowerCase()} in focus.`
-      : "No major red flags are showing in the core operating metrics.";
+  const prioritySentence = employeeOfWeek
+    ? `Today's leadership focus: coach where performance is lagging and recognize ${employeeOfWeek.name} as Employee of the Week.`
+    : "Today's leadership focus: coach where performance is lagging and recognize strong execution.";
 
   const executiveBrief = [
     `${greeting} Revenue remains ${statusLabel[revenueStatus]} at ${money(
@@ -1206,41 +1292,19 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     prioritySentence,
   ].join(" ");
 
-  const rolling90LeadershipRows = activeRows
-    .slice()
-    .filter((row) => Number(row.rolling90ClosingRate || 0) > 0)
-    .sort(
-      (a, b) =>
-        Number(a.rolling90ClosingRate || 0) -
-        Number(b.rolling90ClosingRate || 0)
-    );
-
-  const secondaryRolling90ClosingLow = rolling90LeadershipRows.find((row) => {
-    const alreadyCalledOut = [
-      rolling90ClosingLow?.name,
-      annualGoalLow?.name,
-    ].filter(Boolean);
-
-    return (
-      !alreadyCalledOut.includes(row.name) &&
-      Number(row.rolling90ClosingRate || 0) < rolling90ClosingAverage
-    );
-  });
-
   const priorities = [
-    rolling90ClosingLow
-      ? `Meet with ${rolling90ClosingLow.name} to improve Rolling 90-Day Closing Rate (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
-      : "Review rolling 90-day closing data once metrics are loaded.",
-
-    annualGoalLow
-      ? `Review ${annualGoalLow.name}'s annual production plan. ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
-      : "Review annual goal pace once revenue data is loaded.",
-
-    secondaryRolling90ClosingLow
-      ? `Work with ${secondaryRolling90ClosingLow.name} on improving Rolling 90-Day Closing Rate (${displayPercent(secondaryRolling90ClosingLow.rolling90ClosingRate, 1)}, ${formatPointGap(secondaryRolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
-      : annualRevenueLeader
-      ? `Recognize ${annualRevenueLeader.name} for leading FYTD production.`
-      : "Review the next leadership opportunity once rankings are available.",
+    {
+      label: "Coaching Opportunity",
+      text: coachingOpportunityText,
+    },
+    {
+      label: "Recognition Opportunity",
+      text: recognitionOpportunityText,
+    },
+    {
+      label: "Employee of the Week",
+      text: employeeOfWeekText,
+    },
   ];
 
   return {
@@ -1464,7 +1528,14 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
               {executiveSummary.priorities.map((item, index) => (
                 <div className="executive-priority-item" key={`priority-${index}`}>
                   <span>{index + 1}</span>
-                  <p>{item}</p>
+                  {typeof item === "string" ? (
+                    <p>{item}</p>
+                  ) : (
+                    <div>
+                      <strong>{item.label}</strong>
+                      <p>{item.text}</p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
