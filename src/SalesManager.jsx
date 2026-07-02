@@ -1213,9 +1213,6 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     annualGoalLow
       ? `Review ${annualGoalLow.name}'s annual goal plan — ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
       : "Review annual goal pace once revenue data is loaded.",
-    balanceDue > 0
-      ? `Keep ${money(balanceDue)} in balance due visible until collected.`
-      : "Collections look clean right now.",
     annualRevenueLeader
       ? `Recognize ${annualRevenueLeader.name} for leading FYTD production.`
       : "Recognize the current revenue leader once rankings are available.",
