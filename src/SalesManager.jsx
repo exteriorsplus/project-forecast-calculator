@@ -1184,7 +1184,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       reasons.push("Shows the strongest all-around score across revenue, goal pace, and Rolling 90-Day performance");
     }
 
-    return reasons.slice(0, 6);
+    return reasons.slice(0, 8);
   };
   const weeklyTopDawgReasons = getWeeklyTopDawgReasons(weeklyTopDawg);
 
