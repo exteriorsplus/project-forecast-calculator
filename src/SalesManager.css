@@ -1189,7 +1189,7 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 48px;
-  align-items: center;
+align-items: start;
   padding: 38px;
   margin: 24px 0 30px;
   background: #f8fafc;
@@ -1217,6 +1217,11 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+.employee-of-week-heading {
+  margin-top: 0;
+  margin-bottom: 14px;
+  padding-top: 0;
 }
 
 .employee-of-week-person img {
