@@ -1003,9 +1003,19 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     (row) => !REPAIR_SPECIALISTS.includes(row.name)
   );
 
+const hour = new Date().getHours();
+
+const greeting =
+  hour < 12
+    ? "Good Morning Mike -"
+    : hour < 17
+    ? "Good Afternoon Mike -"
+    : "Good Evening Mike -";
+
   const getHighest = (list, key) =>
     list
       .slice()
+      .filter((row) => Number(row[key] || 0) > 0)
       .sort((a, b) => Number(b[key] || 0) - Number(a[key] || 0))[0];
 
   const getLowest = (list, key) =>
@@ -1045,6 +1055,18 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     const gap = Number(value || 0) - Number(teamAverage || 0);
     return `${Math.abs(gap * 100).toFixed(1)} pts ${gap >= 0 ? "above" : "below"} team average`;
   };
+
+  const getStatus = ({ good, warning }) => {
+    if (good) return "good";
+    if (warning) return "watch";
+    return "attention";
+  };
+
+const statusLabel = {
+  good: "ahead of plan",
+  watch: "slightly behind plan",
+  attention: "needs immediate attention",
+};
 
   const monthlyRevenueLeader = getHighest(activeRows, "monthlyRevenue");
   const monthlyClosingLeader = getHighest(activeRows, "monthlyClosingRate");
@@ -1089,11 +1111,96 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   const balanceDue = Number(invoicePipeline.balanceDue || 0);
   const totalPipeline = Number(invoicePipeline.totalPipeline || 0);
 
+  const revenueStatus = getStatus({
+    good: Number(totals.totalGoalPercent || 0) >= 1 || totals.teamVsLY.className === "positive",
+    warning: Number(totals.totalGoalPercent || 0) >= 0.9 || totals.teamVsLY.rawDifference >= -0.05,
+  });
+
+  const closingStatus = getStatus({
+    good: Number(totals.teamClosingRate || 0) >= 0.35,
+    warning: Number(totals.teamClosingRate || 0) >= 0.28,
+  });
+
+  const cashFlowStatus = getStatus({
+    good: totalPipeline >= 1000000,
+    warning: totalPipeline >= 500000,
+  });
+
+  const collectionsStatus = getStatus({
+    good: balanceDue <= 150000,
+    warning: balanceDue <= 300000,
+  });
+
+  const healthCards = [
+    {
+      label: "Revenue",
+      status: revenueStatus,
+      value: money(totals.totalRevenue),
+      note: `${totals.teamVsLY.label} vs LY`,
+    },
+    {
+      label: "Closing Rate",
+      status: closingStatus,
+      value: displayPercent(totals.teamClosingRate, 1),
+      note: "Active rep average",
+    },
+    {
+      label: "Cash Flow",
+      status: cashFlowStatus,
+      value: money(totalPipeline),
+      note: "Future cash pipeline",
+    },
+    {
+      label: "Collections",
+      status: collectionsStatus,
+      value: money(balanceDue),
+      note: "Balance due",
+    },
+  ];
+
+  const weakestHealthArea = healthCards.find((card) => card.status === "attention") ||
+    healthCards.find((card) => card.status === "watch");
+
+  const briefParts = [
+    `Revenue is ${statusLabel[revenueStatus]} at ${money(
+  totals.totalRevenue
+)}, (${totals.teamVsLY.label} versus last fiscal year).`,
+    annualRevenueLeader
+      ? `${annualRevenueLeader.name} leads FYTD production at ${money(annualRevenueLeader.annualRevenue)}.`
+      : "FYTD production leader is not available yet.",
+    annualClosingLow
+      ? `${annualClosingLow.name} is the primary closing-rate coaching focus at ${displayPercent(annualClosingLow.closingRate, 1)}.`
+      : "Closing-rate coaching data is still loading.",
+    `Cash flow shows ${money(totalPipeline)} in visible future pipeline.`,
+    weakestHealthArea
+      ? `${weakestHealthArea.label} is the area that deserves the most attention today.`
+      : "No major red flags are showing in the core operating metrics.",
+  ];
+
+  const priorities = [
+    annualClosingLow
+      ? `Coach ${annualClosingLow.name} on closing rate (${formatPointGap(annualClosingLow.closingRate, annualClosingAverage)}).`
+      : "Review closing-rate data once monthly metrics are loaded.",
+    annualGoalLow
+      ? `Review ${annualGoalLow.name}'s annual goal plan — ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
+      : "Review annual goal pace once revenue data is loaded.",
+    balanceDue > 0
+      ? `Keep ${money(balanceDue)} in balance due visible until collected.`
+      : "Collections look clean right now.",
+    annualRevenueLeader
+      ? `Recognize ${annualRevenueLeader.name} for leading FYTD production.`
+      : "Recognize the current revenue leader once rankings are available.",
+  ];
+
   return {
+    brief: `${greeting} ${briefParts.join(" ")}`,
+    healthCards,
+    priorities,
     sections: [
       {
         title: "Monthly Performance",
         eyebrow: "Current Month",
+        status: monthlyGoalLow && Number(monthlyGoalLow.monthlyGoalPercent || 0) < 0.75 ? "attention" : monthlyAtGoalCount > 0 ? "good" : "watch",
         positive: [
           monthlyRevenueLeader
             ? `${monthlyRevenueLeader.name} leads monthly revenue at ${money(monthlyRevenueLeader.monthlyRevenue)}.`
@@ -1121,6 +1228,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       {
         title: "Quarterly Performance",
         eyebrow: "Quarter-to-Date",
+        status: quarterlyGoalLow && Number(quarterlyGoalLow.quarterlyGoalPercent || 0) < 0.75 ? "attention" : quarterlyAtGoalCount > 0 ? "good" : "watch",
         positive: [
           quarterlyRevenueLeader
             ? `${quarterlyRevenueLeader.name} leads quarter-to-date revenue at ${money(quarterlyRevenueLeader.quarterMTDRevenue)}.`
@@ -1148,6 +1256,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       {
         title: "Fiscal YTD Performance",
         eyebrow: "Annual Pace",
+        status: revenueStatus,
         positive: [
           `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
           annualRevenueLeader
@@ -1178,6 +1287,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       {
         title: "Business Health",
         eyebrow: "Cash Pipeline",
+        status: balanceDue > 300000 ? "attention" : balanceDue > 150000 ? "watch" : "good",
         positive: [
           `${money(totalPipeline)} total future cash pipeline is currently visible.`,
           `${money(scheduledForBuild)} is already sold and scheduled for production.`,
@@ -1195,8 +1305,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       },
     ],
   };
-};
-  const SalesManagerDashboard = () => {
+};  const SalesManagerDashboard = () => {
     const managerMetrics = getManagerMetrics();
     const { rows, totals, ranges } = managerMetrics;
     const invoicePipeline = getInvoicePipeline();
@@ -1206,17 +1315,20 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       executiveSummary.sections.find(
         (section) => section.title === activeSummaryTab
       ) || executiveSummary.sections[0];
+    const todayLabel = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
 
     return (
       <div className="sales-manager-page">
-        <header className="manager-header">
+        <header className="manager-header executive-command-header">
           <img src="/logo.png" alt="Logo" className="manager-logo" />
           <div>
-            <span>Sales Manager Portal</span>
-            <h1>Sales Performance Command Center</h1>
-            <p>
-              Revenue, closing rate, year-over-year movement, team averages, and goal progress.
-            </p>
+            <span>Exteriors Plus</span>
+            <h1>Executive Command Center</h1>
+            <p>{todayLabel}</p>
           </div>
         </header>
 
@@ -1248,66 +1360,101 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
           </div>
         </section>
 
-        <section className="manager-panel manager-executive-summary-panel">
+        <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
             <div>
-              <span>Executive Brief</span>
-              <h2>Executive Summary</h2>
+              <span>Executive Intelligence</span>
+              <h2>Today's Executive Brief</h2>
             </div>
-            <p>Automatically generated from current sales, closing-rate, goal, and cash-pipeline data.</p>
+            <p>What the business needs from you today.</p>
           </div>
 
-<div className="manager-summary-tabs">
-  {executiveSummary.sections.map((section) => (
-    <button
-      type="button"
-      key={section.title}
-      className={activeSummarySection.title === section.title ? "active" : ""}
-      onClick={() => setActiveSummaryTab(section.title)}
-    >
-      {section.title.replace(" Performance", "").replace("Fiscal YTD", "Annual")}
-    </button>
-  ))}
-</div>
-
-{activeSummarySection && (
-  <div className="manager-summary-section-card active">
-    <div className="manager-summary-section-header">
-      <span>{activeSummarySection.eyebrow}</span>
-      <h3>{activeSummarySection.title}</h3>
-    </div>
-
-    <div className="manager-executive-summary-grid">
-      <div className="manager-summary-column positive">
-        <h4>Positive Momentum</h4>
-
-        {activeSummarySection.positive.map((item, index) => (
-          <div
-            className="manager-executive-summary-item positive"
-            key={`${activeSummarySection.title}-positive-${index}`}
-          >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <p>{item}</p>
+          <div className="executive-brief-card">
+            <p>{executiveSummary.brief}</p>
           </div>
-        ))}
-      </div>
 
-      <div className="manager-summary-column coaching">
-        <h4>Coaching Focus</h4>
-
-        {activeSummarySection.coaching.map((item, index) => (
-          <div
-            className="manager-executive-summary-item coaching"
-            key={`${activeSummarySection.title}-coaching-${index}`}
-          >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <p>{item}</p>
+          <div className="executive-health-grid">
+            {executiveSummary.healthCards.map((card) => (
+              <div
+                className={`executive-health-card ${card.status}`}
+                key={card.label}
+              >
+                <span>{card.label}</span>
+                <strong>{card.value}</strong>
+                <small>{card.note}</small>
+                <b>{card.status === "good" ? "Healthy" : card.status === "watch" ? "Watch" : "Attention"}</b>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
+
+          <div className="executive-priority-card">
+            <div className="manager-summary-section-header">
+              <span>Recommended Actions</span>
+              <h3>Today's Priorities</h3>
+            </div>
+
+            <div className="executive-priority-list">
+              {executiveSummary.priorities.map((item, index) => (
+                <div className="executive-priority-item" key={`priority-${index}`}>
+                  <span>{index + 1}</span>
+                  <p>{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="manager-summary-tabs">
+            {executiveSummary.sections.map((section) => (
+              <button
+                type="button"
+                key={section.title}
+                className={`${activeSummarySection.title === section.title ? "active" : ""} ${section.status}`}
+                onClick={() => setActiveSummaryTab(section.title)}
+              >
+                <span className="summary-tab-status" />
+                {section.title.replace(" Performance", "").replace("Fiscal YTD", "Annual")}
+              </button>
+            ))}
+          </div>
+
+          {activeSummarySection && (
+            <div className={`manager-summary-section-card active ${activeSummarySection.status}`}>
+              <div className="manager-summary-section-header">
+                <span>{activeSummarySection.eyebrow}</span>
+                <h3>{activeSummarySection.title}</h3>
+              </div>
+
+              <div className="manager-executive-summary-grid">
+                <div className="manager-summary-column positive">
+                  <h4>Who Deserves Praise</h4>
+
+                  {activeSummarySection.positive.map((item, index) => (
+                    <div
+                      className="manager-executive-summary-item positive"
+                      key={`${activeSummarySection.title}-positive-${index}`}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <p>{item}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="manager-summary-column coaching">
+                  <h4>Who Needs Coaching</h4>
+
+                  {activeSummarySection.coaching.map((item, index) => (
+                    <div
+                      className="manager-executive-summary-item coaching"
+                      key={`${activeSummarySection.title}-coaching-${index}`}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <p>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="manager-panel">
@@ -1387,7 +1534,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
               <h2>Salesperson Performance</h2>
             </div>
             <p>
-              FYTD {formatShortDate(ranges.fiscalYTD.start)} – {formatShortDate(ranges.fiscalYTD.end)} compared to LY {formatShortDate(ranges.priorFiscalYTD.start)} – {formatShortDate(ranges.priorFiscalYTD.end)}.
+              FYTD {formatShortDate(ranges.fiscalYTD.start)} – {formatShortDate(ranges.fiscalYTD.end)} compared to LY {formatShortDate(ranges.priorFiscalYTD.start)} – {formatShortDate(ranges.priorFiscalYTD.end)}
             </p>
           </div>
 
