@@ -1003,14 +1003,14 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     (row) => !REPAIR_SPECIALISTS.includes(row.name)
   );
 
-const hour = new Date().getHours();
+  const hour = new Date().getHours();
 
-const greeting =
-  hour < 12
-    ? "Good Morning Mike -"
-    : hour < 17
-    ? "Good Afternoon Mike -"
-    : "Good Evening Mike -";
+  const greeting =
+    hour < 12
+      ? "Good Morning Mike -"
+      : hour < 17
+      ? "Good Afternoon Mike -"
+      : "Good Evening Mike -";
 
   const getHighest = (list, key) =>
     list
@@ -1062,30 +1062,33 @@ const greeting =
     return "attention";
   };
 
-const statusLabel = {
-  good: "ahead of plan",
-  watch: "slightly behind plan",
-  attention: "needs immediate attention",
-};
+  const statusLabel = {
+    good: "ahead of plan",
+    watch: "slightly behind plan",
+    attention: "needs immediate attention",
+  };
 
   const monthlyRevenueLeader = getHighest(activeRows, "monthlyRevenue");
-  const monthlyClosingLeader = getHighest(activeRows, "monthlyClosingRate");
+  const monthlyContractsLeader = getHighest(activeRows, "monthlyContracts");
+  const monthlyAverageContractLeader = getHighest(activeRows, "monthlyAverageContract");
   const monthlyGoalLeader = getHighest(activeRows, "monthlyGoalPercent");
-  const monthlyClosingLow = getLowest(activeRows, "monthlyClosingRate");
+  const monthlyRevenueLow = getLowest(revenueCoachingRows, "monthlyRevenue");
   const monthlyGoalLow = getLowest(activeRows, "monthlyGoalPercent");
-  const monthlyRevenueGap = getLargestRevenueGap(revenueCoachingRows, "monthlyRevenue");
-  const monthlyClosingAverage = getAverage(activeRows, "monthlyClosingRate");
+  const monthlyAverageContractLow = getLowest(revenueCoachingRows, "monthlyAverageContract");
   const monthlyAtGoalCount = activeRows.filter(
     (row) => Number(row.monthlyGoalPercent || 0) >= 1
   ).length;
 
+  const rolling90ClosingLeader = getHighest(activeRows, "rolling90ClosingRate");
+  const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
+  const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
+  const rolling90ClosingAverage = getAverage(activeRows, "rolling90ClosingRate");
+  const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
+
   const quarterlyRevenueLeader = getHighest(activeRows, "quarterMTDRevenue");
-  const quarterlyClosingLeader = getHighest(activeRows, "quarterMTDClosingRate");
   const quarterlyGoalLeader = getHighest(activeRows, "quarterlyGoalPercent");
-  const quarterlyClosingLow = getLowest(activeRows, "quarterMTDClosingRate");
   const quarterlyGoalLow = getLowest(activeRows, "quarterlyGoalPercent");
   const quarterlyRevenueGap = getLargestRevenueGap(revenueCoachingRows, "quarterMTDRevenue");
-  const quarterlyClosingAverage = getAverage(activeRows, "quarterMTDClosingRate");
   const quarterlyAtGoalCount = activeRows.filter(
     (row) => Number(row.quarterlyGoalPercent || 0) >= 1
   ).length;
@@ -1117,8 +1120,8 @@ const statusLabel = {
   });
 
   const closingStatus = getStatus({
-    good: Number(totals.teamClosingRate || 0) >= 0.35,
-    warning: Number(totals.teamClosingRate || 0) >= 0.28,
+    good: rolling90ClosingAverage >= 0.35,
+    warning: rolling90ClosingAverage >= 0.28,
   });
 
   const cashFlowStatus = getStatus({
@@ -1139,10 +1142,10 @@ const statusLabel = {
       note: `${totals.teamVsLY.label} vs LY`,
     },
     {
-      label: "Closing Rate",
+      label: "Sales Effectiveness",
       status: closingStatus,
-      value: displayPercent(totals.teamClosingRate, 1),
-      note: "Active rep average",
+      value: displayPercent(rolling90ClosingAverage, 1),
+      note: "Rolling 90 close rate",
     },
     {
       label: "Cash Flow",
@@ -1158,19 +1161,20 @@ const statusLabel = {
     },
   ];
 
-  const weakestHealthArea = healthCards.find((card) => card.status === "attention") ||
+  const weakestHealthArea =
+    healthCards.find((card) => card.status === "attention") ||
     healthCards.find((card) => card.status === "watch");
 
   const briefParts = [
     `Revenue is ${statusLabel[revenueStatus]} at ${money(
-  totals.totalRevenue
-)}, (${totals.teamVsLY.label} versus last fiscal year).`,
+      totals.totalRevenue
+    )} (${totals.teamVsLY.label} versus last fiscal year).`,
     annualRevenueLeader
       ? `${annualRevenueLeader.name} leads FYTD production at ${money(annualRevenueLeader.annualRevenue)}.`
       : "FYTD production leader is not available yet.",
-    annualClosingLow
-      ? `${annualClosingLow.name} is the primary closing-rate coaching focus at ${displayPercent(annualClosingLow.closingRate, 1)}.`
-      : "Closing-rate coaching data is still loading.",
+    rolling90ClosingLow
+      ? `${rolling90ClosingLow.name} is the primary sales-effectiveness coaching focus at ${displayPercent(rolling90ClosingLow.rolling90ClosingRate, 1)} rolling 90-day close rate.`
+      : "Sales-effectiveness coaching data is still loading.",
     `Cash flow shows ${money(totalPipeline)} in visible future pipeline.`,
     weakestHealthArea
       ? `${weakestHealthArea.label} is the area that deserves the most attention today.`
@@ -1178,9 +1182,9 @@ const statusLabel = {
   ];
 
   const priorities = [
-    annualClosingLow
-      ? `Coach ${annualClosingLow.name} on closing rate (${formatPointGap(annualClosingLow.closingRate, annualClosingAverage)}).`
-      : "Review closing-rate data once monthly metrics are loaded.",
+    rolling90ClosingLow
+      ? `Coach ${rolling90ClosingLow.name} on sales effectiveness (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)} on rolling 90-day close rate).`
+      : "Review rolling 90-day closing data once metrics are loaded.",
     annualGoalLow
       ? `Review ${annualGoalLow.name}'s annual goal plan — ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
       : "Review annual goal pace once revenue data is loaded.",
@@ -1198,64 +1202,80 @@ const statusLabel = {
     priorities,
     sections: [
       {
-        title: "Monthly Performance",
+        title: "Monthly Production",
         eyebrow: "Current Month",
-        status: monthlyGoalLow && Number(monthlyGoalLow.monthlyGoalPercent || 0) < 0.75 ? "attention" : monthlyAtGoalCount > 0 ? "good" : "watch",
+        status:
+          monthlyGoalLow && Number(monthlyGoalLow.monthlyGoalPercent || 0) < 0.75
+            ? "attention"
+            : monthlyAtGoalCount > 0
+            ? "good"
+            : "watch",
         positive: [
           monthlyRevenueLeader
             ? `${monthlyRevenueLeader.name} leads monthly revenue at ${money(monthlyRevenueLeader.monthlyRevenue)}.`
             : "Monthly revenue leader is not available yet.",
-          monthlyClosingLeader
-            ? `${monthlyClosingLeader.name} leads monthly closing rate at ${displayPercent(monthlyClosingLeader.monthlyClosingRate, 1)}.`
-            : "Monthly closing-rate leader is not available yet.",
+          monthlyContractsLeader
+            ? `${monthlyContractsLeader.name} has the most contracts sold this month at ${monthlyContractsLeader.monthlyContracts}.`
+            : "Monthly contract count is not available yet.",
+          monthlyAverageContractLeader
+            ? `${monthlyAverageContractLeader.name} has the highest monthly average contract at ${money(monthlyAverageContractLeader.monthlyAverageContract)}.`
+            : "Monthly average contract leader is not available yet.",
           monthlyGoalLeader
             ? `${monthlyGoalLeader.name} is strongest against monthly goal pace at ${displayPercent(monthlyGoalLeader.monthlyGoalPercent, 1)}.`
             : "Monthly goal pace leader is not available yet.",
-          `${monthlyAtGoalCount} ${monthlyAtGoalCount === 1 ? "salesperson is" : "salespeople are"} at or above monthly goal pace.`,
         ],
         coaching: [
-          monthlyClosingLow
-            ? `${monthlyClosingLow.name} has the lowest monthly closing rate at ${displayPercent(monthlyClosingLow.monthlyClosingRate, 1)} (${formatPointGap(monthlyClosingLow.monthlyClosingRate, monthlyClosingAverage)}).`
-            : "Monthly closing-rate coaching data is not available yet.",
-          monthlyGoalLow
-            ? `${monthlyGoalLow.name} is lowest versus monthly goal pace at ${displayPercent(monthlyGoalLow.monthlyGoalPercent, 1)} (${money(Math.max(Number(monthlyGoalLow.monthlyGoal || 0) - Number(monthlyGoalLow.monthlyRevenue || 0), 0))} behind monthly goal).`
-            : "Monthly goal coaching data is not available yet.",
-          monthlyRevenueGap?.row
-            ? `${monthlyRevenueGap.row.name} has the largest monthly revenue gap versus the team average at ${money(monthlyRevenueGap.gap)}.`
+          monthlyRevenueLow
+            ? `${monthlyRevenueLow.name} has the lowest monthly production at ${money(monthlyRevenueLow.monthlyRevenue)}. Recommended action: review current appointment volume and open estimates.`
             : "Monthly revenue coaching data is not available yet.",
+          monthlyGoalLow
+            ? `${monthlyGoalLow.name} is lowest versus monthly goal pace at ${displayPercent(monthlyGoalLow.monthlyGoalPercent, 1)} (${money(Math.max(Number(monthlyGoalLow.monthlyGoal || 0) - Number(monthlyGoalLow.monthlyRevenue || 0), 0))} behind monthly goal). Recommended action: review this month's pipeline.`
+            : "Monthly goal coaching data is not available yet.",
+          monthlyAverageContractLow
+            ? `${monthlyAverageContractLow.name} has the lowest monthly average contract at ${money(monthlyAverageContractLow.monthlyAverageContract)}. Recommended action: review upsell opportunities and job mix.`
+            : "Monthly average-contract coaching data is not available yet.",
         ],
       },
       {
-        title: "Quarterly Performance",
-        eyebrow: "Quarter-to-Date",
-        status: quarterlyGoalLow && Number(quarterlyGoalLow.quarterlyGoalPercent || 0) < 0.75 ? "attention" : quarterlyAtGoalCount > 0 ? "good" : "watch",
+        title: "Sales Effectiveness",
+        eyebrow: "Rolling 90 Days",
+        status:
+          rolling90ClosingLow && Number(rolling90ClosingLow.rolling90ClosingRate || 0) < 0.25
+            ? "attention"
+            : rolling90ClosingAverage >= 0.28
+            ? "good"
+            : "watch",
         positive: [
+          rolling90ClosingLeader
+            ? `${rolling90ClosingLeader.name} leads rolling 90-day closing rate at ${displayPercent(rolling90ClosingLeader.rolling90ClosingRate, 1)}.`
+            : "Rolling 90-day closing-rate leader is not available yet.",
+          rolling90RevenueLeader
+            ? `${rolling90RevenueLeader.name} leads rolling 90-day revenue at ${money(rolling90RevenueLeader.rolling90Revenue)}.`
+            : "Rolling 90-day revenue leader is not available yet.",
           quarterlyRevenueLeader
             ? `${quarterlyRevenueLeader.name} leads quarter-to-date revenue at ${money(quarterlyRevenueLeader.quarterMTDRevenue)}.`
             : "Quarter-to-date revenue leader is not available yet.",
-          quarterlyClosingLeader
-            ? `${quarterlyClosingLeader.name} leads quarter-to-date closing rate at ${displayPercent(quarterlyClosingLeader.quarterMTDClosingRate, 1)}.`
-            : "Quarter-to-date closing-rate leader is not available yet.",
-          quarterlyGoalLeader
-            ? `${quarterlyGoalLeader.name} is strongest against quarterly goal pace at ${displayPercent(quarterlyGoalLeader.quarterlyGoalPercent, 1)}.`
-            : "Quarterly goal pace leader is not available yet.",
-          `${quarterlyAtGoalCount} ${quarterlyAtGoalCount === 1 ? "salesperson is" : "salespeople are"} at or above quarterly goal pace.`,
+          quarterlyAtGoalCount > 0
+            ? `${quarterlyAtGoalCount} ${quarterlyAtGoalCount === 1 ? "salesperson is" : "salespeople are"} at or above quarterly goal pace.`
+            : "No salesperson is currently at quarterly goal pace.",
         ],
         coaching: [
-          quarterlyClosingLow
-            ? `${quarterlyClosingLow.name} has the lowest quarter-to-date closing rate at ${displayPercent(quarterlyClosingLow.quarterMTDClosingRate, 1)} (${formatPointGap(quarterlyClosingLow.quarterMTDClosingRate, quarterlyClosingAverage)}).`
-            : "Quarterly closing-rate coaching data is not available yet.",
+          rolling90ClosingLow
+            ? `${rolling90ClosingLow.name} has the lowest rolling 90-day closing rate at ${displayPercent(rolling90ClosingLow.rolling90ClosingRate, 1)} (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}). Recommended action: review the last five unsold appointments.`
+            : "Rolling 90-day closing-rate coaching data is not available yet.",
           quarterlyGoalLow
-            ? `${quarterlyGoalLow.name} is lowest versus quarterly goal pace at ${displayPercent(quarterlyGoalLow.quarterlyGoalPercent, 1)} (${money(Math.max(Number(quarterlyGoalLow.quarterlyGoal || 0) - Number(quarterlyGoalLow.quarterlyRevenue || 0), 0))} behind quarterly goal).`
+            ? `${quarterlyGoalLow.name} is lowest versus quarterly goal pace at ${displayPercent(quarterlyGoalLow.quarterlyGoalPercent, 1)} (${money(Math.max(Number(quarterlyGoalLow.quarterlyGoal || 0) - Number(quarterlyGoalLow.quarterlyRevenue || 0), 0))} behind quarterly goal). Recommended action: review quarter pipeline and close dates.`
             : "Quarterly goal coaching data is not available yet.",
-          quarterlyRevenueGap?.row
-            ? `${quarterlyRevenueGap.row.name} has the largest quarter-to-date revenue gap versus the team average at ${money(quarterlyRevenueGap.gap)}.`
-            : "Quarterly revenue coaching data is not available yet.",
+          rolling90RevenueGap?.row
+            ? `${rolling90RevenueGap.row.name} has the largest rolling 90-day revenue gap versus the team average at ${money(rolling90RevenueGap.gap)}. Recommended action: review lead volume, appointment quality, and average contract.`
+            : quarterlyRevenueGap?.row
+            ? `${quarterlyRevenueGap.row.name} has the largest quarter-to-date revenue gap versus the team average at ${money(quarterlyRevenueGap.gap)}. Recommended action: review lead volume, appointment quality, and average contract.`
+            : "Revenue-gap coaching data is not available yet.",
         ],
       },
       {
-        title: "Fiscal YTD Performance",
-        eyebrow: "Annual Pace",
+        title: "Annual Performance",
+        eyebrow: "Fiscal YTD",
         status: revenueStatus,
         positive: [
           `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
@@ -1274,13 +1294,13 @@ const statusLabel = {
         ],
         coaching: [
           annualClosingLow
-            ? `${annualClosingLow.name} has the lowest FYTD closing rate at ${displayPercent(annualClosingLow.closingRate, 1)} (${formatPointGap(annualClosingLow.closingRate, annualClosingAverage)}).`
+            ? `${annualClosingLow.name} has the lowest FYTD closing rate at ${displayPercent(annualClosingLow.closingRate, 1)} (${formatPointGap(annualClosingLow.closingRate, annualClosingAverage)}). Recommended action: review close-rate trend and unsold appointment notes.`
             : "FYTD closing-rate coaching data is not available yet.",
           annualGoalLow
-            ? `${annualGoalLow.name} has the lowest annual goal progress at ${displayPercent(annualGoalLow.annualGoalPercent, 1)} (${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remaining to annual goal).`
+            ? `${annualGoalLow.name} has the lowest annual goal progress at ${displayPercent(annualGoalLow.annualGoalPercent, 1)} (${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remaining to annual goal). Recommended action: rebuild the goal recovery plan.`
             : "Annual goal coaching data is not available yet.",
           annualRevenueLow
-            ? `${annualRevenueLow.name} is lowest versus team revenue average at ${annualRevenueLow.revenueVsTeam.label}.`
+            ? `${annualRevenueLow.name} is lowest versus team revenue average at ${annualRevenueLow.revenueVsTeam.label}. Recommended action: review production pace and average contract strategy.`
             : "Revenue versus team average data is not available yet.",
         ],
       },
@@ -1296,10 +1316,10 @@ const statusLabel = {
         ],
         coaching: [
           needsToBeInvoiced > 0
-            ? `${money(needsToBeInvoiced)} should be watched closely because it can convert to invoiceable cash quickly.`
+            ? `${money(needsToBeInvoiced)} should be watched closely because it can convert to invoiceable cash quickly. Recommended action: confirm what can be invoiced this week.`
             : "No immediate invoice-ready cash is showing right now.",
           balanceDue > 0
-            ? `${money(balanceDue)} in balance due should stay visible until collected.`
+            ? `${money(balanceDue)} in balance due should stay visible until collected. Recommended action: prioritize collection follow-up until cleared.`
             : "No balance-due exposure is showing right now.",
         ],
       },
@@ -1342,7 +1362,7 @@ const statusLabel = {
           </div>
 
           <div className="manager-kpi-card">
-            <span>Team Closing Rate</span>
+            <span>FYTD Closing Rate</span>
             <strong>{displayPercent(totals.teamClosingRate, 1)}</strong>
             <small>Active rep average</small>
           </div>
@@ -1426,7 +1446,7 @@ const statusLabel = {
 
               <div className="manager-executive-summary-grid">
                 <div className="manager-summary-column positive">
-                  <h4>Who Deserves Praise</h4>
+                  <h4>What's Going Well</h4>
 
                   {activeSummarySection.positive.map((item, index) => (
                     <div
@@ -1440,7 +1460,7 @@ const statusLabel = {
                 </div>
 
                 <div className="manager-summary-column coaching">
-                  <h4>Who Needs Coaching</h4>
+                  <h4>Leadership Opportunities</h4>
 
                   {activeSummarySection.coaching.map((item, index) => (
                     <div
