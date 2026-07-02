@@ -1247,84 +1247,79 @@ body {
   }
 }
 .employee-of-week-card {
-  position: relative;
-  overflow: hidden;
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 28px;
+  grid-template-columns: 260px 1fr;
+  gap: 34px;
   align-items: center;
-  padding: 28px 32px;
+  padding: 34px;
+  margin: 22px 0 28px;
   border-radius: 24px;
-  background: linear-gradient(135deg, #fffdf2 0%, #ffffff 45%, #f7f8fa 100%);
-  border: 2px solid rgba(255, 215, 0, 0.65);
-  box-shadow:
-    0 18px 45px rgba(15, 23, 42, 0.12),
-    0 0 35px rgba(255, 215, 0, 0.25);
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
 }
 
-.employee-of-week-card::before {
-  content: "EMPLOYEE OF THE WEEK";
-  position: absolute;
-  top: 18px;
-  right: -46px;
-  transform: rotate(35deg);
-  background: #aa211b;
-  color: white;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  padding: 8px 54px;
-}
-
-.employee-of-week-profile {
+.employee-of-week-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.employee-of-week-profile img {
-  width: 130px;
-  height: 130px;
+.employee-of-week-person img {
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   object-fit: cover;
   border: 5px solid gold;
+  animation: topDawgGlow 6s ease-in-out infinite;
   box-shadow:
-    0 0 18px rgba(255, 215, 0, 0.75),
-    0 0 45px rgba(255, 215, 0, 0.45);
+    0 0 18px rgba(255,215,0,.70),
+    0 0 40px rgba(255,215,0,.50),
+    0 0 70px rgba(255,255,0,.35);
 }
 
-.employee-of-week-profile span {
+.employee-of-week-person span,
+.employee-of-week-reasons span {
   display: block;
   margin-top: 14px;
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 950;
   color: #aa211b;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.employee-of-week-profile h3 {
-  margin: 4px 0 0;
-  font-size: 30px;
+.employee-of-week-person h3 {
+  margin: 8px 0 0;
+  font-size: 34px;
   line-height: 1;
+  font-weight: 950;
   color: #0f172a;
 }
 
-.employee-of-week-reasons h4 {
-  margin: 0 0 12px;
-  font-size: 14px;
-  font-weight: 900;
-  color: #6c7285;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.employee-of-week-reasons {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 22px 26px;
 }
 
 .employee-of-week-reasons ul {
-  margin: 0;
+  margin: 10px 0 0;
   padding-left: 20px;
 }
 
 .employee-of-week-reasons li {
-  margin-bottom: 8px;
+  margin: 8px 0;
   font-size: 16px;
-  font-weight: 800;
+  line-height: 1.4;
+  font-weight: 850;
   color: #111827;
+}
+
+@media (max-width: 760px) {
+  .employee-of-week-card {
+    grid-template-columns: 1fr;
+  }
 }
