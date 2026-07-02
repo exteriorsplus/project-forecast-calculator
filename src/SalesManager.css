@@ -1189,7 +1189,7 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 48px;
-align-items:center;
+  align-items: center;
   padding: 38px;
   margin: 24px 0 30px;
   background: #f8fafc;
@@ -1198,21 +1198,25 @@ align-items:center;
   box-shadow: 0 10px 30px rgba(17,24,39,.08);
 }
 
-.employee-of-week-person {
+.employee-of-week-person,
+.employee-of-week-right {
   display: flex;
   flex-direction: column;
+}
+
+.employee-of-week-person {
   align-items: center;
-  justify-content: center;
   text-align: center;
 }
 
-.employee-of-week-person span {
+.employee-of-week-person span,
+.employee-of-week-heading {
   margin-bottom: 18px;
+  color: #aa211b;
   font-size: 18px;
   font-weight: 900;
-  letter-spacing: 1px;
   text-transform: uppercase;
-  color: #aa211b;
+  letter-spacing: 1px;
 }
 
 .employee-of-week-person img {
@@ -1231,134 +1235,43 @@ align-items:center;
 .employee-of-week-person h3 {
   margin: 20px 0 0;
   font-size: 42px;
+  line-height: 1.05;
   font-weight: 900;
   color: #0f172a;
 }
 
-.employee-of-week-reasons{
-    width:100%;
-
-    background:#ffffff;
-
-    border:1px solid #dbe3ee;
-
-    border-radius:20px;
-
-    padding:30px 36px;
-
-    box-shadow:
-        0 8px 24px rgba(17,24,39,.04);
-
-    min-height:245px;
-
-    display:flex;
-    align-items:center;
-}
-
-.employee-of-week-reasons span {
-  display: block;
-  margin-bottom: 16px;
-  font-size: 15px;
-  font-weight: 900;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.employee-of-week-reasons ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 42px;
-  row-gap: 16px;
-}
-
-.employee-of-week-reasons li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 17px;
-  line-height: 1.4;
-  font-weight: 800;
-  color: #111827;
-}
-
-.employee-of-week-reasons li::before {
-  content: "•";
-  color: #111827;
-  font-size: 22px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-@media (max-width: 768px) {
-  .employee-of-week-card {
-    grid-template-columns: 1fr;
-    padding: 28px;
-  }
-
-  .employee-of-week-person img {
-    width: 130px;
-    height: 130px;
-  }
-
-  .employee-of-week-person h3 {
-    font-size: 32px;
-  }
-
-  .employee-of-week-reasons {
-    padding: 22px;
-  }
-
-  .employee-of-week-reasons ul {
-    grid-template-columns: 1fr;
-  }
-
-  .employee-of-week-reasons li {
-    font-size: 16px;
-  }
-}
 .employee-of-week-reasons {
-  align-self: start;
-}
-.employee-of-week-right {
-  display: flex;
-  flex-direction: column;
-}
-
-.employee-of-week-heading {
-    margin-bottom: 18px;
-
-    color:#aa211b;
-
-    font-size:18px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:1px;
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 20px;
+  padding: 30px 36px;
 }
 
-.employee-of-week-columns{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    column-gap:60px;
+.employee-of-week-columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 34px;
 }
+
 .employee-of-week-columns ul {
   margin: 0;
   padding-left: 20px;
 }
 
-.employee-of-week-columns li{
+.employee-of-week-columns li {
+  margin-bottom: 18px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #111827;
+}
 
-    margin-bottom:22px;
+@media (max-width: 900px) {
+  .employee-of-week-card {
+    grid-template-columns: 1fr;
+  }
 
-    font-size:18px;
-
-    font-weight:800;
-
-    line-height:1.45;
+  .employee-of-week-columns {
+    grid-template-columns: 1fr 1fr;
+  }
 }
