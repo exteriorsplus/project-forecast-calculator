@@ -278,7 +278,7 @@ export default function SalesManager() {
 );
 const [managerPassword, setManagerPassword] = useState("");
 const [managerLoginError, setManagerLoginError] = useState("");
-const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Performance");
+const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Production");
   useEffect(() => {
     const loadSalesFile = async () => {
       try {
@@ -1151,7 +1151,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       note: `${totals.teamVsLY.label} vs LY`,
     },
     {
-      label: "Sales Effectiveness",
+      label: "Rolling 90-Day Closing Rate",
       status: closingStatus,
       value: displayPercent(rolling90ClosingAverage, 1),
       note: "Rolling 90 close rate",
@@ -1174,25 +1174,41 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     healthCards.find((card) => card.status === "attention") ||
     healthCards.find((card) => card.status === "watch");
 
-  const briefParts = [
-    `Revenue is ${statusLabel[revenueStatus]} at ${money(
+  const primaryLeadershipFocus = rolling90ClosingLow
+    ? `${rolling90ClosingLow.name}'s Rolling 90-Day Closing Rate is the biggest leadership opportunity at ${displayPercent(
+        rolling90ClosingLow.rolling90ClosingRate,
+        1
+      )} (${formatPointGap(
+        rolling90ClosingLow.rolling90ClosingRate,
+        rolling90ClosingAverage
+      )}).`
+    : "Rolling 90-Day Closing Rate coaching data is still loading.";
+
+  const prioritySentence =
+    weakestHealthArea?.label === "Rolling 90-Day Closing Rate"
+      ? "Today's priority: improve the team's Rolling 90-Day Closing Rate."
+      : weakestHealthArea
+      ? `Today's priority: keep ${weakestHealthArea.label.toLowerCase()} in focus.`
+      : "No major red flags are showing in the core operating metrics.";
+
+  const executiveBrief = [
+    `${greeting} Revenue remains ${statusLabel[revenueStatus]} at ${money(
       totals.totalRevenue
-    )} (${totals.teamVsLY.label} versus last fiscal year).`,
+    )} (${totals.teamVsLY.label} versus last fiscal year), while cash flow shows ${money(
+      totalPipeline
+    )} in visible future pipeline.`,
     annualRevenueLeader
-      ? `${annualRevenueLeader.name} leads FYTD production at ${money(annualRevenueLeader.annualRevenue)}.`
+      ? `${annualRevenueLeader.name} continues to lead FYTD production at ${money(
+          annualRevenueLeader.annualRevenue
+        )}.`
       : "FYTD production leader is not available yet.",
-    rolling90ClosingLow
-      ? `${rolling90ClosingLow.name} is the primary sales-effectiveness coaching focus at ${displayPercent(rolling90ClosingLow.rolling90ClosingRate, 1)} rolling 90-day close rate.`
-      : "Sales-effectiveness coaching data is still loading.",
-    `Cash flow shows ${money(totalPipeline)} in visible future pipeline.`,
-    weakestHealthArea
-      ? `${weakestHealthArea.label} is the area that deserves the most attention today.`
-      : "No major red flags are showing in the core operating metrics.",
-  ];
+    primaryLeadershipFocus,
+    prioritySentence,
+  ].join(" ");
 
   const priorities = [
     rolling90ClosingLow
-      ? `Coach ${rolling90ClosingLow.name} on sales effectiveness (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)} on rolling 90-day close rate).`
+      ? `Coach ${rolling90ClosingLow.name} on Rolling 90-Day Closing Rate (${formatPointGap(rolling90ClosingLow.rolling90ClosingRate, rolling90ClosingAverage)}).`
       : "Review rolling 90-day closing data once metrics are loaded.",
     annualGoalLow
       ? `Review ${annualGoalLow.name}'s annual goal plan — ${money(Math.max(Number(annualGoalLow.goal || 0) - Number(annualGoalLow.annualRevenue || 0), 0))} remains to goal.`
@@ -1206,7 +1222,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   ];
 
   return {
-    brief: `${greeting} ${briefParts.join(" ")}`,
+    brief: executiveBrief,
     healthCards,
     priorities,
     sections: [
@@ -1246,7 +1262,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
         ],
       },
       {
-        title: "Sales Effectiveness",
+        title: "Rolling 90-Day Performance",
         eyebrow: "Rolling 90 Days",
         status:
           rolling90ClosingLow && Number(rolling90ClosingLow.rolling90ClosingRate || 0) < 0.25
