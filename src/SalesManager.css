@@ -1185,144 +1185,23 @@ body {
     font-size: 16px;
   }
 }
-.employee-of-week-card {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 22px;
-  align-items: center;
-  padding: 22px;
-  margin: 18px 0 24px;
-  border-radius: 24px;
-  border: 1px solid #e5e7eb;
-  background: #f8fafc;
+.employee-of-week-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+
+    padding:42px;
+
+    margin:24px 0 30px;
+
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    border-radius:24px;
+
+    box-shadow:0 10px 30px rgba(17,24,39,.08);
 }
 
-.employee-of-week-person {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.employee-of-week-person img {
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #b91c1c;
-  background: white;
-}
-
-.employee-of-week-person span,
-.employee-of-week-reasons span {
-  display: block;
-  font-size: 12px;
-  font-weight: 900;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-}
-
-.employee-of-week-person h3 {
-  margin: 4px 0 0;
-  font-size: 24px;
-  font-weight: 900;
-  color: #111827;
-}
-
-.employee-of-week-reasons ul {
-  margin: 8px 0 0;
-  padding-left: 18px;
-}
-
-.employee-of-week-reasons li {
-  margin: 5px 0;
-  font-size: 14px;
-  font-weight: 800;
-  color: #111827;
-}
-
-@media (max-width: 760px) {
-  .employee-of-week-card {
-    grid-template-columns: 1fr;
-  }
-}
-.employee-of-week-card {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 34px;
-  align-items: center;
-  padding: 34px;
-  margin: 22px 0 28px;
-  border-radius: 24px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
-}
-
-.employee-of-week-person {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.employee-of-week-person img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 5px solid gold;
-  animation: topDawgGlow 6s ease-in-out infinite;
-  box-shadow:
-    0 0 18px rgba(255,215,0,.70),
-    0 0 40px rgba(255,215,0,.50),
-    0 0 70px rgba(255,255,0,.35);
-}
-
-.employee-of-week-person span,
-.employee-of-week-reasons span {
-  display: block;
-  margin-top: 14px;
-  font-size: 13px;
-  font-weight: 950;
-  color: #aa211b;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.employee-of-week-person h3 {
-  margin: 8px 0 0;
-  font-size: 34px;
-  line-height: 1;
-  font-weight: 950;
-  color: #0f172a;
-}
-
-.employee-of-week-reasons {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 22px 26px;
-}
-
-.employee-of-week-reasons ul {
-  margin: 10px 0 0;
-  padding-left: 20px;
-}
-
-.employee-of-week-reasons li {
-  margin: 8px 0;
-  font-size: 16px;
-  line-height: 1.4;
-  font-weight: 850;
-  color: #111827;
-}
-
-@media (max-width: 760px) {
-  .employee-of-week-card {
-    grid-template-columns: 1fr;
-  }
-}
 .employee-of-week-person{
     display:flex;
     flex-direction:column;
@@ -1330,8 +1209,6 @@ body {
 }
 
 .employee-of-week-person span{
-    order:-2;
-
     margin-bottom:18px;
 
     font-size:18px;
@@ -1341,17 +1218,8 @@ body {
 
     color:#aa211b;
 }
-.employee-of-week-person h3{
 
-    margin-top:18px;
-
-    font-size:44px;
-    font-weight:900;
-
-    color:#0f172a;
-}
 .employee-of-week-person img{
-
     width:170px;
     height:170px;
 
@@ -1363,33 +1231,94 @@ body {
     animation:topDawgGlow 6s ease-in-out infinite;
 
     box-shadow:
-      0 0 18px rgba(255,215,0,.75),
-      0 0 45px rgba(255,215,0,.45),
-      0 0 70px rgba(255,255,0,.30);
+        0 0 18px rgba(255,215,0,.70),
+        0 0 42px rgba(255,215,0,.45),
+        0 0 70px rgba(255,255,0,.28);
 }
+
+.employee-of-week-person h3{
+    margin:20px 0 0;
+
+    font-size:42px;
+    font-weight:900;
+
+    color:#0f172a;
+}
+
 .employee-of-week-reasons{
+    margin-top:36px;
 
-    margin-top:30px;
+    width:100%;
+    max-width:850px;
 
-    width:fit-content;
-
-    min-width:700px;
-
-    text-align:left;
-
-    background:white;
-
-    border-radius:18px;
-
-    padding:26px 34px;
+    background:#ffffff;
 
     border:1px solid #e5e7eb;
+    border-radius:18px;
+
+    padding:28px 34px;
+
+    text-align:left;
 }
+
+.employee-of-week-reasons span{
+    display:block;
+
+    margin-bottom:14px;
+
+    font-size:15px;
+    font-weight:900;
+
+    color:#6b7280;
+
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.employee-of-week-reasons ul{
+    margin:12px 0 0;
+    padding:0;
+
+    list-style-position:inside;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:42px;
+    row-gap:16px;
+}
+
 .employee-of-week-reasons li{
-
-    font-size:19px;
-
-    line-height:1.8;
-
+    font-size:18px;
+    line-height:1.45;
     font-weight:800;
+    color:#111827;
+}
+
+@media (max-width:768px){
+
+    .employee-of-week-card{
+        padding:28px;
+    }
+
+    .employee-of-week-person img{
+        width:130px;
+        height:130px;
+    }
+
+    .employee-of-week-person h3{
+        font-size:32px;
+    }
+
+.employee-of-week-reasons{
+    padding:22px;
+}
+
+.employee-of-week-reasons ul{
+    grid-template-columns:1fr;
+}
+
+.employee-of-week-reasons li{
+    font-size:16px;
+}
+
 }
