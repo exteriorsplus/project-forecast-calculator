@@ -1241,6 +1241,39 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       )}.`
     : "Review Rolling 90-Day Closing Rate once metrics are loaded.";
 
+  const secondaryRolling90ClosingLow = activeRows
+    .slice()
+    .filter(
+      (row) =>
+        row.name !== rolling90ClosingLow?.name &&
+        Number(row.rolling90ClosingRate || 0) > 0
+    )
+    .sort(
+      (a, b) =>
+        Number(a.rolling90ClosingRate || 0) -
+        Number(b.rolling90ClosingRate || 0)
+    )[0];
+
+  const annualGoalOpportunityText = annualGoalLow
+    ? `Review ${annualGoalLow.name}'s annual production plan. ${money(
+        Math.max(
+          Number(annualGoalLow.goal || 0) -
+            Number(annualGoalLow.annualRevenue || 0),
+          0
+        )
+      )} remains to reach annual goal.`
+    : "Review annual goal pace once revenue data is loaded.";
+
+  const secondaryCoachingOpportunityText = secondaryRolling90ClosingLow
+    ? `Work with ${secondaryRolling90ClosingLow.name} on improving Rolling 90-Day Closing Rate. Current rate is ${displayPercent(
+        secondaryRolling90ClosingLow.rolling90ClosingRate,
+        1
+      )}, which is ${formatPointGap(
+        secondaryRolling90ClosingLow.rolling90ClosingRate,
+        rolling90ClosingAverage
+      )}.`
+    : "Review the next Rolling 90-Day Closing Rate coaching opportunity once data is loaded.";
+
   let recognitionOpportunityText = annualRevenueLeader
     ? `Recognize ${annualRevenueLeader.name} for leading FYTD production at ${money(
         annualRevenueLeader.annualRevenue
@@ -1298,12 +1331,16 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       text: coachingOpportunityText,
     },
     {
-      label: "Recognition Opportunity",
-      text: recognitionOpportunityText,
+      label: "Coaching Opportunity",
+      text: annualGoalOpportunityText,
     },
     {
-      label: "Employee of the Week",
-      text: employeeOfWeekText,
+      label: "Coaching Opportunity",
+      text: secondaryCoachingOpportunityText,
+    },
+    {
+      label: "Recognition Opportunity",
+      text: recognitionOpportunityText,
     },
   ];
 
@@ -1311,6 +1348,14 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     brief: executiveBrief,
     healthCards,
     priorities,
+    employeeOfWeek: employeeOfWeek
+      ? {
+          name: employeeOfWeek.name,
+          image: employeeOfWeek.image,
+          score: employeeOfWeek.employeeOfWeekScore,
+          reasons: employeeOfWeekReasons,
+        }
+      : null,
     sections: [
       {
         title: "Monthly Production",
@@ -1442,6 +1487,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
+    const employeeOfWeek = executiveSummary.employeeOfWeek;
     const activeSummarySection =
       executiveSummary.sections.find(
         (section) => section.title === activeSummaryTab
@@ -1675,6 +1721,27 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
               FYTD {formatShortDate(ranges.fiscalYTD.start)} – {formatShortDate(ranges.fiscalYTD.end)} compared to LY {formatShortDate(ranges.priorFiscalYTD.start)} – {formatShortDate(ranges.priorFiscalYTD.end)}
             </p>
           </div>
+
+          {employeeOfWeek && (
+            <div className="employee-of-week-card">
+              <div className="employee-of-week-person">
+                <img src={employeeOfWeek.image} alt={employeeOfWeek.name} />
+                <div>
+                  <span>Employee of the Week</span>
+                  <h3>{employeeOfWeek.name}</h3>
+                </div>
+              </div>
+
+              <div className="employee-of-week-reasons">
+                <span>Why they earned it</span>
+                <ul>
+                  {employeeOfWeek.reasons.map((reason, index) => (
+                    <li key={`employee-of-week-reason-${index}`}>{reason}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
 
           <div className="manager-performance-list v2">
             {rows.map((row) => {
