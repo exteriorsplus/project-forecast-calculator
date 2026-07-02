@@ -1379,7 +1379,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
 
         <section className="manager-kpi-grid">
           <div className="manager-kpi-card primary">
-            <span>Team Revenue</span>
+            <span>FYTD Team Revenue</span>
             <strong>{money(totals.totalRevenue)}</strong>
             <small className={`manager-difference ${totals.teamVsLY.className}`}>
               {totals.teamVsLY.label} vs LY
