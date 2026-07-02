@@ -1183,7 +1183,18 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
     if (!reasons.length) {
       reasons.push("Shows the strongest all-around score across revenue, goal pace, and Rolling 90-Day performance");
     }
+    const backupReasons = [
+      `Has produced ${money(row.quarterMTDRevenue)} quarter-to-date`,
+      `Is tracking at ${displayPercent(row.annualGoalPercent, 1)} of annual goal`,
+      `Has generated ${money(row.annualRevenue)} in FYTD revenue`,
+      `Has a Rolling 90-Day Closing Rate of ${displayPercent(row.rolling90ClosingRate, 1)}`,
+    ];
 
+    backupReasons.forEach((reason) => {
+      if (reasons.length < 8 && !reasons.includes(reason)) {
+        reasons.push(reason);
+      }
+    });
     return reasons.slice(0, 8);
   };
   const weeklyTopDawgReasons = getWeeklyTopDawgReasons(weeklyTopDawg);
