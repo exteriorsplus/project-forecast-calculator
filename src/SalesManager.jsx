@@ -1231,12 +1231,14 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to goal`,
   status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
 },
-    {
-      label: "Rolling 90-Day Closing Rate",
-      status: closingStatus,
-      value: displayPercent(rolling90ClosingAverage, 1),
-      note: "Rolling 90 close rate",
-    },
+{
+  label: "Rolling 90-Day Closing Rate",
+  value: displayPercent(rolling90ClosingAverage, 1),
+  note: rolling90ClosingAverage >= 0.25
+    ? "At or above 25% goal"
+    : `${displayPercent(0.25 - rolling90ClosingAverage, 1)} below 25% goal`,
+  status: rolling90ClosingAverage >= 0.25 ? "good" : rolling90ClosingAverage >= 0.2 ? "watch" : "attention",
+},
     {
       label: "Cash Flow",
       status: cashFlowStatus,
