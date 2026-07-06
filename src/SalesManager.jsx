@@ -576,7 +576,41 @@ const getLatestPMMetric = (pmName, metric) => {
 
   return latestMonth ? getPMMetric(pmName, metric, latestMonth) : 0;
 };
+const getLatestTeamMetric = (metric) => {
+  const teamSectionStart = pmRows.findIndex(
+    (row) =>
+      String(row?.[0] || "").trim().toLowerCase() ===
+      "contract total average"
+  );
 
+  if (teamSectionStart < 0) return 0;
+
+  const headerRow = pmRows[teamSectionStart] || [];
+  const teamRow = getTeamMetricRow(metric);
+
+  if (!teamRow) return 0;
+
+  const latestMonth = fiscalMonths
+    .filter((month) => {
+      const columnIndex = headerRow.findIndex(
+        (cell) => formatPMMonth(cell) === month
+      );
+
+      return (
+        columnIndex >= 0 &&
+        Number(parseMetricValue(teamRow[columnIndex]) || 0) > 0
+      );
+    })
+    .at(-1);
+
+  if (!latestMonth) return 0;
+
+  const columnIndex = headerRow.findIndex(
+    (cell) => formatPMMonth(cell) === latestMonth
+  );
+
+  return columnIndex >= 0 ? parseMetricValue(teamRow[columnIndex]) : 0;
+};
   const getManagerMetrics = () => {
     const reps = getManagerSalesReps();
 
@@ -1091,7 +1125,9 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   const rolling90ClosingLeader = getHighest(activeRows, "rolling90ClosingRate");
   const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
   const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
-  const rolling90ClosingAverage = getAverage(activeRows, "rolling90ClosingRate");
+  const rolling90ClosingAverage = getLatestTeamMetric(
+  "Rolling 90-Day Closing Rate Average"
+);
   const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
 
   const quarterlyRevenueLeader = getHighest(activeRows, "quarterMTDRevenue");
@@ -1371,10 +1407,11 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   ];
 
   return {
-    brief: executiveBrief,
-    healthCards,
-    priorities,
-    weeklyTopDawg: weeklyTopDawg
+  brief: executiveBrief,
+  rolling90ClosingAverage,
+  healthCards,
+  priorities,
+  weeklyTopDawg: weeklyTopDawg
       ? {
           name: weeklyTopDawg.name,
           image: weeklyTopDawg.image,
@@ -1544,11 +1581,15 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
             </small>
           </div>
 
-          <div className="manager-kpi-card">
-            <span>FYTD Closing Rate</span>
-            <strong>{displayPercent(totals.teamClosingRate, 1)}</strong>
-            <small>Active rep average</small>
-          </div>
+<div className="manager-kpi-card">
+  <span>Rolling 90-Day Closing Rate</span>
+  <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+  <small>
+    {executiveSummary.rolling90ClosingAverage >= 0.3
+      ? "At or above 30% goal"
+      : `${displayPercent(0.3 - executiveSummary.rolling90ClosingAverage, 1)} below 30% goal`}
+  </small>
+</div>
 
           <div className="manager-kpi-card">
             <span>Annual Goal Progress</span>
