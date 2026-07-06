@@ -582,7 +582,40 @@ const getLatestTeamMetric = (metric) => {
       String(row?.[0] || "").trim().toLowerCase() ===
       "contract total average"
   );
+const getCurrentPMMonthLabel = () => {
+  const today = new Date();
+  return `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+};
 
+const getTeamMetricForMonth = (metric, monthLabel) => {
+  const teamSectionStart = pmRows.findIndex(
+    (row) =>
+      String(row?.[0] || "").trim().toLowerCase() ===
+      "contract total average"
+  );
+
+  if (teamSectionStart < 0) return 0;
+
+  const headerRow = pmRows[teamSectionStart] || [];
+  const requestedMetric = normalizeMetricLabel(metric);
+
+  const teamRow = pmRows
+    .slice(teamSectionStart + 1, teamSectionStart + 20)
+    .find((row) => {
+      const rowMetric = normalizeMetricLabel(row?.[0]);
+      return rowMetric === requestedMetric;
+    });
+
+  if (!teamRow) return 0;
+
+  const columnIndex = headerRow.findIndex(
+    (cell) => formatPMMonth(cell) === monthLabel
+  );
+
+  if (columnIndex < 0) return 0;
+
+  return parseMetricValue(teamRow[columnIndex]);
+};
   if (teamSectionStart < 0) return 0;
 
   const headerRow = pmRows[teamSectionStart] || [];
@@ -1139,8 +1172,11 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   const rolling90ClosingLeader = getHighest(activeRows, "rolling90ClosingRate");
   const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
   const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
-const rolling90ClosingAverage = getLatestTeamMetric(
-  "Rolling 90-Day Closing Rate Average"
+const currentPMMonth = getCurrentPMMonthLabel();
+
+const rolling90ClosingAverage = getTeamMetricForMonth(
+  "Rolling 90-Day Closing Rate Average",
+  currentPMMonth
 );
   const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
 
