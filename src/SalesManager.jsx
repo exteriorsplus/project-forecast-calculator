@@ -586,12 +586,12 @@ const getLatestTeamMetric = (metric) => {
   if (teamSectionStart < 0) return 0;
 
   const headerRow = pmRows[teamSectionStart] || [];
-  const requestedMetric = normalizeMetricLabel(metric).replace(" average", "");
+  const requestedMetric = normalizeMetricLabel(metric);
 
   const teamRow = pmRows
     .slice(teamSectionStart + 1, teamSectionStart + 12)
     .find((row) => {
-      const rowMetric = normalizeMetricLabel(row?.[0]).replace(" average", "");
+      const requestedMetric = normalizeMetricLabel(metric);
       return rowMetric === requestedMetric;
     });
 
@@ -1129,7 +1129,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
   const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
 const rolling90ClosingAverage = getLatestTeamMetric(
-  "Rolling 90-Day Closing Rate"
+  "Rolling 90-Day Closing Rate Average"
 );
   const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
 
