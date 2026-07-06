@@ -587,7 +587,7 @@ const getTeamMetricForMonth = (metric, monthLabel) => {
   const requestedMetric = normalizeMetricLabel(metric);
 
   const teamRowIndex = pmRows.findIndex((row) =>
-    metricLabelMatches(row?.[0], requestedMetric)
+    row.some((cell) => normalizeMetricLabel(cell) === requestedMetric)
   );
 
   if (teamRowIndex < 0) return 0;
@@ -599,11 +599,7 @@ const getTeamMetricForMonth = (metric, monthLabel) => {
   for (let index = teamRowIndex; index >= 0; index -= 1) {
     const possibleHeader = pmRows[index] || [];
 
-    const hasMonth = possibleHeader.some(
-      (cell) => formatPMMonth(cell) === monthLabel
-    );
-
-    if (hasMonth) {
+    if (possibleHeader.some((cell) => formatPMMonth(cell) === monthLabel)) {
       headerRow = possibleHeader;
       break;
     }
