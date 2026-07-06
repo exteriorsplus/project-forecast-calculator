@@ -588,12 +588,12 @@ const getLatestTeamMetric = (metric) => {
   const headerRow = pmRows[teamSectionStart] || [];
   const requestedMetric = normalizeMetricLabel(metric);
 
-  const teamRow = pmRows
-    .slice(teamSectionStart + 1, teamSectionStart + 12)
-    .find((row) => {
-      const requestedMetric = normalizeMetricLabel(metric);
-      return rowMetric === requestedMetric;
-    });
+const teamRow = pmRows
+  .slice(teamSectionStart + 1, teamSectionStart + 12)
+  .find((row) => {
+    const rowMetric = normalizeMetricLabel(row?.[0]);
+    return rowMetric === requestedMetric;
+  });
 
   if (!teamRow) return 0;
 
@@ -723,30 +723,41 @@ const rolling90ClosingRate = getLatestPMMetric(
   "Rolling 90-Day Closing Rate"
 );
 
-      return {
-        name: pm.name,
-        image: pm.image,
-        annualRevenue: annualSales.contractTotal,
-        annualContracts: annualSales.contracts,
-        averageContract: annualSales.averageContract,
-        monthlyRevenue: monthlySales.contractTotal,
-        quarterlyRevenue: quarterlySales.contractTotal,
-        quarterMTDRevenue: quarterMTDSales.contractTotal,
-        rolling90Revenue: rolling90Sales.contractTotal,
-        lyRevenue: lastYearSales.contractTotal,
-        closingRate,
-        lyClosingRate,
-        monthlyClosingRate,
-        quarterlyClosingRate,
-        quarterMTDClosingRate,
-        rolling90ClosingRate,
-        goal,
-        monthlyGoal: goal / 12,
-        quarterlyGoal: goal / 4,
-        annualGoalPercent: goal > 0 ? annualSales.contractTotal / goal : 0,
-        monthlyGoalPercent: goal > 0 ? monthlySales.contractTotal / (goal / 12) : 0,
-        quarterlyGoalPercent: goal > 0 ? quarterlySales.contractTotal / (goal / 4) : 0,
-      };
+return {
+  name: pm.name,
+  image: pm.image,
+
+  annualRevenue: annualSales.contractTotal,
+  annualContracts: annualSales.contracts,
+  averageContract: annualSales.averageContract,
+
+  monthlyRevenue: monthlySales.contractTotal,
+  monthlyContracts: monthlySales.contracts,
+  monthlyAverageContract: monthlySales.averageContract,
+
+  quarterlyRevenue: quarterlySales.contractTotal,
+  quarterlyContracts: quarterlySales.contracts,
+  quarterlyAverageContract: quarterlySales.averageContract,
+
+  quarterMTDRevenue: quarterMTDSales.contractTotal,
+  rolling90Revenue: rolling90Sales.contractTotal,
+  lyRevenue: lastYearSales.contractTotal,
+
+  closingRate,
+  lyClosingRate,
+  monthlyClosingRate,
+  quarterlyClosingRate,
+  quarterMTDClosingRate,
+  rolling90ClosingRate,
+
+  goal,
+  monthlyGoal: goal / 12,
+  quarterlyGoal: goal / 4,
+
+  annualGoalPercent: goal > 0 ? annualSales.contractTotal / goal : 0,
+  monthlyGoalPercent: goal > 0 ? monthlySales.contractTotal / (goal / 12) : 0,
+  quarterlyGoalPercent: goal > 0 ? quarterlySales.contractTotal / (goal / 4) : 0,
+};
     });
 
 const sortedRows = rows.sort((a, b) => b.annualRevenue - a.annualRevenue);
