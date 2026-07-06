@@ -1263,10 +1263,10 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
     warning: Number(totals.totalGoalPercent || 0) >= 0.9 || totals.teamVsLY.rawDifference >= -0.05,
   });
 
-  const closingStatus = getStatus({
-    good: rolling90ClosingAverage >= 0.35,
-    warning: rolling90ClosingAverage >= 0.28,
-  });
+const closingStatus = getStatus({
+  good: rolling90ClosingAverage >= 0.25,
+  warning: rolling90ClosingAverage >= 0.22,
+});
 
   const cashFlowStatus = getStatus({
     good: totalPipeline >= 1000000,
@@ -1287,17 +1287,19 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
 },
 {
   label: "Close Rate Gap",
-  value:
-    rolling90ClosingAverage >= 0.3
-      ? "On Goal"
-      : `${displayPercent(0.3 - rolling90ClosingAverage, 1)} below`,
-  note: "Compared to 30% Rolling 90 goal",
-  status:
-    rolling90ClosingAverage >= 0.3
-      ? "good"
-      : rolling90ClosingAverage >= 0.25
-      ? "watch"
-      : "attention",
+value:
+  rolling90ClosingAverage >= 0.25
+    ? "On Goal"
+    : `${((0.25 - rolling90ClosingAverage) * 100).toFixed(1)} pts below`,
+
+note: "Compared to 25% Rolling 90 goal",
+
+status:
+  rolling90ClosingAverage >= 0.25
+    ? "good"
+    : rolling90ClosingAverage >= 0.20
+    ? "watch"
+    : "attention",
 },
     {
       label: "Cash Flow",
@@ -1612,20 +1614,20 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
 
 <small
   className={`manager-difference ${
-    executiveSummary.rolling90ClosingAverage >= 0.3
+    executiveSummary.rolling90ClosingAverage >= 0.25
       ? "positive"
       : "negative"
   }`}
 >
   {executiveSummary.rolling90ClosingAverage >= 0.3
     ? `${(
-        (executiveSummary.rolling90ClosingAverage - 0.3) *
+        (executiveSummary.rolling90ClosingAverage - 0.25) *
         100
-      ).toFixed(1)} pts above 30% goal`
+      ).toFixed(1)} pts above 25% goal`
     : `${(
-        (0.3 - executiveSummary.rolling90ClosingAverage) *
+        (0.25 - executiveSummary.rolling90ClosingAverage) *
         100
-      ).toFixed(1)} pts below 30% goal`}
+      ).toFixed(1)} pts below 25% goal`}
 </small>
 </div>
 
