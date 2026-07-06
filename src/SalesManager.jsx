@@ -1225,12 +1225,12 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   });
 
   const healthCards = [
-    {
-      label: "Revenue",
-      status: revenueStatus,
-      value: money(totals.totalRevenue),
-      note: `${totals.teamVsLY.label} vs LY`,
-    },
+{
+  label: "Goal Gap",
+  value: money(Math.max(Number(totals.totalGoal || 0) - Number(totals.totalRevenue || 0), 0)),
+  note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to goal`,
+  status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
+},
     {
       label: "Rolling 90-Day Closing Rate",
       status: closingStatus,
