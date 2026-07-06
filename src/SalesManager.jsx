@@ -586,30 +586,33 @@ const getLatestTeamMetric = (metric) => {
   if (teamSectionStart < 0) return 0;
 
   const headerRow = pmRows[teamSectionStart] || [];
-  const teamRow = getTeamMetricRow(metric);
+  const requestedMetric = normalizeMetricLabel(metric).replace(" average", "");
+
+  const teamRow = pmRows
+    .slice(teamSectionStart + 1, teamSectionStart + 12)
+    .find((row) => {
+      const rowMetric = normalizeMetricLabel(row?.[0]).replace(" average", "");
+      return rowMetric === requestedMetric;
+    });
 
   if (!teamRow) return 0;
 
-  const latestMonth = fiscalMonths
-    .filter((month) => {
-      const columnIndex = headerRow.findIndex(
-        (cell) => formatPMMonth(cell) === month
-      );
+  for (let index = fiscalMonths.length - 1; index >= 0; index -= 1) {
+    const month = fiscalMonths[index];
+    const columnIndex = headerRow.findIndex(
+      (cell) => formatPMMonth(cell) === month
+    );
 
-      return (
-        columnIndex >= 0 &&
-        Number(parseMetricValue(teamRow[columnIndex]) || 0) > 0
-      );
-    })
-    .at(-1);
+    if (columnIndex >= 0) {
+      const value = parseMetricValue(teamRow[columnIndex]);
 
-  if (!latestMonth) return 0;
+      if (Number(value || 0) > 0) {
+        return value;
+      }
+    }
+  }
 
-  const columnIndex = headerRow.findIndex(
-    (cell) => formatPMMonth(cell) === latestMonth
-  );
-
-  return columnIndex >= 0 ? parseMetricValue(teamRow[columnIndex]) : 0;
+  return 0;
 };
   const getManagerMetrics = () => {
     const reps = getManagerSalesReps();
@@ -1125,8 +1128,8 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   const rolling90ClosingLeader = getHighest(activeRows, "rolling90ClosingRate");
   const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
   const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
-  const rolling90ClosingAverage = getLatestTeamMetric(
-  "Rolling 90-Day Closing Rate Average"
+const rolling90ClosingAverage = getLatestTeamMetric(
+  "Rolling 90-Day Closing Rate"
 );
   const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
 
@@ -1268,12 +1271,18 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
 },
 {
-  label: "Rolling 90-Day Closing Rate",
-  value: displayPercent(rolling90ClosingAverage, 1),
-  note: rolling90ClosingAverage >= 0.25
-    ? "At or above 25% goal"
-    : `${displayPercent(0.25 - rolling90ClosingAverage, 1)} below 25% goal`,
-  status: rolling90ClosingAverage >= 0.25 ? "good" : rolling90ClosingAverage >= 0.2 ? "watch" : "attention",
+  label: "Close Rate Gap",
+  value:
+    rolling90ClosingAverage >= 0.3
+      ? "On Goal"
+      : `${displayPercent(0.3 - rolling90ClosingAverage, 1)} below`,
+  note: "Compared to 30% Rolling 90 goal",
+  status:
+    rolling90ClosingAverage >= 0.3
+      ? "good"
+      : rolling90ClosingAverage >= 0.25
+      ? "watch"
+      : "attention",
 },
     {
       label: "Cash Flow",
