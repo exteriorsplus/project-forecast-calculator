@@ -569,19 +569,15 @@ const [activeSummaryTab, setActiveSummaryTab] = useState("Monthly Production");
 };
 
 const getLatestPMMetric = (pmName, metric) => {
-  const availableMonths = fiscalMonths
-    .filter((month) => Number(getPMMetric(pmName, metric, month) || 0) > 0);
+  const availableMonths = fiscalMonths.filter(
+    (month) => Number(getPMMetric(pmName, metric, month) || 0) > 0
+  );
 
   const latestMonth = availableMonths[availableMonths.length - 1];
 
   return latestMonth ? getPMMetric(pmName, metric, latestMonth) : 0;
 };
-const getLatestTeamMetric = (metric) => {
-  const teamSectionStart = pmRows.findIndex(
-    (row) =>
-      String(row?.[0] || "").trim().toLowerCase() ===
-      "contract total average"
-  );
+
 const getCurrentPMMonthLabel = () => {
   const today = new Date();
   return `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
@@ -615,37 +611,6 @@ const getTeamMetricForMonth = (metric, monthLabel) => {
   if (columnIndex < 0) return 0;
 
   return parseMetricValue(teamRow[columnIndex]);
-};
-  if (teamSectionStart < 0) return 0;
-
-  const headerRow = pmRows[teamSectionStart] || [];
-  const requestedMetric = normalizeMetricLabel(metric);
-
-const teamRow = pmRows
-  .slice(teamSectionStart + 1, teamSectionStart + 12)
-  .find((row) => {
-    const rowMetric = normalizeMetricLabel(row?.[0]);
-    return rowMetric === requestedMetric;
-  });
-
-  if (!teamRow) return 0;
-
-  for (let index = fiscalMonths.length - 1; index >= 0; index -= 1) {
-    const month = fiscalMonths[index];
-    const columnIndex = headerRow.findIndex(
-      (cell) => formatPMMonth(cell) === month
-    );
-
-    if (columnIndex >= 0) {
-      const value = parseMetricValue(teamRow[columnIndex]);
-
-      if (Number(value || 0) > 0) {
-        return value;
-      }
-    }
-  }
-
-  return 0;
 };
   const getManagerMetrics = () => {
     const reps = getManagerSalesReps();
