@@ -584,25 +584,32 @@ const getCurrentPMMonthLabel = () => {
 };
 
 const getTeamMetricForMonth = (metric, monthLabel) => {
-  const teamSectionStart = pmRows.findIndex(
-    (row) =>
-      String(row?.[0] || "").trim().toLowerCase() ===
-      "contract total average"
-  );
-
-  if (teamSectionStart < 0) return 0;
-
-  const headerRow = pmRows[teamSectionStart] || [];
   const requestedMetric = normalizeMetricLabel(metric);
 
-  const teamRow = pmRows
-    .slice(teamSectionStart + 1, teamSectionStart + 20)
-    .find((row) => {
-      const rowMetric = normalizeMetricLabel(row?.[0]);
-      return rowMetric === requestedMetric;
-    });
+  const teamRowIndex = pmRows.findIndex((row) =>
+    metricLabelMatches(row?.[0], requestedMetric)
+  );
 
-  if (!teamRow) return 0;
+  if (teamRowIndex < 0) return 0;
+
+  const teamRow = pmRows[teamRowIndex];
+
+  let headerRow = null;
+
+  for (let index = teamRowIndex; index >= 0; index -= 1) {
+    const possibleHeader = pmRows[index] || [];
+
+    const hasMonth = possibleHeader.some(
+      (cell) => formatPMMonth(cell) === monthLabel
+    );
+
+    if (hasMonth) {
+      headerRow = possibleHeader;
+      break;
+    }
+  }
+
+  if (!headerRow) return 0;
 
   const columnIndex = headerRow.findIndex(
     (cell) => formatPMMonth(cell) === monthLabel
