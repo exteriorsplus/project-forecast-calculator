@@ -1607,12 +1607,26 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
 
 <div className="manager-kpi-card">
   <span>Rolling 90-Day Closing Rate</span>
+
   <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
-  <small>
-    {executiveSummary.rolling90ClosingAverage >= 0.3
-      ? "At or above 30% goal"
-      : `${displayPercent(0.3 - executiveSummary.rolling90ClosingAverage, 1)} below 30% goal`}
-  </small>
+
+<small
+  className={`manager-difference ${
+    executiveSummary.rolling90ClosingAverage >= 0.3
+      ? "positive"
+      : "negative"
+  }`}
+>
+  {executiveSummary.rolling90ClosingAverage >= 0.3
+    ? `${(
+        (executiveSummary.rolling90ClosingAverage - 0.3) *
+        100
+      ).toFixed(1)} pts above 30% goal`
+    : `${(
+        (0.3 - executiveSummary.rolling90ClosingAverage) *
+        100
+      ).toFixed(1)} pts below 30% goal`}
+</small>
 </div>
 
           <div className="manager-kpi-card">
