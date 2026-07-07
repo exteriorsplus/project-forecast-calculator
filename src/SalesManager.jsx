@@ -1525,9 +1525,21 @@ monthlyContractsLeaders.length === 1
           quarterlyRevenueLeader
             ? `${quarterlyRevenueLeader.name} leads quarter-to-date revenue at ${money(quarterlyRevenueLeader.quarterMTDRevenue)}.`
             : "Quarter-to-date revenue leader is not available yet.",
-          quarterlyAtGoalCount > 0
-            ? `${quarterlyAtGoalCount} ${quarterlyAtGoalCount === 1 ? "salesperson is" : "salespeople are"} at or above quarterly goal pace.`
-            : "No salesperson is currently at quarterly goal pace.",
+(() => {
+  const quarterlyGoalLeaders = activeRows.filter(
+    (row) => Number(row.quarterlyGoalPercent || 0) >= 1
+  );
+
+  if (!quarterlyGoalLeaders.length) {
+    return "No salesperson is currently at or above quarterly goal pace.";
+  }
+
+  const names = formatLeaderNames(quarterlyGoalLeaders);
+
+  return quarterlyGoalLeaders.length === 1
+    ? `${names} is at or above quarterly goal pace.`
+    : `${names} are all at or above quarterly goal pace.`;
+})(),
         ],
         coaching: [
           rolling90ClosingLow
@@ -1558,9 +1570,11 @@ monthlyContractsLeaders.length === 1
           annualGoalLeader
             ? `${annualGoalLeader.name} is strongest against annual goal pace at ${displayPercent(annualGoalLeader.annualGoalPercent, 1)}.`
             : "Annual goal pace leader is not available yet.",
-          aboveTeamRevenue.length
-            ? `${aboveTeamRevenue.map((row) => row.name).join(", ")} ${aboveTeamRevenue.length === 1 ? "is" : "are"} above the team revenue average.`
-            : "No salesperson is currently above the team revenue average.",
+aboveTeamRevenue.length
+  ? `${formatLeaderNames(aboveTeamRevenue)} ${
+      aboveTeamRevenue.length === 1 ? "is" : "are"
+    } above the team revenue average.`
+  : "No salesperson is currently above the team revenue average.",
         ],
         coaching: [
           annualClosingLow
@@ -1644,7 +1658,7 @@ monthlyContractsLeaders.length === 1
       : "negative"
   }`}
 >
-  {executiveSummary.rolling90ClosingAverage >= 0.3
+  {executiveSummary.rolling90ClosingAverage >= 0.25
     ? `${(
         (executiveSummary.rolling90ClosingAverage - 0.25) *
         100
