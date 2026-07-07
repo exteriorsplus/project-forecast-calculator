@@ -1488,8 +1488,8 @@ insight: `Monthly Production is currently highlighted in ${
   monthlyAtGoalCount >= 4
     ? "The team has enough salespeople producing at goal pace to maintain healthy monthly performance."
     : monthlyAtGoalCount >= 2
-    ? "Increasing the number of reps on pace to 4 would move this section to green (Good)."
-    : "Increasing the number of reps on pace to at least 2 would move this section to yellow (Watch). Reaching 4 reps on pace would move it to green (Good)."
+    ? "Increasing the number of PM's on pace to 4 would move this section to green (Good)."
+    : "Increasing the number of PM's on pace to at least 2 would move this section to yellow (Watch). Reaching 4 PM's on pace would move it to green (Good)."
 }`,
         positive: [
           monthlyRevenueLeader
