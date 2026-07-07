@@ -1087,25 +1087,44 @@ body {
   background: #111827;
   color: #ffffff;
   border-color: #111827;
+  box-shadow: 0 8px 20px rgba(17,24,39,.18);
 }
 
-.summary-tab-status {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: #6b7280;
+.summary-tab-status{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    transition:.25s ease;
+    opacity:.55;
+    transform:scale(.8);
 }
 
-.manager-summary-tabs button.good .summary-tab-status {
-  background: #16a34a;
+/* GOOD */
+.manager-summary-tabs button.good .summary-tab-status{
+    background:#16a34a;
 }
 
-.manager-summary-tabs button.watch .summary-tab-status {
-  background: #ca8a04;
+/* WATCH */
+.manager-summary-tabs button.watch .summary-tab-status{
+    background:#ca8a04;
 }
 
-.manager-summary-tabs button.attention .summary-tab-status {
-  background: #b91c1c;
+/* ATTENTION */
+.manager-summary-tabs button.attention .summary-tab-status{
+    background:#b91c1c;
+}
+
+/* Active tab = brighter & larger */
+.manager-summary-tabs button.active .summary-tab-status{
+    opacity:1;
+    transform:scale(1.35);
+    box-shadow:0 0 10px currentColor;
+}
+
+/* Hover */
+.manager-summary-tabs button:hover{
+    transform:translateY(-1px);
+    transition:.18s;
 }
 
 .manager-summary-section-card.active {
@@ -1181,7 +1200,7 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .executive-brief-card p {
+  .executive-brief-card p { 
     font-size: 16px;
   }
 }
