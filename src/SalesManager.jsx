@@ -1478,14 +1478,18 @@ status:
             : monthlyAtGoalCount > 0
             ? "good"
             : "watch",
-            insight: `Monthly Production is rated ${
-  monthlyAtGoalCount >= 4 ? "Good" : monthlyAtGoalCount >= 2 ? "Watch" : "Attention"
-} because ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently at or above monthly goal pace. ${
+insight: `Monthly Production is currently highlighted in ${
   monthlyAtGoalCount >= 4
-    ? "The team has enough reps producing at goal pace to keep the month healthy."
+    ? "green (Good)"
     : monthlyAtGoalCount >= 2
-    ? "The month is not critical yet, but more reps need to move onto goal pace."
-    : "Leadership action is needed because too few reps are currently carrying the month."
+    ? "yellow (Watch)"
+    : "red (Needs Attention)"
+} because only ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently on monthly goal pace. ${
+  monthlyAtGoalCount >= 4
+    ? "The team has enough salespeople producing at goal pace to maintain healthy monthly performance."
+    : monthlyAtGoalCount >= 2
+    ? "Increasing the number of reps on pace to 4 would move this section to green (Good)."
+    : "Increasing the number of reps on pace to at least 2 would move this section to yellow (Watch). Reaching 4 reps on pace would move it to green (Good)."
 }`,
         positive: [
           monthlyRevenueLeader
