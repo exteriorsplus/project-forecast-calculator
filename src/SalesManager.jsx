@@ -1075,7 +1075,30 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
       .slice()
       .filter((row) => Number(row[key] || 0) > 0)
       .sort((a, b) => Number(b[key] || 0) - Number(a[key] || 0))[0];
+const getLeaders = (list, key) => {
+  const values = list
+    .map((row) => Number(row[key] || 0))
+    .filter((value) => value > 0);
 
+  if (!values.length) return [];
+
+  const max = Math.max(...values);
+
+  return list.filter((row) => Number(row[key] || 0) === max);
+};
+
+const formatLeaderNames = (leaders) => {
+  if (leaders.length === 1) return leaders[0].name;
+
+  if (leaders.length === 2) {
+    return `${leaders[0].name} and ${leaders[1].name}`;
+  }
+
+  return `${leaders
+    .slice(0, -1)
+    .map((row) => row.name)
+    .join(", ")}, and ${leaders[leaders.length - 1].name}`;
+};
   const getLowest = (list, key) =>
     list
       .slice()
@@ -1127,7 +1150,7 @@ const getExecutiveSummary = (rows, totals, invoicePipeline) => {
   };
 
   const monthlyRevenueLeader = getHighest(activeRows, "monthlyRevenue");
-  const monthlyContractsLeader = getHighest(activeRows, "monthlyContracts");
+  const monthlyContractsLeaders = getLeaders(activeRows, "monthlyContracts");
   const monthlyAverageContractLeader = getHighest(activeRows, "monthlyAverageContract");
   const monthlyGoalLeader = getHighest(activeRows, "monthlyGoalPercent");
   const monthlyRevenueLow = getLowest(revenueCoachingRows, "monthlyRevenue");
@@ -1459,9 +1482,11 @@ status:
           monthlyRevenueLeader
             ? `${monthlyRevenueLeader.name} leads monthly revenue at ${money(monthlyRevenueLeader.monthlyRevenue)}.`
             : "Monthly revenue leader is not available yet.",
-          monthlyContractsLeader
-            ? `${monthlyContractsLeader.name} has the most contracts sold this month at ${monthlyContractsLeader.monthlyContracts}.`
-            : "Monthly contract count is not available yet.",
+monthlyContractsLeaders.length === 1
+  ? `${monthlyContractsLeaders[0].name} has the most contracts sold this month at ${monthlyContractsLeaders[0].monthlyContracts}.`
+  : monthlyContractsLeaders.length > 1
+    ? `${formatLeaderNames(monthlyContractsLeaders)} are tied for the most contracts sold this month with ${monthlyContractsLeaders[0].monthlyContracts} each.`
+    : "Monthly contract count is not available yet.",
           monthlyAverageContractLeader
             ? `${monthlyAverageContractLeader.name} has the highest monthly average contract at ${money(monthlyAverageContractLeader.monthlyAverageContract)}.`
             : "Monthly average contract leader is not available yet.",
