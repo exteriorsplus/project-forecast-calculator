@@ -908,7 +908,7 @@ body {
 /* ===== Executive Command Center Upgrade ===== */
 .executive-command-header {
   background:
-    radial-gradient(circle at top right, rgba(185, 28, 28, 0.35), transparent 34%),
+    radial-gradient(circle at top right, rgba(240, 1, 1, 0.761), transparent 34%),
     linear-gradient(135deg, #0f172a, #111827 58%, #1f2937);
 }
 
@@ -1181,7 +1181,127 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .executive-brief-card p {
+  .executive-brief-card p { 
     font-size: 16px;
+  }
+}
+.employee-of-week-card {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+align-items: start;
+  padding: 38px;
+  margin: 24px 0 30px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(17,24,39,.08);
+}
+
+.employee-of-week-person,
+.employee-of-week-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-of-week-person {
+  align-items: center;
+  text-align: center;
+}
+
+.employee-of-week-person span,
+.employee-of-week-heading {
+  margin-bottom: 18px;
+  color: #aa211b;
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.employee-of-week-heading {
+  margin-top: 0;
+  margin-bottom: 14px;
+  padding-top: 0;
+}
+
+.employee-of-week-person img {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid gold;
+  animation: topDawgGlow 6s ease-in-out infinite;
+  box-shadow:
+    0 0 18px rgba(255,215,0,.70),
+    0 0 42px rgba(255,215,0,.45),
+    0 0 70px rgba(255,255,0,.28);
+}
+
+.employee-of-week-person h3 {
+  margin: 20px 0 0;
+  font-size: 42px;
+  line-height: 1.05;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.employee-of-week-reasons {
+  background: #ffffff;
+  border: 1px solid #dbe3ee;
+  border-radius: 20px;
+  padding: 30px 36px;
+}
+
+.employee-of-week-columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 34px;
+}
+
+.employee-of-week-columns ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.employee-of-week-columns li {
+  margin-bottom: 18px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #111827;
+}
+
+@media (max-width: 900px) {
+  .employee-of-week-card {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-of-week-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.employee-of-week-reason-grid {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 18px 34px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.employee-of-week-reason-grid li {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: #111827;
+}
+
+@media (max-width: 900px) {
+  .employee-of-week-reason-grid {
+    grid-template-rows: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row;
   }
 }
