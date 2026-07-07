@@ -1478,6 +1478,15 @@ status:
             : monthlyAtGoalCount > 0
             ? "good"
             : "watch",
+            insight: `Monthly Production is rated ${
+  monthlyAtGoalCount >= 4 ? "Good" : monthlyAtGoalCount >= 2 ? "Watch" : "Attention"
+} because ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently at or above monthly goal pace. ${
+  monthlyAtGoalCount >= 4
+    ? "The team has enough reps producing at goal pace to keep the month healthy."
+    : monthlyAtGoalCount >= 2
+    ? "The month is not critical yet, but more reps need to move onto goal pace."
+    : "Leadership action is needed because too few reps are currently carrying the month."
+}`,
         positive: [
           monthlyRevenueLeader
             ? `${monthlyRevenueLeader.name} leads monthly revenue at ${money(monthlyRevenueLeader.monthlyRevenue)}.`
@@ -1753,6 +1762,12 @@ aboveTeamRevenue.length
                 <span>{activeSummarySection.eyebrow}</span>
                 <h3>{activeSummarySection.title}</h3>
               </div>
+              {activeSummarySection.insight && (
+  <div className={`manager-section-insight ${activeSummarySection.status}`}>
+    <strong>Executive Interpretation</strong>
+    <p>{activeSummarySection.insight}</p>
+  </div>
+)}
 
               <div className="manager-executive-summary-grid">
                 <div className="manager-summary-column positive">
