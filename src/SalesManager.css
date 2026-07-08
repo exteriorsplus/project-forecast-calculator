@@ -922,18 +922,24 @@ body {
 }
 
 .executive-brief-card {
-  background: #111827;
-  color: #ffffff;
-  border-radius: 22px;
-  padding: 22px 24px;
-  margin-bottom: 18px;
-  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
+  background: #f8fafc;
+  border: 1px solid #dbe3ee;
+  border-left: 7px solid #b91c1c;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin: 12px 0 18px;
 }
 
 .executive-brief-card p {
   margin: 0;
-  font-size: 19px;
-  line-height: 1.5;
+  color: #111827;
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.executive-brief-card strong {
+  color: #111827;
   font-weight: 850;
 }
 
