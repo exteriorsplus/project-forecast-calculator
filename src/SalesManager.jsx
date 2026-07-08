@@ -1715,20 +1715,34 @@ aboveTeamRevenue.length
 <div className="manager-kpi-card">
   <span>Total Company Revenue</span>
   <strong>{money(totalCompanyRevenue)}</strong>
-  <small>FYTD Revenue + Money Owed</small>
+  <small>Revenue earned + receivables</small>
 </div>
 
     <div className="manager-kpi-card">
-      <span>Money Owed</span>
+      <span>Revenue Owed to Company</span>
       <strong>{money(invoicePipeline.balanceDue)}</strong>
-      <small>Invoiced / owed</small>
+      <small>Outstanding receivables</small>
     </div>
 
-    <div className="manager-kpi-card">
-      <span>Scheduled for Build</span>
-      <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
-      <small>Future production money</small>
-    </div>
+<div className="manager-kpi-card">
+  <span>FYTD vs Last Year</span>
+
+  <strong
+    className={
+      totals.teamVsLY.className === "positive"
+        ? "manager-positive"
+        : "manager-negative"
+    }
+  >
+    {totals.teamVsLY.label}
+  </strong>
+
+  <small>
+    {totals.teamVsLY.className === "positive"
+      ? "Ahead of last fiscal year"
+      : "Behind last fiscal year"}
+  </small>
+</div>
   </div>
 
   <div className="manager-kpi-grid">
@@ -1892,11 +1906,17 @@ aboveTeamRevenue.length
           </div>
 
           <div className="manager-kpi-grid">
-            <div className="manager-kpi-card">
-              <span>Scheduled for Build</span>
-              <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
-              <small>Future production money</small>
-            </div>
+<div className="manager-kpi-card">
+  <span>FYTD vs Last Year</span>
+
+  <strong>{totals.teamVsLY.label}</strong>
+
+  <small>
+    {totals.teamVsLY.className === "positive"
+      ? "Ahead of last fiscal year"
+      : "Behind last fiscal year"}
+  </small>
+</div>
 
             <div className="manager-kpi-card">
               <span>Needs to be Invoiced</span>
