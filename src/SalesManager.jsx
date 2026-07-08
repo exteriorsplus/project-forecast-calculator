@@ -1285,7 +1285,16 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
     good: Number(totals.totalGoalPercent || 0) >= 1 || totals.teamVsLY.className === "positive",
     warning: Number(totals.totalGoalPercent || 0) >= 0.9 || totals.teamVsLY.rawDifference >= -0.05,
   });
-
+const annualLeadingStatus = getStatus({
+  good:
+    annualClosingAverage >= 0.25 &&
+    totals.teamAverageContract >= 12000 &&
+    totals.totalContracts >= 300,
+  warning:
+    annualClosingAverage >= 0.22 &&
+    totals.teamAverageContract >= 10000 &&
+    totals.totalContracts >= 250,
+});
 const closingStatus = getStatus({
   good: rolling90ClosingAverage >= 0.25,
   warning: rolling90ClosingAverage >= 0.22,
@@ -1587,22 +1596,24 @@ monthlyContractsLeaders.length === 1
       {
         title: "Annual Performance",
         eyebrow: "Fiscal YTD",
-        status: revenueStatus,
+        status: annualLeadingStatus,
 insight: `Annual Performance is currently highlighted in ${
-  revenueStatus === "good"
+  annualLeadingStatus === "good"
     ? "green (good to go)"
-    : revenueStatus === "watch"
+    : annualLeadingStatus === "watch"
     ? "yellow (keep an eye on it)"
     : "red (needs attention)"
-} because the team is currently at ${displayPercent(
-  totals.totalGoalPercent,
+} because annual success is being measured by the leading indicators that drive revenue: closing rate, average contract value, and contract volume. The team is currently at ${displayPercent(
+  annualClosingAverage,
   1
-)} of the annual goal. ${
-  revenueStatus === "good"
-    ? "The team is already in a healthy annual position."
-    : revenueStatus === "watch"
-    ? "Improving annual goal progress to 95% would move it to green (good to go)."
-    : "Improving annual goal progress to at least 85% would move this section to yellow (keep an eye on it). Reaching 95% would move it to green (good to go)."
+)} FYTD closing rate, ${money(
+  totals.teamAverageContract
+)} average contract value, and ${totals.totalContracts} contracts. ${
+  annualLeadingStatus === "good"
+    ? "These inputs are strong enough to support annual goal achievement."
+    : annualLeadingStatus === "watch"
+    ? "Improving FYTD closing rate to 25%, average contract value to $12,000, or contract volume above 300 would move this section to green (good to go)."
+    : "Improving FYTD closing rate to at least 22%, average contract value to $10,000, and contract volume to 250 would move this section to yellow (keep an eye on it)."
 }`,
         positive: [
           `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
