@@ -1482,14 +1482,14 @@ insight: `Monthly Production is currently highlighted in ${
   monthlyAtGoalCount >= 4
     ? "green (good to go)"
     : monthlyAtGoalCount >= 2
-    ? "yellow (Keep an eye on it)"
+    ? "yellow (keep an eye on it)"
     : "red (needs attention)"
 } because only ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently on monthly goal pace. ${
   monthlyAtGoalCount >= 4
     ? "The team has enough salespeople producing at goal pace to maintain healthy monthly performance."
     : monthlyAtGoalCount >= 2
-    ? "Increasing the number of PM's on pace to 4 would move this section to green (Good)."
-    : "Increasing the number of PM's on pace to at least 2 would move this section to yellow (Watch). Reaching 4 PM's on pace would move it to green (Good)."
+    ? "Increasing the number of PM's on pace to 4 would move this section to green (good to go)."
+    : "Increasing the number of PM's on pace to at least 2 would move this section to yellow (keep an eye on it). Reaching 4 PM's on pace would move it to green (good to go)."
 }`,
         positive: [
           monthlyRevenueLeader
