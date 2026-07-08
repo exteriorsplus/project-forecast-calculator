@@ -1484,7 +1484,7 @@ insight: `Monthly Production is currently highlighted in ${
     : monthlyAtGoalCount >= 2
     ? "yellow (keep an eye on it)"
     : "red (needs attention)"
-} because only ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently on monthly goal pace. ${
+} because ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently on monthly goal pace. ${
   monthlyAtGoalCount >= 4
     ? "The team has enough salespeople producing at goal pace to maintain healthy monthly performance."
     : monthlyAtGoalCount >= 2
