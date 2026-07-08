@@ -1713,14 +1713,18 @@ aboveTeamRevenue.length
     </div>
 
 <div className="manager-kpi-card">
-  <span>Total Company Revenue</span>
-  <strong>{money(totalCompanyRevenue)}</strong>
-  <small>Revenue earned + receivables</small>
+  <span>Total Revenue Owed to Company</span>
+
+  <strong>{money(invoicePipeline.balanceDue)}</strong>
+
+  <small>Outstanding receivables</small>
 </div>
 
 <div className="manager-kpi-card">
   <span>Total Company Revenue</span>
+
   <strong>{money(totalCompanyRevenue)}</strong>
+
   <small>FYTD Revenue + revenue owed</small>
 </div>
 
