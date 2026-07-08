@@ -1768,7 +1768,7 @@ aboveTeamRevenue.length
       <span>Annual Performance</span>
       <strong>
   {executiveSummary.annualLeadingStatus === "good"
-    ? "Good"
+    ? "On Pace"
     : executiveSummary.annualLeadingStatus === "watch"
     ? "Watch"
     : "Attention"}
