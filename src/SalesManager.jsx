@@ -1281,10 +1281,25 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
   const balanceDue = Number(invoicePipeline.balanceDue || 0);
   const totalPipeline = Number(invoicePipeline.totalPipeline || 0);
 
-  const revenueStatus = getStatus({
-    good: Number(totals.totalGoalPercent || 0) >= 1 || totals.teamVsLY.className === "positive",
-    warning: Number(totals.totalGoalPercent || 0) >= 0.9 || totals.teamVsLY.rawDifference >= -0.05,
-  });
+const revenueStatus = getStatus({
+  good:
+    Number(totals.totalGoalPercent || 0) >= 1 ||
+    totals.teamVsLY.className === "positive",
+  warning:
+    Number(totals.totalGoalPercent || 0) >= 0.9 ||
+    totals.teamVsLY.rawDifference >= -0.05,
+});
+
+const monthlyLeadingStatus = getStatus({
+  good: monthlyAtGoalCount >= 4,
+  warning: monthlyAtGoalCount >= 2,
+});
+
+const rolling90LeadingStatus = getStatus({
+  good: rolling90ClosingAverage >= 0.25,
+  warning: rolling90ClosingAverage >= 0.22,
+});
+
 const annualLeadingStatus = getStatus({
   good:
     annualClosingAverage >= 0.25 &&
@@ -1481,12 +1496,7 @@ status:
       {
         title: "Monthly Production",
         eyebrow: "Current Month",
-        status:
-          monthlyGoalLow && Number(monthlyGoalLow.monthlyGoalPercent || 0) < 0.75
-            ? "attention"
-            : monthlyAtGoalCount > 0
-            ? "good"
-            : "watch",
+status: monthlyLeadingStatus,
 insight: `Monthly Production is currently highlighted in ${
   monthlyAtGoalCount >= 4
     ? "green (good to go)"
@@ -1531,12 +1541,7 @@ monthlyContractsLeaders.length === 1
       {
         title: "Rolling 90-Day Performance",
         eyebrow: "Rolling 90 Days",
-        status:
-          rolling90ClosingLow && Number(rolling90ClosingLow.rolling90ClosingRate || 0) < 0.25
-            ? "attention"
-            : rolling90ClosingAverage >= 0.28
-            ? "good"
-            : "watch",
+status: rolling90LeadingStatus,
             insight: `Rolling 90-Day Performance is currently highlighted in ${
   rolling90ClosingAverage >= 0.25
     ? "green (good to go)"
