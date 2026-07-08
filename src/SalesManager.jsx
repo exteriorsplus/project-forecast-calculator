@@ -1589,9 +1589,9 @@ monthlyContractsLeaders.length === 1
         eyebrow: "Fiscal YTD",
         status: revenueStatus,
         insight: `Annual Performance is currently highlighted in ${
-  Number(totals.totalGoalPercent || 0) >= 0.95
+  revenueStatus === "good"
     ? "green (good to go)"
-    : Number(totals.totalGoalPercent || 0) >= 0.85
+    : revenueStatus === "watch"
     ? "yellow (keep an eye on it)"
     : "red (needs attention)"
 } because the team is currently at ${displayPercent(
