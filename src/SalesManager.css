@@ -922,9 +922,10 @@ body {
 }
 
 .executive-brief-card {
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-left: 7px solid #111827;
+  background: #374151;      /* charcoal */
+  color: #f9fafb;
+  border: 1px solid #4b5563;
+  border-left: 7px solid #b91c1c;
   border-radius: 22px;
   padding: 22px 24px;
   margin-bottom: 18px;
@@ -932,10 +933,15 @@ body {
 
 .executive-brief-card p {
   margin: 0;
-  color: #111827;
-  font-size: 18px;
-  line-height: 1.7;
-  font-weight: 700;
+  color: #f3f4f6;
+  font-size: 17px;
+  line-height: 1.8;
+  font-weight: 500;
+}
+
+.executive-brief-card strong {
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .executive-health-grid {
