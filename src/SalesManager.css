@@ -922,19 +922,25 @@ body {
 }
 
 .executive-brief-card {
-  background: #111827;
-  color: #ffffff;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-left: 7px solid #111827;
   border-radius: 22px;
   padding: 22px 24px;
   margin-bottom: 18px;
-  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
 }
 
 .executive-brief-card p {
   margin: 0;
-  font-size: 19px;
-  line-height: 1.5;
-  font-weight: 850;
+  color: #374151;
+  font-size: 17px;
+  line-height: 1.8;
+  font-weight: 500;
+}
+
+.executive-brief-card strong {
+  color: #111827;
+  font-weight: 800;
 }
 
 .executive-health-grid {
