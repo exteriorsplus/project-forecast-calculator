@@ -1678,7 +1678,9 @@ aboveTeamRevenue.length
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
-    const weeklyTopDawg = executiveSummary.weeklyTopDawg;
+    const totalCompanyRevenue =
+  totals.totalRevenue + invoicePipeline.balanceDue;
+  const weeklyTopDawg = executiveSummary.weeklyTopDawg;
     const activeSummarySection =
       executiveSummary.sections.find(
         (section) => section.title === activeSummaryTab
@@ -1710,11 +1712,11 @@ aboveTeamRevenue.length
       </small>
     </div>
 
-    <div className="manager-kpi-card">
-      <span>Cash Pipeline</span>
-      <strong>{money(invoicePipeline.totalPipeline)}</strong>
-      <small>Scheduled + invoice-ready + owed</small>
-    </div>
+<div className="manager-kpi-card">
+  <span>Total Company Revenue</span>
+  <strong>{money(totalCompanyRevenue)}</strong>
+  <small>FYTD Revenue + Money Owed</small>
+</div>
 
     <div className="manager-kpi-card">
       <span>Money Owed</span>
