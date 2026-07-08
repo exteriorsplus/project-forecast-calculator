@@ -1479,9 +1479,11 @@ status:
     },
   ];
 
-  return {
+return {
   brief: executiveBrief,
   rolling90ClosingAverage,
+  annualLeadingStatus,
+  monthlyAtGoalCount,
   healthCards,
   priorities,
   weeklyTopDawg: weeklyTopDawg
@@ -1744,7 +1746,13 @@ aboveTeamRevenue.length
 
     <div className="manager-kpi-card">
       <span>Annual Performance</span>
-      <strong>{annualLeadingStatus === "good" ? "Good" : annualLeadingStatus === "watch" ? "Watch" : "Attention"}</strong>
+      <strong>
+  {executiveSummary.annualLeadingStatus === "good"
+    ? "Good"
+    : executiveSummary.annualLeadingStatus === "watch"
+    ? "Watch"
+    : "Attention"}
+</strong>
       <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
     </div>
 
@@ -1756,7 +1764,7 @@ aboveTeamRevenue.length
 
     <div className="manager-kpi-card">
       <span>PMs on Goal Pace</span>
-      <strong>{monthlyAtGoalCount} / {rows.length}</strong>
+      <strong>{executiveSummary.monthlyAtGoalCount} / {rows.length}</strong>
       <small>Monthly goal pace</small>
     </div>
   </div>
