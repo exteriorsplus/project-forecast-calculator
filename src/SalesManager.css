@@ -925,16 +925,17 @@ body {
   background: #111827;
   color: #ffffff;
   border-radius: 22px;
-  padding: 22px 24px;
+  padding: 20px 24px;
   margin-bottom: 18px;
   box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
 }
 
 .executive-brief-card p {
   margin: 0;
-  font-size: 19px;
-  line-height: 1.5;
-  font-weight: 850;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 700;
 }
 
 .executive-health-grid {
