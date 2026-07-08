@@ -1713,11 +1713,11 @@ aboveTeamRevenue.length
     </div>
 
 <div className="manager-kpi-card">
-  <span>Total Revenue Owed to Company</span>
+  <span>Revenue in Pipeline</span>
 
-  <strong>{money(invoicePipeline.balanceDue)}</strong>
+  <strong>{money(invoicePipeline.totalPipeline)}</strong>
 
-  <small>Outstanding receivables</small>
+  <small>Sold but not yet recognized</small>
 </div>
 
 <div className="manager-kpi-card">
