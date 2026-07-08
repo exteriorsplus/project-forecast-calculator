@@ -1528,6 +1528,22 @@ monthlyContractsLeaders.length === 1
             : rolling90ClosingAverage >= 0.28
             ? "good"
             : "watch",
+            insight: `Rolling 90-Day Performance is currently highlighted in ${
+  rolling90ClosingAverage >= 0.25
+    ? "green (good to go)"
+    : rolling90ClosingAverage >= 0.22
+    ? "yellow (keep an eye on it)"
+    : "red (needs attention)"
+} because the team Rolling 90-Day Closing Rate is ${displayPercent(
+  rolling90ClosingAverage,
+  1
+)}. ${
+  rolling90ClosingAverage >= 0.25
+    ? "The team is meeting or exceeding the 25% closing-rate goal."
+    : rolling90ClosingAverage >= 0.22
+    ? "Improving the team closing rate to 25% would move this section to green (good to go)."
+    : "Improving the team closing rate to at least 22% would move this section to yellow (keep an eye on it). Reaching 25% would move it to green (good to go)."
+}`,
         positive: [
           rolling90ClosingLeader
             ? `${rolling90ClosingLeader.name} leads rolling 90-day closing rate at ${displayPercent(rolling90ClosingLeader.rolling90ClosingRate, 1)}.`
@@ -1572,6 +1588,22 @@ monthlyContractsLeaders.length === 1
         title: "Annual Performance",
         eyebrow: "Fiscal YTD",
         status: revenueStatus,
+        insight: `Annual Performance is currently highlighted in ${
+  Number(totals.totalGoalPercent || 0) >= 0.95
+    ? "green (good to go)"
+    : Number(totals.totalGoalPercent || 0) >= 0.85
+    ? "yellow (keep an eye on it)"
+    : "red (needs attention)"
+} because the team is currently at ${displayPercent(
+  totals.totalGoalPercent,
+  1
+)} of the annual goal. ${
+  Number(totals.totalGoalPercent || 0) >= 0.95
+    ? "Annual production is close enough to goal pace that the team is in a healthy position."
+    : Number(totals.totalGoalPercent || 0) >= 0.85
+    ? "Improving annual goal progress to 95% would move this section to green (good to go)."
+    : "Improving annual goal progress to at least 85% would move this section to yellow (keep an eye on it). Reaching 95% would move it to green (good to go)."
+}`,
         positive: [
           `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
           annualRevenueLeader
