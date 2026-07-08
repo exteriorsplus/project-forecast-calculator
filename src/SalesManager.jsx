@@ -1698,51 +1698,69 @@ aboveTeamRevenue.length
           </div>
         </header>
 
-        <section className="manager-kpi-grid">
-          <div className="manager-kpi-card primary">
-            <span>FYTD Team Revenue</span>
-            <strong>{money(totals.totalRevenue)}</strong>
-            <small className={`manager-difference ${totals.teamVsLY.className}`}>
-              {totals.teamVsLY.label} vs LY
-            </small>
-          </div>
+        <section className="manager-kpi-stack">
+  <div className="manager-kpi-grid">
+    <div className="manager-kpi-card primary">
+      <span>FYTD Team Revenue</span>
+      <strong>{money(totals.totalRevenue)}</strong>
+      <small className={`manager-difference ${totals.teamVsLY.className}`}>
+        {totals.teamVsLY.label} vs LY
+      </small>
+    </div>
 
-<div className="manager-kpi-card">
-  <span>Rolling 90-Day Closing Rate</span>
+    <div className="manager-kpi-card">
+      <span>Cash Pipeline</span>
+      <strong>{money(invoicePipeline.totalPipeline)}</strong>
+      <small>Scheduled + invoice-ready + owed</small>
+    </div>
 
-  <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+    <div className="manager-kpi-card">
+      <span>Money Owed</span>
+      <strong>{money(invoicePipeline.balanceDue)}</strong>
+      <small>Invoiced / owed</small>
+    </div>
 
-<small
-  className={`manager-difference ${
-    executiveSummary.rolling90ClosingAverage >= 0.25
-      ? "positive"
-      : "negative"
-  }`}
->
-  {executiveSummary.rolling90ClosingAverage >= 0.25
-    ? `${(
-        (executiveSummary.rolling90ClosingAverage - 0.25) *
-        100
-      ).toFixed(1)} pts above 25% goal`
-    : `${(
-        (0.25 - executiveSummary.rolling90ClosingAverage) *
-        100
-      ).toFixed(1)} pts below 25% goal`}
-</small>
-</div>
+    <div className="manager-kpi-card">
+      <span>Scheduled for Build</span>
+      <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
+      <small>Future production money</small>
+    </div>
+  </div>
 
-          <div className="manager-kpi-card">
-            <span>Annual Goal Progress</span>
-            <strong>{displayPercent(totals.totalGoalPercent, 1)}</strong>
-            <ProgressBar value={totals.totalGoalPercent} />
-          </div>
+  <div className="manager-kpi-grid">
+    <div className="manager-kpi-card">
+      <span>Rolling 90-Day Closing Rate</span>
+      <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+      <small
+        className={`manager-difference ${
+          executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
+        }`}
+      >
+        {executiveSummary.rolling90ClosingAverage >= 0.25
+          ? `${((executiveSummary.rolling90ClosingAverage - 0.25) * 100).toFixed(1)} pts above 25% goal`
+          : `${((0.25 - executiveSummary.rolling90ClosingAverage) * 100).toFixed(1)} pts below 25% goal`}
+      </small>
+    </div>
 
-          <div className="manager-kpi-card">
-            <span>Average Contract</span>
-            <strong>{money(totals.teamAverageContract)}</strong>
-            <small>{totals.totalContracts} contracts</small>
-          </div>
-        </section>
+    <div className="manager-kpi-card">
+      <span>Annual Performance</span>
+      <strong>{annualLeadingStatus === "good" ? "Good" : annualLeadingStatus === "watch" ? "Watch" : "Attention"}</strong>
+      <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
+    </div>
+
+    <div className="manager-kpi-card">
+      <span>Average Contract</span>
+      <strong>{money(totals.teamAverageContract)}</strong>
+      <small>{totals.totalContracts} contracts</small>
+    </div>
+
+    <div className="manager-kpi-card">
+      <span>PMs on Goal Pace</span>
+      <strong>{monthlyAtGoalCount} / {rows.length}</strong>
+      <small>Monthly goal pace</small>
+    </div>
+  </div>
+</section>
 
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">

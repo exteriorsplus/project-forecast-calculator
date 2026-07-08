@@ -1281,11 +1281,35 @@ const rolling90ClosingAverage = getTeamMetricForMonth(
   const balanceDue = Number(invoicePipeline.balanceDue || 0);
   const totalPipeline = Number(invoicePipeline.totalPipeline || 0);
 
-  const revenueStatus = getStatus({
-    good: Number(totals.totalGoalPercent || 0) >= 1 || totals.teamVsLY.className === "positive",
-    warning: Number(totals.totalGoalPercent || 0) >= 0.9 || totals.teamVsLY.rawDifference >= -0.05,
-  });
+const revenueStatus = getStatus({
+  good:
+    Number(totals.totalGoalPercent || 0) >= 1 ||
+    totals.teamVsLY.className === "positive",
+  warning:
+    Number(totals.totalGoalPercent || 0) >= 0.9 ||
+    totals.teamVsLY.rawDifference >= -0.05,
+});
 
+const monthlyLeadingStatus = getStatus({
+  good: monthlyAtGoalCount >= 4,
+  warning: monthlyAtGoalCount >= 2,
+});
+
+const rolling90LeadingStatus = getStatus({
+  good: rolling90ClosingAverage >= 0.25,
+  warning: rolling90ClosingAverage >= 0.22,
+});
+
+const annualLeadingStatus = getStatus({
+  good:
+    annualClosingAverage >= 0.25 &&
+    totals.teamAverageContract >= 12000 &&
+    totals.totalContracts >= 300,
+  warning:
+    annualClosingAverage >= 0.22 &&
+    totals.teamAverageContract >= 10000 &&
+    totals.totalContracts >= 250,
+});
 const closingStatus = getStatus({
   good: rolling90ClosingAverage >= 0.25,
   warning: rolling90ClosingAverage >= 0.22,
@@ -1472,12 +1496,20 @@ status:
       {
         title: "Monthly Production",
         eyebrow: "Current Month",
-        status:
-          monthlyGoalLow && Number(monthlyGoalLow.monthlyGoalPercent || 0) < 0.75
-            ? "attention"
-            : monthlyAtGoalCount > 0
-            ? "good"
-            : "watch",
+status: monthlyLeadingStatus,
+insight: `Monthly Production is currently highlighted in ${
+  monthlyAtGoalCount >= 4
+    ? "green (good to go)"
+    : monthlyAtGoalCount >= 2
+    ? "yellow (keep an eye on it)"
+    : "red (needs attention)"
+} because ${monthlyAtGoalCount} of ${activeRows.length} salespeople are currently on monthly goal pace. ${
+  monthlyAtGoalCount >= 4
+    ? "The team has enough salespeople producing at goal pace to maintain healthy monthly performance."
+    : monthlyAtGoalCount >= 2
+    ? "Increasing the number of PM's on pace to 4 would move this section to green (good to go)."
+    : "Increasing the number of PM's on pace to at least 2 would move this section to yellow (keep an eye on it). Reaching 4 PM's on pace would move it to green (good to go)."
+}`,
         positive: [
           monthlyRevenueLeader
             ? `${monthlyRevenueLeader.name} leads monthly revenue at ${money(monthlyRevenueLeader.monthlyRevenue)}.`
@@ -1509,12 +1541,23 @@ monthlyContractsLeaders.length === 1
       {
         title: "Rolling 90-Day Performance",
         eyebrow: "Rolling 90 Days",
-        status:
-          rolling90ClosingLow && Number(rolling90ClosingLow.rolling90ClosingRate || 0) < 0.25
-            ? "attention"
-            : rolling90ClosingAverage >= 0.28
-            ? "good"
-            : "watch",
+status: rolling90LeadingStatus,
+            insight: `Rolling 90-Day Performance is currently highlighted in ${
+  rolling90ClosingAverage >= 0.25
+    ? "green (good to go)"
+    : rolling90ClosingAverage >= 0.22
+    ? "yellow (keep an eye on it)"
+    : "red (needs attention)"
+} because the team Rolling 90-Day Closing Rate is ${displayPercent(
+  rolling90ClosingAverage,
+  1
+)}. ${
+  rolling90ClosingAverage >= 0.25
+    ? "The team is meeting or exceeding the 25% closing-rate goal."
+    : rolling90ClosingAverage >= 0.22
+    ? "Improving the team closing rate to 25% would move this section to green (good to go)."
+    : "Improving the team closing rate to at least 22% would move this section to yellow (keep an eye on it). Reaching 25% would move it to green (good to go)."
+}`,
         positive: [
           rolling90ClosingLeader
             ? `${rolling90ClosingLeader.name} leads rolling 90-day closing rate at ${displayPercent(rolling90ClosingLeader.rolling90ClosingRate, 1)}.`
@@ -1558,7 +1601,25 @@ monthlyContractsLeaders.length === 1
       {
         title: "Annual Performance",
         eyebrow: "Fiscal YTD",
-        status: revenueStatus,
+        status: annualLeadingStatus,
+insight: `Annual Performance is currently highlighted in ${
+  annualLeadingStatus === "good"
+    ? "green (good to go)"
+    : annualLeadingStatus === "watch"
+    ? "yellow (keep an eye on it)"
+    : "red (needs attention)"
+} because annual success is being measured by the leading indicators that drive revenue: closing rate, average contract value, and contract volume. The team is currently at ${displayPercent(
+  annualClosingAverage,
+  1
+)} FYTD closing rate, ${money(
+  totals.teamAverageContract
+)} average contract value, and ${totals.totalContracts} contracts. ${
+  annualLeadingStatus === "good"
+    ? "These inputs are strong enough to support annual goal achievement."
+    : annualLeadingStatus === "watch"
+    ? "Improving FYTD closing rate to 25%, average contract value to $12,000, or contract volume above 300 would move this section to green (good to go)."
+    : "Improving FYTD closing rate to at least 22%, average contract value to $10,000, and contract volume to 250 would move this section to yellow (keep an eye on it)."
+}`,
         positive: [
           `Team revenue is ${totals.teamVsLY.label} versus the same fiscal period last year.`,
           annualRevenueLeader
@@ -1753,6 +1814,12 @@ aboveTeamRevenue.length
                 <span>{activeSummarySection.eyebrow}</span>
                 <h3>{activeSummarySection.title}</h3>
               </div>
+              {activeSummarySection.insight && (
+  <div className={`manager-section-insight ${activeSummarySection.status}`}>
+    <strong>Executive Interpretation</strong>
+    <p>{activeSummarySection.insight}</p>
+  </div>
+)}
 
               <div className="manager-executive-summary-grid">
                 <div className="manager-summary-column positive">

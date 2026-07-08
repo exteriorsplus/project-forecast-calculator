@@ -1364,3 +1364,7 @@ align-items: start;
   line-height: 1.55;
   font-weight: 700;
 }
+.manager-kpi-stack {
+  display: grid;
+  gap: 18px;
+}
