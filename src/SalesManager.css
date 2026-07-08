@@ -932,15 +932,10 @@ body {
 
 .executive-brief-card p {
   margin: 0;
-  color: #374151;
-  font-size: 17px;
-  line-height: 1.8;
-  font-weight: 500;
-}
-
-.executive-brief-card strong {
   color: #111827;
-  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.7;
+  font-weight: 700;
 }
 
 .executive-health-grid {
