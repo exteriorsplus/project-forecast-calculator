@@ -1588,7 +1588,7 @@ monthlyContractsLeaders.length === 1
         title: "Annual Performance",
         eyebrow: "Fiscal YTD",
         status: revenueStatus,
-        insight: `Annual Performance is currently highlighted in ${
+insight: `Annual Performance is currently highlighted in ${
   revenueStatus === "good"
     ? "green (good to go)"
     : revenueStatus === "watch"
@@ -1598,10 +1598,10 @@ monthlyContractsLeaders.length === 1
   totals.totalGoalPercent,
   1
 )} of the annual goal. ${
-  Number(totals.totalGoalPercent || 0) >= 0.95
-    ? "Annual production is close enough to goal pace that the team is in a healthy position."
-    : Number(totals.totalGoalPercent || 0) >= 0.85
-    ? "Improving annual goal progress to 95% would move this section to green (good to go)."
+  revenueStatus === "good"
+    ? "The team is already in a healthy annual position."
+    : revenueStatus === "watch"
+    ? "Improving annual goal progress to 95% would move it to green (good to go)."
     : "Improving annual goal progress to at least 85% would move this section to yellow (keep an eye on it). Reaching 95% would move it to green (good to go)."
 }`,
         positive: [
