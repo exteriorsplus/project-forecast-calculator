@@ -1717,7 +1717,7 @@ aboveTeamRevenue.length
 
   <strong>{money(invoicePipeline.totalPipeline)}</strong>
 
-  <small>Sold but not yet recognized</small>
+  <small>Builds + Accounts Receivable</small>
 </div>
 
 <div className="manager-kpi-card">
@@ -1725,7 +1725,7 @@ aboveTeamRevenue.length
 
   <strong>{money(totalCompanyRevenue)}</strong>
 
-  <small>FYTD Revenue + revenue owed</small>
+  <small>FYTD Revenue + Revenue in Pipeline</small>
 </div>
 
 <div className="manager-kpi-card">
