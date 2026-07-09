@@ -1579,6 +1579,10 @@ align-items: start;
   border-radius: 18px;
   margin: 0;
 }
+.revenue-runway-markers {
+  position: relative;
+}
+
 .runway-markers-polished {
   height: 118px;
   margin: 12px 0 8px;
@@ -1591,11 +1595,6 @@ align-items: start;
   transform: translateX(-50%);
   text-align: center;
   color: #111827;
-}
-
-.runway-markers-polished .annual-goal {
-  transform: translateX(-50%);
-  text-align: center;
 }
 
 .runway-markers-polished .marker span {
@@ -1656,7 +1655,7 @@ align-items: start;
   background: #b91c1c;
 }
 
-.annual-goal .runway-flag {
-  margin-left: auto;
-  margin-right: auto;
+.runway-markers-polished .annual-goal {
+  transform: translateX(-50%);
+  text-align: center;
 }
