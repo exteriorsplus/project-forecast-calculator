@@ -1794,57 +1794,41 @@ const lastYearMarkerPercent =
     <i />
   </div>
 
-<div
-  className="marker ly-goal"
-  style={{ left: `${lastYearMarkerPercent}%` }}
->
-  <b className="runway-flag navy-flag" />
+  <div className="marker ly-goal" style={{ left: `${lastYearMarkerPercent}%` }}>
+    <b className="runway-flag navy-flag" />
+    <span>Last Year</span>
+    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfLastYear, 1)} vs Last Year</small>
+    <i />
+  </div>
 
-  <span>Last Year</span>
-
-  <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
-
-  <small>
-    {displayPercent(expectedPercentOfLastYear,1)} vs Last Year
-  </small>
-
-  <i />
-</div>
-
-<div
-  className="marker annual-goal"
-  style={{ left: "100%" }}
->
-  <b className="runway-flag red-flag" />
-
-  <span>Annual Goal</span>
-
-  <strong>{moneyShort(annualRevenueGoal)}</strong>
-
-  <small>
-    {displayPercent(expectedPercentOfGoal,1)} to $10M Goal
-  </small>
-
-  <i />
-</div>
+  <div className="marker annual-goal" style={{ left: "100%" }}>
+    <b className="runway-flag red-flag" />
+    <span>Annual Goal</span>
+    <strong>{moneyShort(annualRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfGoal, 1)} to $10M Goal</small>
+    <i />
+  </div>
 </div>
 
 <div className="revenue-runway-bar">
-      <div
-        className="revenue-runway-recognized"
-        style={{ width: `${recognizedPercent}%` }}
-      />
-      <div
-        className="revenue-runway-pipeline"
-        style={{ width: `${pipelinePercent}%` }}
-      />
-    </div>
+  <div
+    className="revenue-runway-recognized"
+    style={{ width: `${recognizedPercent}%` }}
+  />
+  <div
+    className="revenue-runway-pipeline"
+    style={{ width: `${pipelinePercent}%` }}
+  />
+</div>
+
 <div className="revenue-runway-legend">
   <span><b className="recognized-dot" /> Actual: {money(recognizedRevenue)}</span>
   <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
   <span>Last Year: {money(lastFiscalRevenueGoal)}</span>
   <span>Annual Goal: {money(annualRevenueGoal)}</span>
 </div>
+
 <p>
   Current recognized revenue and committed pipeline total{" "}
   <strong>{money(expectedRevenue)}</strong>, which is{" "}
