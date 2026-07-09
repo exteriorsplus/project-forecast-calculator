@@ -1656,6 +1656,6 @@ align-items: start;
 }
 
 .runway-markers-polished .annual-goal {
-  transform: translateX(-50%);
-  text-align: center;
+    transform: translateX(calc(-100% + 18px));
+    text-align: center;
 }
