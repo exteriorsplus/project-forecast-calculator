@@ -1805,7 +1805,7 @@ const remainingToBeatLastYear = Math.max(
     <p>
       Recognized revenue plus committed pipeline totals <strong>{money(expectedRevenue)}</strong>.
       {remainingToBeatLastYear > 0
-        ? ` ${money(remainingToBeatLastYear)} remains to match last fiscal year.`
+        ? ` Need to bring in ${money(remainingToBeatLastYear)} to match last fiscal year.`
         : ` This exceeds last fiscal year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
     </p>
   </section>
