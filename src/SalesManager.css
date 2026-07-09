@@ -1581,8 +1581,9 @@ align-items: start;
 }
 .revenue-runway-markers {
   position: relative;
-  height: 42px;
-  margin: 4px 0 4px;
+  height: 52px;
+  margin: 10px 0 6px;
+  z-index: 2;
 }
 
 .revenue-runway-markers span {
@@ -1590,7 +1591,7 @@ align-items: start;
   top: 0;
   transform: translateX(-50%);
   color: #111827;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 950;
   line-height: 1.1;
   white-space: nowrap;
@@ -1598,7 +1599,7 @@ align-items: start;
 
 .revenue-runway-markers span b {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .revenue-runway-markers span:nth-child(2) {
