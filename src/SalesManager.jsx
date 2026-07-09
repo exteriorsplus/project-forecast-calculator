@@ -1532,8 +1532,7 @@ return {
       : null,
     sections: [
       {
-        title: "Monthly Production",
-        eyebrow: "Current Month",
+title: "Monthly Production",
 status: monthlyLeadingStatus,
 insight: `Monthly Production is currently highlighted in ${
   monthlyAtGoalCount >= 4
