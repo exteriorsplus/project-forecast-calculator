@@ -2026,7 +2026,6 @@ const lastYearMarkerPercent =
         <section className="manager-panel">
           <div className="manager-panel-header">
             <div>
-              <span>Cash Flow</span>
               <h2>Future Cash Pipeline</h2>
             </div>
             <p>Expected future payments from Invoicing.xlsx.</p>
