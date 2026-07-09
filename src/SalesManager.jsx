@@ -1772,7 +1772,6 @@ const lastYearMarkerPercent =
   <section className="revenue-runway-card">
     <div className="revenue-runway-header">
       <div>
-        <span>Executive Revenue Runway</span>
         <h2>FY Revenue Position vs. Last Fiscal Year</h2>
       </div>
       </div>
@@ -1869,7 +1868,6 @@ const lastYearMarkerPercent =
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
             <div>
-              <span>Executive Intelligence</span>
               <h2>Today's Executive Brief</h2>
             </div>
             <p>What the business needs from you today.</p>
@@ -2095,7 +2093,6 @@ const lastYearMarkerPercent =
         <section className="manager-panel manager-salesperson-panel">
           <div className="manager-panel-header">
             <div>
-              <span>Leaderboard</span>
               <h2>Salesperson Performance</h2>
             </div>
             <p>
