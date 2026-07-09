@@ -1790,13 +1790,11 @@ const lastYearMarkerPercent =
 </div>
     </div>
 
-<div className="revenue-runway-markers">
-  <div
-    className="marker actual"
-    style={{ left: `${recognizedPercent}%` }}
-  >
+<div className="revenue-runway-markers runway-markers-polished">
+  <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
     <span>Actual</span>
     <strong>{moneyShort(recognizedRevenue)}</strong>
+    <i />
   </div>
 
   <div
@@ -1805,23 +1803,27 @@ const lastYearMarkerPercent =
   >
     <span>Pipeline</span>
     <strong>{moneyShort(pipelineRevenue)}</strong>
+    <i />
   </div>
 
-<div
-  className="marker ly-goal"
-  style={{ left: `${lastYearMarkerPercent}%` }}
->
-  <span>Last Year</span>
-  <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
-</div>
+  <div
+    className="marker ly-goal flag-marker"
+    style={{ left: `${lastYearMarkerPercent}%` }}
+  >
+    <b className="runway-flag navy-flag" />
+    <span>Last Year</span>
+    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfLastYear, 1)} vs Last Year</small>
+    <i />
+  </div>
 
-<div
-  className="marker annual-goal"
-  style={{ left: "100%" }}
->
-  <span>Annual Goal</span>
-  <strong>{moneyShort(annualRevenueGoal)}</strong>
-</div>
+  <div className="marker annual-goal flag-marker" style={{ left: "100%" }}>
+    <b className="runway-flag red-flag" />
+    <span>Annual Goal</span>
+    <strong>{moneyShort(annualRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfGoal, 1)} to $10M Goal</small>
+    <i />
+  </div>
 </div>
 
 <div className="revenue-runway-bar">

@@ -1641,3 +1641,83 @@ align-items: start;
     font-weight:700;
     text-transform:uppercase;
 }
+.runway-markers-polished {
+  height: 118px;
+  margin: 12px 0 8px;
+}
+
+.runway-markers-polished .marker {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #111827;
+}
+
+.runway-markers-polished .marker span {
+  display: block;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.runway-markers-polished .marker strong {
+  display: block;
+  font-size: 22px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.runway-markers-polished .marker small {
+  display: block;
+  margin-top: 4px;
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.runway-markers-polished .pipeline {
+  color: #b91c1c;
+}
+
+.runway-markers-polished .annual-goal {
+  transform: translateX(-100%);
+  text-align: right;
+}
+
+.runway-markers-polished .marker i {
+  display: block;
+  width: 1px;
+  height: 34px;
+  background: #6b7280;
+  margin: 10px auto 0;
+}
+
+.runway-markers-polished .pipeline i,
+.runway-markers-polished .annual-goal i {
+  background: #b91c1c;
+}
+
+.runway-flag {
+  display: block;
+  width: 34px;
+  height: 24px;
+  margin: 0 auto 8px;
+  clip-path: polygon(0 0, 100% 0, 72% 50%, 100% 100%, 0 100%);
+}
+
+.navy-flag {
+  background: #111827;
+}
+
+.red-flag {
+  background: #b91c1c;
+}
+
+.annual-goal .runway-flag {
+  margin-left: auto;
+  margin-right: 0;
+}
