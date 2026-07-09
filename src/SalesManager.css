@@ -1591,29 +1591,30 @@ align-items: start;
   color: #111827;
 }
 
-.runway-markers-polished .marker span {
-  display: block;
-  font-size: 12px;
-  font-weight: 950;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
+.runway-markers-polished .marker span{
+    display:block;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+    line-height:1;
 }
 
-.runway-markers-polished .marker strong {
-  display: block;
-  font-size: 22px;
-  font-weight: 950;
-  line-height: 1.05;
+.runway-markers-polished .marker strong{
+    display:block;
+    margin-top:2px;
+    font-size:18px;
+    font-weight:900;
+    line-height:1;
 }
 
-.runway-markers-polished .marker small {
-  display: block;
-  margin-top: 4px;
-  color: #4b5563;
-  font-size: 11px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+.runway-markers-polished .marker small{
+    display:block;
+    margin-top:3px;
+    font-size:10px;
+    font-weight:800;
+    color:#6b7280;
+    line-height:1;
 }
 
 .runway-markers-polished .pipeline {
