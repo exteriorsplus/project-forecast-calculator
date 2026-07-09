@@ -1365,7 +1365,7 @@ const closingStatus = getStatus({
 {
   label: "PM Goal Status",
   value: money(Math.max(Number(totals.totalGoal || 0) - Number(totals.totalRevenue || 0), 0)),
-  note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to goal`,
+  note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to Total PM Sales Goal`,
   status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
 },
 {
@@ -1375,7 +1375,7 @@ value:
     ? "On Goal"
     : `${((0.25 - rolling90ClosingAverage) * 100).toFixed(1)} pts below`,
 
-note: "Compared to 25% Rolling 90 goal",
+note: "Compared to 25% Rolling 90 Goal",
 
 status:
   rolling90ClosingAverage >= 0.25
@@ -1388,13 +1388,13 @@ status:
       label: "Cash Flow",
       status: cashFlowStatus,
       value: money(totalPipeline),
-      note: "Future cash pipeline",
+      note: "Future Cash Pipeline",
     },
     {
       label: "Collections",
       status: collectionsStatus,
       value: money(balanceDue),
-      note: "Balance due",
+      note: "Balance Due",
     },
   ];
 
