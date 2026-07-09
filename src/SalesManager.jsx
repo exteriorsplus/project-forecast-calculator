@@ -1749,18 +1749,24 @@ const remainingToBeatLastYear = Math.max(
     </div>
 
 <div className="revenue-runway-markers">
-  <div>
-<b>Actual</b>
-<strong>{money(recognizedRevenue)}</strong>
+  <div
+    className="marker actual"
+    style={{ left: `${recognizedPercent}%` }}
+  >
+    <span>Actual</span>
+    <strong>{money(recognizedRevenue)}</strong>
   </div>
 
-  <div>
-    <b>Pipeline:</b>
+  <div
+    className="marker pipeline"
+    style={{ left: `${recognizedPercent + pipelinePercent}%` }}
+  >
+    <span>Pipeline</span>
     <strong>{money(pipelineRevenue)}</strong>
   </div>
 
-  <div>
-    <b>Total:</b>
+  <div className="marker goal">
+    <span>Goal</span>
     <strong>{money(lastFiscalRevenueGoal)}</strong>
   </div>
 </div>
