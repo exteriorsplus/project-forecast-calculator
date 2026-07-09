@@ -107,6 +107,20 @@ const money = (value) =>
     currency: "USD",
   });
 
+  const moneyShort = (value) => {
+  const number = Number(value || 0);
+
+  if (number >= 1000000) {
+    return `$${(number / 1000000).toFixed(2)}M`;
+  }
+
+  if (number >= 1000) {
+    return `$${(number / 1000).toFixed(1)}K`;
+  }
+
+  return money(number);
+};
+
 const displayPercent = (value, decimals = 1) => {
   const number = Number(value || 0);
   return `${(number * 100).toFixed(decimals)}%`;
@@ -1306,6 +1320,17 @@ const monthlyLeadingStatus = getStatus({
   warning: monthlyAtGoalCount >= 2,
 });
 
+const moneyShort = (value = 0) => {
+  if (Math.abs(value) >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(2)}M`;
+  }
+
+  if (Math.abs(value) >= 1_000) {
+    return `$${(value / 1_000).toFixed(1)}K`;
+  }
+
+  return money(value);
+};
 const rolling90LeadingStatus = getStatus({
   good: rolling90ClosingAverage >= 0.25,
   warning: rolling90ClosingAverage >= 0.22,
@@ -1754,7 +1779,7 @@ const remainingToBeatLastYear = Math.max(
     style={{ left: `${recognizedPercent}%` }}
   >
     <span>Actual</span>
-    <strong>{money(recognizedRevenue)}</strong>
+    <strong>{moneyShort(recognizedRevenue)}</strong>
   </div>
 
   <div
@@ -1762,12 +1787,12 @@ const remainingToBeatLastYear = Math.max(
     style={{ left: `${recognizedPercent + pipelinePercent}%` }}
   >
     <span>Pipeline</span>
-    <strong>{money(pipelineRevenue)}</strong>
+    <strong>{moneyShort(pipelineRevenue)}</strong>
   </div>
 
   <div className="marker goal">
     <span>Goal</span>
-    <strong>{money(lastFiscalRevenueGoal)}</strong>
+    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
   </div>
 </div>
 
