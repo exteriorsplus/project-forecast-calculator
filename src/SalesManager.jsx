@@ -1750,8 +1750,8 @@ const remainingToBeatLastYear = Math.max(
 
 <div className="revenue-runway-markers">
   <div>
-    <b>Actual:</b>
-    <strong>{money(recognizedRevenue)}</strong>
+<b>Actual</b>
+<strong>{money(recognizedRevenue)}</strong>
   </div>
 
   <div>
