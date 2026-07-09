@@ -1619,3 +1619,25 @@ align-items: start;
     text-align:right;
     color:#111827;
 }
+.runway-percentages{
+    display:flex;
+    gap:28px;
+    align-items:flex-end;
+}
+
+.runway-percentages div{
+    text-align:right;
+}
+
+.runway-percentages strong{
+    display:block;
+    font-size:2rem;
+    line-height:1;
+}
+
+.runway-percentages span{
+    font-size:.75rem;
+    color:#6b7280;
+    font-weight:700;
+    text-transform:uppercase;
+}
