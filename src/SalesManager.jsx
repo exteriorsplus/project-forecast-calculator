@@ -1834,7 +1834,12 @@ const lastYearMarkerPercent =
         style={{ width: `${pipelinePercent}%` }}
       />
     </div>
-
+<div className="revenue-runway-legend">
+  <span><b className="recognized-dot" /> Actual: {money(recognizedRevenue)}</span>
+  <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
+  <span>Last Year: {money(lastFiscalRevenueGoal)}</span>
+  <span>Annual Goal: {money(annualRevenueGoal)}</span>
+</div>
 <p>
   Current recognized revenue and committed pipeline total{" "}
   <strong>{money(expectedRevenue)}</strong>, which is{" "}
