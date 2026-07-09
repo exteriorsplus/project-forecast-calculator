@@ -1850,40 +1850,6 @@ const remainingToBeatLastYear = Math.max(
     </div>
   </div>
 </section>
-<section className="revenue-runway-card">
-  <div className="revenue-runway-header">
-    <div>
-      <span>Executive Revenue Runway</span>
-      <h2>Revenue Runway Toward Last Fiscal Year</h2>
-    </div>
-
-    <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
-  </div>
-
-  <div className="revenue-runway-bar">
-    <div
-      className="revenue-runway-recognized"
-      style={{ width: `${recognizedPercent}%` }}
-    />
-    <div
-      className="revenue-runway-pipeline"
-      style={{ width: `${pipelinePercent}%` }}
-    />
-  </div>
-
-  <div className="revenue-runway-legend">
-    <span><b className="recognized-dot" /> Recognized: {money(recognizedRevenue)}</span>
-    <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
-    <span>Goal: {money(lastFiscalRevenueGoal)}</span>
-  </div>
-
-  <p>
-    Recognized revenue plus committed pipeline totals <strong>{money(expectedRevenue)}</strong>.
-    {remainingToBeatLastYear > 0
-      ? ` ${money(remainingToBeatLastYear)} remains to match last fiscal year.`
-      : ` This exceeds last fiscal year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
-  </p>
-</section>
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
             <div>
