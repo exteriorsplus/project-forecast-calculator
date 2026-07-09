@@ -1717,11 +1717,11 @@ aboveTeamRevenue.length
 const totalCompanyRevenue =
   totals.totalRevenue + invoicePipeline.totalPipeline;
   const lastFiscalRevenueGoal = Number(totals.teamLastFiscalRevenue || 0);
+  const annualRevenueGoal = 10000000;
 const recognizedRevenue = Number(totals.totalRevenue || 0);
 const pipelineRevenue = Number(invoicePipeline.totalPipeline || 0);
 const expectedRevenue = recognizedRevenue + pipelineRevenue;
-
-const revenueRunwayGoal = Math.max(lastFiscalRevenueGoal, expectedRevenue, 1);
+const revenueRunwayGoal = annualRevenueGoal;
 
 const recognizedPercent = Math.min(
   (recognizedRevenue / revenueRunwayGoal) * 100,
@@ -1740,6 +1740,13 @@ const remainingToBeatLastYear = Math.max(
   lastFiscalRevenueGoal - expectedRevenue,
   0
 );
+
+const expectedPercentOfGoal =
+  annualRevenueGoal > 0 ? expectedRevenue / annualRevenueGoal : 0;
+
+const lastYearMarkerPercent =
+  annualRevenueGoal > 0 ? (lastFiscalRevenueGoal / annualRevenueGoal) * 100 : 0;
+
   const weeklyTopDawg = executiveSummary.weeklyTopDawg;
     const activeSummarySection =
       executiveSummary.sections.find(
@@ -1770,7 +1777,17 @@ const remainingToBeatLastYear = Math.max(
         <h2>FY Revenue Position vs. Last Fiscal Year</h2>
       </div>
 
-      <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
+     <div className="runway-percentages">
+  <div>
+    <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
+    <span>vs Last Year</span>
+  </div>
+
+  <div>
+    <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong>
+    <span>to $10M Goal</span>
+  </div>
+</div>
     </div>
 
 <div className="revenue-runway-markers">
@@ -1790,10 +1807,21 @@ const remainingToBeatLastYear = Math.max(
     <strong>{moneyShort(pipelineRevenue)}</strong>
   </div>
 
-  <div className="marker goal">
-    <span>Goal</span>
-    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
-  </div>
+<div
+  className="marker ly-goal"
+  style={{ left: `${lastYearMarkerPercent}%` }}
+>
+  <span>LY Fiscal Revenue Total</span>
+  <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
+</div>
+
+<div
+  className="marker annual-goal"
+  style={{ left: "100%" }}
+>
+  <span>$10M Goal</span>
+  <strong>{moneyShort(annualRevenueGoal)}</strong>
+</div>
 </div>
 
 <div className="revenue-runway-bar">
