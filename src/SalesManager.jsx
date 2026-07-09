@@ -2011,25 +2011,30 @@ const lastYearMarkerPercent =
           </div>
 
           <div className="manager-kpi-grid">
+  <div className="manager-kpi-card">
+    <span>Scheduled for Build</span>
+    <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
+    <small>Future production money</small>
+  </div>
 
-            <div className="manager-kpi-card">
-              <span>Needs to be Invoiced</span>
-              <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
-              <small>Ready to invoice</small>
-            </div>
+  <div className="manager-kpi-card">
+    <span>Needs to be Invoiced</span>
+    <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
+    <small>Ready to invoice</small>
+  </div>
 
-            <div className="manager-kpi-card">
-              <span>Balance Due</span>
-              <strong>{money(invoicePipeline.balanceDue)}</strong>
-              <small>Already invoiced / owed</small>
-            </div>
+  <div className="manager-kpi-card">
+    <span>Balance Due</span>
+    <strong>{money(invoicePipeline.balanceDue)}</strong>
+    <small>Already invoiced / owed</small>
+  </div>
 
-            <div className="manager-kpi-card primary">
-              <span>Total Future Cash</span>
-              <strong>{money(invoicePipeline.totalPipeline)}</strong>
-              <small>Build + invoice + receivables</small>
-            </div>
-          </div>
+  <div className="manager-kpi-card primary">
+    <span>Total Future Cash</span>
+    <strong>{money(invoicePipeline.totalPipeline)}</strong>
+    <small>Build + invoice + receivables</small>
+  </div>
+</div>
 
           <div className="manager-table-wrap manager-invoice-table-wrap">
             <table className="manager-table">
