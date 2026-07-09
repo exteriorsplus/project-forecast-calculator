@@ -1841,45 +1841,7 @@ const lastYearMarkerPercent =
 </p>
   </section>
 
-  <div className="manager-kpi-grid">
-    <div className="manager-kpi-card">
-      <span>Rolling 90-Day Closing Rate</span>
-      <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
-      <small
-        className={`manager-difference ${
-          executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
-        }`}
-      >
-        {executiveSummary.rolling90ClosingAverage >= 0.25
-          ? `${((executiveSummary.rolling90ClosingAverage - 0.25) * 100).toFixed(1)} pts above 25% goal`
-          : `${((0.25 - executiveSummary.rolling90ClosingAverage) * 100).toFixed(1)} pts below 25% goal`}
-      </small>
-    </div>
-
-    <div className="manager-kpi-card">
-      <span>Annual Performance</span>
-      <strong>
-        {executiveSummary.annualLeadingStatus === "good"
-          ? "On Pace"
-          : executiveSummary.annualLeadingStatus === "watch"
-          ? "Watch"
-          : "Attention"}
-      </strong>
-      <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
-    </div>
-
-    <div className="manager-kpi-card">
-      <span>Average Contract</span>
-      <strong>{money(totals.teamAverageContract)}</strong>
-      <small>{totals.totalContracts} contracts</small>
-    </div>
-
-    <div className="manager-kpi-card">
-      <span>PMs on Goal Pace</span>
-      <strong>{executiveSummary.monthlyAtGoalCount} / {rows.length}</strong>
-      <small>Monthly goal pace</small>
-    </div>
-  </div>
+  
 </section>
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
@@ -1907,17 +1869,47 @@ const lastYearMarkerPercent =
               </div>
             ))}
           </div>
-          <div className="manager-kpi-card">
-  <span>FYTD vs Last Year</span>
+          <div className="manager-kpi-grid">
+            <div className="manager-kpi-card">
+              <span>Rolling 90-Day Closing Rate</span>
+              <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+              <small
+                className={`manager-difference ${
+                  executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
+                }`}
+              >
+                {executiveSummary.rolling90ClosingAverage >= 0.25
+                  ? `${((executiveSummary.rolling90ClosingAverage - 0.25) * 100).toFixed(1)} pts above 25% goal`
+                  : `${((0.25 - executiveSummary.rolling90ClosingAverage) * 100).toFixed(1)} pts below 25% goal`}
+              </small>
+            </div>
 
-  <strong>{totals.teamVsLY.label}</strong>
+            <div className="manager-kpi-card">
+              <span>Annual Performance</span>
+              <strong>
+                {executiveSummary.annualLeadingStatus === "good"
+                  ? "On Pace"
+                  : executiveSummary.annualLeadingStatus === "watch"
+                  ? "Watch"
+                  : "Attention"}
+              </strong>
+              <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
+            </div>
 
-  <small>
-    {totals.teamVsLY.className === "positive"
-      ? "Ahead of last fiscal year"
-      : "FYTD recognized revenue vs LY"}
-  </small>
-</div>
+            <div className="manager-kpi-card">
+              <span>Average Contract</span>
+              <strong>{money(totals.teamAverageContract)}</strong>
+              <small>{totals.totalContracts} contracts</small>
+            </div>
+
+            <div className="manager-kpi-card">
+              <span>PMs on Goal Pace</span>
+              <strong>{executiveSummary.monthlyAtGoalCount} / {rows.length}</strong>
+              <small>Monthly goal pace</small>
+            </div>
+          </div>
+
+          
 
           <div className="executive-priority-card">
             <div className="manager-summary-section-header">
