@@ -1748,7 +1748,24 @@ const remainingToBeatLastYear = Math.max(
       <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
     </div>
 
-    <div className="revenue-runway-bar">
+<div className="revenue-runway-markers">
+  <div>
+    <b>Actual:</b>
+    <strong>{money(recognizedRevenue)}</strong>
+  </div>
+
+  <div>
+    <b>Pipeline:</b>
+    <strong>{money(pipelineRevenue)}</strong>
+  </div>
+
+  <div>
+    <b>Total:</b>
+    <strong>{money(lastFiscalRevenueGoal)}</strong>
+  </div>
+</div>
+
+<div className="revenue-runway-bar">
       <div
         className="revenue-runway-recognized"
         style={{ width: `${recognizedPercent}%` }}
