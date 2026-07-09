@@ -1557,3 +1557,25 @@ align-items: start;
   line-height: 1.5;
   font-weight: 800;
 }
+.manager-salesperson-panel {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+}
+
+.manager-salesperson-panel .manager-panel-header {
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 22px;
+}
+
+.manager-performance-list.v2 {
+  gap: 18px;
+}
+
+.manager-performance-report {
+  box-shadow: none;
+  border-radius: 18px;
+  margin: 0;
+}
