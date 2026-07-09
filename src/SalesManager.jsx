@@ -1779,11 +1779,14 @@ const lastYearMarkerPercent =
       </div>
 
 <div className="revenue-runway-markers runway-markers-polished">
-  <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
-    <span>Actual</span>
-    <strong>{moneyShort(recognizedRevenue)}</strong>
-    <i />
-  </div>
+<div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
+  <span>Actual</span>
+  <strong>{moneyShort(recognizedRevenue)}</strong>
+  <small className={`actual-vs-ly ${totals.teamVsLY.className}`}>
+    {totals.teamVsLY.label} vs LY
+  </small>
+  <i />
+</div>
 
   <div
     className="marker pipeline"
@@ -2014,25 +2017,25 @@ const lastYearMarkerPercent =
   <div className="manager-kpi-card">
     <span>Scheduled for Build</span>
     <strong>{money(invoicePipeline.scheduledForBuild)}</strong>
-    <small>Future production money</small>
+    <small>Future Production Money</small>
   </div>
 
   <div className="manager-kpi-card">
     <span>Needs to be Invoiced</span>
     <strong>{money(invoicePipeline.needsToBeInvoiced)}</strong>
-    <small>Ready to invoice</small>
+    <small>Ready to Invoice</small>
   </div>
 
   <div className="manager-kpi-card">
     <span>Balance Due</span>
     <strong>{money(invoicePipeline.balanceDue)}</strong>
-    <small>Already invoiced / owed</small>
+    <small>Already Invoiced / Owed</small>
   </div>
 
   <div className="manager-kpi-card primary">
     <span>Total Future Cash</span>
     <strong>{money(invoicePipeline.totalPipeline)}</strong>
-    <small>Build + invoice + receivables</small>
+    <small>Build + Invoice + Receivables</small>
   </div>
 </div>
 
