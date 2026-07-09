@@ -1907,6 +1907,17 @@ const lastYearMarkerPercent =
               </div>
             ))}
           </div>
+          <div className="manager-kpi-card">
+  <span>FYTD vs Last Year</span>
+
+  <strong>{totals.teamVsLY.label}</strong>
+
+  <small>
+    {totals.teamVsLY.className === "positive"
+      ? "Ahead of last fiscal year"
+      : "FYTD recognized revenue vs LY"}
+  </small>
+</div>
 
           <div className="executive-priority-card">
             <div className="manager-summary-section-header">
@@ -2001,17 +2012,6 @@ const lastYearMarkerPercent =
           </div>
 
           <div className="manager-kpi-grid">
-<div className="manager-kpi-card">
-  <span>FYTD vs Last Year</span>
-
-  <strong>{totals.teamVsLY.label}</strong>
-
-  <small>
-    {totals.teamVsLY.className === "positive"
-      ? "Ahead of last fiscal year"
-      : "FYTD recognized revenue vs LY"}
-  </small>
-</div>
 
             <div className="manager-kpi-card">
               <span>Needs to be Invoiced</span>
