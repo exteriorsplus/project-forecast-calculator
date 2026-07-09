@@ -779,6 +779,16 @@ const companyLYFYTD = getCompanySalesDataForRange(
   priorFiscalYTD.end
 );
 
+const priorFiscalYear = {
+  start: new Date(2024, 10, 1),
+  end: new Date(2025, 9, 31),
+};
+
+const companyLastFiscalYear = getCompanySalesDataForRange(
+  priorFiscalYear.start,
+  priorFiscalYear.end
+);
+
 const totalRevenue = companyFYTD.contractTotal;
 const totalContracts = companyFYTD.contracts;
 const teamAverageContract = companyFYTD.averageContract;
@@ -814,6 +824,7 @@ return {
     teamClosingRate,
     teamAverageContract,
     teamLYRevenue,
+    teamLastFiscalRevenue: companyLastFiscalYear.contractTotal,
     teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
   },
   ranges: {
@@ -1678,8 +1689,32 @@ aboveTeamRevenue.length
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
-    const totalCompanyRevenue =
-  totals.totalRevenue + invoicePipeline.balanceDue;
+const totalCompanyRevenue =
+  totals.totalRevenue + invoicePipeline.totalPipeline;
+  const lastFiscalRevenueGoal = Number(totals.teamLastFiscalRevenue || 0);
+const recognizedRevenue = Number(totals.totalRevenue || 0);
+const pipelineRevenue = Number(invoicePipeline.totalPipeline || 0);
+const expectedRevenue = recognizedRevenue + pipelineRevenue;
+
+const revenueRunwayGoal = Math.max(lastFiscalRevenueGoal, expectedRevenue, 1);
+
+const recognizedPercent = Math.min(
+  (recognizedRevenue / revenueRunwayGoal) * 100,
+  100
+);
+
+const pipelinePercent = Math.min(
+  (pipelineRevenue / revenueRunwayGoal) * 100,
+  Math.max(100 - recognizedPercent, 0)
+);
+
+const expectedPercentOfLastYear =
+  lastFiscalRevenueGoal > 0 ? expectedRevenue / lastFiscalRevenueGoal : 0;
+
+const remainingToBeatLastYear = Math.max(
+  lastFiscalRevenueGoal - expectedRevenue,
+  0
+);
   const weeklyTopDawg = executiveSummary.weeklyTopDawg;
     const activeSummarySection =
       executiveSummary.sections.find(
@@ -1707,9 +1742,6 @@ aboveTeamRevenue.length
     <div className="manager-kpi-card primary">
       <span>FYTD Team Revenue</span>
       <strong>{money(totals.totalRevenue)}</strong>
-      <small className={`manager-difference ${totals.teamVsLY.className}`}>
-        {totals.teamVsLY.label} vs LY
-      </small>
     </div>
 
 <div className="manager-kpi-card">
@@ -1765,7 +1797,7 @@ aboveTeamRevenue.length
     </div>
 
     <div className="manager-kpi-card">
-      <span>Annual Performance</span> v     
+      <span>Annual Performance</span>
       <strong>
   {executiveSummary.annualLeadingStatus === "good"
     ? "On Pace"
@@ -1789,7 +1821,40 @@ aboveTeamRevenue.length
     </div>
   </div>
 </section>
+<section className="revenue-runway-card">
+  <div className="revenue-runway-header">
+    <div>
+      <span>Executive Revenue Runway</span>
+      <h2>Progress Toward Last Fiscal Year</h2>
+    </div>
 
+    <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
+  </div>
+
+  <div className="revenue-runway-bar">
+    <div
+      className="revenue-runway-recognized"
+      style={{ width: `${recognizedPercent}%` }}
+    />
+    <div
+      className="revenue-runway-pipeline"
+      style={{ width: `${pipelinePercent}%` }}
+    />
+  </div>
+
+  <div className="revenue-runway-legend">
+    <span><b className="recognized-dot" /> Recognized: {money(recognizedRevenue)}</span>
+    <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
+    <span>Goal: {money(lastFiscalRevenueGoal)}</span>
+  </div>
+
+  <p>
+    Recognized revenue plus committed pipeline totals <strong>{money(expectedRevenue)}</strong>.
+    {remainingToBeatLastYear > 0
+      ? ` ${money(remainingToBeatLastYear)} remains to match last fiscal year.`
+      : ` This exceeds last fiscal year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
+  </p>
+</section>
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
             <div>
@@ -1918,7 +1983,7 @@ aboveTeamRevenue.length
   <small>
     {totals.teamVsLY.className === "positive"
       ? "Ahead of last fiscal year"
-      : "Behind last fiscal year"}
+      : "FYTD recognized revenue vs LY"}
   </small>
 </div>
 
