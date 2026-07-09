@@ -1937,10 +1937,9 @@ const lastYearMarkerPercent =
           
 
           <div className="executive-priority-card">
-            <div className="manager-summary-section-header">
-              <span>Leadership Focus</span>
-              <h3>Leadership Opportunities</h3>
-            </div>
+<div className="manager-summary-section-header">
+  <h3>Leadership Opportunities</h3>
+</div>
 
             <div className="executive-priority-list">
               {executiveSummary.priorities.map((item, index) => (

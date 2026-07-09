@@ -1694,8 +1694,7 @@ align-items: start;
 }
 
 .manager-panel-header,
-.revenue-runway-header,
-.manager-summary-section-header {
+.revenue-runway-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -1703,9 +1702,15 @@ align-items: start;
   margin-bottom: 18px;
 }
 
+.manager-summary-section-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
 .manager-panel-header span,
 .revenue-runway-header span,
-.manager-summary-section-header span,
 .executive-story-card span {
   display: block;
   color: var(--ecc-red);
