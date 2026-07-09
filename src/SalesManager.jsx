@@ -1737,49 +1737,78 @@ const remainingToBeatLastYear = Math.max(
           </div>
         </header>
 
-        <section className="manager-kpi-stack">
+<section className="manager-kpi-stack">
   <div className="manager-kpi-grid">
     <div className="manager-kpi-card primary">
       <span>FYTD Team Revenue</span>
       <strong>{money(totals.totalRevenue)}</strong>
     </div>
 
-<div className="manager-kpi-card">
-  <span>Revenue in Pipeline</span>
+    <div className="manager-kpi-card">
+      <span>Revenue in Pipeline</span>
+      <strong>{money(invoicePipeline.totalPipeline)}</strong>
+      <small>Builds + Accounts Receivable</small>
+    </div>
 
-  <strong>{money(invoicePipeline.totalPipeline)}</strong>
+    <div className="manager-kpi-card">
+      <span>Total Company Revenue</span>
+      <strong>{money(totalCompanyRevenue)}</strong>
+      <small>FYTD Revenue + Revenue in Pipeline</small>
+    </div>
 
-  <small>Builds + Accounts Receivable</small>
-</div>
-
-<div className="manager-kpi-card">
-  <span>Total Company Revenue</span>
-
-  <strong>{money(totalCompanyRevenue)}</strong>
-
-  <small>FYTD Revenue + Revenue in Pipeline</small>
-</div>
-
-<div className="manager-kpi-card">
-  <span>FYTD vs Last Year</span>
-
-  <strong
-    className={
-      totals.teamVsLY.className === "positive"
-        ? "manager-positive"
-        : "manager-negative"
-    }
-  >
-    {totals.teamVsLY.label}
-  </strong>
-
-  <small>
-    {totals.teamVsLY.className === "positive"
-      ? "Ahead of last fiscal year"
-      : "Behind last fiscal year"}
-  </small>
-</div>
+    <div className="manager-kpi-card">
+      <span>FYTD vs Last Year</span>
+      <strong
+        className={
+          totals.teamVsLY.className === "positive"
+            ? "manager-positive"
+            : "manager-negative"
+        }
+      >
+        {totals.teamVsLY.label}
+      </strong>
+      <small>
+        {totals.teamVsLY.className === "positive"
+          ? "Ahead of last fiscal year"
+          : "Behind last fiscal year"}
+      </small>
+    </div>
   </div>
+
+  <section className="revenue-runway-card">
+    <div className="revenue-runway-header">
+      <div>
+        <span>Executive Revenue Runway</span>
+        <h2>Revenue Runway Toward Last Fiscal Year</h2>
+      </div>
+
+      <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
+    </div>
+
+    <div className="revenue-runway-bar">
+      <div
+        className="revenue-runway-recognized"
+        style={{ width: `${recognizedPercent}%` }}
+      />
+      <div
+        className="revenue-runway-pipeline"
+        style={{ width: `${pipelinePercent}%` }}
+      />
+    </div>
+
+    <div className="revenue-runway-legend">
+      <span><b className="recognized-dot" /> Recognized: {money(recognizedRevenue)}</span>
+      <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
+      <span>Goal: {money(lastFiscalRevenueGoal)}</span>
+    </div>
+
+    <p>
+      Recognized revenue plus committed pipeline totals <strong>{money(expectedRevenue)}</strong>.
+      {remainingToBeatLastYear > 0
+        ? ` ${money(remainingToBeatLastYear)} remains to match last fiscal year.`
+        : ` This exceeds last fiscal year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
+    </p>
+  </section>
 
   <div className="manager-kpi-grid">
     <div className="manager-kpi-card">
@@ -1799,12 +1828,12 @@ const remainingToBeatLastYear = Math.max(
     <div className="manager-kpi-card">
       <span>Annual Performance</span>
       <strong>
-  {executiveSummary.annualLeadingStatus === "good"
-    ? "On Pace"
-    : executiveSummary.annualLeadingStatus === "watch"
-    ? "Watch"
-    : "Attention"}
-</strong>
+        {executiveSummary.annualLeadingStatus === "good"
+          ? "On Pace"
+          : executiveSummary.annualLeadingStatus === "watch"
+          ? "Watch"
+          : "Attention"}
+      </strong>
       <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
     </div>
 
