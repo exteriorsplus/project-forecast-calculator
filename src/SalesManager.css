@@ -1653,3 +1653,680 @@ align-items: start;
     transform: translateX(calc(-100% + 18px));
     text-align: center;
 }
+
+/* =========================================================
+   Executive Command Center Design System - Final Overrides
+   Paste-safe: this block intentionally comes last so it wins
+   over older duplicated runway/executive styles above.
+   ========================================================= */
+
+:root {
+  --ecc-navy: #111827;
+  --ecc-red: #b91c1c;
+  --ecc-green: #16a34a;
+  --ecc-yellow: #ca8a04;
+  --ecc-muted: #6b7280;
+  --ecc-line: #e5e7eb;
+  --ecc-card: #ffffff;
+  --ecc-soft: #f8fafc;
+  --ecc-radius-lg: 22px;
+  --ecc-radius-md: 18px;
+  --ecc-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+}
+
+.sales-manager-page {
+  gap: 24px;
+}
+
+.manager-panel,
+.manager-kpi-card,
+.revenue-runway-card {
+  background: var(--ecc-card);
+  border-radius: var(--ecc-radius-lg);
+  box-shadow: var(--ecc-shadow);
+}
+
+.manager-panel,
+.revenue-runway-card {
+  border-top: 8px solid var(--ecc-navy);
+  padding: 24px;
+}
+
+.manager-panel-header,
+.revenue-runway-header,
+.manager-summary-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.manager-panel-header span,
+.revenue-runway-header span,
+.manager-summary-section-header span,
+.executive-story-card span {
+  display: block;
+  color: var(--ecc-red);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.manager-panel-header h2,
+.revenue-runway-header h2,
+.manager-summary-section-header h3 {
+  margin: 4px 0 0;
+  color: var(--ecc-navy);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1.08;
+  letter-spacing: -0.4px;
+}
+
+.manager-panel-header p {
+  margin: 0;
+  color: var(--ecc-muted);
+  font-size: 14px;
+  font-weight: 850;
+  text-align: right;
+}
+
+/* Revenue runway */
+.revenue-runway-card {
+  padding: 18px 22px 20px;
+}
+
+.revenue-runway-header {
+  margin-bottom: 2px;
+}
+
+.revenue-runway-markers {
+  position: relative;
+}
+
+.runway-markers-polished {
+  height: 96px;
+  margin: 0 0 6px;
+}
+
+.runway-markers-polished .marker {
+  position: absolute;
+  bottom: 0;
+  width: 145px;
+  transform: translateX(-50%);
+  text-align: center;
+  color: var(--ecc-navy);
+}
+
+.runway-markers-polished .marker span {
+  display: block;
+  color: var(--ecc-navy);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+}
+
+.runway-markers-polished .marker strong {
+  display: block;
+  color: var(--ecc-navy);
+  font-size: 20px;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -0.35px;
+}
+
+.runway-markers-polished .marker small {
+  display: block;
+  margin-top: 3px;
+  color: #4b5563;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.25px;
+}
+
+.runway-markers-polished .pipeline,
+.runway-markers-polished .pipeline span,
+.runway-markers-polished .pipeline strong {
+  color: var(--ecc-red);
+}
+
+.runway-markers-polished .marker i {
+  display: block;
+  width: 1px;
+  height: 28px;
+  background: #9ca3af;
+  margin: 7px auto 0;
+}
+
+.runway-markers-polished .pipeline i,
+.runway-markers-polished .annual-goal i {
+  background: var(--ecc-red);
+}
+
+.runway-flag {
+  display: block;
+  width: 30px;
+  height: 18px;
+  margin: 0 auto 5px;
+  clip-path: polygon(0 0, 100% 0, 72% 50%, 100% 100%, 0 100%);
+}
+
+.navy-flag {
+  background: var(--ecc-navy);
+}
+
+.red-flag {
+  background: var(--ecc-red);
+}
+
+.runway-markers-polished .annual-goal {
+  transform: translateX(calc(-100% + 28px));
+}
+
+.revenue-runway-bar {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  overflow: hidden;
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+.revenue-runway-recognized {
+  background: var(--ecc-navy);
+}
+
+.revenue-runway-pipeline {
+  background: var(--ecc-red);
+}
+
+.revenue-runway-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 10px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.revenue-runway-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.recognized-dot,
+.pipeline-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.recognized-dot {
+  background: var(--ecc-navy);
+}
+
+.pipeline-dot {
+  background: var(--ecc-red);
+}
+
+.revenue-runway-card p {
+  margin: 10px 0 0;
+  color: var(--ecc-navy);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+/* KPI cards */
+.manager-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.manager-kpi-card {
+  border-top: 8px solid #4b5563;
+  padding: 18px;
+}
+
+.manager-kpi-card.primary {
+  border-top-color: var(--ecc-red);
+}
+
+.manager-kpi-card span {
+  color: var(--ecc-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.manager-kpi-card strong {
+  color: var(--ecc-navy);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.manager-kpi-card small {
+  color: var(--ecc-muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+/* Executive intelligence */
+.manager-executive-summary-panel {
+  border-top: 8px solid var(--ecc-navy);
+}
+
+.executive-story-card {
+  background: var(--ecc-navy);
+  color: #ffffff;
+  border-radius: var(--ecc-radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
+}
+
+.executive-story-card span {
+  color: #ffffff;
+  opacity: 0.92;
+  margin-bottom: 8px;
+}
+
+.executive-story-card p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 750;
+}
+
+.executive-health-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.executive-health-card {
+  position: relative;
+  background: var(--ecc-soft);
+  border: 1px solid var(--ecc-line);
+  border-left: 7px solid #6b7280;
+  border-radius: var(--ecc-radius-md);
+  padding: 16px;
+}
+
+.executive-health-card.good {
+  border-left-color: var(--ecc-green);
+}
+
+.executive-health-card.watch {
+  border-left-color: var(--ecc-yellow);
+}
+
+.executive-health-card.attention {
+  border-left-color: var(--ecc-red);
+}
+
+.executive-health-card span {
+  color: var(--ecc-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.executive-health-card strong {
+  color: var(--ecc-navy);
+  font-size: 25px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.executive-health-card small {
+  color: var(--ecc-muted);
+  font-size: 13px;
+  font-weight: 850;
+  margin-top: 6px;
+}
+
+.executive-health-card b {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.executive-health-card.good b {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.executive-health-card.watch b {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.executive-health-card.attention b {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Leadership priorities */
+.executive-priority-card {
+  background: var(--ecc-soft);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.executive-priority-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.executive-priority-item {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid var(--ecc-line);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.executive-priority-item .priority-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-width: 74px;
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.priority-badge.high {
+  background: var(--ecc-red);
+}
+
+.priority-badge.medium {
+  background: var(--ecc-yellow);
+}
+
+.priority-badge.low {
+  background: var(--ecc-green);
+}
+
+.executive-priority-item strong {
+  display: block;
+  color: var(--ecc-navy);
+  font-size: 14px;
+  font-weight: 950;
+  margin-bottom: 2px;
+}
+
+.executive-priority-item p {
+  margin: 0;
+  color: var(--ecc-navy);
+  font-size: 14px;
+  line-height: 1.42;
+  font-weight: 850;
+}
+
+/* Summary tabs and detail cards */
+.manager-summary-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 20px;
+}
+
+.manager-summary-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: var(--ecc-navy);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 950;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.manager-summary-tabs button.active {
+  min-height: 48px;
+  background: var(--ecc-navy);
+  color: #ffffff;
+  border-color: var(--ecc-navy);
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.18);
+}
+
+.manager-summary-tabs button:hover {
+  transform: translateY(-1px);
+}
+
+.summary-tab-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  opacity: 0.65;
+  transform: scale(0.85);
+  transition: 0.2s ease;
+}
+
+.manager-summary-tabs button.good .summary-tab-status {
+  background: var(--ecc-green);
+}
+
+.manager-summary-tabs button.watch .summary-tab-status {
+  background: var(--ecc-yellow);
+}
+
+.manager-summary-tabs button.attention .summary-tab-status {
+  background: var(--ecc-red);
+}
+
+.manager-summary-tabs button.active .summary-tab-status {
+  opacity: 1;
+  transform: scale(1.35);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.manager-summary-section-card.active {
+  display: block;
+  border-radius: 20px;
+  border: 1px solid var(--ecc-line);
+  border-left: 7px solid #6b7280;
+  background: #ffffff;
+  padding: 18px;
+}
+
+.manager-summary-section-card.active.good {
+  border-left-color: var(--ecc-green);
+}
+
+.manager-summary-section-card.active.watch {
+  border-left-color: var(--ecc-yellow);
+}
+
+.manager-summary-section-card.active.attention {
+  border-left-color: var(--ecc-red);
+}
+
+.manager-section-insight {
+  background: var(--ecc-navy);
+  color: #ffffff;
+  border-radius: var(--ecc-radius-lg);
+  padding: 20px 24px;
+  margin: 14px 0 22px;
+  box-shadow: 0 14px 34px rgba(17, 24, 39, 0.18);
+  border-left: 7px solid #6b7280;
+}
+
+.manager-section-insight.good {
+  border-left-color: var(--ecc-green);
+}
+
+.manager-section-insight.watch {
+  border-left-color: var(--ecc-yellow);
+}
+
+.manager-section-insight.attention {
+  border-left-color: var(--ecc-red);
+}
+
+.manager-section-insight strong {
+  display: block;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.manager-section-insight p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 750;
+}
+
+.manager-executive-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.manager-summary-column h4 {
+  margin: 0 0 10px;
+  color: var(--ecc-navy);
+  font-size: 14px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.manager-executive-summary-item {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: var(--ecc-soft);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.manager-executive-summary-item span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--ecc-navy);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.manager-executive-summary-item.positive span {
+  background: var(--ecc-green);
+}
+
+.manager-executive-summary-item.coaching span {
+  background: var(--ecc-red);
+}
+
+.manager-executive-summary-item p {
+  margin: 0;
+  color: var(--ecc-navy);
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 850;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .manager-kpi-grid,
+  .executive-health-grid,
+  .executive-priority-list,
+  .manager-executive-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .runway-markers-polished .marker {
+    width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .manager-panel,
+  .revenue-runway-card {
+    padding: 18px;
+  }
+
+  .manager-panel-header,
+  .revenue-runway-header,
+  .manager-summary-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .manager-panel-header h2,
+  .revenue-runway-header h2,
+  .manager-summary-section-header h3 {
+    font-size: 24px;
+  }
+
+  .manager-kpi-grid,
+  .executive-health-grid,
+  .executive-priority-list,
+  .manager-executive-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .executive-priority-item {
+    grid-template-columns: 1fr;
+  }
+
+  .runway-markers-polished {
+    height: 110px;
+  }
+
+  .revenue-runway-legend {
+    gap: 10px;
+  }
+}

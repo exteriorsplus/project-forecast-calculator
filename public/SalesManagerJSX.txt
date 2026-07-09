@@ -107,6 +107,20 @@ const money = (value) =>
     currency: "USD",
   });
 
+  const moneyShort = (value) => {
+  const number = Number(value || 0);
+
+  if (number >= 1000000) {
+    return `$${(number / 1000000).toFixed(2)}M`;
+  }
+
+  if (number >= 1000) {
+    return `$${(number / 1000).toFixed(1)}K`;
+  }
+
+  return money(number);
+};
+
 const displayPercent = (value, decimals = 1) => {
   const number = Number(value || 0);
   return `${(number * 100).toFixed(decimals)}%`;
@@ -779,6 +793,16 @@ const companyLYFYTD = getCompanySalesDataForRange(
   priorFiscalYTD.end
 );
 
+const priorFiscalYear = {
+  start: new Date(2024, 10, 1),
+  end: new Date(2025, 9, 31),
+};
+
+const companyLastFiscalYear = getCompanySalesDataForRange(
+  priorFiscalYear.start,
+  priorFiscalYear.end
+);
+
 const totalRevenue = companyFYTD.contractTotal;
 const totalContracts = companyFYTD.contracts;
 const teamAverageContract = companyFYTD.averageContract;
@@ -814,6 +838,7 @@ return {
     teamClosingRate,
     teamAverageContract,
     teamLYRevenue,
+    teamLastFiscalRevenue: companyLastFiscalYear.contractTotal,
     teamVsLY: compareNumbers(totalRevenue, teamLYRevenue),
   },
   ranges: {
@@ -1295,6 +1320,17 @@ const monthlyLeadingStatus = getStatus({
   warning: monthlyAtGoalCount >= 2,
 });
 
+const moneyShort = (value = 0) => {
+  if (Math.abs(value) >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(2)}M`;
+  }
+
+  if (Math.abs(value) >= 1_000) {
+    return `$${(value / 1_000).toFixed(1)}K`;
+  }
+
+  return money(value);
+};
 const rolling90LeadingStatus = getStatus({
   good: rolling90ClosingAverage >= 0.25,
   warning: rolling90ClosingAverage >= 0.22,
@@ -1327,19 +1363,19 @@ const closingStatus = getStatus({
 
   const healthCards = [
 {
-  label: "Goal Gap",
+  label: "PM Goal Status",
   value: money(Math.max(Number(totals.totalGoal || 0) - Number(totals.totalRevenue || 0), 0)),
-  note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to goal`,
+  note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to Total PM Sales Goal`,
   status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
 },
 {
-  label: "Close Rate Gap",
+  label: "Closing Rate Status",
 value:
   rolling90ClosingAverage >= 0.25
     ? "On Goal"
     : `${((0.25 - rolling90ClosingAverage) * 100).toFixed(1)} pts below`,
 
-note: "Compared to 25% Rolling 90 goal",
+note: "Compared to 25% Rolling 90 Goal",
 
 status:
   rolling90ClosingAverage >= 0.25
@@ -1352,13 +1388,13 @@ status:
       label: "Cash Flow",
       status: cashFlowStatus,
       value: money(totalPipeline),
-      note: "Future cash pipeline",
+      note: "Future Cash Pipeline",
     },
     {
       label: "Collections",
       status: collectionsStatus,
       value: money(balanceDue),
-      note: "Balance due",
+      note: "Balance Due",
     },
   ];
 
@@ -1678,8 +1714,39 @@ aboveTeamRevenue.length
     const invoicePipeline = getInvoicePipeline();
     const invoiceRepRows = getInvoicePipelineByRep();
     const executiveSummary = getExecutiveSummary(rows, totals, invoicePipeline);
-    const totalCompanyRevenue =
-  totals.totalRevenue + invoicePipeline.balanceDue;
+const totalCompanyRevenue =
+  totals.totalRevenue + invoicePipeline.totalPipeline;
+  const lastFiscalRevenueGoal = Number(totals.teamLastFiscalRevenue || 0);
+  const annualRevenueGoal = 10000000;
+const recognizedRevenue = Number(totals.totalRevenue || 0);
+const pipelineRevenue = Number(invoicePipeline.totalPipeline || 0);
+const expectedRevenue = recognizedRevenue + pipelineRevenue;
+const revenueRunwayGoal = annualRevenueGoal;
+
+const recognizedPercent = Math.min(
+  (recognizedRevenue / revenueRunwayGoal) * 100,
+  100
+);
+
+const pipelinePercent = Math.min(
+  (pipelineRevenue / revenueRunwayGoal) * 100,
+  Math.max(100 - recognizedPercent, 0)
+);
+
+const expectedPercentOfLastYear =
+  lastFiscalRevenueGoal > 0 ? expectedRevenue / lastFiscalRevenueGoal : 0;
+
+const remainingToBeatLastYear = Math.max(
+  lastFiscalRevenueGoal - expectedRevenue,
+  0
+);
+
+const expectedPercentOfGoal =
+  annualRevenueGoal > 0 ? expectedRevenue / annualRevenueGoal : 0;
+
+const lastYearMarkerPercent =
+  annualRevenueGoal > 0 ? (lastFiscalRevenueGoal / annualRevenueGoal) * 100 : 0;
+
   const weeklyTopDawg = executiveSummary.weeklyTopDawg;
     const activeSummarySection =
       executiveSummary.sections.find(
@@ -1702,94 +1769,80 @@ aboveTeamRevenue.length
           </div>
         </header>
 
-        <section className="manager-kpi-stack">
-  <div className="manager-kpi-grid">
-    <div className="manager-kpi-card primary">
-      <span>FYTD Team Revenue</span>
-      <strong>{money(totals.totalRevenue)}</strong>
-      <small className={`manager-difference ${totals.teamVsLY.className}`}>
-        {totals.teamVsLY.label} vs LY
-      </small>
-    </div>
+<section className="manager-kpi-stack">
+  <section className="revenue-runway-card">
+    <div className="revenue-runway-header">
+      <div>
+        <span>Executive Revenue Runway</span>
+        <h2>FY Revenue Position vs. Last Fiscal Year</h2>
+      </div>
+      </div>
 
-<div className="manager-kpi-card">
-  <span>Revenue in Pipeline</span>
+<div className="revenue-runway-markers runway-markers-polished">
+  <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
+    <span>Actual</span>
+    <strong>{moneyShort(recognizedRevenue)}</strong>
+    <i />
+  </div>
 
-  <strong>{money(invoicePipeline.totalPipeline)}</strong>
-
-  <small>Builds + Accounts Receivable</small>
-</div>
-
-<div className="manager-kpi-card">
-  <span>Total Company Revenue</span>
-
-  <strong>{money(totalCompanyRevenue)}</strong>
-
-  <small>FYTD Revenue + Revenue in Pipeline</small>
-</div>
-
-<div className="manager-kpi-card">
-  <span>FYTD vs Last Year</span>
-
-  <strong
-    className={
-      totals.teamVsLY.className === "positive"
-        ? "manager-positive"
-        : "manager-negative"
-    }
+  <div
+    className="marker pipeline"
+    style={{ left: `${recognizedPercent + pipelinePercent}%` }}
   >
-    {totals.teamVsLY.label}
-  </strong>
+    <span>Pipeline</span>
+    <strong>{moneyShort(pipelineRevenue)}</strong>
+    <i />
+  </div>
 
-  <small>
-    {totals.teamVsLY.className === "positive"
-      ? "Ahead of last fiscal year"
-      : "Behind last fiscal year"}
-  </small>
+  <div className="marker ly-goal" style={{ left: `${lastYearMarkerPercent}%` }}>
+    <b className="runway-flag navy-flag" />
+    <span>Last Year</span>
+    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfLastYear, 1)} vs Last Year</small>
+    <i />
+  </div>
+
+  <div className="marker annual-goal" style={{ left: "100%" }}>
+    <b className="runway-flag red-flag" />
+    <span>Annual Goal</span>
+    <strong>{moneyShort(annualRevenueGoal)}</strong>
+    <small>{displayPercent(expectedPercentOfGoal, 1)} to $10M Goal</small>
+    <i />
+  </div>
 </div>
-  </div>
 
-  <div className="manager-kpi-grid">
-    <div className="manager-kpi-card">
-      <span>Rolling 90-Day Closing Rate</span>
-      <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
-      <small
-        className={`manager-difference ${
-          executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
-        }`}
-      >
-        {executiveSummary.rolling90ClosingAverage >= 0.25
-          ? `${((executiveSummary.rolling90ClosingAverage - 0.25) * 100).toFixed(1)} pts above 25% goal`
-          : `${((0.25 - executiveSummary.rolling90ClosingAverage) * 100).toFixed(1)} pts below 25% goal`}
-      </small>
-    </div>
+<div className="revenue-runway-bar">
+  <div
+    className="revenue-runway-recognized"
+    style={{ width: `${recognizedPercent}%` }}
+  />
+  <div
+    className="revenue-runway-pipeline"
+    style={{ width: `${pipelinePercent}%` }}
+  />
+</div>
 
-    <div className="manager-kpi-card">
-      <span>Annual Performance</span> v     
-      <strong>
-  {executiveSummary.annualLeadingStatus === "good"
-    ? "On Pace"
-    : executiveSummary.annualLeadingStatus === "watch"
-    ? "Watch"
-    : "Attention"}
-</strong>
-      <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
-    </div>
+<div className="revenue-runway-legend">
+  <span><b className="recognized-dot" /> Actual: {money(recognizedRevenue)}</span>
+  <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
+  <span>Last Year: {money(lastFiscalRevenueGoal)}</span>
+  <span>Annual Goal: {money(annualRevenueGoal)}</span>
+</div>
 
-    <div className="manager-kpi-card">
-      <span>Average Contract</span>
-      <strong>{money(totals.teamAverageContract)}</strong>
-      <small>{totals.totalContracts} contracts</small>
-    </div>
+<p>
+  Current recognized revenue and committed pipeline total{" "}
+  <strong>{money(expectedRevenue)}</strong>, which is{" "}
+  <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong> of last
+  year's final revenue and{" "}
+  <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong> of the $10M goal.
+  {remainingToBeatLastYear > 0
+    ? ` ${money(remainingToBeatLastYear)} remains to match last year.`
+    : ` This exceeds last year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
+</p>
+  </section>
 
-    <div className="manager-kpi-card">
-      <span>PMs on Goal Pace</span>
-      <strong>{executiveSummary.monthlyAtGoalCount} / {rows.length}</strong>
-      <small>Monthly goal pace</small>
-    </div>
-  </div>
+  
 </section>
-
         <section className="manager-panel manager-executive-summary-panel executive-command-panel">
           <div className="manager-panel-header">
             <div>
@@ -1816,6 +1869,47 @@ aboveTeamRevenue.length
               </div>
             ))}
           </div>
+          <div className="manager-kpi-grid">
+            <div className="manager-kpi-card">
+              <span>Rolling 90-Day Closing Rate</span>
+              <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+              <small
+                className={`manager-difference ${
+                  executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
+                }`}
+              >
+                {executiveSummary.rolling90ClosingAverage >= 0.25
+                  ? `${((executiveSummary.rolling90ClosingAverage - 0.25) * 100).toFixed(1)} pts above 25% goal`
+                  : `${((0.25 - executiveSummary.rolling90ClosingAverage) * 100).toFixed(1)} pts below 25% goal`}
+              </small>
+            </div>
+
+            <div className="manager-kpi-card">
+              <span>Annual Performance</span>
+              <strong>
+                {executiveSummary.annualLeadingStatus === "good"
+                  ? "On Pace"
+                  : executiveSummary.annualLeadingStatus === "watch"
+                  ? "Watch"
+                  : "Attention"}
+              </strong>
+              <small>{displayPercent(totals.totalGoalPercent, 1)} annual progress</small>
+            </div>
+
+            <div className="manager-kpi-card">
+              <span>Average Contract</span>
+              <strong>{money(totals.teamAverageContract)}</strong>
+              <small>{totals.totalContracts} contracts</small>
+            </div>
+
+            <div className="manager-kpi-card">
+              <span>PMs on Goal Pace</span>
+              <strong>{executiveSummary.monthlyAtGoalCount} / {rows.length}</strong>
+              <small>Monthly goal pace</small>
+            </div>
+          </div>
+
+          
 
           <div className="executive-priority-card">
             <div className="manager-summary-section-header">
@@ -1910,17 +2004,6 @@ aboveTeamRevenue.length
           </div>
 
           <div className="manager-kpi-grid">
-<div className="manager-kpi-card">
-  <span>FYTD vs Last Year</span>
-
-  <strong>{totals.teamVsLY.label}</strong>
-
-  <small>
-    {totals.teamVsLY.className === "positive"
-      ? "Ahead of last fiscal year"
-      : "FYTD recognized revenue vs LY"}
-  </small>
-</div>
 
             <div className="manager-kpi-card">
               <span>Needs to be Invoiced</span>

@@ -1852,7 +1852,8 @@ const lastYearMarkerPercent =
             <p>What the business needs from you today.</p>
           </div>
 
-          <div className="executive-brief-card">
+          <div className="executive-brief-card executive-story-card">
+            <span>Today's Story</span>
             <p>{executiveSummary.brief}</p>
           </div>
 
@@ -1865,7 +1866,7 @@ const lastYearMarkerPercent =
                 <span>{card.label}</span>
                 <strong>{card.value}</strong>
                 <small>{card.note}</small>
-                <b>{card.status === "good" ? "Healthy" : card.status === "watch" ? "Watch" : "Attention"}</b>
+                <b>{card.status === "good" ? "Healthy" : card.status === "watch" ? "Monitor" : "Needs Action"}</b>
               </div>
             ))}
           </div>
@@ -1920,7 +1921,13 @@ const lastYearMarkerPercent =
             <div className="executive-priority-list">
               {executiveSummary.priorities.map((item, index) => (
                 <div className="executive-priority-item" key={`priority-${index}`}>
-                  <span>{index + 1}</span>
+                  <span
+                    className={`priority-badge ${
+                      index === 0 ? "high" : index < 3 ? "medium" : "low"
+                    }`}
+                  >
+                    {index === 0 ? "High" : index < 3 ? "Medium" : "Low"}
+                  </span>
                   {typeof item === "string" ? (
                     <p>{item}</p>
                   ) : (
