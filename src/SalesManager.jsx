@@ -1777,18 +1777,14 @@ const lastYearMarkerPercent =
         <h2>FY Revenue Position vs. Last Fiscal Year</h2>
       </div>
 
-     <div className="runway-percentages">
-  <div>
-    <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
-    <span>vs Last Year</span>
-  </div>
+
 
   <div>
     <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong>
     <span>to $10M Goal</span>
   </div>
 </div>
-    </div>
+
 
 <div className="revenue-runway-markers runway-markers-polished">
   <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
