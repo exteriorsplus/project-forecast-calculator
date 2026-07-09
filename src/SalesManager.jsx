@@ -1825,7 +1825,7 @@ const remainingToBeatLastYear = Math.max(
   <div className="revenue-runway-header">
     <div>
       <span>Executive Revenue Runway</span>
-      <h2>Progress Toward Last Fiscal Year</h2>
+      <h2>Revenue Runway Toward Last Fiscal Year</h2>
     </div>
 
     <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong>
