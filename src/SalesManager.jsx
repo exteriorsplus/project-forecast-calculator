@@ -1811,7 +1811,7 @@ const lastYearMarkerPercent =
   className="marker ly-goal"
   style={{ left: `${lastYearMarkerPercent}%` }}
 >
-  <span>LY Fiscal Revenue Total</span>
+  <span>Last Year</span>
   <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
 </div>
 
@@ -1819,7 +1819,7 @@ const lastYearMarkerPercent =
   className="marker annual-goal"
   style={{ left: "100%" }}
 >
-  <span>$10M Goal</span>
+  <span>Annual Goal</span>
   <strong>{moneyShort(annualRevenueGoal)}</strong>
 </div>
 </div>
@@ -1835,21 +1835,16 @@ const lastYearMarkerPercent =
       />
     </div>
 
-    <div className="revenue-runway-legend">
-      <span><b className="recognized-dot" /> Recognized: {money(recognizedRevenue)}</span>
-      <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
-      <span>Goal: {money(lastFiscalRevenueGoal)}</span>
-      <span className={totals.teamVsLY.className === "positive" ? "manager-positive" : "manager-negative"}>
-        FYTD vs LY: {totals.teamVsLY.label}
-      </span>
-    </div>
-
-    <p>
-      Recognized revenue plus committed pipeline totals <strong>{money(expectedRevenue)}</strong>.
-      {remainingToBeatLastYear > 0
-        ? ` Need to bring in ${money(remainingToBeatLastYear)} to match last fiscal year.`
-        : ` This exceeds last fiscal year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
-    </p>
+<p>
+  Current recognized revenue and committed pipeline total{" "}
+  <strong>{money(expectedRevenue)}</strong>, which is{" "}
+  <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong> of last
+  year's final revenue and{" "}
+  <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong> of the $10M goal.
+  {remainingToBeatLastYear > 0
+    ? ` ${money(remainingToBeatLastYear)} remains to match last year.`
+    : ` This exceeds last year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
+</p>
   </section>
 
   <div className="manager-kpi-grid">
