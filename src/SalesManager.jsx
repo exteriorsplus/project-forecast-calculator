@@ -1858,7 +1858,7 @@ const lastYearMarkerPercent =
   year's final revenue and{" "}
   <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong> of the $10M goal.
   {remainingToBeatLastYear > 0
-    ? ` ${money(remainingToBeatLastYear)} remains to match last year.`
+    ? ` ${money(remainingToBeatLastYear)} remains to match last year's total.`
     : ` This exceeds last year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
 </p>
   </section>
