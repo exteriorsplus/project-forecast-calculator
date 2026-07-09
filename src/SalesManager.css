@@ -1579,3 +1579,33 @@ align-items: start;
   border-radius: 18px;
   margin: 0;
 }
+.revenue-runway-markers {
+  position: relative;
+  height: 42px;
+  margin: 4px 0 4px;
+}
+
+.revenue-runway-markers span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  color: #111827;
+  font-size: 14px;
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.revenue-runway-markers span b {
+  display: block;
+  font-size: 13px;
+}
+
+.revenue-runway-markers span:nth-child(2) {
+  color: #b91c1c;
+}
+
+.revenue-runway-markers span:last-child {
+  transform: translateX(-100%);
+  text-align: right;
+}
