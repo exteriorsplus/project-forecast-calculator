@@ -1765,7 +1765,7 @@ aboveTeamRevenue.length
     </div>
 
     <div className="manager-kpi-card">
-      <span>Annual Performance</span>
+      <span>Annual Performance</span> v     
       <strong>
   {executiveSummary.annualLeadingStatus === "good"
     ? "On Pace"
