@@ -1780,38 +1780,59 @@ const lastYearMarkerPercent =
 
 <div className="revenue-runway-markers runway-markers-polished">
 <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
-  <span>Actual</span>
+  <span>ACTUAL</span>
+
   <strong>{moneyShort(recognizedRevenue)}</strong>
+
   <small className={`actual-vs-ly ${totals.teamVsLY.className}`}>
     {totals.teamVsLY.label} vs LY
   </small>
+
   <i />
 </div>
 
-  <div
-    className="marker pipeline"
-    style={{ left: `${recognizedPercent + pipelinePercent}%` }}
-  >
-    <span>Pipeline</span>
-    <strong>{moneyShort(pipelineRevenue)}</strong>
-    <i />
-  </div>
+<div
+  className="marker pipeline"
+  style={{ left: `${recognizedPercent + pipelinePercent}%` }}
+>
+  <span>PIPELINE</span>
 
-  <div className="marker ly-goal" style={{ left: `${lastYearMarkerPercent}%` }}>
-    <b className="runway-flag navy-flag" />
-    <span>Last Year</span>
-    <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
-    <small>{displayPercent(expectedPercentOfLastYear, 1)} vs Last Year</small>
-    <i />
-  </div>
+  <strong>{moneyShort(pipelineRevenue)}</strong>
 
-  <div className="marker annual-goal" style={{ left: "100%" }}>
-    <b className="runway-flag red-flag" />
-    <span>Annual Goal</span>
-    <strong>{moneyShort(annualRevenueGoal)}</strong>
-    <small>{displayPercent(expectedPercentOfGoal, 1)} to $10M Goal</small>
-    <i />
-  </div>
+  <small>Future Cash</small>
+
+  <i />
+</div>
+
+<div
+  className="marker ly-goal"
+  style={{ left: `${lastYearMarkerPercent}%` }}
+>
+  <b className="runway-flag navy-flag" />
+
+  <span>LAST YEAR</span>
+
+  <strong>{moneyShort(lastFiscalRevenueGoal)}</strong>
+
+  <small>FYTD Benchmark</small>
+
+  <i />
+</div>
+
+<div
+  className="marker annual-goal"
+  style={{ left: "100%" }}
+>
+  <b className="runway-flag red-flag" />
+
+  <span>ANNUAL GOAL</span>
+
+  <strong>{moneyShort(annualRevenueGoal)}</strong>
+
+  <small>{displayPercent(expectedPercentOfGoal,1)} to Goal</small>
+
+  <i />
+</div>
 </div>
 
 <div className="revenue-runway-bar">
