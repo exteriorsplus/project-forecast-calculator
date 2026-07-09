@@ -1579,68 +1579,6 @@ align-items: start;
   border-radius: 18px;
   margin: 0;
 }
-.revenue-runway-markers{
-    position:relative;
-    height:56px;
-    margin-bottom:8px;
-}
-
-.revenue-runway-markers .marker{
-    position:absolute;
-    transform:translateX(-50%);
-    text-align:center;
-}
-
-.revenue-runway-markers .marker span{
-    display:block;
-    font-size:12px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-}
-
-.revenue-runway-markers .marker strong{
-    display:block;
-    font-size:20px;
-    font-weight:900;
-}
-
-.revenue-runway-markers .actual{
-    color:#111827;
-}
-
-.revenue-runway-markers .pipeline{
-    color:#b91c1c;
-}
-
-.revenue-runway-markers .goal{
-    left:100%;
-    transform:translateX(-100%);
-    text-align:right;
-    color:#111827;
-}
-.runway-percentages{
-    display:flex;
-    gap:28px;
-    align-items:flex-end;
-}
-
-.runway-percentages div{
-    text-align:right;
-}
-
-.runway-percentages strong{
-    display:block;
-    font-size:2rem;
-    line-height:1;
-}
-
-.runway-percentages span{
-    font-size:.75rem;
-    color:#6b7280;
-    font-weight:700;
-    text-transform:uppercase;
-}
 .runway-markers-polished {
   height: 118px;
   margin: 12px 0 8px;
@@ -1649,9 +1587,15 @@ align-items: start;
 .runway-markers-polished .marker {
   position: absolute;
   bottom: 0;
+  width: 150px;
   transform: translateX(-50%);
   text-align: center;
   color: #111827;
+}
+
+.runway-markers-polished .annual-goal {
+  transform: translateX(-50%);
+  text-align: center;
 }
 
 .runway-markers-polished .marker span {
@@ -1683,11 +1627,6 @@ align-items: start;
   color: #b91c1c;
 }
 
-.runway-markers-polished .annual-goal {
-  transform: translateX(-100%);
-  text-align: right;
-}
-
 .runway-markers-polished .marker i {
   display: block;
   width: 1px;
@@ -1704,7 +1643,7 @@ align-items: start;
 .runway-flag {
   display: block;
   width: 34px;
-  height: 24px;
+  height: 22px;
   margin: 0 auto 8px;
   clip-path: polygon(0 0, 100% 0, 72% 50%, 100% 100%, 0 100%);
 }
@@ -1719,5 +1658,5 @@ align-items: start;
 
 .annual-goal .runway-flag {
   margin-left: auto;
-  margin-right: 0;
+  margin-right: auto;
 }
