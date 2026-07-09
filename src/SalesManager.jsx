@@ -1338,13 +1338,13 @@ const closingStatus = getStatus({
 
   const healthCards = [
 {
-  label: "Goal Gap",
+  label: "PM Goal Status",
   value: money(Math.max(Number(totals.totalGoal || 0) - Number(totals.totalRevenue || 0), 0)),
   note: `${displayPercent(Math.max(1 - Number(totals.totalGoalPercent || 0), 0), 1)} left to goal`,
   status: totals.totalGoalPercent >= 1 ? "good" : totals.totalGoalPercent >= 0.75 ? "watch" : "attention",
 },
 {
-  label: "Close Rate Gap",
+  label: "Closing Rate Status",
 value:
   rolling90ClosingAverage >= 0.25
     ? "On Goal"
