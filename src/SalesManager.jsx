@@ -1776,6 +1776,7 @@ const lastYearMarkerPercent =
       </div>
       </div>
 
+  <div className="revenue-runway-markers runway-markers-polished"></div>
 <div className="revenue-runway-markers runway-markers-polished">
 <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
   <span>ACTUAL</span>

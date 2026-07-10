@@ -1705,6 +1705,15 @@ align-items: start;
   margin-bottom: 18px;
 }
 
+.runway-description{
+    margin:6px 0 0;
+    color:#6b7280;
+    font-size:13px;
+    font-weight:500;
+    line-height:1.4;
+    max-width:560px;
+}
+
 .manager-panel-header span,
 .revenue-runway-header span,
 .executive-story-card span {
