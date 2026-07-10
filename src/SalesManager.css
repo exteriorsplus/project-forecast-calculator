@@ -1400,9 +1400,9 @@ align-items: start;
 }
 
 .revenue-runway-header h2 {
-  margin: 22px 0 0;   /* was 2px */
+  margin: 222px 0 0;   /* was 2px */
   color: #111827;
-  font-size: 282px;
+  font-size: 28px;
   font-weight: 900;
   line-height: 1.1;
 }
