@@ -1770,13 +1770,16 @@ const lastYearMarkerPercent =
 
 <section className="manager-kpi-stack">
   <section className="revenue-runway-card">
-    <div className="revenue-runway-header">
-      <div>
-        <h2>FY Revenue Position vs. Last Fiscal Year</h2>
-      </div>
-      </div>
+<div className="revenue-runway-header">
+  <div>
+    <h2>FY Revenue Position vs. Last Fiscal Year</h2>
 
-  <div className="revenue-runway-markers runway-markers-polished"></div>
+    <small className="runway-description">
+      Visual comparison of recognized revenue, future cash, last fiscal
+      year's benchmark, and the annual revenue goal.
+    </small>
+  </div>
+</div>
 <div className="revenue-runway-markers runway-markers-polished">
 <div className="marker actual" style={{ left: `${recognizedPercent}%` }}>
   <span>ACTUAL</span>
