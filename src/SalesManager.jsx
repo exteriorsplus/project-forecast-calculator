@@ -2103,7 +2103,7 @@ const lastYearMarkerPercent =
           {weeklyTopDawg && (
             <div className="employee-of-week-card">
               <div className="employee-of-week-person">
-                <span>Weekly Top Dawg</span>
+                <span>Current Top Dawg</span>
                 <img src={weeklyTopDawg.image} alt={weeklyTopDawg.name} />
                 <div>
                   <h3>{weeklyTopDawg.name}</h3>
