@@ -2343,12 +2343,11 @@ align-items: start;
 }
 .revenue-runway-header .runway-description {
   display: block;
-  max-width: 520px;
-  margin-top: 8px;
-  color: #6b7280;
-  font-size: 13px;
+  max-width: 500px;
+  margin-top: 10px;
+  color: #7a7f8f;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.4;
-  text-transform: none;
-  letter-spacing: normal;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
 }
