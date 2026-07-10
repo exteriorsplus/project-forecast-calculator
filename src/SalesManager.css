@@ -1400,7 +1400,7 @@ align-items: start;
 }
 
 .revenue-runway-header h2 {
-  margin: 222px 0 0;   /* was 2px */
+  margin: 22px 0 0;   /* was 2px */
   color: #111827;
   font-size: 28px;
   font-weight: 900;
@@ -1694,12 +1694,8 @@ align-items: start;
 }
 
 .manager-panel-header,
-.revenue-runway-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 18px;
-  margin-bottom: 18px;
+.revenue-runway-header > div:first-child {
+    padding-top: 10px;
 }
 
 .manager-summary-section-header {
