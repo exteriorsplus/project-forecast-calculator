@@ -1794,19 +1794,6 @@ const lastYearMarkerPercent =
 </div>
 
 <div
-  className="marker pipeline"
-  style={{ left: `${recognizedPercent + pipelinePercent}%` }}
->
-  <span>PIPELINE</span>
-
-  <strong>{moneyShort(pipelineRevenue)}</strong>
-
-  <small>Future Cash</small>
-
-  <i />
-</div>
-
-<div
   className="marker ly-goal"
   style={{ left: `${lastYearMarkerPercent}%` }}
 >
@@ -1840,11 +1827,7 @@ const lastYearMarkerPercent =
 <div className="revenue-runway-bar">
   <div
     className="revenue-runway-recognized"
-    style={{ width: `${recognizedPercent}%` }}
-  />
-  <div
-    className="revenue-runway-pipeline"
-    style={{ width: `${pipelinePercent}%` }}
+    style={{ width: `${actualPercent}%` }}
   />
 </div>
 
