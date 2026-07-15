@@ -1774,21 +1774,21 @@ align-items: start;
 .runway-markers-polished .marker span {
   display: block;
   color: var(--ecc-navy);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: .7px;
+  letter-spacing: 0.8px;
   line-height: 1;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .runway-markers-polished .marker strong {
   display: block;
   color: var(--ecc-navy);
-  font-size: 32px;
+  font-size: 18px;
   font-weight: 900;
-  line-height: .95;
-  letter-spacing: -.8px;
+  line-height: 1;
+  letter-spacing: -0.2px;
   margin-bottom: 2px;
 }
 
