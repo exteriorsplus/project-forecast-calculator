@@ -2351,3 +2351,10 @@ align-items: start;
   line-height: 1.5;
   letter-spacing: 0.2px;
 }
+.marker.pipeline {
+    margin-top: -18px;
+}
+
+.marker.ly-goal {
+    margin-top: 18px;
+}
