@@ -1774,10 +1774,10 @@ const lastYearMarkerPercent =
   <div>
     <h2>FY Revenue Position vs. Last Fiscal Year</h2>
 
-    <small className="runway-description">
-      Visual comparison of recognized revenue, future cash, last fiscal
-      year's benchmark, and the annual revenue goal.
-    </small>
+<small className="runway-description">
+  Visual comparison of FYTD sales revenue, last fiscal year's benchmark,
+  and the annual revenue goal.
+</small>
   </div>
 </div>
 <div className="revenue-runway-markers runway-markers-polished">
@@ -1818,7 +1818,15 @@ const lastYearMarkerPercent =
 
   <strong>{moneyShort(annualRevenueGoal)}</strong>
 
-  <small>{displayPercent(expectedPercentOfGoal,1)} to Goal</small>
+<small>
+  {displayPercent(
+    annualRevenueGoal > 0
+      ? recognizedRevenue / annualRevenueGoal
+      : 0,
+    1
+  )}{" "}
+  to Goal
+</small>
 
   <i />
 </div>
@@ -1827,25 +1835,41 @@ const lastYearMarkerPercent =
 <div className="revenue-runway-bar">
   <div
     className="revenue-runway-recognized"
-    style={{ width: `${actualPercent}%` }}
+    style={{ width: `${recognizedPercent}%` }}
   />
 </div>
 
 <div className="revenue-runway-legend">
   <span>
     <b className="recognized-dot" />
-    Actual: {money(recognizedRevenue)}
+    Actual FYTD: {money(recognizedRevenue)}
   </span>
 
   <span>
-    <b className="pipeline-dot" />
-    Pipeline: {money(pipelineRevenue)}
+    Last Year: {money(lastFiscalRevenueGoal)}
   </span>
 
-  <span>Last Year: {money(lastFiscalRevenueGoal)}</span>
-
-  <span>Annual Goal: {money(annualRevenueGoal)}</span>
+  <span>
+    Annual Goal: {money(annualRevenueGoal)}
+  </span>
 </div>
+
+<p className="revenue-runway-takeaway">
+  {remainingToBeatLastYear > 0
+    ? `${money(
+        remainingToBeatLastYear
+      )} remains to match last fiscal year's revenue.`
+    : `Revenue is ${money(
+        recognizedRevenue - lastFiscalRevenueGoal
+      )} ahead of last fiscal year.`}{" "}
+
+  {money(
+    Math.max(
+      annualRevenueGoal - recognizedRevenue,
+      0
+    )
+  )} remains to reach the annual revenue goal.
+</p>
   </section>
 
   
