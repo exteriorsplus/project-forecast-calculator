@@ -1667,7 +1667,7 @@ insight: `Annual Performance is currently highlighted in ${
             : "FYTD closing-rate leader is not available yet.",
           annualGoalLeader
             ? `${annualGoalLeader.name} is strongest against annual goal pace at ${displayPercent(annualGoalLeader.annualGoalPercent, 1)}.`
-            : "Annual goal pace leader is not available yet.",
+            : "The annual goal pace leader is not available yet.",
 aboveTeamRevenue.length
   ? `${formatLeaderNames(aboveTeamRevenue)} ${
       aboveTeamRevenue.length === 1 ? "is" : "are"
