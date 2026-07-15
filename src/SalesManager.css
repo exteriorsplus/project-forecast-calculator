@@ -1545,11 +1545,6 @@ align-items: start;
   letter-spacing: 0.25px;
 }
 
-.runway-markers-polished .pipeline,
-.runway-markers-polished .pipeline span,
-.runway-markers-polished .pipeline strong {
-  color: var(--ecc-red);
-}
 
 .runway-markers-polished .marker i {
   display: block;
@@ -1559,7 +1554,6 @@ align-items: start;
   margin: 7px auto 0;
 }
 
-.runway-markers-polished .pipeline i,
 .runway-markers-polished .annual-goal i {
   background: var(--ecc-red);
 }
@@ -1597,10 +1591,6 @@ align-items: start;
   background: var(--ecc-navy);
 }
 
-.revenue-runway-pipeline {
-  background: var(--ecc-red);
-}
-
 .revenue-runway-legend {
   display: flex;
   flex-wrap: wrap;
@@ -1617,15 +1607,11 @@ align-items: start;
   gap: 7px;
 }
 
-.recognized-dot,
-.pipeline-dot {
+.recognized-dot {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 999px;
-}
-
-.recognized-dot {
   background: var(--ecc-navy);
 }
 
@@ -2097,16 +2083,7 @@ align-items: start;
   line-height: 1.5;
   letter-spacing: 0.2px;
 }
-.runway-markers-polished .marker.pipeline {
-  bottom: 0;
-}
 
-.runway-markers-polished .marker.pipeline > span,
-.runway-markers-polished .marker.pipeline > strong,
-.runway-markers-polished .marker.pipeline > small {
-  position: relative;
-  left: -38px;
-}
 
 .runway-markers-polished .marker.ly-goal {
   bottom: 0;
