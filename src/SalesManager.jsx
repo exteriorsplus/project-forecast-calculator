@@ -1719,7 +1719,7 @@ const totalCompanyRevenue =
   const annualRevenueGoal = 10000000;
 const recognizedRevenue = Number(totals.totalRevenue || 0);
 const pipelineRevenue = Number(invoicePipeline.totalPipeline || 0);
-const expectedRevenue = recognizedRevenue + pipelineRevenue;
+const expectedRevenue = recognizedRevenue;
 const revenueRunwayGoal = annualRevenueGoal;
 
 const recognizedPercent = Math.min(
@@ -1849,22 +1849,20 @@ const lastYearMarkerPercent =
 </div>
 
 <div className="revenue-runway-legend">
-  <span><b className="recognized-dot" /> Actual: {money(recognizedRevenue)}</span>
-  <span><b className="pipeline-dot" /> Pipeline: {money(pipelineRevenue)}</span>
+  <span>
+    <b className="recognized-dot" />
+    Actual: {money(recognizedRevenue)}
+  </span>
+
+  <span>
+    <b className="pipeline-dot" />
+    Pipeline: {money(pipelineRevenue)}
+  </span>
+
   <span>Last Year: {money(lastFiscalRevenueGoal)}</span>
+
   <span>Annual Goal: {money(annualRevenueGoal)}</span>
 </div>
-
-<p>
-  Current recognized revenue and committed pipeline total{" "}
-  <strong>{money(expectedRevenue)}</strong>, which is{" "}
-  <strong>{displayPercent(expectedPercentOfLastYear, 1)}</strong> of last
-  year's final revenue and{" "}
-  <strong>{displayPercent(expectedPercentOfGoal, 1)}</strong> of the $10M goal.
-  {remainingToBeatLastYear > 0
-    ? ` ${money(remainingToBeatLastYear)} remains to match last year's total.`
-    : ` This exceeds last year by ${money(expectedRevenue - lastFiscalRevenueGoal)}.`}
-</p>
   </section>
 
   
