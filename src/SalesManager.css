@@ -2351,17 +2351,25 @@ align-items: start;
   line-height: 1.5;
   letter-spacing: 0.2px;
 }
-.marker.pipeline {
-    margin-top: -18px;
+.runway-markers-polished .marker.pipeline {
+  bottom: 0;
 }
 
-.marker.ly-goal {
-    margin-top: 18px;
-}
-.runway-markers-polished .marker.pipeline {
-  bottom: 22px;
+.runway-markers-polished .marker.pipeline > span,
+.runway-markers-polished .marker.pipeline > strong,
+.runway-markers-polished .marker.pipeline > small {
+  position: relative;
+  left: -58px;
 }
 
 .runway-markers-polished .marker.ly-goal {
   bottom: 0;
+}
+
+.runway-markers-polished .marker.ly-goal > b,
+.runway-markers-polished .marker.ly-goal > span,
+.runway-markers-polished .marker.ly-goal > strong,
+.runway-markers-polished .marker.ly-goal > small {
+  position: relative;
+  left: 58px;
 }
