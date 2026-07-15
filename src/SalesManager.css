@@ -2358,3 +2358,10 @@ align-items: start;
 .marker.ly-goal {
     margin-top: 18px;
 }
+.runway-markers-polished .marker.pipeline {
+  bottom: 22px;
+}
+
+.runway-markers-polished .marker.ly-goal {
+  bottom: 0;
+}
