@@ -56,7 +56,7 @@ const projectManagers = [
     name: "William Dye",
     slug: "williamdye",
     image: "/pm/williamdye.jpg",
-    activeGoal: true,
+    activeGoal: false,
   },
   {
     name: "Mike Harr",
@@ -1110,6 +1110,12 @@ const formatLeaderNames = (leaders) => {
       .filter((row) => Number(row[key] || 0) > 0)
       .sort((a, b) => Number(a[key] || 0) - Number(b[key] || 0))[0];
 
+  const getLowestIncludingZero = (list, key) =>
+    list
+      .slice()
+      .filter((row) => Number.isFinite(Number(row[key] || 0)))
+      .sort((a, b) => Number(a[key] || 0) - Number(b[key] || 0))[0];
+
   const getAverage = (list, key) => {
     const values = list
       .map((row) => Number(row[key] || 0))
@@ -1158,9 +1164,30 @@ const formatLeaderNames = (leaders) => {
   const monthlyContractsLeaders = getLeaders(activeRows, "monthlyContracts");
   const monthlyAverageContractLeader = getHighest(activeRows, "monthlyAverageContract");
   const monthlyGoalLeader = getHighest(activeRows, "monthlyGoalPercent");
-  const monthlyRevenueLow = getLowest(revenueCoachingRows, "monthlyRevenue");
-  const monthlyGoalLow = getLowest(activeRows, "monthlyGoalPercent");
-  const monthlyAverageContractLow = getLowest(revenueCoachingRows, "monthlyAverageContract");
+  const zeroProductionRows = revenueCoachingRows.filter(
+    (row) => Number(row.monthlyRevenue || 0) <= 0
+  );
+  const monthlyCoachingRows = zeroProductionRows.length
+    ? zeroProductionRows
+    : revenueCoachingRows;
+  const monthlyRevenueLow = getLowestIncludingZero(
+    monthlyCoachingRows,
+    "monthlyRevenue"
+  );
+  const monthlyGoalLow =
+    getLowestIncludingZero(
+      monthlyCoachingRows.filter((row) => row.name !== monthlyRevenueLow?.name),
+      "monthlyGoalPercent"
+    ) || monthlyRevenueLow;
+  const monthlyAverageContractLow =
+    getLowestIncludingZero(
+      monthlyCoachingRows.filter(
+        (row) =>
+          row.name !== monthlyRevenueLow?.name &&
+          row.name !== monthlyGoalLow?.name
+      ),
+      "monthlyAverageContract"
+    ) || monthlyGoalLow || monthlyRevenueLow;
   const monthlyAtGoalCount = activeRows.filter(
     (row) => Number(row.monthlyGoalPercent || 0) >= 1
   ).length;

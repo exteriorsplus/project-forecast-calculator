@@ -228,7 +228,7 @@ const projectManagers = [
     slug: "williamdye",
     image: "/pm/williamdye.jpg",
     password: "William123",
-    activeGoal: true,
+    activeGoal: false,
   },
 {
   name: "Mike Harr",
