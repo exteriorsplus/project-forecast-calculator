@@ -592,42 +592,22 @@ const getLatestPMMetric = (pmName, metric) => {
   return latestMonth ? getPMMetric(pmName, metric, latestMonth) : 0;
 };
 
-const getCurrentPMMonthLabel = () => {
-  const today = new Date();
-  return `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
-};
-
-const getTeamMetricForMonth = (metric, monthLabel) => {
+const getLatestTeamMetric = (metric) => {
   const requestedMetric = normalizeMetricLabel(metric);
-
   const teamRowIndex = pmRows.findIndex((row) =>
     row.some((cell) => normalizeMetricLabel(cell) === requestedMetric)
   );
 
   if (teamRowIndex < 0) return 0;
 
-  const teamRow = pmRows[teamRowIndex];
+  const teamRow = pmRows[teamRowIndex] || [];
 
-  let headerRow = null;
-
-  for (let index = teamRowIndex; index >= 0; index -= 1) {
-    const possibleHeader = pmRows[index] || [];
-
-    if (possibleHeader.some((cell) => formatPMMonth(cell) === monthLabel)) {
-      headerRow = possibleHeader;
-      break;
-    }
+  for (let columnIndex = teamRow.length - 1; columnIndex >= 1; columnIndex -= 1) {
+    const value = parseMetricValue(teamRow[columnIndex]);
+    if (value > 0) return value;
   }
 
-  if (!headerRow) return 0;
-
-  const columnIndex = headerRow.findIndex(
-    (cell) => formatPMMonth(cell) === monthLabel
-  );
-
-  if (columnIndex < 0) return 0;
-
-  return parseMetricValue(teamRow[columnIndex]);
+  return 0;
 };
   const getManagerMetrics = () => {
     const reps = getManagerSalesReps();
@@ -1188,11 +1168,8 @@ const formatLeaderNames = (leaders) => {
   const rolling90ClosingLeader = getHighest(activeRows, "rolling90ClosingRate");
   const rolling90RevenueLeader = getHighest(activeRows, "rolling90Revenue");
   const rolling90ClosingLow = getLowest(activeRows, "rolling90ClosingRate");
-const currentPMMonth = getCurrentPMMonthLabel();
-
-const rolling90ClosingAverage = getTeamMetricForMonth(
-  "Rolling 90-Day Closing Rate Average",
-  currentPMMonth
+const rolling90ClosingAverage = getLatestTeamMetric(
+  "Rolling 90-Day Closing Rate Average"
 );
   const rolling90RevenueGap = getLargestRevenueGap(revenueCoachingRows, "rolling90Revenue");
 
@@ -1903,7 +1880,7 @@ const lastYearMarkerPercent =
           <div className="manager-kpi-grid">
             <div className="manager-kpi-card">
               <span>Rolling 90-Day Closing Rate</span>
-              <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 1)}</strong>
+              <strong>{displayPercent(executiveSummary.rolling90ClosingAverage, 2)}</strong>
               <small
                 className={`manager-difference ${
                   executiveSummary.rolling90ClosingAverage >= 0.25 ? "positive" : "negative"
